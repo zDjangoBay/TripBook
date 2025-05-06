@@ -127,3 +127,5 @@ Limited Profiling: Use Android Profiler in Android Studio.
 
 Summary
 VS Code works well for Android development if you prefer lightweight tools and are comfortable with terminal commands. For advanced features (e.g., layout design, profiling), switch to Android Studio. Use VS Code for coding and debugging, and Android Studio for complex tasks.
+
+Notes provided by sas-bergson.
