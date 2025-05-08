@@ -32,4 +32,6 @@ class ReservationsDashboardViewModel : ViewModel() {
         )
         _allReservations.value = dummyData
     }
+
+
 }

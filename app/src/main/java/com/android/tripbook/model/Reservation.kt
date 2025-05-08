@@ -17,5 +17,8 @@ data class Reservation(
 enum class ReservationStatus {
     UPCOMING,
     COMPLETED,
-    CANCELLED
+
+
+
+
 }
