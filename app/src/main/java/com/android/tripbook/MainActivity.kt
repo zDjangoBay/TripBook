@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.UserProfileScreen // Import the UserProfileScreen function
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,29 +21,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    // Calling the UserProfileScreen composable
+                    UserProfileScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
 
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview
 @Composable
 fun GreetingPreview() {
     TripBookTheme {
-        Greeting("Android")
+        Text(text = "Hello Android")
     }
 }
