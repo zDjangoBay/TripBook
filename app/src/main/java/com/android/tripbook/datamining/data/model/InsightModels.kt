@@ -14,7 +14,9 @@ data class DestinationInsight(
     val rating: Float,
     val imageUrl: String? = null,
     val description: String = "",
-    val tags: List<String> = emptyList()
+    val tags: List<String> = emptyList(),
+    val budgetCategory: String = "Mid-range",
+    val category: String = "Adventure"
 )
 
 /**
@@ -73,5 +75,9 @@ data class TravelRecommendation(
     val imageUrl: String? = null,
     val confidence: Float,
     val tags: List<String> = emptyList(),
-    val relevanceScore: Float // How relevant this recommendation is to the user
+    val relevanceScore: Float, // How relevant this recommendation is to the user
+    val region: String = "",
+    val budgetCategory: String = "",
+    val travelStyle: String = "",
+    val isPredictive: Boolean = false
 )

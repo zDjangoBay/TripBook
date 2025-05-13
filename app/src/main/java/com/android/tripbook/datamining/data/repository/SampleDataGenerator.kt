@@ -13,7 +13,7 @@ import java.util.Date
 // Sample destinations for demonstration
 fun getSampleDestinations(): List<Destination> {
     val now = Date()
-    return listOf(
+    val destinations = mutableListOf(
         Destination(
             name = "Zanzibar",
             country = "Tanzania",
@@ -133,26 +133,197 @@ fun getSampleDestinations(): List<Destination> {
             description = "Pristine beaches and crystal-clear waters in this island paradise.",
             tags = "beach,island,luxury,honeymoon,snorkeling",
             seasonalityData = "{\"Jan\":90,\"Feb\":85,\"Mar\":80,\"Apr\":85,\"May\":80,\"Jun\":75,\"Jul\":80,\"Aug\":85,\"Sep\":80,\"Oct\":75,\"Nov\":85,\"Dec\":95}"
+        ),
+
+        // Cameroon Destinations - Adamawa Region
+        Destination(
+            name = "Vina Waterfalls",
+            country = "Cameroon",
+            region = "Adamawa Region",
+            popularity = 82.0f,
+            averageRating = 4.5f,
+            visitCount = 8750,
+            lastUpdated = now,
+            latitude = 7.2372,
+            longitude = 13.5803,
+            imageUrl = "https://images.unsplash.com/photo-1564982752979-3f7c5f4a8b3b",
+            description = "Spectacular waterfalls surrounded by lush vegetation in the Adamawa Region.",
+            tags = "waterfall,nature,hiking,photography,adventure",
+            seasonalityData = "{\"Jan\":70,\"Feb\":65,\"Mar\":60,\"Apr\":75,\"May\":85,\"Jun\":90,\"Jul\":85,\"Aug\":80,\"Sep\":85,\"Oct\":80,\"Nov\":75,\"Dec\":70}"
+        ),
+
+        // Cameroon Destinations - Centre Region
+        Destination(
+            name = "Mefou National Park",
+            country = "Cameroon",
+            region = "Centre Region",
+            popularity = 84.0f,
+            averageRating = 4.6f,
+            visitCount = 12450,
+            lastUpdated = now,
+            latitude = 3.8667,
+            longitude = 11.5167,
+            imageUrl = "https://images.unsplash.com/photo-1584844115436-473887b1e327",
+            description = "Home to the Mefou Primate Sanctuary with over 300 rescued primates including chimps and gorillas.",
+            tags = "wildlife,primates,conservation,nature,sanctuary",
+            seasonalityData = "{\"Jan\":75,\"Feb\":70,\"Mar\":65,\"Apr\":70,\"May\":80,\"Jun\":85,\"Jul\":80,\"Aug\":75,\"Sep\":70,\"Oct\":75,\"Nov\":80,\"Dec\":85}"
+        ),
+
+        // Cameroon Destinations - East Region
+        Destination(
+            name = "Dja Faunal Reserve",
+            country = "Cameroon",
+            region = "East Region",
+            popularity = 86.0f,
+            averageRating = 4.7f,
+            visitCount = 9870,
+            lastUpdated = now,
+            latitude = 3.1667,
+            longitude = 13.0000,
+            imageUrl = "https://images.unsplash.com/photo-1552083974-186346191183",
+            description = "UNESCO World Heritage site with pristine rainforest and exceptional biodiversity.",
+            tags = "rainforest,wildlife,unesco,conservation,biodiversity",
+            seasonalityData = "{\"Jan\":70,\"Feb\":65,\"Mar\":60,\"Apr\":65,\"May\":75,\"Jun\":85,\"Jul\":90,\"Aug\":85,\"Sep\":80,\"Oct\":75,\"Nov\":70,\"Dec\":75}"
+        ),
+
+        // Cameroon Destinations - Far North Region
+        Destination(
+            name = "Waza National Park",
+            country = "Cameroon",
+            region = "Far North Region",
+            popularity = 88.0f,
+            averageRating = 4.8f,
+            visitCount = 14560,
+            lastUpdated = now,
+            latitude = 11.0000,
+            longitude = 14.7500,
+            imageUrl = "https://images.unsplash.com/photo-1549366021-9f761d450615",
+            description = "Most visited national park in Cameroon with lions, elephants, giraffes and diverse wildlife.",
+            tags = "safari,wildlife,nature,photography,adventure",
+            seasonalityData = "{\"Jan\":85,\"Feb\":80,\"Mar\":75,\"Apr\":65,\"May\":60,\"Jun\":65,\"Jul\":70,\"Aug\":65,\"Sep\":70,\"Oct\":80,\"Nov\":85,\"Dec\":90}"
+        ),
+
+        // Cameroon Destinations - Littoral Region
+        Destination(
+            name = "Ekom-Nkam Waterfalls",
+            country = "Cameroon",
+            region = "Littoral Region",
+            popularity = 85.0f,
+            averageRating = 4.7f,
+            visitCount = 11230,
+            lastUpdated = now,
+            latitude = 4.5833,
+            longitude = 9.8833,
+            imageUrl = "https://images.unsplash.com/photo-1564982752979-3f7c5f4a8b3b",
+            description = "Impressive waterfalls featured in Tarzan films, surrounded by lush rainforest.",
+            tags = "waterfall,nature,film,photography,adventure",
+            seasonalityData = "{\"Jan\":65,\"Feb\":60,\"Mar\":65,\"Apr\":75,\"May\":85,\"Jun\":90,\"Jul\":85,\"Aug\":80,\"Sep\":75,\"Oct\":70,\"Nov\":65,\"Dec\":70}"
+        ),
+
+        // Cameroon Destinations - North Region
+        Destination(
+            name = "Bénoué National Park",
+            country = "Cameroon",
+            region = "North Region",
+            popularity = 83.0f,
+            averageRating = 4.5f,
+            visitCount = 8950,
+            lastUpdated = now,
+            latitude = 8.3333,
+            longitude = 13.8333,
+            imageUrl = "https://images.unsplash.com/photo-1549366021-9f761d450615",
+            description = "Wildlife reserve with diverse ecosystems and abundant wildlife including hippos and antelopes.",
+            tags = "safari,wildlife,nature,river,adventure",
+            seasonalityData = "{\"Jan\":80,\"Feb\":75,\"Mar\":70,\"Apr\":65,\"May\":60,\"Jun\":65,\"Jul\":70,\"Aug\":75,\"Sep\":80,\"Oct\":85,\"Nov\":80,\"Dec\":85}"
+        ),
+
+        // Cameroon Destinations - Northwest Region
+        Destination(
+            name = "Bafut Palace",
+            country = "Cameroon",
+            region = "Northwest Region",
+            popularity = 87.0f,
+            averageRating = 4.6f,
+            visitCount = 13450,
+            lastUpdated = now,
+            latitude = 6.0833,
+            longitude = 10.1333,
+            imageUrl = "https://images.unsplash.com/photo-1566419808810-658178380987",
+            description = "UNESCO World Heritage site, a traditional royal residence with rich cultural significance.",
+            tags = "culture,history,architecture,unesco,heritage",
+            seasonalityData = "{\"Jan\":75,\"Feb\":70,\"Mar\":65,\"Apr\":70,\"May\":80,\"Jun\":85,\"Jul\":80,\"Aug\":75,\"Sep\":70,\"Oct\":75,\"Nov\":80,\"Dec\":85}"
+        ),
+
+        // Cameroon Destinations - South Region
+        Destination(
+            name = "Kribi Beach",
+            country = "Cameroon",
+            region = "South Region",
+            popularity = 89.0f,
+            averageRating = 4.8f,
+            visitCount = 16780,
+            lastUpdated = now,
+            latitude = 2.9333,
+            longitude = 9.9167,
+            imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+            description = "Beautiful white sand beaches along the Atlantic with fresh seafood and relaxing atmosphere.",
+            tags = "beach,ocean,seafood,relaxation,swimming",
+            seasonalityData = "{\"Jan\":85,\"Feb\":80,\"Mar\":75,\"Apr\":70,\"May\":75,\"Jun\":80,\"Jul\":85,\"Aug\":90,\"Sep\":85,\"Oct\":80,\"Nov\":85,\"Dec\":90}"
+        ),
+
+        // Cameroon Destinations - Southwest Region
+        Destination(
+            name = "Mount Cameroon",
+            country = "Cameroon",
+            region = "Southwest Region",
+            popularity = 91.0f,
+            averageRating = 4.9f,
+            visitCount = 18950,
+            lastUpdated = now,
+            latitude = 4.2167,
+            longitude = 9.1700,
+            imageUrl = "https://images.unsplash.com/photo-1454496522488-7a8e488e8606",
+            description = "Highest mountain in West and Central Africa (4,095m) with volcanic landscapes and diverse ecosystems.",
+            tags = "mountain,hiking,volcano,adventure,nature",
+            seasonalityData = "{\"Jan\":80,\"Feb\":75,\"Mar\":70,\"Apr\":65,\"May\":70,\"Jun\":75,\"Jul\":80,\"Aug\":85,\"Sep\":80,\"Oct\":75,\"Nov\":80,\"Dec\":85}"
+        ),
+
+        // Cameroon Destinations - West Region
+        Destination(
+            name = "Bafoussam Royal Palace",
+            country = "Cameroon",
+            region = "West Region",
+            popularity = 84.0f,
+            averageRating = 4.6f,
+            visitCount = 12340,
+            lastUpdated = now,
+            latitude = 5.4667,
+            longitude = 10.4167,
+            imageUrl = "https://images.unsplash.com/photo-1566419808810-658178380987",
+            description = "Historical palace with artifacts showcasing the rich cultural heritage of the region.",
+            tags = "culture,history,architecture,museum,heritage",
+            seasonalityData = "{\"Jan\":75,\"Feb\":70,\"Mar\":65,\"Apr\":70,\"May\":75,\"Jun\":80,\"Jul\":85,\"Aug\":80,\"Sep\":75,\"Oct\":70,\"Nov\":75,\"Dec\":80}"
         )
     )
+    return destinations
 }
 
 // Sample travel patterns for demonstration
 fun getSampleTravelPatterns(): List<TravelPattern> {
     val calendar = Calendar.getInstance()
     val now = Date()
-    
+
     // Set start date to beginning of current year
     calendar.time = now
     calendar.set(Calendar.MONTH, Calendar.JANUARY)
     calendar.set(Calendar.DAY_OF_MONTH, 1)
     val startDate = calendar.time
-    
+
     // Set end date to end of current year
     calendar.set(Calendar.MONTH, Calendar.DECEMBER)
     calendar.set(Calendar.DAY_OF_MONTH, 31)
     val endDate = calendar.time
-    
+
     return listOf(
         TravelPattern(
             userId = "global",
@@ -187,6 +358,40 @@ fun getSampleTravelPatterns(): List<TravelPattern> {
             confidence = 0.85f,
             sampleSize = 12340
         ),
+        // Cameroon travel patterns
+        TravelPattern(
+            userId = "global",
+            patternType = "seasonal",
+            patternName = "Cameroon Dry Season Peak",
+            patternValue = 0.82f,
+            patternData = "{\"months\":[\"November\",\"December\",\"January\",\"February\"],\"destinations\":[\"Mount Cameroon\",\"Waza National Park\"],\"activities\":[\"hiking\",\"safari\",\"cultural tours\"]}",
+            startDate = startDate,
+            endDate = endDate,
+            confidence = 0.88f,
+            sampleSize = 9850
+        ),
+        TravelPattern(
+            userId = "global",
+            patternType = "destination_correlation",
+            patternName = "Cameroon Explorer Circuit",
+            patternValue = 0.75f,
+            patternData = "{\"primary\":\"Mount Cameroon\",\"secondary\":[\"Kribi Beach\",\"Waza National Park\",\"Bafut Palace\"],\"averageDuration\":14}",
+            startDate = startDate,
+            endDate = endDate,
+            confidence = 0.85f,
+            sampleSize = 7250
+        ),
+        TravelPattern(
+            userId = "global",
+            patternType = "activity_preference",
+            patternName = "Cameroon Cultural Experience",
+            patternValue = 0.79f,
+            patternData = "{\"activities\":[\"cultural tours\",\"historical sites\",\"traditional ceremonies\"],\"destinations\":[\"Bafut Palace\",\"Bafoussam Royal Palace\"],\"intensity\":\"medium\"}",
+            startDate = startDate,
+            endDate = endDate,
+            confidence = 0.84f,
+            sampleSize = 6540
+        ),
         TravelPattern(
             userId = "user123",
             patternType = "seasonal",
@@ -208,6 +413,17 @@ fun getSampleTravelPatterns(): List<TravelPattern> {
             endDate = endDate,
             confidence = 0.90f,
             sampleSize = 35
+        ),
+        TravelPattern(
+            userId = "user123",
+            patternType = "destination_interest",
+            patternName = "Cameroon Explorer",
+            patternValue = 0.80f,
+            patternData = "{\"destinations\":[\"Mount Cameroon\",\"Kribi Beach\"],\"activities\":[\"hiking\",\"beach\",\"cultural exploration\"],\"duration\":10}",
+            startDate = startDate,
+            endDate = endDate,
+            confidence = 0.85f,
+            sampleSize = 18
         )
     )
 }
@@ -260,6 +476,71 @@ fun getSampleUserPreferences(): List<UserPreference> {
             lastUpdated = now,
             source = "explicit",
             confidence = 0.90f
+        ),
+
+        // Cameroon-specific preferences
+        UserPreference(
+            userId = "user123",
+            preferenceType = "country",
+            preferenceValue = "Cameroon",
+            preferenceStrength = 0.82f,
+            lastUpdated = now,
+            source = "explicit",
+            confidence = 0.90f
+        ),
+        UserPreference(
+            userId = "user123",
+            preferenceType = "destination",
+            preferenceValue = "Mount Cameroon",
+            preferenceStrength = 0.88f,
+            lastUpdated = now,
+            source = "explicit",
+            confidence = 0.95f
+        ),
+        UserPreference(
+            userId = "user123",
+            preferenceType = "destination",
+            preferenceValue = "Kribi Beach",
+            preferenceStrength = 0.75f,
+            lastUpdated = now,
+            source = "implicit",
+            confidence = 0.80f
+        ),
+        UserPreference(
+            userId = "user123",
+            preferenceType = "activity",
+            preferenceValue = "cultural tours",
+            preferenceStrength = 0.70f,
+            lastUpdated = now,
+            source = "inferred",
+            confidence = 0.75f
+        ),
+        UserPreference(
+            userId = "user456",
+            preferenceType = "country",
+            preferenceValue = "Cameroon",
+            preferenceStrength = 0.90f,
+            lastUpdated = now,
+            source = "explicit",
+            confidence = 0.95f
+        ),
+        UserPreference(
+            userId = "user456",
+            preferenceType = "destination",
+            preferenceValue = "Waza National Park",
+            preferenceStrength = 0.85f,
+            lastUpdated = now,
+            source = "explicit",
+            confidence = 0.90f
+        ),
+        UserPreference(
+            userId = "user456",
+            preferenceType = "activity",
+            preferenceValue = "wildlife photography",
+            preferenceStrength = 0.92f,
+            lastUpdated = now,
+            source = "explicit",
+            confidence = 0.95f
         )
     )
 }

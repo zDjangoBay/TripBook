@@ -33,7 +33,7 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
     private val currentUserId = "user123"
 
     // Available regions for filtering
-    val availableRegions = listOf("All", "East Africa", "North Africa", "West Africa", "Southern Africa", "Central Africa")
+    val availableRegions = listOf("All", "Central Africa", "East Africa", "North Africa", "West Africa", "Southern Africa")
 
     // Available budget ranges for filtering
     val availableBudgetRanges = listOf("All", "Budget", "Mid-range", "Luxury")
@@ -163,8 +163,108 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                 // This would normally be a more complex algorithm
                 // For demo purposes, we'll create some sample recommendations
                 val recommendations = listOf(
+                    // Cameroon recommendations
                     TravelRecommendation(
                         id = 1,
+                        title = "Mount Cameroon Adventure",
+                        description = "Climb the highest mountain in West and Central Africa with breathtaking views of volcanic landscapes and diverse ecosystems.",
+                        destinationId = 18,
+                        destinationName = "Mount Cameroon",
+                        imageUrl = "https://images.unsplash.com/photo-1454496522488-7a8e488e8606",
+                        confidence = 0.94f,
+                        tags = listOf("mountain", "hiking", "adventure", "volcano"),
+                        relevanceScore = 0.92f,
+                        region = "Central Africa",
+                        budgetCategory = "Mid-range",
+                        travelStyle = "Adventure"
+                    ),
+                    TravelRecommendation(
+                        id = 2,
+                        title = "Kribi Beach Getaway",
+                        description = "Relax on the beautiful white sand beaches of Kribi with fresh seafood and a peaceful atmosphere along the Atlantic coast.",
+                        destinationId = 17,
+                        destinationName = "Kribi Beach",
+                        imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+                        confidence = 0.88f,
+                        tags = listOf("beach", "seafood", "relaxation", "ocean"),
+                        relevanceScore = 0.85f,
+                        region = "Central Africa",
+                        budgetCategory = "Mid-range",
+                        travelStyle = "Beach"
+                    ),
+                    TravelRecommendation(
+                        id = 3,
+                        title = "Wildlife Safari at Waza",
+                        description = "Experience Cameroon's most visited national park with lions, elephants, giraffes and diverse wildlife in their natural habitat.",
+                        destinationId = 12,
+                        destinationName = "Waza National Park",
+                        imageUrl = "https://images.unsplash.com/photo-1549366021-9f761d450615",
+                        confidence = 0.90f,
+                        tags = listOf("safari", "wildlife", "nature", "photography"),
+                        relevanceScore = 0.88f,
+                        region = "Central Africa",
+                        budgetCategory = "Mid-range",
+                        travelStyle = "Safari"
+                    ),
+                    TravelRecommendation(
+                        id = 4,
+                        title = "Cultural Heritage Tour",
+                        description = "Explore the UNESCO World Heritage site of Bafut Palace and discover the rich cultural heritage of Cameroon's Northwest Region.",
+                        destinationId = 16,
+                        destinationName = "Bafut Palace",
+                        imageUrl = "https://images.unsplash.com/photo-1566419808810-658178380987",
+                        confidence = 0.86f,
+                        tags = listOf("culture", "history", "heritage", "architecture"),
+                        relevanceScore = 0.82f,
+                        region = "Central Africa",
+                        budgetCategory = "Budget",
+                        travelStyle = "Cultural"
+                    ),
+                    TravelRecommendation(
+                        id = 5,
+                        title = "Rainforest Expedition",
+                        description = "Discover the exceptional biodiversity of Dja Faunal Reserve, a UNESCO World Heritage site with pristine rainforest ecosystems.",
+                        destinationId = 11,
+                        destinationName = "Dja Faunal Reserve",
+                        imageUrl = "https://images.unsplash.com/photo-1552083974-186346191183",
+                        confidence = 0.84f,
+                        tags = listOf("rainforest", "wildlife", "biodiversity", "conservation"),
+                        relevanceScore = 0.80f,
+                        region = "Central Africa",
+                        budgetCategory = "Mid-range",
+                        travelStyle = "Eco-tourism"
+                    ),
+                    TravelRecommendation(
+                        id = 6,
+                        title = "Ekom-Nkam Waterfalls",
+                        description = "Visit the impressive waterfalls featured in Tarzan films, surrounded by lush rainforest in Cameroon's Littoral Region.",
+                        destinationId = 13,
+                        destinationName = "Ekom-Nkam Waterfalls",
+                        imageUrl = "https://images.unsplash.com/photo-1564982752979-3f7c5f4a8b3b",
+                        confidence = 0.87f,
+                        tags = listOf("waterfall", "nature", "film", "photography"),
+                        relevanceScore = 0.83f,
+                        region = "Central Africa",
+                        budgetCategory = "Budget",
+                        travelStyle = "Adventure"
+                    ),
+                    TravelRecommendation(
+                        id = 7,
+                        title = "Mefou Primate Sanctuary",
+                        description = "Meet rescued chimpanzees, gorillas and other primates at this conservation center near Yaoundé.",
+                        destinationId = 10,
+                        destinationName = "Mefou National Park",
+                        imageUrl = "https://images.unsplash.com/photo-1584844115436-473887b1e327",
+                        confidence = 0.89f,
+                        tags = listOf("wildlife", "primates", "conservation", "nature"),
+                        relevanceScore = 0.86f,
+                        region = "Central Africa",
+                        budgetCategory = "Budget",
+                        travelStyle = "Eco-tourism"
+                    ),
+                    // Original recommendations
+                    TravelRecommendation(
+                        id = 8,
                         title = "Safari Adventure",
                         description = "Based on your interest in wildlife and adventure activities, we recommend a safari trip to Serengeti National Park.",
                         destinationId = 2,
@@ -172,13 +272,13 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                         imageUrl = "https://images.unsplash.com/photo-1516426122078-c23e76319801",
                         confidence = 0.92f,
                         tags = listOf("safari", "wildlife", "photography"),
-                        relevanceScore = 0.95f,
+                        relevanceScore = 0.78f,
                         region = "East Africa",
                         budgetCategory = "Luxury",
                         travelStyle = "Safari"
                     ),
                     TravelRecommendation(
-                        id = 2,
+                        id = 9,
                         title = "Beach Relaxation",
                         description = "Your preference for beach destinations suggests you would enjoy the pristine beaches of Zanzibar.",
                         destinationId = 1,
@@ -186,80 +286,10 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                         imageUrl = "https://images.unsplash.com/photo-1586500036706-41963de24d8c",
                         confidence = 0.88f,
                         tags = listOf("beach", "relaxation", "island"),
-                        relevanceScore = 0.85f,
+                        relevanceScore = 0.75f,
                         region = "East Africa",
                         budgetCategory = "Mid-range",
                         travelStyle = "Beach"
-                    ),
-                    TravelRecommendation(
-                        id = 3,
-                        title = "Cultural Experience",
-                        description = "Explore the rich cultural heritage of Marrakech with its vibrant markets and historic architecture.",
-                        destinationId = 4,
-                        destinationName = "Marrakech",
-                        imageUrl = "https://images.unsplash.com/photo-1597212618440-806262de4f6b",
-                        confidence = 0.75f,
-                        tags = listOf("culture", "history", "market"),
-                        relevanceScore = 0.70f,
-                        region = "North Africa",
-                        budgetCategory = "Mid-range",
-                        travelStyle = "Cultural"
-                    ),
-                    TravelRecommendation(
-                        id = 4,
-                        title = "Desert Adventure",
-                        description = "Experience the stunning landscapes of the Sahara Desert with a guided tour in Morocco.",
-                        destinationId = 5,
-                        destinationName = "Sahara Desert",
-                        imageUrl = "https://images.unsplash.com/photo-1509042239860-f0b825a6dfcc",
-                        confidence = 0.82f,
-                        tags = listOf("desert", "adventure", "landscape"),
-                        relevanceScore = 0.78f,
-                        region = "North Africa",
-                        budgetCategory = "Mid-range",
-                        travelStyle = "Adventure"
-                    ),
-                    TravelRecommendation(
-                        id = 5,
-                        title = "Wildlife Expedition",
-                        description = "Discover the incredible wildlife of Kruger National Park with expert guides.",
-                        destinationId = 6,
-                        destinationName = "Kruger National Park",
-                        imageUrl = "https://images.unsplash.com/photo-1551009175-15bdf9dcb580",
-                        confidence = 0.89f,
-                        tags = listOf("wildlife", "safari", "nature"),
-                        relevanceScore = 0.84f,
-                        region = "Southern Africa",
-                        budgetCategory = "Luxury",
-                        travelStyle = "Safari"
-                    ),
-                    TravelRecommendation(
-                        id = 6,
-                        title = "Island Paradise",
-                        description = "Relax on the beautiful beaches of Seychelles with crystal clear waters and white sand.",
-                        destinationId = 7,
-                        destinationName = "Seychelles",
-                        imageUrl = "https://images.unsplash.com/photo-1573843981267-be1999ff37cd",
-                        confidence = 0.91f,
-                        tags = listOf("beach", "island", "luxury"),
-                        relevanceScore = 0.88f,
-                        region = "East Africa",
-                        budgetCategory = "Luxury",
-                        travelStyle = "Beach"
-                    ),
-                    TravelRecommendation(
-                        id = 7,
-                        title = "Budget Safari",
-                        description = "Experience an affordable safari adventure in Tanzania's Tarangire National Park.",
-                        destinationId = 8,
-                        destinationName = "Tarangire National Park",
-                        imageUrl = "https://images.unsplash.com/photo-1547970810-dc1eac37d174",
-                        confidence = 0.76f,
-                        tags = listOf("safari", "budget", "wildlife"),
-                        relevanceScore = 0.72f,
-                        region = "East Africa",
-                        budgetCategory = "Budget",
-                        travelStyle = "Safari"
                     )
                 )
                 _allRecommendations.value = recommendations
@@ -364,15 +394,15 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                     predictiveRecs.add(
                         TravelRecommendation(
                             id = 101,
-                            title = "Winter Safari Special",
-                            description = "Winter is the perfect time for wildlife viewing in East Africa with fewer crowds.",
-                            destinationId = 10,
-                            destinationName = "Masai Mara",
-                            imageUrl = "https://images.unsplash.com/photo-1547970810-dc1eac37d174",
+                            title = "Cameroon Dry Season Safari",
+                            description = "Winter is the perfect time to visit Waza National Park in Cameroon with excellent wildlife viewing conditions.",
+                            destinationId = 12,
+                            destinationName = "Waza National Park",
+                            imageUrl = "https://images.unsplash.com/photo-1549366021-9f761d450615",
                             confidence = 0.94f,
-                            tags = listOf("safari", "winter", "wildlife"),
+                            tags = listOf("safari", "winter", "wildlife", "dry season"),
                             relevanceScore = 0.91f,
-                            region = "East Africa",
+                            region = "Central Africa",
                             budgetCategory = "Mid-range",
                             travelStyle = "Safari",
                             isPredictive = true
@@ -383,15 +413,15 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                     predictiveRecs.add(
                         TravelRecommendation(
                             id = 102,
-                            title = "Spring Cultural Festival",
-                            description = "Experience the vibrant spring festivals in Morocco with traditional music and food.",
-                            destinationId = 11,
-                            destinationName = "Fes",
-                            imageUrl = "https://images.unsplash.com/photo-1548019979-e49b7c0a0652",
+                            title = "Cameroon Cultural Festival",
+                            description = "Experience the vibrant spring cultural festivals in Cameroon's Northwest Region with traditional music, dance, and food.",
+                            destinationId = 16,
+                            destinationName = "Bafut Palace",
+                            imageUrl = "https://images.unsplash.com/photo-1566419808810-658178380987",
                             confidence = 0.89f,
-                            tags = listOf("culture", "festival", "spring"),
+                            tags = listOf("culture", "festival", "spring", "tradition"),
                             relevanceScore = 0.86f,
-                            region = "North Africa",
+                            region = "Central Africa",
                             budgetCategory = "Budget",
                             travelStyle = "Cultural",
                             isPredictive = true
@@ -402,16 +432,16 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                     predictiveRecs.add(
                         TravelRecommendation(
                             id = 103,
-                            title = "Summer Beach Getaway",
-                            description = "Enjoy the perfect summer weather at the beaches of Mozambique.",
-                            destinationId = 12,
-                            destinationName = "Bazaruto Archipelago",
-                            imageUrl = "https://images.unsplash.com/photo-1573843981267-be1999ff37cd",
+                            title = "Kribi Beach Summer Escape",
+                            description = "Enjoy the perfect summer weather at the beautiful beaches of Kribi in Cameroon with fresh seafood and water activities.",
+                            destinationId = 17,
+                            destinationName = "Kribi Beach",
+                            imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
                             confidence = 0.96f,
-                            tags = listOf("beach", "summer", "island"),
+                            tags = listOf("beach", "summer", "seafood", "swimming"),
                             relevanceScore = 0.93f,
-                            region = "Southern Africa",
-                            budgetCategory = "Luxury",
+                            region = "Central Africa",
+                            budgetCategory = "Mid-range",
                             travelStyle = "Beach",
                             isPredictive = true
                         )
@@ -421,15 +451,15 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                     predictiveRecs.add(
                         TravelRecommendation(
                             id = 104,
-                            title = "Fall Adventure Trek",
-                            description = "The perfect time to trek in the Atlas Mountains with mild temperatures and beautiful scenery.",
-                            destinationId = 13,
-                            destinationName = "Atlas Mountains",
-                            imageUrl = "https://images.unsplash.com/photo-1489493585363-d69421e0edd3",
+                            title = "Mount Cameroon Hiking Adventure",
+                            description = "Fall is the perfect time to climb Mount Cameroon with mild temperatures and clear views of the surrounding landscapes.",
+                            destinationId = 18,
+                            destinationName = "Mount Cameroon",
+                            imageUrl = "https://images.unsplash.com/photo-1454496522488-7a8e488e8606",
                             confidence = 0.88f,
-                            tags = listOf("trekking", "mountains", "fall"),
+                            tags = listOf("hiking", "mountain", "fall", "volcano"),
                             relevanceScore = 0.85f,
-                            region = "North Africa",
+                            region = "Central Africa",
                             budgetCategory = "Mid-range",
                             travelStyle = "Adventure",
                             isPredictive = true
@@ -445,16 +475,16 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                         predictiveRecs.add(
                             TravelRecommendation(
                                 id = 105,
-                                title = "Exclusive Wildlife Photography Tour",
-                                description = "Based on your interest in wildlife, we've found a special photography tour in Botswana.",
-                                destinationId = 14,
-                                destinationName = "Okavango Delta",
-                                imageUrl = "https://images.unsplash.com/photo-1516426122078-c23e76319801",
+                                title = "Exclusive Waza Wildlife Photography Tour",
+                                description = "Based on your interest in wildlife, we've found a special photography tour in Cameroon's Waza National Park.",
+                                destinationId = 12,
+                                destinationName = "Waza National Park",
+                                imageUrl = "https://images.unsplash.com/photo-1549366021-9f761d450615",
                                 confidence = 0.92f,
-                                tags = listOf("wildlife", "photography", "exclusive"),
+                                tags = listOf("wildlife", "photography", "exclusive", "safari"),
                                 relevanceScore = 0.90f,
-                                region = "Southern Africa",
-                                budgetCategory = "Luxury",
+                                region = "Central Africa",
+                                budgetCategory = "Mid-range",
                                 travelStyle = "Safari",
                                 isPredictive = true
                             )
@@ -464,15 +494,15 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                         predictiveRecs.add(
                             TravelRecommendation(
                                 id = 106,
-                                title = "Hidden Beach Paradise",
-                                description = "Discover this secluded beach in Madagascar that matches your preference for quiet beach destinations.",
-                                destinationId = 15,
-                                destinationName = "Nosy Be",
-                                imageUrl = "https://images.unsplash.com/photo-1586500036706-41963de24d8c",
+                                title = "Hidden Kribi Beach Paradise",
+                                description = "Discover the secluded beaches near Kribi in Cameroon that match your preference for quiet beach destinations.",
+                                destinationId = 17,
+                                destinationName = "Kribi Beach",
+                                imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
                                 confidence = 0.90f,
-                                tags = listOf("beach", "secluded", "paradise"),
+                                tags = listOf("beach", "secluded", "paradise", "seafood"),
                                 relevanceScore = 0.87f,
-                                region = "East Africa",
+                                region = "Central Africa",
                                 budgetCategory = "Mid-range",
                                 travelStyle = "Beach",
                                 isPredictive = true
@@ -483,15 +513,15 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
                         predictiveRecs.add(
                             TravelRecommendation(
                                 id = 107,
-                                title = "Authentic Cultural Immersion",
-                                description = "Live with a local family in Ethiopia and experience authentic cultural traditions.",
+                                title = "Authentic Cameroon Cultural Immersion",
+                                description = "Experience authentic cultural traditions with a stay at the Bafut Palace in Cameroon's Northwest Region.",
                                 destinationId = 16,
-                                destinationName = "Lalibela",
-                                imageUrl = "https://images.unsplash.com/photo-1523805009345-7448845a9e53",
+                                destinationName = "Bafut Palace",
+                                imageUrl = "https://images.unsplash.com/photo-1566419808810-658178380987",
                                 confidence = 0.87f,
-                                tags = listOf("culture", "immersion", "authentic"),
+                                tags = listOf("culture", "immersion", "authentic", "heritage"),
                                 relevanceScore = 0.84f,
-                                region = "East Africa",
+                                region = "Central Africa",
                                 budgetCategory = "Budget",
                                 travelStyle = "Cultural",
                                 isPredictive = true
