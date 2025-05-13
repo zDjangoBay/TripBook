@@ -34,7 +34,14 @@ import com.android.tripbook.ui.theme.TripBookTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 
 class MainActivity : ComponentActivity() {
     private lateinit var dataMiningViewModel: DataMiningViewModel
@@ -99,20 +106,31 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "TripBook",
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 24.dp)
+                modifier = Modifier.padding(top = 32.dp)
+            )
+
+            // Travel image
+            Image(
+                painter = painterResource(id = R.drawable.travel_background),
+                contentDescription = "Travel background",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(240.dp)
+                    .clip(MaterialTheme.shapes.medium),
+                contentScale = ContentScale.Crop
             )
 
             Text(
                 text = "A social network for travelers exploring Africa & beyond",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 48.dp)
+                modifier = Modifier.padding(vertical = 16.dp)
             )
 
             Button(
