@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "ios",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
