@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.android.tripbook.datamining.data.model.ChartDataPoint
 import com.android.tripbook.datamining.data.model.ChartDataSet
 import com.android.tripbook.datamining.data.model.DestinationInsight
+import com.android.tripbook.datamining.data.model.HeatMapDataSet
+import com.android.tripbook.datamining.data.model.RadarChartDataSet
 import com.android.tripbook.datamining.data.model.TravelInsight
 import com.android.tripbook.datamining.data.model.TravelRecommendation
 import com.android.tripbook.datamining.data.model.UserInsight
+import com.android.tripbook.datamining.data.repository.ChartDataGenerator
 import com.android.tripbook.datamining.data.repository.DataMiningRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,6 +77,22 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
     private val _seasonalChartData = MutableStateFlow<ChartDataSet?>(null)
     val seasonalChartData: StateFlow<ChartDataSet?> = _seasonalChartData.asStateFlow()
 
+    // Advanced visualization data
+    private val _destinationPopularityData = MutableStateFlow<ChartDataSet?>(null)
+    val destinationPopularityData: StateFlow<ChartDataSet?> = _destinationPopularityData.asStateFlow()
+
+    private val _budgetDistributionData = MutableStateFlow<ChartDataSet?>(null)
+    val budgetDistributionData: StateFlow<ChartDataSet?> = _budgetDistributionData.asStateFlow()
+
+    private val _travelStylePreferencesData = MutableStateFlow<ChartDataSet?>(null)
+    val travelStylePreferencesData: StateFlow<ChartDataSet?> = _travelStylePreferencesData.asStateFlow()
+
+    private val _destinationHeatMapData = MutableStateFlow<HeatMapDataSet?>(null)
+    val destinationHeatMapData: StateFlow<HeatMapDataSet?> = _destinationHeatMapData.asStateFlow()
+
+    private val _destinationComparisonData = MutableStateFlow<RadarChartDataSet?>(null)
+    val destinationComparisonData: StateFlow<RadarChartDataSet?> = _destinationComparisonData.asStateFlow()
+
     // UI state for personalized recommendations (unfiltered)
     private val _allRecommendations = MutableStateFlow<List<TravelRecommendation>>(emptyList())
 
@@ -95,6 +114,7 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
 
     init {
         loadData()
+        generateAdvancedVisualizationData()
     }
 
     fun loadData() {
@@ -589,6 +609,32 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
             }
         }
         return false
+    }
+
+    /**
+     * Generate advanced visualization data for the dashboard
+     */
+    private fun generateAdvancedVisualizationData() {
+        viewModelScope.launch {
+            try {
+                // Generate destination popularity data
+                _destinationPopularityData.value = ChartDataGenerator.generateDestinationPopularityData()
+
+                // Generate budget distribution data
+                _budgetDistributionData.value = ChartDataGenerator.generateBudgetDistributionData()
+
+                // Generate travel style preferences data
+                _travelStylePreferencesData.value = ChartDataGenerator.generateTravelStylePreferenceData()
+
+                // Generate destination heat map data
+                _destinationHeatMapData.value = ChartDataGenerator.generateDestinationHeatMapData()
+
+                // Generate destination comparison data
+                _destinationComparisonData.value = ChartDataGenerator.generateDestinationComparisonData()
+            } catch (e: Exception) {
+                _error.value = "Failed to generate advanced visualization data: ${e.message}"
+            }
+        }
     }
 
     /**

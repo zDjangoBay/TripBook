@@ -45,6 +45,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.datamining.data.repository.DataMiningRepository
 import com.android.tripbook.datamining.ui.screen.DataMiningScreen
+import com.android.tripbook.datamining.ui.screens.AdvancedInsightsScreen
 import com.android.tripbook.datamining.ui.viewmodel.DataMiningViewModel
 import com.android.tripbook.ui.theme.ThemeMode
 import com.android.tripbook.ui.theme.ThemeViewModel
@@ -99,6 +100,18 @@ class MainActivity : ComponentActivity() {
 
                     composable("dataMining") {
                         DataMiningScreen(
+                            viewModel = dataMiningViewModel,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            },
+                            onNavigateToAdvancedInsights = {
+                                navController.navigate("advancedInsights")
+                            }
+                        )
+                    }
+
+                    composable("advancedInsights") {
+                        AdvancedInsightsScreen(
                             viewModel = dataMiningViewModel,
                             onNavigateBack = {
                                 navController.popBackStack()
