@@ -12,8 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
-import com.android.tripbook.ui.triplist.Trip
-import com.android.tripbook.ui.triplist.TripCard
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,13 +21,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TripCard(
-                        trip = Trip(
-                            title = "Trip to Ghana",
-                            destination = "Accra",
-                            dateRange = "June 10 – June 20",
-                            status = "Upcoming"
-                        ),
+                    Greeting(
+                        name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
