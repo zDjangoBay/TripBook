@@ -1,7 +1,7 @@
 # Gradle files
 .gradle/
 build/
-
+my-notes.md
 # Local configuration file (sdk path, etc)
 local.properties
 

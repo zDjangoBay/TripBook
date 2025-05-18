@@ -1,4 +1,4 @@
-package com.android.tripbook.ui.theme
+package com.android.tripbook.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

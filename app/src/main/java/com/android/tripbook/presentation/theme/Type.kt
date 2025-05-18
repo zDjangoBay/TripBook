@@ -1,4 +1,4 @@
-package com.android.tripbook.ui.theme
+package com.android.tripbook.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

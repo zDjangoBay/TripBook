@@ -76,4 +76,7 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    implementation("androidx.navigation:navigation-compose:2.9.0")
+
 }
