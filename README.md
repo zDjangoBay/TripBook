@@ -325,7 +325,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENCE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -368,7 +368,7 @@ Project Link: [https://github.com/sas-bergson/TripBook](https://github.com/sas-b
 [issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge
 [issues-url]: https://github.com/sas-bergson/TripBook/issues
 [license-shield]: https://img.shields.io/github/license/sas-bergson/TripBook.svg?style=for-the-badge
-[license-url]: https://github.com/sas-bergson/TripBook/blob/master/LICENSE
+[license-url]: https://github.com/sas-bergson/TripBook/blob/master/LICENCE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/your-linkedin
 [product-screenshot]: https://images.pexels.com/photos/32099220/pexels-photo-32099220.jpeg?cs=srgb&dl=pexels-unknown_entity-2151399066-32099220.jpg&fm=jpg
