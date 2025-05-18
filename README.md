@@ -368,7 +368,7 @@ Project Link: [https://github.com/sas-bergson/TripBook](https://github.com/sas-b
 [issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge
 [issues-url]: https://github.com/sas-bergson/TripBook/issues
 [license-shield]: https://img.shields.io/github/license/sas-bergson/TripBook.svg?style=for-the-badge
-[license-url]: https://github.com/sas-bergson/TripBook/LICENCE
+[license-url]: https://github.com/sas-bergson/TripBook/blob/main/LICENCE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/your-linkedin
 [product-screenshot]: https://images.pexels.com/photos/32099220/pexels-photo-32099220.jpeg?cs=srgb&dl=pexels-unknown_entity-2151399066-32099220.jpg&fm=jpg
