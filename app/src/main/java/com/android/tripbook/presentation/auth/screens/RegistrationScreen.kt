@@ -39,10 +39,10 @@ fun RegisterScreen(navController: NavController) {
     ) {
         // Progress indicator
         LinearProgressIndicator(
-            progress = (viewModel.currentStep + 1).toFloat() / viewModel.totalSteps.toFloat(),
+            progress = { (viewModel.currentStep + 1).toFloat() / viewModel.totalSteps.toFloat() },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                .padding(vertical = 8.dp),
         )
 
         // Content with animation
@@ -128,7 +128,8 @@ fun RegisterScreen(navController: NavController) {
                     viewModel.goToNextStep()
                 }
             },
-            isLastStep = viewModel.currentStep == viewModel.totalSteps - 1
+            isLastStep = viewModel.currentStep == viewModel.totalSteps - 1,
+            isNextEnabled = viewModel.isCurrentStepValid.value
         )
     }
 }

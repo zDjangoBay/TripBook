@@ -115,7 +115,7 @@ fun ProfilePicturePage(
                     onClick = { galleryLauncher.launch("image/*") }
                 ) {
                     Icon(
-                        Icons.Default.AddAPhoto,
+                        Icons.Default.AddCircle,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )

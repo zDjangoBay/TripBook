@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.android.tripbook.presentation.auth.screens.RegisterScreen
 import com.android.tripbook.presentation.navigation.Screen
 import com.android.tripbook.presentation.splash.SplashScreen
 import com.android.tripbook.presentation.theme.TripBookTheme
@@ -49,7 +50,7 @@ fun TripBookApp() {
             // LoginScreen(navController)
         }
         composable(Screen.Register.route) {
-            // RegisterScreen(navController)
+             RegisterScreen(navController)
         }
         composable(Screen.Home.route) {
             // HomeScreen()
