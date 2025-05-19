@@ -10,6 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+// Validation helpers
+import androidx.compose.runtime.derivedStateOf
+import com.android.tripbook.util.ValidationResult
+import com.android.tripbook.util.ValidationUtil
+
 class RegistrationViewModel : ViewModel() {
 
     // Store form data
@@ -23,14 +28,61 @@ class RegistrationViewModel : ViewModel() {
     // Total number of steps
     val totalSteps = 4
 
-    // Update form data functions
+    // Form validation states
+    var nameValidation by mutableStateOf(ValidationResult(true))
+        private set
+
+    var emailValidation by mutableStateOf(ValidationResult(true))
+        private set
+
+    var passwordValidation by mutableStateOf(ValidationResult(true))
+        private set
+
+    var bioValidation by mutableStateOf(ValidationResult(true))
+        private set
+
+    // Computed property to check if current step is valid
+    val isCurrentStepValid = derivedStateOf {
+        when (currentStep) {
+            0 -> nameValidation.isValid && emailValidation.isValid && passwordValidation.isValid
+            1 -> true // Profile picture is optional
+            2 -> bioValidation.isValid
+            3 -> true // Preferences are optional
+            else -> false
+        }
+    }
+
+    // Update existing functions to include validation
     fun updateBasicInfo(name: String, email: String, password: String) {
+        // Validate inputs
+        nameValidation = ValidationUtil.validateName(name)
+        emailValidation = ValidationUtil.validateEmail(email)
+        passwordValidation = ValidationUtil.validatePassword(password)
+
+        // Update data if everything is valid
         _registrationData.update { currentData ->
             currentData.copy(
                 fullName = name,
                 email = email,
                 password = password
             )
+        }
+    }
+
+    fun updateBio(bio: String) {
+        // Validate bio
+        bioValidation = ValidationUtil.validateBio(bio)
+
+        // Update data
+        _registrationData.update { currentData ->
+            currentData.copy(bio = bio)
+        }
+    }
+
+    // Only allow navigation to next step if current step is valid
+    fun goToNextStep() {
+        if (isCurrentStepValid.value && currentStep < totalSteps - 1) {
+            currentStep++
         }
     }
 
@@ -55,19 +107,6 @@ class RegistrationViewModel : ViewModel() {
     fun updateFavoriteDestinations(destinations: List<String>) {
         _registrationData.update { currentData ->
             currentData.copy(favoriteDestinations = destinations)
-        }
-    }
-
-    fun updateBio(bio: String) {
-        _registrationData.update { currentData ->
-            currentData.copy(bio = bio)
-        }
-    }
-
-    // Navigation functions
-    fun goToNextStep() {
-        if (currentStep < totalSteps - 1) {
-            currentStep++
         }
     }
 

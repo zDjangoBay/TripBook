@@ -81,6 +81,9 @@ fun RegisterScreen(navController: NavController) {
                         name = registrationData.fullName,
                         email = registrationData.email,
                         password = registrationData.password,
+                        nameValidation = viewModel.nameValidation,
+                        emailValidation = viewModel.emailValidation,
+                        passwordValidation = viewModel.passwordValidation,
                         onInfoUpdated = viewModel::updateBasicInfo
                     )
                     1 -> ProfilePicturePage(
@@ -91,6 +94,7 @@ fun RegisterScreen(navController: NavController) {
                         birthDate = registrationData.birthDate,
                         onBirthDateChanged = viewModel::updateBirthDate,
                         bio = registrationData.bio,
+                        bioValidation = viewModel.bioValidation,
                         onBioChanged = viewModel::updateBio
                     )
                     3 -> TravelPreferencesPage(

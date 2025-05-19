@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.util.ValidationResult
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,6 +24,7 @@ fun PersonalDetailsPage(
     birthDate: String,
     onBirthDateChanged: (String) -> Unit,
     bio: String,
+    bioValidation: ValidationResult,
     onBioChanged: (String) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
@@ -63,7 +65,7 @@ fun PersonalDetailsPage(
             placeholder = { Text("Select your birth date") }
         )
 
-        // Bio field
+        // Bio field with validation
         OutlinedTextField(
             value = bioState,
             onValueChange = {
@@ -79,18 +81,29 @@ fun PersonalDetailsPage(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Done
             ),
-            maxLines = 4
+            maxLines = 4,
+            isError = !bioValidation.isValid,
+            supportingText = {
+                if (!bioValidation.isValid) {
+                    Text(
+                        text = bioValidation.errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Text("${bioState.length}/150 characters")
+                }
+            }
         )
 
-        // Character counter for bio
-        Text(
-            text = "${bioState.length}/150 characters",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 4.dp)
-        )
+//        // Character counter for bio
+//        Text(
+//            text = "${bioState.length}/150 characters",
+//            style = MaterialTheme.typography.bodySmall,
+//            color = MaterialTheme.colorScheme.onSurfaceVariant,
+//            modifier = Modifier
+//                .align(Alignment.End)
+//                .padding(end = 4.dp)
+//        )
     }
 
     // Date picker dialog

@@ -10,13 +10,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.util.ValidationResult
 
 @Composable
 fun BasicInfoPage(
     name: String,
     email: String,
     password: String,
+    nameValidation: ValidationResult,
+    emailValidation: ValidationResult,
+    passwordValidation: ValidationResult,
     onInfoUpdated: (name: String, email: String, password: String) -> Unit
+
 ) {
     var nameState by remember { mutableStateOf(name) }
     var emailState by remember { mutableStateOf(email) }
@@ -34,6 +39,7 @@ fun BasicInfoPage(
             style = MaterialTheme.typography.headlineMedium
         )
 
+        // Name field with validation
         OutlinedTextField(
             value = nameState,
             onValueChange = {
@@ -42,11 +48,19 @@ fun BasicInfoPage(
             },
             label = { Text("Full Name") },
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            )
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            isError = !nameValidation.isValid,
+            supportingText = {
+                if (!nameValidation.isValid) {
+                    Text(
+                        text = nameValidation.errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         )
 
+        // Email field with validation
         OutlinedTextField(
             value = emailState,
             onValueChange = {
@@ -58,9 +72,19 @@ fun BasicInfoPage(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
-            )
+            ),
+            isError = !emailValidation.isValid,
+            supportingText = {
+                if (!emailValidation.isValid) {
+                    Text(
+                        text = emailValidation.errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         )
 
+        // Password field with validation
         OutlinedTextField(
             value = passwordState,
             onValueChange = {
@@ -73,7 +97,17 @@ fun BasicInfoPage(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            )
-        )
-    }
+            ),
+            isError = !passwordValidation.isValid,
+            supportingText = {
+                if (!passwordValidation.isValid) {
+                    Text(
+                        text = passwordValidation.errorMessage,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    Text("Use at least 8 characters with letters and numbers")
+                }
+            }
+        ) }
 }

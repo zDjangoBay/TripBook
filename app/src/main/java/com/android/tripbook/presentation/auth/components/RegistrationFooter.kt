@@ -14,7 +14,8 @@ fun RegistrationFooter(
     totalSteps: Int,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
-    isLastStep: Boolean
+    isLastStep: Boolean,
+    isNextEnabled: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -36,7 +37,8 @@ fun RegistrationFooter(
         // Next/Finish button
         Button(
             onClick = onNext,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            enabled = isNextEnabled  // Disable button if validation fails
         ) {
             Text(if (isLastStep) "Create Account" else "Next")
         }
