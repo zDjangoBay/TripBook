@@ -1,78 +1,128 @@
 package com.android.tripbook.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.model.Trip
-
-// Temporary placeholder list (should be replaced by ViewModel or repository)
-val sampleTrips = listOf(
-    Trip(1, "Paris Getaway", "Explore the romantic city...", "https://source.unsplash.com/400x300/?paris"),
-    Trip(2, "Tokyo Adventure", "Experience the vibrant culture...", "https://source.unsplash.com/400x300/?tokyo"),
-    Trip(3, "Safari in Kenya", "Witness the Big Five...", "https://source.unsplash.com/400x300/?safari,kenya"),
-    Trip(4, "New York City Tour", "The city that never sleeps...", "https://source.unsplash.com/400x300/?newyork")
-)
+import com.android.tripbook.ui.components.ImageCarousel
+import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.model.SampleReviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripDetailScreen(
-    tripId: Int,
-    onBack: () -> Unit
-) {
-    val trip = sampleTrips.find { it.id == tripId }
+fun TripDetailScreen(tripId: Int, onBack: () -> Unit) {
+    val tripImages = listOf(
+        "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k=",
+        "https://media.gettyimages.com/id/953837336/photo/cameroon-politics-unrest-police.jpg?s=2048x2048&w=gi&k=20&c=FB3Qus6FKDhoijiBjUfBNKEoBNmmdjaDntYX2ZxRSlA=",
+        "https://source.unsplash.com/800x600/?mountains"
+    )
 
-    if (trip == null) {
-        Text("Trip not found", modifier = Modifier.padding(16.dp))
-        return
-    }
+    var reviewText by remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(trip.title) },
+                title = { Text("Trip Details") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp) // More space between sections
         ) {
-            Image(
-                painter = rememberAsyncImagePainter(trip.imageUrl),
-                contentDescription = trip.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(220.dp)
-                    .clip(MaterialTheme.shapes.medium)
-            )
+            item {
+                // Image carousel full width, taller height
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(280.dp) // increased height
+                ) {
+                    ImageCarousel(images = tripImages, modifier = Modifier.fillMaxSize())
+                }
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Text("Trip to Bali", style = MaterialTheme.typography.headlineMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Experience the tropical paradise with stunning beaches, rich culture, and exotic food. Bali offers an unforgettable experience.",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider(color = Color.LightGray, thickness = 1.dp)
+            }
 
-            Text(
-                text = trip.description,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            item {
+                Text("User Reviews", style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(12.dp))
+                SampleReviews.reviews.forEach { review ->
+                    ReviewCard(
+                        review = review,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider(color = Color.LightGray, thickness = 1.dp)
+            }
+
+            item {
+                Text("Add Your Review", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = reviewText,
+                    onValueChange = { reviewText = it },
+                    label = { Text("Your Comment") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp), // taller for longer text
+                    maxLines = 6,
+                    singleLine = false,
+                    textStyle = MaterialTheme.typography.bodyMedium
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = { /* Simulate image picker */ },
+                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                    contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
+                ) {
+                    Text("Upload Images")
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = { /* Submit Review */ },
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                        contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
+                    ) {
+                        Text("Submit")
+                    }
+                }
+            }
         }
     }
 }
