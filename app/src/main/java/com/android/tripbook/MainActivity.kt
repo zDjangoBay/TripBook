@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.presentation.navigation.Screen
 import com.android.tripbook.presentation.splash.SplashScreen
 import com.android.tripbook.presentation.theme.TripBookTheme
-import com.android.tripbook.presentation.onboarding.Onboarding
+import com.android.tripbook.presentation.onboarding.OnboardingScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ fun TripBookApp() {
             SplashScreen(navController)
         }
         composable(Screen.Onboarding.route) {
-             OnboardingScreen(navController)
+            OnboardingScreen(navController)
         }
         composable(Screen.Login.route) {
             // LoginScreen(navController)

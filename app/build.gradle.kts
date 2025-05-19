@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -77,6 +77,21 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    implementation("androidx.navigation:navigation-compose:2.9.0")
+
+    // Compose
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.material3)
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // SavedState -
+    implementation(libs.androidx.savedstate)
+    implementation(libs.androidx.savedstate.ktx)
+
+
+
 
 }
