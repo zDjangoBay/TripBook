@@ -3,6 +3,7 @@ activityComposeVersion = "1.10.1"
 agp = "8.6.1"
 composeBomVersion = "2025.05.00"
 coreKtxVersion = "1.16.0"
+datastorePreferences = "1.0.0"
 kotlin = "1.9.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -31,6 +32,7 @@ androidx-activity-compose-v1101 = { module = "androidx.activity:activity-compose
 androidx-compose-bom-v20250500 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v1160 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-lifecycle-runtime-ktx-v290 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-savedstate = { module = "androidx.savedstate:savedstate", version.ref = "savedstate" }
@@ -67,4 +69,3 @@ ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

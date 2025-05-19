@@ -29,9 +29,26 @@ import com.android.tripbook.presentation.navigation.Screen
 import com.android.tripbook.presentation.onboarding.components.OnboardingPage
 import kotlinx.coroutines.launch
 
+//To mark completion state of onboarding
+
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.android.tripbook.data.repository.UserPreferencesRepository
+import com.android.tripbook.data.repository.dataStore
+import com.android.tripbook.presentation.onboarding.viewmodels.OnboardingViewModel
+
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(navController: NavController) {
+
+    // Setup repository and viewModel for tracking onboarding completion
+    val context = LocalContext.current
+    val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
+    val viewModel: OnboardingViewModel = viewModel(
+        factory = OnboardingViewModel.Factory(userPreferencesRepository)
+    )
+
     val pages = listOf(
         OnboardingPageData(
             title = "Share Your Journeys",
@@ -122,8 +139,10 @@ fun OnboardingScreen(navController: NavController) {
                                 pagerState.animateScrollToPage(pagerState.currentPage + 1)
                             }
                         } else {
-                            // On last page, go to login
-                            navController.navigate(Screen.Login.route) {
+                            // Mark onboarding as completed
+                            viewModel.completeOnboarding()
+                            // On last page, go to register
+                            navController.navigate(Screen.Register.route) {
                                 popUpTo(Screen.Onboarding.route) { inclusive = true }
                             }
                         }

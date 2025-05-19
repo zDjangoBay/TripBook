@@ -1,36 +1,60 @@
 package com.android.tripbook.presentation.splash
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.android.tripbook.R
+import com.android.tripbook.data.repository.UserPreferencesRepository
+import com.android.tripbook.data.repository.dataStore
 import com.android.tripbook.presentation.navigation.Screen
+import com.android.tripbook.presentation.onboarding.viewmodels.OnboardingViewModel
 import kotlinx.coroutines.delay
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "TripBook",
-            fontSize = 36.sp,
-            fontWeight = FontWeight.Bold
+    // Get context for DataStore
+    val context = LocalContext.current
+
+    // Create repository and viewModel
+    val userPreferencesRepository = UserPreferencesRepository(context.dataStore)
+    val viewModel: OnboardingViewModel = viewModel(
+        factory = OnboardingViewModel.Factory(userPreferencesRepository)
+    )
+
+    // Collect the onboarding state
+    val isOnboardingCompleted by viewModel.isOnboardingCompleted.collectAsState()
+
+    // Display logo
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(id = R.drawable.app_logo), // Add your logo to resources
+            contentDescription = "TripBook Logo"
         )
     }
 
-    // Navigate to onboarding after 2 seconds
+    // Navigate after a delay based on onboarding status
     LaunchedEffect(key1 = true) {
-        delay(2000)
-        navController.navigate(Screen.Onboarding.route) {
-            popUpTo(Screen.Splash.route) { inclusive = true }
+        delay(2000) // 2 second splash delay
+        if (isOnboardingCompleted) {
+            // Navigate to Register instead of Login
+            navController.navigate(Screen.Register.route) {
+                popUpTo(Screen.Splash.route) { inclusive = true }
+            }
+        } else {
+            // Navigate to onboarding if it hasn't been completed
+            navController.navigate(Screen.Onboarding.route) {
+                popUpTo(Screen.Splash.route) { inclusive = true }
+            }
         }
     }
 }

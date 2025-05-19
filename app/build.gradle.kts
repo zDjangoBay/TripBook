@@ -91,6 +91,8 @@ dependencies {
     implementation(libs.androidx.savedstate)
     implementation(libs.androidx.savedstate.ktx)
 
+    implementation(libs.androidx.datastore.preferences)
+
 
 
 
