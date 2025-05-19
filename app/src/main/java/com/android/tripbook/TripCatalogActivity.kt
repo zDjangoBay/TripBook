@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.ui.theme.TripBookTheme
 
@@ -34,6 +35,7 @@ class TripCatalogActivity : ComponentActivity() {
 }
 
 @Composable
+@Preview
 fun TripCatalogScreen(modifier: Modifier = Modifier) {
     val trips = listOf("Buea", "Yaounde", "Garoua", "Bamenda")
 
