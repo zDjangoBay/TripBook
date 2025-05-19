@@ -1,5 +1,3 @@
-// ui/screens/TripCatalogScreen.kt
-
 package com.android.tripbook.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +13,10 @@ import com.android.tripbook.ui.components.TripCard
  * Displays a list of available trips using cards.
  */
 @Composable
-fun TripCatalogScreen(modifier: Modifier = Modifier) {
+fun TripCatalogScreen(
+    modifier: Modifier = Modifier,
+    onTripClick: (Int) -> Unit
+) {
     val trips = listOf(
         Trip(
             id = 1,
@@ -56,7 +57,7 @@ fun TripCatalogScreen(modifier: Modifier = Modifier) {
 
         LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
             items(trips) { trip ->
-                TripCard(trip)
+                TripCard(trip, onClick = { onTripClick(trip.id) })
             }
         }
     }
