@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TripBook"
 include(":app")
+include(":userprofile-nde-dilan")
+include(":userprofilendedilan")

@@ -1,20 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
-    namespace = "com.android.tripbook"
+    namespace = "com.tripbook.userprofilendedilan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.android.tripbook"
+
         minSdk = 31
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -30,12 +29,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -50,8 +50,9 @@ android {
 }
 
 dependencies {
+
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -100,11 +101,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.material3)
 
 
-        implementation("androidx.compose.material:material-icons-extended:1.7.8")
-
-    implementation(project(":userprofilendedilan"))
-
-
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
 
 }
