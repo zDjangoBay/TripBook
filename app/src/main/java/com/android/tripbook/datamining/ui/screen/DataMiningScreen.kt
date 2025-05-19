@@ -24,6 +24,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import com.android.tripbook.datamining.data.feedback.RecommendationFeedback.FeedbackType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,9 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.datamining.ui.components.FilterSection
 import com.android.tripbook.datamining.ui.components.PersonalizedInsightsSection
-import com.android.tripbook.datamining.ui.components.PredictiveRecommendationsSection
+import com.android.tripbook.datamining.ui.components.PersonalizedRecommendationsSection
 import com.android.tripbook.datamining.ui.components.SeasonalTrendsChart
-import com.android.tripbook.datamining.ui.components.TravelRecommendationsSection
 import com.android.tripbook.datamining.ui.components.TrendingDestinationsSection
 import com.android.tripbook.datamining.ui.viewmodel.DataMiningViewModel
 
@@ -119,18 +119,26 @@ fun DataMiningScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Predictive recommendations
-                    if (predictiveRecommendations.isNotEmpty()) {
-                        PredictiveRecommendationsSection(
-                            recommendations = predictiveRecommendations
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-
-                    // Personalized recommendations
-                    TravelRecommendationsSection(
-                        recommendations = recommendations
+                    // Personalized and predictive recommendations
+                    PersonalizedRecommendationsSection(
+                        recommendations = recommendations,
+                        predictiveRecommendations = predictiveRecommendations,
+                        isLoading = isLoading,
+                        onRecommendationClick = { recommendation ->
+                            // Handle recommendation click
+                            viewModel.handleRecommendationFeedback(
+                                recommendation = recommendation,
+                                feedbackType = FeedbackType.CLICK
+                            )
+                        },
+                        onFeedback = { recommendation, feedbackType, rating ->
+                            // Handle recommendation feedback
+                            viewModel.handleRecommendationFeedback(
+                                recommendation = recommendation,
+                                feedbackType = feedbackType,
+                                rating = rating
+                            )
+                        }
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

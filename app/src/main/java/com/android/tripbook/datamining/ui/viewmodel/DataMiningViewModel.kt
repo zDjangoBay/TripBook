@@ -3,6 +3,8 @@ package com.android.tripbook.datamining.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.android.tripbook.datamining.data.feedback.RecommendationFeedback
+import com.android.tripbook.datamining.data.feedback.RecommendationFeedback.FeedbackType
 import com.android.tripbook.datamining.data.model.ChartDataPoint
 import com.android.tripbook.datamining.data.model.ChartDataSet
 import com.android.tripbook.datamining.data.model.DestinationInsight
@@ -11,6 +13,9 @@ import com.android.tripbook.datamining.data.model.RadarChartDataSet
 import com.android.tripbook.datamining.data.model.TravelInsight
 import com.android.tripbook.datamining.data.model.TravelRecommendation
 import com.android.tripbook.datamining.data.model.UserInsight
+import com.android.tripbook.datamining.data.realtime.DynamicRecommender
+import com.android.tripbook.datamining.data.realtime.TrendAnalyzer
+import com.android.tripbook.datamining.data.realtime.UserInteractionTracker
 import com.android.tripbook.datamining.data.repository.ChartDataGenerator
 import com.android.tripbook.datamining.data.repository.DataMiningRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -638,13 +643,100 @@ class DataMiningViewModel(private val repository: DataMiningRepository) : ViewMo
     }
 
     /**
+     * Handle feedback on a recommendation
+     */
+    fun handleRecommendationFeedback(
+        recommendation: TravelRecommendation,
+        feedbackType: FeedbackType,
+        rating: Float? = null
+    ) {
+        viewModelScope.launch {
+            try {
+                // If we have a feedback system, record the feedback
+                recommendationFeedback?.let { feedback ->
+                    feedback.recordFeedback(
+                        RecommendationFeedback.Feedback(
+                            userId = currentUserId,
+                            recommendationId = recommendation.id,
+                            destinationId = recommendation.destinationId,
+                            type = feedbackType,
+                            rating = rating
+                        )
+                    )
+                }
+
+                // If we have an interaction tracker, track the interaction
+                userInteractionTracker?.let { tracker ->
+                    val interactionType = when (feedbackType) {
+                        FeedbackType.LIKE -> UserInteractionTracker.InteractionType.RATE
+                        FeedbackType.DISLIKE -> UserInteractionTracker.InteractionType.RATE
+                        FeedbackType.SAVE -> UserInteractionTracker.InteractionType.BOOKMARK
+                        FeedbackType.DISMISS -> UserInteractionTracker.InteractionType.DISMISS
+                        FeedbackType.CLICK -> UserInteractionTracker.InteractionType.CLICK
+                        FeedbackType.RATE -> UserInteractionTracker.InteractionType.RATE
+                    }
+
+                    tracker.trackInteraction(
+                        UserInteractionTracker.UserInteraction(
+                            userId = currentUserId,
+                            type = interactionType,
+                            targetId = recommendation.destinationId?.toString(),
+                            targetType = "destination",
+                            value = when (feedbackType) {
+                                FeedbackType.LIKE -> 5f
+                                FeedbackType.DISLIKE -> 1f
+                                FeedbackType.RATE -> rating
+                                else -> null
+                            },
+                            metadata = mapOf(
+                                "recommendation_id" to recommendation.id.toString(),
+                                "recommendation_type" to if (recommendation.isPredictive) "predictive" else "standard",
+                                "region" to recommendation.region,
+                                "budget_category" to recommendation.budgetCategory,
+                                "travel_style" to recommendation.travelStyle
+                            )
+                        )
+                    )
+                }
+
+                // Update UI based on feedback
+                when (feedbackType) {
+                    FeedbackType.DISMISS -> {
+                        // Remove the recommendation from the list
+                        _recommendations.value = _recommendations.value.filter { it.id != recommendation.id }
+                        _predictiveRecommendations.value = _predictiveRecommendations.value.filter { it.id != recommendation.id }
+                    }
+                    else -> {
+                        // For other feedback types, we might want to update the UI in some way
+                        // For example, we could show a confirmation message
+                    }
+                }
+            } catch (e: Exception) {
+                _error.value = "Failed to process feedback: ${e.message}"
+            }
+        }
+    }
+
+    /**
      * Factory for creating DataMiningViewModel with dependencies
      */
-    class Factory(private val repository: DataMiningRepository) : ViewModelProvider.Factory {
+    class Factory(
+        private val repository: DataMiningRepository,
+        private val recommendationFeedback: RecommendationFeedback? = null,
+        private val userInteractionTracker: UserInteractionTracker? = null,
+        private val dynamicRecommender: DynamicRecommender? = null,
+        private val trendAnalyzer: TrendAnalyzer? = null
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(DataMiningViewModel::class.java)) {
-                return DataMiningViewModel(repository) as T
+                return DataMiningViewModel(
+                    repository = repository,
+                    recommendationFeedback = recommendationFeedback,
+                    userInteractionTracker = userInteractionTracker,
+                    dynamicRecommender = dynamicRecommender,
+                    trendAnalyzer = trendAnalyzer
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
