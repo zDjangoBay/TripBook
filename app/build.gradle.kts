@@ -93,6 +93,13 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
+    // Coil for image loading
+    implementation(libs.coil.compose)
+
+    // Date picker
+    implementation(libs.androidx.compose.material3.material3)
+
+
 
 
 
