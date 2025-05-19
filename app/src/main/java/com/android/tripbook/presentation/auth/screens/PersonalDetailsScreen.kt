@@ -95,15 +95,6 @@ fun PersonalDetailsPage(
             }
         )
 
-//        // Character counter for bio
-//        Text(
-//            text = "${bioState.length}/150 characters",
-//            style = MaterialTheme.typography.bodySmall,
-//            color = MaterialTheme.colorScheme.onSurfaceVariant,
-//            modifier = Modifier
-//                .align(Alignment.End)
-//                .padding(end = 4.dp)
-//        )
     }
 
     // Date picker dialog

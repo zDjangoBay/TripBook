@@ -15,12 +15,11 @@ fun RegistrationFooter(
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     isLastStep: Boolean,
-    isNextEnabled: Boolean = true
+    isNextEnabled: Boolean = true,
+    modifier: Modifier
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         // Back button (hidden on first step)

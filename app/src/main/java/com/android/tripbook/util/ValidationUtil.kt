@@ -65,6 +65,22 @@ object ValidationUtil {
             else -> ValidationResult(isValid = true)
         }
     }
+
+    fun validatePhone(phone: String): ValidationResult {
+        return when {
+            phone.isBlank() -> ValidationResult(false, "Phone number cannot be empty")
+            phone.length < 8 -> ValidationResult(false, "Phone number is too short")
+            else -> ValidationResult(true)
+        }
+    }
+
+    fun validateConfirmPassword(password: String, confirmPassword: String): ValidationResult {
+        return when {
+            confirmPassword.isBlank() -> ValidationResult(false, "Please confirm your password")
+            password != confirmPassword -> ValidationResult(false, "Passwords do not match")
+            else -> ValidationResult(true)
+        }
+    }
 }
 
 data class ValidationResult(
