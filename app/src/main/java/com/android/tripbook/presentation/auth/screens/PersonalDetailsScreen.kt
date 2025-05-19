@@ -2,6 +2,7 @@ package com.android.tripbook.presentation.auth.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,11 +42,15 @@ fun PersonalDetailsPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+
+        Spacer(modifier = Modifier.height(48.dp))
         Text(
-            text = "Tell us more about you",
+            text = "Tell us more about you, would you?",
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Birth date field
         OutlinedTextField(
@@ -54,6 +59,7 @@ fun PersonalDetailsPage(
             label = { Text("Birth Date") },
             readOnly = true,
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(
@@ -64,6 +70,9 @@ fun PersonalDetailsPage(
             },
             placeholder = { Text("Select your birth date") }
         )
+
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Bio field with validation
         OutlinedTextField(
@@ -77,6 +86,7 @@ fun PersonalDetailsPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
+            shape = RoundedCornerShape(24.dp),
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 imeAction = ImeAction.Done
@@ -97,6 +107,7 @@ fun PersonalDetailsPage(
 
     }
 
+    Spacer(modifier = Modifier.height(24.dp))
     // Date picker dialog
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState(
