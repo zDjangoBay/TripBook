@@ -12,11 +12,13 @@ TripBook: A mobile social network for travelers exploring Africa &amp; beyond. S
 - **Security**: Access reliable information for peaceful journeys.
 ---
 
-## 📱 Captures d’écran
+## 📱 Screenshots
 
-|                                     Accueil                                     |                                     Découverte                                     |                                     Profil                                     |
-|:-------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:------------------------------------------------------------------------------:|
-| ![Accueil](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png) | ![Découverte](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png) | ![Profil](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png) |
+| Home | Discover | Profile |
+|:----:|:--------:|:-------:|
+| ![Home](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png) | ![Discover](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png) | ![Profile](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png) |
+| **Your Account** | **Your Style** | **Upload Picture** |
+| ![Account](app/src/main/java/com/android/tripbook/screenshots/create_account.png) | ![Style](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png) | ![Picture](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
 
 ---
 
