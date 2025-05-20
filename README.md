@@ -21,6 +21,10 @@ This branch implements the Reservation module for the TripBook mobile applicatio
 ## Screenshots
 
 [Screenshots will be added here]
+![Capture2](https://github.com/user-attachments/assets/cc084878-6c0e-47ee-be76-538214e1cfdd)
+![Capture3](https://github.com/user-attachments/assets/86e13ce3-ebc0-4fd5-8129-27fd3b88b698)
+![Capture4](https://github.com/user-attachments/assets/2691d068-aaae-4857-8cb7-825ee2747c21)
+
 
 ## Features
 
