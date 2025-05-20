@@ -20,25 +20,30 @@ This branch implements the Reservation module for the TripBook mobile applicatio
 
 ## Screenshots
 
-[Screenshots will be added here]
-![Capture2](https://github.com/user-attachments/assets/cc084878-6c0e-47ee-be76-538214e1cfdd)
-![Capture3](https://github.com/user-attachments/assets/86e13ce3-ebc0-4fd5-8129-27fd3b88b698)
-![Capture4](https://github.com/user-attachments/assets/2691d068-aaae-4857-8cb7-825ee2747c21)
-
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/cc084878-6c0e-47ee-be76-538214e1cfdd" alt="Capture2" width="200" height="400"/></td>
+    <td><img src="https://github.com/user-attachments/assets/86e13ce3-ebc0-4fd5-8129-27fd3b88b698" alt="Capture3" width="200" height="400"/></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/2691d068-aaae-4857-8cb7-825ee2747c21" alt="Capture4" width="200" height="400"/></td>
+    <td><img src="https://github.com/user-attachments/assets/6dfddca9-d51a-48ad-9f4b-c893e1cdcb95" alt="Capture5" width="200" height="400"/></td>
+  </tr>
+</table>
 
 ## Features
 
-* **Reservation List**: View all your reservations in a clean, organized list
-* **Reservation Details**: See comprehensive information about each booking
-* **New Reservation**: Create new bookings for different types of services
-* **Reservation Management**: Cancel or modify your existing reservations
+* **Reservation List**: View all your reservations in a clean, organized list  
+* **Reservation Details**: See comprehensive information about each booking  
+* **New Reservation**: Create new bookings for different types of services  
+* **Reservation Management**: Cancel or modify your existing reservations  
 
 ## Technical Implementation
 
-* Built with Jetpack Compose for modern UI
-* Uses Material 3 design components
-* Implements navigation with the Navigation Component
-* Uses dummy data for demonstration purposes
+* Built with Jetpack Compose for modern UI  
+* Uses Material 3 design components  
+* Implements navigation with the Navigation Component  
+* Uses dummy data for demonstration purposes  
 
 ## License
 
