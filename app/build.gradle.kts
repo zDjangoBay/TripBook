@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -76,4 +76,7 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    val navVersion = "2.9.0"
+
+    implementation("androidx.navigation:navigation-compose:$navVersion")
 }
