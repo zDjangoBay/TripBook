@@ -73,7 +73,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.coil-kt:coil-compose:2.4.0")
-    //---------------------------------------------------------
+    implementation("androidx.compose.material3:material3:1.1.0") // or latest version
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")//---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 }

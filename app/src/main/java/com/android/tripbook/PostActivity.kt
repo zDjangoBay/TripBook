@@ -25,7 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.Alignment
 
 
-class Login : ComponentActivity() {
+class PostActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

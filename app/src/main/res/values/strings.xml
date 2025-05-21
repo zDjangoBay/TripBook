@@ -3,4 +3,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
     <string name="title_activity_login">login</string>
+    <string name="title_activity_feedscreen">Feedscreen</string>
+    <string name="title_activity_profilescreen">Profilescreen</string>
 </resources>
