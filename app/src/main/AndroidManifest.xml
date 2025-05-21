@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook">
         <activity
+            android:name=".PostActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.TripBook" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
