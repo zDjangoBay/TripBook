@@ -37,7 +37,7 @@ class TripCatalogActivity : ComponentActivity() {
 @Composable
 @Preview
 fun TripCatalogScreen(modifier: Modifier = Modifier) {
-    val trips = listOf("Buea", "Yaounde", "Garoua")
+    val trips = listOf("Buea")
 
     Column(modifier = modifier
         .fillMaxSize()
