@@ -13,7 +13,7 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.ui.theme.TripBookTheme
 
@@ -31,14 +33,82 @@ class Profilescreen : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
+                val navController = rememberNavController()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    bottomBar = { BottomNavigationBars() }
+                    bottomBar = { BottomNavigationBars(navController) }
                 ) { innerPadding ->
-                    ProfileScreen(modifier = Modifier.padding(innerPadding))
+                    NavHost(
+                        navController = navController,
+                        startDestination = "profile",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable("home") { Homefeedscreen() }
+                        composable("post") { PostScreen() }
+                        composable("profile") { ProfileScreen() }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BottomNavigationBars(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    NavigationBar {
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = currentRoute == "home",
+            onClick = {
+                if (currentRoute != "home") navController.navigate("home") {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.AddCircle, contentDescription = "Post") },
+            label = { Text("Post") },
+            selected = currentRoute == "post",
+            onClick = {
+                if (currentRoute != "post") navController.navigate("post") {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
+            label = { Text("Profile") },
+            selected = currentRoute == "profile",
+            onClick = {
+                if (currentRoute != "profile") navController.navigate("profile") {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        )
+    }
+}
+
+@Composable
+fun Homefeedscreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Feed Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
+fun PostScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("Post Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -50,7 +120,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Profile Info
+        // Existing profile layout (unchanged)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -72,92 +142,58 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Stats
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            ProfileStat(number = "5", label = "Trips Booked")
-            ProfileStat(number = "3", label = "Destinations")
-            ProfileStat(number = "10", label = "Reviews")
+            ProfileStat("5", "Trips Booked")
+            ProfileStat("3", "Destinations")
+            ProfileStat("10", "Reviews")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Bio & Action
         Text(
-            text = "I believe in consistency, discipline, and good energy 💪✨",
+            "I believe in consistency, discipline, and good energy 💪✨",
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
+
         Button(
-            onClick = { /* TODO: Edit profile */ },
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium
+            onClick = { /* Edit profile logic */ },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Edit Profile")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Highlights (optional section)
         Text("Story Highlights", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Spacer(modifier = Modifier.height(8.dp))
+
+        val highlightImages = listOf(
+            "https://randomuser.me/api/portraits/women/1.jpg",
+            "https://randomuser.me/api/portraits/men/5.jpg",
+            "https://randomuser.me/api/portraits/women/6.jpg",
+            "https://randomuser.me/api/portraits/men/9.jpg"
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            repeat(4) {
-                val highlightImages = listOf(
-                    "https://randomuser.me/api/portraits/women/1.jpg",
-                    "https://randomuser.me/api/portraits/men/5.jpg",
-                    "https://randomuser.me/api/portraits/women/6.jpg",
-                    "https://randomuser.me/api/portraits/men/9.jpg"
+            highlightImages.forEach { imageUrl ->
+                Image(
+                    painter = rememberAsyncImagePainter(imageUrl),
+                    contentDescription = "Highlight",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
                 )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    highlightImages.forEach { imageUrl ->
-                        Image(
-                            painter = rememberAsyncImagePainter(imageUrl),
-                            contentDescription = "Highlight",
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-                }
-
             }
         }
     }
 }
-@Composable
-fun BottomNavigationBars() {
-    NavigationBar {
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Home") },
-            selected = false,
-            onClick = { /* TODO: Navigate to Home */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.AddCircle, contentDescription = "Post") },
-            label = { Text("Post") },
-            selected = false,
-            onClick = { /* TODO: Navigate to Post */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
-            label = { Text("Profile") },
-            selected = true,
-            onClick = { /* TODO: Already on Profile */ }
-        )
-    }
-}
-
 
 @Composable
 fun ProfileStat(number: String, label: String) {
@@ -167,15 +203,22 @@ fun ProfileStat(number: String, label: String) {
     }
 }
 
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
     TripBookTheme {
+        // Create a dummy NavController for preview (won't actually navigate)
+        val navController = rememberNavController()
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = { BottomNavigationBars() }
+            bottomBar = { BottomNavigationBars(navController) }
         ) { innerPadding ->
             ProfileScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }
+
+
+

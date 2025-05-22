@@ -1,6 +1,8 @@
 package com.android.tripbook
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,10 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.example.tripbook.PostActivity
 
 class Feedscreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -193,27 +197,36 @@ fun PostItem(post: Post) {
 
 @Composable
 fun BottomNavigationBar() {
+    val context = LocalContext.current
+
     NavigationBar {
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
             label = { Text("Home") },
             selected = true,
-            onClick = { }
+            onClick = {
+
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Filled.AddCircle, contentDescription = "Post") },
             label = { Text("Post") },
             selected = false,
-            onClick = { }
+            onClick = {
+                context.startActivity(Intent(context, PostActivity::class.java))
+            }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
             selected = false,
-            onClick = { }
+            onClick = {
+                context.startActivity(Intent(context, Profilescreen::class.java))
+            }
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

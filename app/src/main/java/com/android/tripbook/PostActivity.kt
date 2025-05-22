@@ -1,5 +1,6 @@
 package com.example.tripbook
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,6 +24,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import com.android.tripbook.Feedscreen
+import com.android.tripbook.Profilescreen
 
 
 class PostActivity: ComponentActivity() {
@@ -41,14 +45,13 @@ class PostActivity: ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostScreen() {
+    val context = LocalContext.current
+
     var caption by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
         imageUri = it
     }
-
-
-    val bottomNavItems = listOf("Profile", "Home")
 
     Column(
         modifier = Modifier
@@ -111,7 +114,6 @@ fun PostScreen() {
 
         Spacer(modifier = Modifier.weight(1f))
 
-
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             BottomAppBar(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -124,16 +126,17 @@ fun PostScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = {
+                        context.startActivity(Intent(context, Profilescreen::class.java))
+                    }) {
                         Icon(Icons.Filled.Person, contentDescription = "Profile", tint = Color.White)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Profile", color = Color.White)
                     }
 
-                    Spacer(modifier = Modifier.width(48.dp))
-
-
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(onClick = {
+                        context.startActivity(Intent(context, Feedscreen::class.java))
+                    }) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Home", color = Color.White)
@@ -141,9 +144,10 @@ fun PostScreen() {
                 }
             }
 
-
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    context.startActivity(Intent(context, PostActivity::class.java)) // Or navigate to new post
+                },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.offset(y = (-28).dp)
             ) {
@@ -152,6 +156,7 @@ fun PostScreen() {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
