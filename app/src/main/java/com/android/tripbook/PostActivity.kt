@@ -27,6 +27,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.Feedscreen
 import com.android.tripbook.Profilescreen
+import android.graphics.Bitmap
+import android.provider.MediaStore
+import android.util.Base64
+import android.widget.Toast
+import com.google.firebase.firestore.FirebaseFirestore
+import java.io.ByteArrayOutputStream
+import java.util.Date
+
 
 
 class PostActivity: ComponentActivity() {
@@ -39,6 +47,19 @@ class PostActivity: ComponentActivity() {
                 }
             }
         }
+    }
+}
+
+fun uriToBase64(context: android.content.Context, uri: Uri): String? {
+    return try {
+        val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
+        val byteArray = outputStream.toByteArray()
+        Base64.encodeToString(byteArray, Base64.DEFAULT)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
@@ -103,8 +124,32 @@ fun PostScreen() {
 
         Button(
             onClick = {
-                // TODO: Save or send post (caption + imageUri)
-            },
+                if (caption.isNotBlank() && imageUri != null) {
+                    val imageBase64 = uriToBase64(context, imageUri!!)
+                    if (imageBase64 != null) {
+                        val post = hashMapOf(
+                            "caption" to caption,
+                            "imageBase64" to imageBase64,
+                            "timestamp" to Date()
+                        )
+                        FirebaseFirestore.getInstance().collection("post")
+                            .add(post)
+                            .addOnSuccessListener {
+                                caption = ""
+                                imageUri = null
+                                Toast.makeText(context, "Post uploaded!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Failed to upload post", Toast.LENGTH_SHORT).show()
+                            }
+                    } else {
+                        Toast.makeText(context, "Failed to convert image", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Please add a caption and select an image", Toast.LENGTH_SHORT).show()
+                }
+            }
+            ,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.fillMaxWidth()

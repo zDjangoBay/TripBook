@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -79,7 +80,17 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.4.3")//---------------------------------------------------------
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-storage-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+   
+
+
 //      You can add your own dependencies down here
     //---------------------------------------------------------
 }

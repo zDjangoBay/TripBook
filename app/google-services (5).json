@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900743305420",
+    "project_id": "tripbookapp-fcfa5",
+    "storage_bucket": "tripbookapp-fcfa5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900743305420:android:4d6646e177436ce5370a69",
+        "android_client_info": {
+          "package_name": "com.android.tripbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzLfYYZqLfsAWMZOzYr-pbMfNu68r4wec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
