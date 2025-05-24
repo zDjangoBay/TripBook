@@ -78,4 +78,6 @@ dependencies {
     //---------------------------------------------------------
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
 }
