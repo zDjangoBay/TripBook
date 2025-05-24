@@ -76,4 +76,6 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.navigation.compose)
 }
