@@ -24,6 +24,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class RegistrationViewModel : ViewModel() {
 
@@ -279,9 +281,26 @@ class RegistrationViewModel : ViewModel() {
 
     // For later: Function to submit data to Firebase
     fun registerUser(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        // Will implement Firebase registration later
-        // For now, just simulate success
-        onSuccess()
+        val auth = FirebaseAuth.getInstance()
+        val email = registrationData.value.email
+        val password = registrationData.value.password
+
+        viewModelScope.launch {
+            try {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // User registered successfully
+                            onSuccess()
+                        } else {
+                            // Registration failed
+                            onError(task.exception?.message ?: "Registration failed")
+                        }
+                    }
+            } catch (e: Exception) {
+                onError(e.message ?: "Registration failed")
+            }
+        }
     }
 
 
