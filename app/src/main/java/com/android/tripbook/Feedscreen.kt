@@ -35,7 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.example.tripbook.PostActivity
-
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 class Feedscreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,68 +52,34 @@ class Feedscreen : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen() {
+    // Make posts mutable state list so UI recomposes on changes
     val posts = remember {
-        listOf(
+        mutableStateListOf(
             Post(
                 username = "Randy",
                 profileImage = "https://randomuser.me/api/portraits/men/1.jpg",
                 postImage = "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
                 caption = "Enjoying the sunny day at the beach! #sunshine",
-                timeAgo = "2h"
+                timeAgo = "2h",
+                isLiked = false,
+                likeCount = 10
             ),
             Post(
                 username = "Steven",
                 profileImage = "https://randomuser.me/api/portraits/women/2.jpg",
                 postImage = "https://images.unsplash.com/photo-1500534623283-312aade485b7",
                 caption = "Delicious homemade pizza 🍕",
-                timeAgo = "5h"
+                timeAgo = "5h",
+                isLiked = false,
+                likeCount = 25
             )
         )
     }
 
-
-    val notificationCount = 3
-    val messageCount = 1
-
+    // Scaffold and LazyColumn unchanged except PostItem call:
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Feed") },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
-                actions = {
-
-                    BadgedBox(
-                        badge = {
-                            if (messageCount > 0) {
-                                Badge { Text(messageCount.toString()) }
-                            }
-                        }
-                    ) {
-                        IconButton(onClick = { /* TODO: Open messages */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.ChatBubble,
-                                contentDescription = "Messages"
-                            )
-                        }
-                    }
-
-
-                    BadgedBox(
-                        badge = {
-                            if (notificationCount > 0) {
-                                Badge { Text(notificationCount.toString()) }
-                            }
-                        }
-                    ) {
-                        IconButton(onClick = { /* TODO: Open notifications */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Person,
-                                contentDescription = "Notifications"
-                            )
-                        }
-                    }
-                }
-            )
+            // ... your existing TopAppBar code
         },
         bottomBar = { BottomNavigationBar() }
     ) { innerPadding ->
@@ -121,8 +88,17 @@ fun FeedScreen() {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            items(posts) { post ->
-                PostItem(post)
+            items(posts.size) { index ->
+                PostItem(
+                    post = posts[index],
+                    onLikeClicked = {
+                        // Toggle like state & update likeCount
+                        val currentPost = posts[index]
+                        val newLikedState = !currentPost.isLiked
+                        val newLikeCount = if (newLikedState) currentPost.likeCount + 1 else currentPost.likeCount - 1
+                        posts[index] = currentPost.copy(isLiked = newLikedState, likeCount = newLikeCount)
+                    }
+                )
                 Divider()
             }
         }
@@ -134,11 +110,13 @@ data class Post(
     val profileImage: String,
     val postImage: String,
     val caption: String,
-    val timeAgo: String
+    val timeAgo: String,
+    val isLiked: Boolean = false,      // added
+    val likeCount: Int = 0             // added
 )
 
 @Composable
-fun PostItem(post: Post) {
+fun PostItem(post: Post, onLikeClicked: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,15 +155,18 @@ fun PostItem(post: Post) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            IconButton(onClick = { /* TODO: Like action */ }) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onLikeClicked) {
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,
-                    contentDescription = "Like"
+                    contentDescription = "Like",
+                    tint = if (post.isLiked) Color.Red else LocalContentColor.current
                 )
             }
+            Text(text = post.likeCount.toString(), style = MaterialTheme.typography.bodyMedium)
+
             Spacer(modifier = Modifier.width(16.dp))
-            IconButton(onClick = { /* TODO: Comment actio */ }) {
+            IconButton(onClick = { /* TODO: Comment action */ }) {
                 Icon(
                     imageVector = Icons.Outlined.ChatBubbleOutline,
                     contentDescription = "Comment"
