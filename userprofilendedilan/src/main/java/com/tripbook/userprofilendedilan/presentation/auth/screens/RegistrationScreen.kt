@@ -199,7 +199,9 @@ fun RegisterScreen(navController: NavController) {
                     1 -> ProfilePicturePage(
                         currentUri = registrationData.profilePictureUri,
                         onTakePhoto = handleTakePhoto,
-                        onPictureSelected = viewModel::updateProfilePicture
+                        onPictureSelected = viewModel::updateProfilePicture,
+                        onSkip = viewModel::goToNextStep,
+                        onBack = viewModel::goToPreviousStep
                     )
                     2 -> PersonalDetailsPage(
                         birthDate = registrationData.birthDate,
