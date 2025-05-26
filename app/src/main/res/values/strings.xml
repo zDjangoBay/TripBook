@@ -2,4 +2,30 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+    <string name="rating_text">Rating: %s</string>
+    <string name="Explore_the_Word">Explore the Word</string>
+    <string name="let_s_start">let\'s start ></string>
+    <string name="User_Name">Anthony Joel</string>
+    <string name="Profile_Image">Profile Image</string>
+    <string name="Travelling_Made_Easy">Travelling Made Easy</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification_btn"> notification btn</string>
+    <string name="Train_Transport">Train Transport</string>
+    <string name="starting_icon"> starting icon</string>
+    <string name="flight">flight</string>
+    <string name="flight_image">flight image</string>
+    <string name="Bus_icon">Bus icon</string>
+    <string name="Bus">Bus</string>
+    <string name="Boat_icon">Boat icon</string>
+    <string name="Boats">Boats</string>
+    <string name="Train_icon">flight image</string>
+    <string name="Trains">Trains</string>
+    <string name="Upcoming_Schedules">Upcoming Schedules</string>
+    <string name="Home">Home</string>
+    <string name="Explorer">Explorer</string>
+    <string name="Bookmark">Bookmark</string>
+    <string name="Profile">Profile</string>
+    <string name="Recommendation_Places">Recommendation places\n</string>
+
 </resources>
