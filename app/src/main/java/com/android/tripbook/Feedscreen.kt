@@ -1,218 +1,162 @@
-package com.android.tripbook
-
-import android.content.Intent
 import android.os.Bundle
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
-
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.graphics.drawable.toBitmap
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.ui.theme.TripBookTheme
-import com.example.tripbook.PostActivity
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-class Feedscreen : ComponentActivity() {
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayInputStream
+import android.graphics.BitmapFactory
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Favorite
+
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        FirebaseApp.initializeApp(this)
+
         setContent {
-            TripBookTheme {
+            MaterialTheme {
                 FeedScreen()
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FeedScreen() {
-    // Make posts mutable state list so UI recomposes on changes
-    val posts = remember {
-        mutableStateListOf(
-            Post(
-                username = "Randy",
-                profileImage = "https://randomuser.me/api/portraits/men/1.jpg",
-                postImage = "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-                caption = "Enjoying the sunny day at the beach! #sunshine",
-                timeAgo = "2h",
-                isLiked = false,
-                likeCount = 10
-            ),
-            Post(
-                username = "Steven",
-                profileImage = "https://randomuser.me/api/portraits/women/2.jpg",
-                postImage = "https://images.unsplash.com/photo-1500534623283-312aade485b7",
-                caption = "Delicious homemade pizza 🍕",
-                timeAgo = "5h",
-                isLiked = false,
-                likeCount = 25
-            )
-        )
-    }
-
-    // Scaffold and LazyColumn unchanged except PostItem call:
-    Scaffold(
-        topBar = {
-            // ... your existing TopAppBar code
-        },
-        bottomBar = { BottomNavigationBar() }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            items(posts.size) { index ->
-                PostItem(
-                    post = posts[index],
-                    onLikeClicked = {
-                        // Toggle like state & update likeCount
-                        val currentPost = posts[index]
-                        val newLikedState = !currentPost.isLiked
-                        val newLikeCount = if (newLikedState) currentPost.likeCount + 1 else currentPost.likeCount - 1
-                        posts[index] = currentPost.copy(isLiked = newLikedState, likeCount = newLikeCount)
-                    }
-                )
-                Divider()
-            }
-        }
-    }
-}
-
 data class Post(
-    val username: String,
-    val profileImage: String,
-    val postImage: String,
-    val caption: String,
-    val timeAgo: String,
-    val isLiked: Boolean = false,      // added
-    val likeCount: Int = 0             // added
+    val id: String = "",
+    val caption: String = "",
+    val imageBase64: String = "",
+    val likes: Int = 0,
+    val comments: Int = 0
 )
 
 @Composable
-fun PostItem(post: Post, onLikeClicked: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = rememberAsyncImagePainter(post.profileImage),
-                contentDescription = "Profile Image",
-                modifier = Modifier
-                    .size(40.dp)
-                    .padding(end = 8.dp)
-                    .clip(CircleShape)
-            )
-            Column {
-                Text(text = post.username, style = MaterialTheme.typography.titleMedium)
-                Text(text = post.timeAgo, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+fun FeedScreen() {
+    val context = LocalContext.current
+    var posts by remember { mutableStateOf<List<Post>>(emptyList()) }
+    val firestore = remember { Firebase.firestore }
+
+
+    LaunchedEffect(true) {
+        try {
+            val snapshot = firestore.collection("post").get().await()
+            posts = snapshot.documents.mapNotNull { doc ->
+                val caption = doc.getString("caption") ?: return@mapNotNull null
+                val imageBase64 = doc.getString("imageBase64") ?: return@mapNotNull null
+                val likes = doc.getLong("likes")?.toInt() ?: 0
+                val comments = doc.getLong("comments")?.toInt() ?: 0
+                Post(
+                    id = doc.id,
+                    caption = caption,
+                    imageBase64 = imageBase64,
+                    likes = likes,
+                    comments = comments
+                )
             }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Failed to load posts: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(posts) { post ->
+            PostItem(post = post)
+        }
+    }
+}
+
+@Composable
+fun PostItem(post: Post) {
+    val context = LocalContext.current
+    val firestore = remember { FirebaseFirestore.getInstance() }
+    var isLiked by remember { mutableStateOf(false) }
+    var likeCount by remember { mutableStateOf(post.likes) }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp)
+    ) {
+
+        val imageBytes = Base64.decode(post.imageBase64, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        bitmap?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = "Post Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Image(
-            painter = rememberAsyncImagePainter(post.postImage),
-            contentDescription = "Post Image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
-                .clip(RoundedCornerShape(12.dp)),
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(text = post.caption, style = MaterialTheme.typography.bodyMedium)
+        Text(text = post.caption, style = MaterialTheme.typography.bodyLarge)
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onLikeClicked) {
+            IconButton(onClick = {
+                val newLikeStatus = !isLiked
+                val increment = if (newLikeStatus) 1 else -1
+                val postRef = firestore.collection("post").document(post.id)
+
+                firestore.runTransaction { transaction ->
+                    val snapshot = transaction.get(postRef)
+                    val currentLikes = snapshot.getLong("likes") ?: 0
+                    val updatedLikes = currentLikes + increment
+                    transaction.update(postRef, "likes", updatedLikes)
+                }.addOnSuccessListener {
+                    isLiked = newLikeStatus
+                    likeCount += increment
+                    Toast.makeText(
+                        context,
+                        if (isLiked) "Liked!" else "Unliked!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }.addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to update like: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }) {
                 Icon(
-                    imageVector = Icons.Filled.FavoriteBorder,
+                    imageVector = Icons.Filled.Favorite,
                     contentDescription = "Like",
-                    tint = if (post.isLiked) Color.Red else LocalContentColor.current
+                    tint = if (isLiked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Text(text = post.likeCount.toString(), style = MaterialTheme.typography.bodyMedium)
+            Text(text = "$likeCount")
 
             Spacer(modifier = Modifier.width(16.dp))
-            IconButton(onClick = { /* TODO: Comment action */ }) {
+
+            IconButton(onClick = {
+                Toast.makeText(context, "Comment clicked!", Toast.LENGTH_SHORT).show()
+            }) {
                 Icon(
-                    imageVector = Icons.Outlined.ChatBubbleOutline,
+                    imageVector = Icons.Filled.ChatBubble,
                     contentDescription = "Comment"
                 )
             }
+            Text(text = "${post.comments}")
         }
-    }
-}
-
-@Composable
-fun BottomNavigationBar() {
-    val context = LocalContext.current
-
-    NavigationBar {
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Home") },
-            selected = true,
-            onClick = {
-
-            }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.AddCircle, contentDescription = "Post") },
-            label = { Text("Post") },
-            selected = false,
-            onClick = {
-                context.startActivity(Intent(context, PostActivity::class.java))
-            }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
-            label = { Text("Profile") },
-            selected = false,
-            onClick = {
-                context.startActivity(Intent(context, Profilescreen::class.java))
-            }
-        )
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun FeedScreenPreview() {
-    TripBookTheme {
-        FeedScreen()
     }
 }

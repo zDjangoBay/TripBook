@@ -31,6 +31,7 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.util.Base64
 import android.widget.Toast
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
 import java.util.Date
@@ -40,6 +41,7 @@ import java.util.Date
 class PostActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         setContent {
             TripBookTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
