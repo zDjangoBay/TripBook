@@ -26,19 +26,19 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit) {
     var reviewText by remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Trip Details") },
-//                navigationIcon = {
-//                    IconButton(onClick = onBack) {
-//                        Icon(
-//                            imageVector = Icons.Default.ArrowBack,
-//                            contentDescription = "Back"
-//                        )
-//                    }
-//                }
-//            )
-//        }
+        topBar = {
+            SmallTopAppBar(
+                title = { Text("Trip Details") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier

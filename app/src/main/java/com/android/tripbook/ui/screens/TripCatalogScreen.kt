@@ -7,13 +7,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.ui.components.TripCard
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
-import com.android.tripbook.model.Trip
+import com.android.tripbook.mockData.SampleTrips
 
 /**
  * Main Trip Catalog Screen combining:
@@ -26,8 +25,7 @@ fun TripCatalogScreen(
     modifier: Modifier = Modifier,
     onTripClick: (Int) -> Unit
 ) {
-    val allTrips = remember { sampleTrips() } // Replace with real fetch
-    val context = LocalContext.current
+    val allTrips = remember { SampleTrips.get() } // Replace with real fetch
 
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -93,30 +91,3 @@ fun TripCatalogScreen(
         }
     }
 }
-
-fun sampleTrips(): List<Trip> = listOf(
-    Trip(
-        id = 1,
-        title = "Yaounde Capital",
-        description = "Explore the capital city.",
-        imageUrl = "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48="
-    ),
-    Trip(
-        id = 2,
-        title = "Buea Mountain",
-        description = "Climb the scenic Mount Cameroon.",
-        imageUrl = "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k="
-    ),
-    Trip(
-        id = 3,
-        title = "Kribi",
-        description = "Beach town with waterfalls.",
-        imageUrl = "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48="
-    ),
-    Trip(
-        id = 4,
-        title = "Bamenda Town",
-        description = "Highland city with great culture.",
-        imageUrl = "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k=",
-    )
-)
