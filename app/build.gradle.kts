@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -76,4 +76,32 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+
+    // Compose
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.material3)
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // SavedState -
+    implementation(libs.androidx.savedstate)
+    implementation(libs.androidx.savedstate.ktx)
+
+    implementation(libs.androidx.datastore.preferences)
+
+    // Coil for image loading
+    implementation(libs.coil.compose)
+
+    // Date picker
+    implementation(libs.androidx.compose.material3.material3)
+
+
+        implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(project(":userprofile"))
+
+
 }
