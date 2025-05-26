@@ -13,6 +13,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.tripbook.userprofileManfoIngrid.presentation.media.MediaOrganizationScreen
 import com.tripbook.userprofilendedilan.presentation.auth.screens.RegisterScreen
 import com.tripbook.userprofilendedilan.presentation.navigation.Screen
 import com.tripbook.userprofilendedilan.presentation.splash.SplashScreen
@@ -51,8 +52,11 @@ fun UserProfileNdeDilanEntryPoint(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         composable(Screen.Splash.route) {
-            SplashScreen(navController)
+            MediaOrganizationScreen(navController)
         }
+//        composable(Screen.Splash.route) {
+//            SplashScreen(navController)
+//        }
         composable(Screen.Onboarding.route) {
             OnboardingScreen(navController)
         }
