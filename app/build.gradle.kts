@@ -74,6 +74,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
 
 
 

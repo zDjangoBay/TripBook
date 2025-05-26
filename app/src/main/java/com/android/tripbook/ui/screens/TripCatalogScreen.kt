@@ -49,11 +49,6 @@ fun TripCatalogScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Text(
-            text = "Explore Trips",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
 
         LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
             items(trips) { trip ->

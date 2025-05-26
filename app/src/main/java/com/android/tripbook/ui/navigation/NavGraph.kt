@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,12 +12,17 @@ import com.android.tripbook.ui.screens.TripCatalogScreen
 import com.android.tripbook.ui.screens.TripDetailScreen
 
 @Composable
-fun TripNavGraph() {
+fun TripNavGraph(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "catalog") {
+    NavHost(
+        navController = navController,
+        startDestination = "catalog",
+        modifier = modifier // 👈 respect BaseScaffold padding
+    ) {
         composable("catalog") {
             TripCatalogScreen(
+                modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
                 }
@@ -30,3 +37,4 @@ fun TripNavGraph() {
         }
     }
 }
+

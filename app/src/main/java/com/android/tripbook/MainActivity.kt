@@ -1,17 +1,17 @@
 package com.android.tripbook
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.ui.components.BaseScaffold
+import com.android.tripbook.ui.navigation.navigateTo
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,44 +20,39 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val context = LocalContext.current
+                var isLoading by remember { mutableStateOf(false) }
+                var pendingNavigation by remember { mutableStateOf<String?>(null) }
+
+                // Handle delayed navigation in a safe Composable scope
+                LaunchedEffect(pendingNavigation) {
+                    pendingNavigation?.let { destination ->
+                        isLoading = true
+                        kotlinx.coroutines.delay(600)
+                        navigateTo(context, destination)
+                        isLoading = false
+                        pendingNavigation = null
+                    }
+                }
+
+                BaseScaffold(
+                    currentRoute = "home",
+                    title = "Home",
+                    onNavigate = { destination ->
+                        pendingNavigation = destination
+                    },
+                    isLoading = isLoading
+                ) { padding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(16.dp)
+                    ) {
+                        Text("Welcome to the TripBook Home Page!")
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val context = LocalContext.current  // ✅ Get the context
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Hello $name!")
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(onClick = {
-            val intent = Intent(context, TripCatalogActivity::class.java)
-            context.startActivity(intent)  // ✅ Use context here
-        }) {
-            Text("Go to Trip Catalog")
-        }
-    }
-}
-
-@Preview
-@Composable
-fun GreetingPreview() {
-    TripBookTheme {
-        Greeting("Android")
     }
 }
