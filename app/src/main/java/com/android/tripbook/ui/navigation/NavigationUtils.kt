@@ -7,7 +7,7 @@ import com.android.tripbook.*
 fun navigateTo(context: Context, destination: String) {
     val intent = when (destination) {
         "home" -> Intent(context, MainActivity::class.java)
-        "explore" -> Intent(context, TripCatalogActivity::class.java)
+        "catalog" -> Intent(context, TripCatalogActivity::class.java)
         // Add others when created
         "book" -> Intent(context, BookTripsActivity::class.java)
         "profile" -> Intent(context, ProfileActivity::class.java)

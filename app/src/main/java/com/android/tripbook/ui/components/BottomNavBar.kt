@@ -11,7 +11,7 @@ data class NavItem(val label: String, val icon: ImageVector, val route: String)
 val navItems = listOf(
     NavItem("Home", Icons.Default.Home, "home"),
     NavItem("Book", Icons.Default.DateRange, "book"),
-    NavItem("Explore", Icons.Default.Place, "explore"),
+    NavItem("Catalog", Icons.Default.Place, "catalog"),
     NavItem("Profile", Icons.Default.Person, "profile")
 )
 

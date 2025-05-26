@@ -1,5 +1,6 @@
 package com.android.tripbook.model
 
+
 /**
  * Represents a travel trip entry in the Trip Catalog.
  * @param id Unique identifier for the trip
@@ -11,5 +12,5 @@ data class Trip(
     val id: Int,
     val title: String,
     val description: String,
-    val imageUrl: String
+    val imageUrl: String,
 )

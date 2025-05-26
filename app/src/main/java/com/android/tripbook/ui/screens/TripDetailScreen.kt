@@ -12,7 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.ui.components.ImageCarousel
 import com.android.tripbook.ui.components.ReviewCard
-import com.android.tripbook.model.SampleReviews
+import com.android.tripbook.mockData.SampleReviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,19 +26,19 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit) {
     var reviewText by remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Trip Details") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            )
-        }
+//        topBar = {
+//            TopAppBar(
+//                title = { Text("Trip Details") },
+//                navigationIcon = {
+//                    IconButton(onClick = onBack) {
+//                        Icon(
+//                            imageVector = Icons.Default.ArrowBack,
+//                            contentDescription = "Back"
+//                        )
+//                    }
+//                }
+//            )
+//        }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier

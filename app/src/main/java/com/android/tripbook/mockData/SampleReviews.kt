@@ -1,5 +1,7 @@
 // model/SampleReviews.kt
-package com.android.tripbook.model
+package com.android.tripbook.mockData
+
+import com.android.tripbook.model.Review
 
 object SampleReviews {
     val reviews = listOf(
