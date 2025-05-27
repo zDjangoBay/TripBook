@@ -4,7 +4,7 @@ build/
 my-notes.md
 # Local configuration file (sdk path, etc)
 local.properties
-
+*.class
 # Log/OS Files
 *.log
 
