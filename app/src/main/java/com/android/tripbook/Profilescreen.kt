@@ -120,7 +120,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Existing profile layout (unchanged)
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -154,13 +154,13 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            "I believe in consistency, discipline, and good energy 💪✨",
+            "I believe in consistency, discipline, and good energy ",
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Button(
-            onClick = { /* Edit profile logic */ },
+            onClick = {  },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Edit Profile")
@@ -208,7 +208,7 @@ fun ProfileStat(number: String, label: String) {
 @Composable
 fun ProfileScreenPreview() {
     TripBookTheme {
-        // Create a dummy NavController for preview (won't actually navigate)
+
         val navController = rememberNavController()
 
         Scaffold(

@@ -14,6 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook" >
         <activity
+            android:name=".FeedActivity"
+            android:exported="false"
+            android:label="@string/title_activity_feed"
+            android:theme="@style/Theme.TripBook" />
+        <activity
             android:name=".PostActivity"
             android:exported="false"
             android:label="@string/title_activity_post"
@@ -22,11 +27,6 @@
             android:name=".Profilescreen"
             android:exported="false"
             android:label="@string/title_activity_profilescreen"
-            android:theme="@style/Theme.TripBook" />
-        <activity
-            android:name=".Feedscreen"
-            android:exported="true"
-            android:label="@string/title_activity_feedscreen"
             android:theme="@style/Theme.TripBook" />
         <activity
             android:name=".MainActivity"

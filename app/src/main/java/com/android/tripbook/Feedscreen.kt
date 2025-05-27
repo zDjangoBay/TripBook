@@ -1,46 +1,29 @@
-import android.os.Bundle
+package com.example.tripbook
+
+import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
-import coil.compose.rememberAsyncImagePainter
-import com.google.firebase.FirebaseApp
+import com.android.tripbook.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
-import java.io.ByteArrayInputStream
-import android.graphics.BitmapFactory
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.Favorite
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        FirebaseApp.initializeApp(this)
-
-        setContent {
-            MaterialTheme {
-                FeedScreen()
-            }
-        }
-    }
-}
 
 data class Post(
     val id: String = "",
@@ -55,7 +38,6 @@ fun FeedScreen() {
     val context = LocalContext.current
     var posts by remember { mutableStateOf<List<Post>>(emptyList()) }
     val firestore = remember { Firebase.firestore }
-
 
     LaunchedEffect(true) {
         try {
@@ -90,7 +72,9 @@ fun PostItem(post: Post) {
     val context = LocalContext.current
     val firestore = remember { FirebaseFirestore.getInstance() }
     var isLiked by remember { mutableStateOf(false) }
-    var likeCount by remember { mutableStateOf(post.likes) }
+    var likeCount by remember { mutableIntStateOf(post.likes) }
+    var showCommentBox by remember { mutableStateOf(false) }
+    var commentText by remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .fillMaxWidth()
@@ -149,7 +133,7 @@ fun PostItem(post: Post) {
             Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(onClick = {
-                Toast.makeText(context, "Comment clicked!", Toast.LENGTH_SHORT).show()
+                showCommentBox = !showCommentBox
             }) {
                 Icon(
                     imageVector = Icons.Filled.ChatBubble,
@@ -157,6 +141,112 @@ fun PostItem(post: Post) {
                 )
             }
             Text(text = "${post.comments}")
+        }
+
+        if (showCommentBox) {
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = commentText,
+                onValueChange = { commentText = it },
+                label = { Text("Write a comment...") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Button(onClick = {
+                if (commentText.isNotBlank()) {
+                    val commentMap = mapOf("text" to commentText, "timestamp" to System.currentTimeMillis())
+                    val postRef = firestore.collection("post").document(post.id)
+                    val commentsRef = postRef.collection("comments")
+
+                    commentsRef.add(commentMap).addOnSuccessListener {
+                        Toast.makeText(context, "Comment posted!", Toast.LENGTH_SHORT).show()
+                        commentText = ""
+
+                        firestore.runTransaction { transaction ->
+                            val snapshot = transaction.get(postRef)
+                            val currentComments = snapshot.getLong("comments") ?: 0
+                            transaction.update(postRef, "comments", currentComments + 1)
+                        }
+                    }.addOnFailureListener {
+                        Toast.makeText(context, "Failed to post comment", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }) {
+                Text("Post Comment")
+            }
+        }
+    }
+}
+
+
+val mockBase64Image: String = Base64.encodeToString(
+    byteArrayOf(
+        -1, -40, -1, -32, 0, 16, 74, 70, 73, 70, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, -1, -37, 0, 67,
+        0, 8, 6, 6, 7, 6, 5, 8, 7, 7, 7, 9, 9, 8, 10, 12, 20, 13, 12, 11, 11, 12, 25, 18, 19, 15,
+        20, 29, 26, 31, 30, 29, 26, 28, 28, 32, 36, 46, 39, 32, 34, 44, 35, 28, 28, 40, 55, 41,
+        44, 48, 49, 52, 52, 52, 31, 39, 57, 61, 56, 50, 60, 46, 51, 52, 50
+    ),
+    Base64.DEFAULT
+)
+
+@Preview(showBackground = true)
+@Composable
+fun FeedScreenPreview() {
+    MaterialTheme {
+        FeedScreenPreviewContent(
+            posts = listOf(
+                Post(
+                    id = "1",
+                    caption = "Enjoying the beach!",
+                    imageBase64 = mockBase64Image,
+                    likes = 12,
+                    comments = 3
+                ),
+                Post(
+                    id = "2",
+                    caption = "Hiking through the mountains",
+                    imageBase64 = mockBase64Image,
+                    likes = 8,
+                    comments = 2
+                )
+            )
+        )
+    }
+}
+
+
+@Composable
+fun FeedScreenPreviewContent(posts: List<Post>) {
+    LazyColumn {
+        items(posts) { post ->
+            PostItemPreview(post = post)
+        }
+    }
+}
+
+@Composable
+fun PostItemPreview(post: Post) {
+    Column(modifier = Modifier.padding(12.dp)) {
+        val imageBytes = Base64.decode(post.imageBase64, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        bitmap?.let {
+            Image(
+                bitmap = it.asImageBitmap(),
+                contentDescription = "Post Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = post.caption, style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Icon(Icons.Default.Favorite, contentDescription = null)
+            Text("${post.likes}")
+            Spacer(modifier = Modifier.width(16.dp))
+            Icon(Icons.Default.ChatBubble, contentDescription = null)
+            Text("${post.comments}")
         }
     }
 }

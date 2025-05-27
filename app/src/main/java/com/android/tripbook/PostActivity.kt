@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
-import com.android.tripbook.Feedscreen
 import com.android.tripbook.Profilescreen
 import android.graphics.Bitmap
 import android.provider.MediaStore
@@ -140,6 +139,10 @@ fun PostScreen() {
                                 caption = ""
                                 imageUri = null
                                 Toast.makeText(context, "Post uploaded!", Toast.LENGTH_SHORT).show()
+
+
+                                val intent = Intent(context, FeedActivity::class.java)
+                                context.startActivity(intent)
                             }
                             .addOnFailureListener {
                                 Toast.makeText(context, "Failed to upload post", Toast.LENGTH_SHORT).show()
@@ -150,8 +153,7 @@ fun PostScreen() {
                 } else {
                     Toast.makeText(context, "Please add a caption and select an image", Toast.LENGTH_SHORT).show()
                 }
-            }
-            ,
+            },
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.fillMaxWidth()
@@ -182,7 +184,8 @@ fun PostScreen() {
                     }
 
                     TextButton(onClick = {
-                        context.startActivity(Intent(context, Feedscreen::class.java))
+
+                        context.startActivity(Intent(context, FeedActivity::class.java))
                     }) {
                         Icon(Icons.Filled.Home, contentDescription = "Home", tint = Color.White)
                         Spacer(modifier = Modifier.width(4.dp))
@@ -193,7 +196,7 @@ fun PostScreen() {
 
             FloatingActionButton(
                 onClick = {
-                    context.startActivity(Intent(context, PostActivity::class.java)) // Or navigate to new post
+                    context.startActivity(Intent(context, PostActivity::class.java))
                 },
                 containerColor = MaterialTheme.colorScheme.secondary,
                 modifier = Modifier.offset(y = (-28).dp)
