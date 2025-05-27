@@ -19,17 +19,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown // Keep this import
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search // NEW: For search icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults // Important for trailingIcon
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton // Keep for potential other actions, but not for dropdown anchor
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField // For the visible dropdown field
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -55,7 +56,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-// TripItem data class (assuming it's in the same file or imported)
 
 
 // Enum for sorting options
@@ -63,10 +63,9 @@ enum class SortOrder(val label: String) {
     NONE("None"),
     CITY_ASC("City A-Z"),
     CITY_DESC("City Z-A"),
-    DATE_ASC("Date Asc"), // Note: For robust date sorting, parse `dates` into real Date objects
+    DATE_ASC("Date Asc"),
     DATE_DESC("Date Desc")
 }
-
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -91,19 +90,26 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
+            var searchText by remember { mutableStateOf("") } // NEW: Search text state
             var sortOrder by remember { mutableStateOf(SortOrder.NONE) }
-            var expanded by remember { mutableStateOf(false) } // For dropdown menu
+            var expanded by remember { mutableStateOf(false) }
 
+            // Derived state for filtered and sorted items
             val displayedTripItems by remember {
                 derivedStateOf {
-                    val list = allTripItems
+                    // 1. Filter first
+                    val filteredList = allTripItems.filter {
+                        it.cityName.contains(searchText, ignoreCase = true) ||
+                                it.dates.contains(searchText, ignoreCase = true)
+                    }
+
+                    // 2. Then sort the filtered list
                     when (sortOrder) {
-                        SortOrder.NONE -> list
-                        SortOrder.CITY_ASC -> list.sortedBy { it.cityName }
-                        SortOrder.CITY_DESC -> list.sortedByDescending { it.cityName }
-                        // For robust date sorting, consider parsing dates into comparable objects
-                        SortOrder.DATE_ASC -> list.sortedBy { it.dates }
-                        SortOrder.DATE_DESC -> list.sortedByDescending { it.dates }
+                        SortOrder.NONE -> filteredList
+                        SortOrder.CITY_ASC -> filteredList.sortedBy { it.cityName }
+                        SortOrder.CITY_DESC -> filteredList.sortedByDescending { it.cityName }
+                        SortOrder.DATE_ASC -> filteredList.sortedBy { it.dates }
+                        SortOrder.DATE_DESC -> filteredList.sortedByDescending { it.dates }
                     }
                 }
             }
@@ -119,28 +125,27 @@ class MainActivity : ComponentActivity() {
                             actions = {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    // Give some padding to the right for the dropdown
                                     modifier = Modifier.padding(end = 8.dp)
                                 ) {
                                     Text("Sort by:")
-                                    Spacer(Modifier.width(8.dp)) // Use width for horizontal spacing
+                                    Spacer(Modifier.width(8.dp))
 
                                     ExposedDropdownMenuBox(
                                         expanded = expanded,
                                         onExpandedChange = { expanded = !expanded },
-                                        modifier = Modifier.width(150.dp) // Give it a fixed width or use weight
+                                        modifier = Modifier.width(150.dp)
                                     ) {
                                         OutlinedTextField(
                                             value = sortOrder.label,
-                                            onValueChange = {}, // Read-only, no direct typing
+                                            onValueChange = {},
                                             readOnly = true,
                                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                                             modifier = Modifier
-                                                .menuAnchor() // Crucial for dropdown to anchor to this TextField
+                                                .menuAnchor()
                                                 .fillMaxWidth(),
                                             singleLine = true,
-                                            textStyle = MaterialTheme.typography.bodyLarge, // Adjust text style
-                                            label = { Text("Option") } // A label for the text field
+                                            textStyle = MaterialTheme.typography.bodyLarge,
+                                            label = { Text("Option") }
                                         )
 
                                         ExposedDropdownMenu(
@@ -167,8 +172,20 @@ class MainActivity : ComponentActivity() {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(innerPadding)
+                            .padding(innerPadding) // Apply Scaffold's padding to the whole content column
                     ) {
+                        // NEW: Search Bar above the list
+                        OutlinedTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            label = { Text("Search trips...") },
+                            singleLine = true,
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") }, // Add search icon
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp) // Add padding
+                        )
+
                         PullToRefreshBox(
                             state = refreshState,
                             isRefreshing = isRefreshing,
@@ -176,10 +193,11 @@ class MainActivity : ComponentActivity() {
                                 coroutineScope.launch {
                                     isRefreshing = true
                                     delay(5.seconds)
+                                    // In a real app, you'd fetch new data here
                                     isRefreshing = false
                                 }
                             },
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize() // Fill remaining space
                         ) {
                             LazyColumn(
                                 modifier = Modifier.fillMaxWidth(),
@@ -195,7 +213,7 @@ class MainActivity : ComponentActivity() {
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
-                                            Text("No trips found.")
+                                            Text("No trips found matching your criteria.")
                                         }
                                     }
                                 } else {
