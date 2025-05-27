@@ -1,9 +1,10 @@
 package com.android.tripbook.model
 
 data class Trip(
-    val id: Int,
+    val id: String,
     val title: String,
-    val price: Int,
     val location: String,
-    val rating: Float
+    val imageUrl: String,
+    val rating: Double,
+    val price: Double
 )

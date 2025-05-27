@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.foundation.layout.android)
+    // implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,4 +78,11 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation(libs.coil.compose)
+    // Navigation
+//    implementation(libs.androidx.navigation.compose)
+//    // ViewModel
+//    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+
 }
