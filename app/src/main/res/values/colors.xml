@@ -17,4 +17,5 @@
     <color name="dark_blue">#00008B</color>
     <color name="navy_blue">#000080</color>
     <color name="midnight_blue">#191970</color>
+    <color name="grey">#808080</color>
 </resources>
