@@ -1,4 +1,4 @@
-package com.android.tripbook
+package com.android.tripbook.data
 
 // Define this in a new file, e.g., 'data/TripItem.kt' or within MainActivity if it's small
 data class TripItem(
