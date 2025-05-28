@@ -10,16 +10,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Message
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.R
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,28 +29,80 @@ import kotlinx.coroutines.tasks.await
 
 data class Post(
     val id: String = "",
+    val username: String = "",
+    val profileImageUrl: String = "",
     val caption: String = "",
     val imageBase64: String = "",
     val likes: Int = 0,
-    val comments: Int = 0
+    val comments: Int = 0,
+    val imageUrl: String = ""
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainTopBar(
+    unreadNotifications: Int,
+    unreadMessages: Int,
+    onNotificationsClick: () -> Unit,
+    onMessagesClick: () -> Unit
+) {
+    TopAppBar(
+        title = { Text("TripBook") },
+        actions = {
+            IconButton(onClick = onNotificationsClick) {
+                if (unreadNotifications > 0) {
+                    BadgedBox(
+                        badge = {
+                            Badge { Text(unreadNotifications.toString()) }
+                        }
+                    ) {
+                        Icon(Icons.Default.Notifications, contentDescription = "Notifications")
+                    }
+                } else {
+                    Icon(Icons.Default.Notifications, contentDescription = "Notifications")
+                }
+            }
+            IconButton(onClick = onMessagesClick) {
+                if (unreadMessages > 0) {
+                    BadgedBox(
+                        badge = {
+                            Badge { Text(unreadMessages.toString()) }
+                        }
+                    ) {
+                        Icon(Icons.Default.Message, contentDescription = "Messages")
+                    }
+                } else {
+                    Icon(Icons.Default.Message, contentDescription = "Messages")
+                }
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen() {
     val context = LocalContext.current
     var posts by remember { mutableStateOf<List<Post>>(emptyList()) }
     val firestore = remember { Firebase.firestore }
 
+    var unreadNotifications by remember { mutableStateOf(3) }
+    var unreadMessages by remember { mutableStateOf(2) }
+
     LaunchedEffect(true) {
         try {
             val snapshot = firestore.collection("post").get().await()
             posts = snapshot.documents.mapNotNull { doc ->
+                val username = doc.getString("username") ?: "Unknown"
+                val profileImageUrl = doc.getString("profileImageUrl") ?: ""
                 val caption = doc.getString("caption") ?: return@mapNotNull null
-                val imageBase64 = doc.getString("imageBase64") ?: return@mapNotNull null
+                val imageBase64 = doc.getString("imageBase64") ?: ""
                 val likes = doc.getLong("likes")?.toInt() ?: 0
                 val comments = doc.getLong("comments")?.toInt() ?: 0
                 Post(
                     id = doc.id,
+                    username = username,
+                    profileImageUrl = profileImageUrl,
                     caption = caption,
                     imageBase64 = imageBase64,
                     likes = likes,
@@ -60,9 +114,30 @@ fun FeedScreen() {
         }
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(posts) { post ->
-            PostItem(post = post)
+    Scaffold(
+        topBar = {
+            MainTopBar(
+                unreadNotifications = unreadNotifications,
+                unreadMessages = unreadMessages,
+                onNotificationsClick = {
+                    Toast.makeText(context, "Notifications clicked!", Toast.LENGTH_SHORT).show()
+                    unreadNotifications = 0
+                },
+                onMessagesClick = {
+                    Toast.makeText(context, "Messages clicked!", Toast.LENGTH_SHORT).show()
+                    unreadMessages = 0
+                }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            items(posts) { post ->
+                PostItem(post = post)
+            }
         }
     }
 }
@@ -76,16 +151,58 @@ fun PostItem(post: Post) {
     var showCommentBox by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(12.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
     ) {
 
-        val imageBytes = Base64.decode(post.imageBase64, Base64.DEFAULT)
-        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        bitmap?.let {
-            Image(
-                bitmap = it.asImageBitmap(),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            if (post.profileImageUrl.isNotBlank()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(post.profileImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+            } else {
+
+                Surface(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp),
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                ) {}
+            }
+            Text(text = post.username, style = MaterialTheme.typography.titleMedium)
+        }
+
+        if (post.imageBase64.isNotBlank()) {
+            val imageBytes = Base64.decode(post.imageBase64, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            bitmap?.let {
+                Image(
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = "Post Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                )
+            }
+        } else if (post.imageUrl.isNotBlank()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(post.imageUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = "Post Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,75 +295,121 @@ fun PostItem(post: Post) {
     }
 }
 
-
-val mockBase64Image: String = Base64.encodeToString(
-    byteArrayOf(
-        -1, -40, -1, -32, 0, 16, 74, 70, 73, 70, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, -1, -37, 0, 67,
-        0, 8, 6, 6, 7, 6, 5, 8, 7, 7, 7, 9, 9, 8, 10, 12, 20, 13, 12, 11, 11, 12, 25, 18, 19, 15,
-        20, 29, 26, 31, 30, 29, 26, 28, 28, 32, 36, 46, 39, 32, 34, 44, 35, 28, 28, 40, 55, 41,
-        44, 48, 49, 52, 52, 52, 31, 39, 57, 61, 56, 50, 60, 46, 51, 52, 50
-    ),
-    Base64.DEFAULT
-)
-
 @Preview(showBackground = true)
 @Composable
 fun FeedScreenPreview() {
     MaterialTheme {
-        FeedScreenPreviewContent(
-            posts = listOf(
-                Post(
-                    id = "1",
-                    caption = "Enjoying the beach!",
-                    imageBase64 = mockBase64Image,
-                    likes = 12,
-                    comments = 3
-                ),
-                Post(
-                    id = "2",
-                    caption = "Hiking through the mountains",
-                    imageBase64 = mockBase64Image,
-                    likes = 8,
-                    comments = 2
+        Scaffold(
+            topBar = {
+                MainTopBar(
+                    unreadNotifications = 5,
+                    unreadMessages = 2,
+                    onNotificationsClick = {},
+                    onMessagesClick = {}
+                )
+            }
+        ) { paddingValues ->
+            FeedScreenPreviewContent(
+                modifier = Modifier.padding(paddingValues),
+                posts = listOf(
+                    Post(
+                        id = "1",
+                        username = "Alice",
+                        profileImageUrl = "https://randomuser.me/api/portraits/women/1.jpg",
+                        caption = "Enjoying the beach!",
+                        imageUrl = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+                        likes = 12,
+                        comments = 3
+                    ),
+                    Post(
+                        id = "2",
+                        username = "Bob",
+                        profileImageUrl = "https://randomuser.me/api/portraits/men/2.jpg",
+                        caption = "Hiking through the mountains",
+                        imageUrl = "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80",
+                        likes = 8,
+                        comments = 2
+                    )
                 )
             )
-        )
+        }
     }
 }
 
-
 @Composable
-fun FeedScreenPreviewContent(posts: List<Post>) {
-    LazyColumn {
+fun FeedScreenPreviewContent(modifier: Modifier = Modifier, posts: List<Post>) {
+    LazyColumn(modifier = modifier) {
         items(posts) { post ->
-            PostItemPreview(post = post)
+            PostItemPreview(post)
         }
     }
 }
 
 @Composable
 fun PostItemPreview(post: Post) {
-    Column(modifier = Modifier.padding(12.dp)) {
-        val imageBytes = Base64.decode(post.imageBase64, Base64.DEFAULT)
-        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        bitmap?.let {
-            Image(
-                bitmap = it.asImageBitmap(),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            if (post.profileImageUrl.isNotBlank()) {
+                AsyncImage(
+                    model = post.profileImageUrl,
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp)
+                )
+            } else {
+                Surface(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(end = 8.dp),
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                ) {}
+            }
+            Text(text = post.username, style = MaterialTheme.typography.titleMedium)
+        }
+
+        if (post.imageUrl.isNotBlank()) {
+            AsyncImage(
+                model = post.imageUrl,
                 contentDescription = "Post Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
             )
         }
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(text = post.caption, style = MaterialTheme.typography.bodyLarge)
+
         Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Icon(Icons.Default.Favorite, contentDescription = null)
-            Text("${post.likes}")
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Favorite,
+                contentDescription = "Likes",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "${post.likes}")
+
             Spacer(modifier = Modifier.width(16.dp))
-            Icon(Icons.Default.ChatBubble, contentDescription = null)
-            Text("${post.comments}")
+
+            Icon(
+                imageVector = Icons.Filled.ChatBubble,
+                contentDescription = "Comments"
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "${post.comments}")
         }
     }
 }

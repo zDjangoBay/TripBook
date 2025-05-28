@@ -1,5 +1,6 @@
 package com.android.tripbook
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.example.tripbook.FeedActivity
 
 class Profilescreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +46,6 @@ class Profilescreen : ComponentActivity() {
                         startDestination = "profile",
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable("home") { Homefeedscreen() }
                         composable("post") { PostScreen() }
                         composable("profile") { ProfileScreen() }
                     }
@@ -55,6 +57,7 @@ class Profilescreen : ComponentActivity() {
 
 @Composable
 fun BottomNavigationBars(navController: NavHostController) {
+    val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -62,13 +65,9 @@ fun BottomNavigationBars(navController: NavHostController) {
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
             label = { Text("Home") },
-            selected = currentRoute == "home",
+            selected = false,
             onClick = {
-                if (currentRoute != "home") navController.navigate("home") {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                context.startActivity(Intent(context, FeedActivity::class.java))
             }
         )
         NavigationBarItem(
@@ -99,13 +98,6 @@ fun BottomNavigationBars(navController: NavHostController) {
 }
 
 @Composable
-fun Homefeedscreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Feed Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
 fun PostScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Post Screen", fontSize = 24.sp, fontWeight = FontWeight.Bold)
@@ -120,7 +112,6 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             .background(Color.White)
             .padding(16.dp)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -160,7 +151,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
         )
 
         Button(
-            onClick = {  },
+            onClick = { },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Edit Profile")
@@ -203,14 +194,11 @@ fun ProfileStat(number: String, label: String) {
     }
 }
 
-
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ProfileScreenPreview() {
     TripBookTheme {
-
         val navController = rememberNavController()
-
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = { BottomNavigationBars(navController) }
@@ -219,6 +207,3 @@ fun ProfileScreenPreview() {
         }
     }
 }
-
-
-
