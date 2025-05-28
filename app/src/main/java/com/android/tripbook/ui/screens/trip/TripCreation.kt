@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.data.TripRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +98,17 @@ fun TripCreation(
                 Button(
                     onClick = {
                         if (currentStep < 3) currentStep++
-                        else onTripCreated("new_trip_id")
+                        else {
+                            // Create a new trip using the repository
+                            val tripId = TripRepository.addTrip(
+                                destination = destination,
+                                startDate = startDate,
+                                endDate = endDate,
+                                name = tripName,
+                                purpose = tripPurpose
+                            )
+                            onTripCreated(tripId)
+                        }
                     },
                     enabled = when (currentStep) {
                         0 -> destination.isNotBlank()

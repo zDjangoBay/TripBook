@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.data.TripRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +57,7 @@ fun TripDashboard(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(sampleTrips) { trip ->
+                items(TripRepository.trips) { trip ->
                     TripCard(
                         trip = trip,
                         onClick = { onOpenItinerary(trip.id) }
@@ -134,22 +135,4 @@ data class Trip(
     val completionStatus: Float
 )
 
-// Sample data for preview
-val sampleTrips = listOf(
-    Trip(
-        id = "1",
-        destination = "Paris, France",
-        startDate = "May 1, 2024",
-        endDate = "May 7, 2024",
-        description = "A week-long exploration of the City of Light",
-        completionStatus = 0.8f
-    ),
-    Trip(
-        id = "2",
-        destination = "Tokyo, Japan",
-        startDate = "June 15, 2024",
-        endDate = "June 25, 2024",
-        description = "Discovering Japanese culture and cuisine",
-        completionStatus = 0.3f
-    )
-)
+// Trip data is now managed by TripRepository
