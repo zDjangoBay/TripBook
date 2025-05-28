@@ -78,10 +78,10 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
 > _Note: Add actual screenshots after UI implementation is complete._
 
 - Trip Catalog Screen  
-  ![Trip Catalog Screenshot](images/trip_catalog.png)
+  ![Trip Catalog Screenshot](images/trip-catalog.png)
 
-- Trip Detail Screen  
-  ![Trip Detail Screenshot](images/trip_details.png)
+- Trip Detail Screen  ~~~~
+  ![Trip Detail Screenshot](images/trip-details.png)
 
 - Horizontal Review Section  
   ![Review Carousel Screenshot](images/trip-review.png)
