@@ -1,7 +1,6 @@
 package com.android.tripbook
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.android.tripbook.Schedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

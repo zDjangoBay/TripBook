@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "1.9.10-1.0.13" // Add version here
+    id("com.google.devtools.ksp") version "1.9.10-1.0.13"
 }
 
 android {
@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation ("com.google.android.material:material:1.11.0")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
@@ -92,7 +93,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // If you don't already have the Java standard library
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
@@ -103,7 +104,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Test dependencies
+    testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.9.10")
     testImplementation("junit:junit:4.13.2")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
