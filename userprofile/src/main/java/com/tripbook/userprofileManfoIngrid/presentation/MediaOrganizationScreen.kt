@@ -1,4 +1,4 @@
-package com.tripbook.userprofileManfoIngrid.presentation
+package com.tripbook.userprofileManfoIngrid.presentation.media
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,19 +6,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.MediaGrid
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.FilterTabs
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.ProfileHeader
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.dialogs.MediaActionDialog
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.dialogs.EditMediaDialog
+import com.tripbook.userprofileManfoIngrid.presentation.media.components.dialogs.ShareDialog
 import com.tripbook.userprofileManfoIngrid.presentation.media.models.MediaItem
 import com.tripbook.userprofileManfoIngrid.presentation.media.viewmodels.MediaViewModel
-import com.tripbook.userprofileManfoIngrid.presentation.media.components.*
-import com.tripbook.userprofileManfoIngrid.presentation.media.components.dialogs.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaOrganizationScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: MediaViewModel = viewModel()
 ) {
-    val viewModel: MediaViewModel = viewModel()
     val mediaItems by viewModel.filteredAndSortedMedia.collectAsState()
     val currentFilter by viewModel.currentFilter.collectAsState()
 
