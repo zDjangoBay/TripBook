@@ -5,13 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.ui.components.BaseScaffold
-import com.android.tripbook.ui.navigation.navigateTo
+import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,37 +19,21 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                val context = LocalContext.current
+                val navController = rememberNavController()
                 var isLoading by remember { mutableStateOf(false) }
-                var pendingNavigation by remember { mutableStateOf<String?>(null) }
-
-                // Handle delayed navigation in a safe Composable scope
-                LaunchedEffect(pendingNavigation) {
-                    pendingNavigation?.let { destination ->
-                        isLoading = true
-                        kotlinx.coroutines.delay(600)
-                        navigateTo(context, destination)
-                        isLoading = false
-                        pendingNavigation = null
-                    }
-                }
 
                 BaseScaffold(
-                    currentRoute = "home",
+                    navController = navController,
                     title = "Home",
-                    onNavigate = { destination ->
-                        pendingNavigation = destination
-                    },
                     isLoading = isLoading
                 ) { padding ->
-                    Column(
+                    MainNavGraph(
+                        navController = navController,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding)
-                            .padding(16.dp)
-                    ) {
-                        Text("Welcome to the TripBook Home Page!")
-                    }
+                            .padding(2.dp)
+                    )
                 }
             }
         }

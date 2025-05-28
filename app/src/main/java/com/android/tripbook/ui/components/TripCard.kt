@@ -34,8 +34,11 @@ fun TripCard(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
+            // Use the first image URL if available, else fallback to empty string
+            val imageUrl = trip.imageUrl.firstOrNull().orEmpty()
+
             Image(
-                painter = rememberAsyncImagePainter(trip.imageUrl),
+                painter = rememberAsyncImagePainter(imageUrl),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -46,7 +49,7 @@ fun TripCard(
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = trip.title, style = MaterialTheme.typography.titleMedium)
             Text(
-                text = trip.description,
+                text = trip.caption,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
