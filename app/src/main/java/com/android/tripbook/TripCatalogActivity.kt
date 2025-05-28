@@ -21,7 +21,6 @@ class TripCatalogActivity : ComponentActivity() {
 
                 BaseScaffold(
                     navController = navController,
-                    title = "Trip Catalog",
                     isLoading = isLoading
                 ) { }
             }

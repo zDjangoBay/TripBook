@@ -12,12 +12,21 @@ import com.android.tripbook.ui.theme.Purple40
 @Composable
 fun BaseScaffold(
     navController: NavController,
-    title: String,
     isLoading: Boolean = false,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: ""
+
+    val title = when {
+        currentRoute.startsWith("home") -> "Home"
+        currentRoute.startsWith("schedule") -> "Schedule Trips"
+        currentRoute.startsWith("catalog") -> "Trip Catalog"
+        currentRoute.startsWith("profile") -> "Profile"
+        currentRoute.startsWith("detail") -> "Trip Details"
+        currentRoute.startsWith("reviews") -> "User Reviews"
+        else -> "TripBook"
+    }
 
     Scaffold(
         topBar = { TopBar(title = title) },
@@ -25,15 +34,13 @@ fun BaseScaffold(
             BottomNavigationBar(
                 current = currentRoute,
                 onNavigate = {
-                    // Prevent multiple copies of the same destination
                     if (navController.currentDestination?.route != it) {
                         navController.navigate(it) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
                     }
-                }
-                ,
+                },
                 selectedColor = Purple40
             )
         },

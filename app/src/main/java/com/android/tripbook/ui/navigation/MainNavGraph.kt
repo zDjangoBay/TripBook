@@ -38,13 +38,13 @@ fun MainNavGraph(
                 )
             }
         }
-        composable("book") {
+        composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Book Trips Screen",
+                    text = "Schedule Trips Screen",
                     color = Color.Gray,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center

@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
 
                 BaseScaffold(
                     navController = navController,
-                    title = "Home",
                     isLoading = isLoading
                 ) { padding ->
                     MainNavGraph(

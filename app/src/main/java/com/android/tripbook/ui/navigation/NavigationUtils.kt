@@ -9,7 +9,7 @@ fun navigateTo(context: Context, destination: String) {
         "home" -> Intent(context, MainActivity::class.java)
         "catalog" -> Intent(context, TripCatalogActivity::class.java)
         // Add others when created
-        "book" -> Intent(context, BookTripsActivity::class.java)
+        "schedule" -> Intent(context, BookTripsActivity::class.java)
         "profile" -> Intent(context, ProfileActivity::class.java)
         else -> null
     }
