@@ -1,10 +1,10 @@
 // model/SampleReviews.kt
-package com.android.tripbook.mockData
+package com.android.tripbook.data
 
 import com.android.tripbook.model.Review
 
 object SampleReviews {
-    val reviews = listOf(
+    fun get(): List<Review>  = listOf(
         Review(
             tripId = 2,
             username = "Jane Doe",

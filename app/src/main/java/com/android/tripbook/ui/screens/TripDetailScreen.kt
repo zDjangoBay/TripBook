@@ -13,18 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.data.MockReviewRepository
-import com.android.tripbook.data.MockTripRepository
+import com.android.tripbook.viewmodel.MockReviewViewModel
+import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageCarousel
 import com.android.tripbook.ui.components.ReviewCard
-import com.android.tripbook.mockData.SampleReviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> Unit) {
-    val trip = remember { MockTripRepository.getTripById(tripId) }
-    val reviewRepository = remember { MockReviewRepository() }
-    val reviews = remember { reviewRepository.getReviewsForTrip(tripId) }
+    val tripViewModel = remember {MockTripViewModel()}
+    val trip = remember { tripViewModel.getTripById(tripId) }
+    val reviewViewModel = remember { MockReviewViewModel() }
+    val allReviews by reviewViewModel.reviews.collectAsState()
+    val reviewsForTrip = allReviews.filter { it.tripId == tripId }
 
     if (trip == null) {
         Scaffold(
@@ -104,11 +105,11 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                if (reviews.isEmpty()) {
+                if (reviewsForTrip.isEmpty()) {
                     Text("No reviews yet for this trip.", color = Color.Gray)
                 } else {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(reviews.take(5)) { review -> // limit to preview size
+                        items(reviewsForTrip.take(5)) { review -> // limit to preview size
                             ReviewCard(
                                 review = review,
                                 modifier = Modifier

@@ -1,4 +1,4 @@
-package com.android.tripbook.mockData
+package com.android.tripbook.data
 
 import com.android.tripbook.model.Trip
 

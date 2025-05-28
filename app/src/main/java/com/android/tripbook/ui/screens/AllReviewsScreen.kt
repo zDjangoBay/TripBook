@@ -15,13 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.data.MockReviewRepository
+import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.ui.components.ReviewCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
-    val reviews = remember { MockReviewRepository().getReviewsForTrip(tripId) }
+    val reviews = remember { MockReviewViewModel().getReviewsForTrip(tripId) }
 
     Scaffold(
         topBar = {
