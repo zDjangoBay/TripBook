@@ -79,7 +79,7 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
 - Trip Catalog Screen  
   ![Trip Catalog Screenshot](images/trip-catalog.png)
 
-- Trip Detail Screen  ~~~~
+- Trip Detail Screen
   ![Trip Detail Screenshot](images/trip-details.png)
 
 - Horizontal Review Section  
