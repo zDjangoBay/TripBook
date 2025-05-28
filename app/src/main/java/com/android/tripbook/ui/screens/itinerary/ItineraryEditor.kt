@@ -12,6 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.data.ActivityRepository
+import com.android.tripbook.data.TripActivity
+import com.android.tripbook.data.TripRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,13 +22,119 @@ fun ItineraryEditor(
     tripId: String?,
     onNavigateBack: () -> Unit
 ) {
+    // State variables
     var showMapView by remember { mutableStateOf(false) }
     var selectedDay by remember { mutableStateOf(0) }
+    var showActivityDialog by remember { mutableStateOf(false) }
+    var selectedActivity by remember { mutableStateOf<TripActivity?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    
+    // Get trip information
+    val trip = tripId?.let { TripRepository.getTripById(it) }
+    
+    // Calculate number of days in trip
+    val numberOfDays = remember(trip) {
+        if (trip != null) {
+            // In a real app, calculate days between start and end date
+            // For now, use a placeholder of 5 days
+            5
+        } else {
+            0
+        }
+    }
+    
+    // Generate day labels
+    val dayLabels = remember(numberOfDays) {
+        List(numberOfDays) { index -> "Day ${index + 1}" }
+    }
+    
+    // Get activities for the selected day
+    val activities = remember(tripId, selectedDay) {
+        tripId?.let {
+            // Initialize with sample data if empty
+            if (ActivityRepository.activities.isEmpty() && tripId.isNotEmpty()) {
+                ActivityRepository.addSampleActivities(tripId)
+            }
+            ActivityRepository.getActivitiesForTripAndDay(tripId, selectedDay)
+        } ?: emptyList()
+    }
+    
+    // Activity dialog
+    if (showActivityDialog) {
+        ActivityDialog(
+            activity = selectedActivity,
+            day = selectedDay,
+            tripId = tripId ?: "",
+            onDismiss = {
+                showActivityDialog = false
+                selectedActivity = null
+            },
+            onSave = { time, title, location ->
+                if (selectedActivity != null) {
+                    // Update existing activity
+                    val updatedActivity = selectedActivity!!.copy(
+                        time = time,
+                        title = title,
+                        location = location
+                    )
+                    ActivityRepository.updateActivity(updatedActivity)
+                } else {
+                    // Add new activity
+                    tripId?.let {
+                        ActivityRepository.addActivity(
+                            tripId = it,
+                            day = selectedDay,
+                            time = time,
+                            title = title,
+                            location = location
+                        )
+                    }
+                }
+                showActivityDialog = false
+                selectedActivity = null
+            }
+        )
+    }
+    
+    // Delete confirmation dialog
+    if (showDeleteConfirmation && selectedActivity != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteConfirmation = false
+                selectedActivity = null
+            },
+            title = { Text("Delete Activity") },
+            text = { Text("Are you sure you want to delete this activity?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        selectedActivity?.let {
+                            ActivityRepository.deleteActivity(it.id)
+                        }
+                        showDeleteConfirmation = false
+                        selectedActivity = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmation = false
+                        selectedActivity = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
     
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Itinerary") },
+                title = { Text("Itinerary: ${trip?.destination ?: ""}") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Navigate back")
@@ -42,7 +151,12 @@ fun ItineraryEditor(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* Add activity */ }) {
+            FloatingActionButton(
+                onClick = {
+                    selectedActivity = null
+                    showActivityDialog = true
+                }
+            ) {
                 Icon(Icons.Default.Add, contentDescription = "Add activity")
             }
         }
@@ -53,7 +167,7 @@ fun ItineraryEditor(
                 .padding(padding)
         ) {
             DaySelector(
-                days = sampleDays,
+                days = dayLabels,
                 selectedDay = selectedDay,
                 onDaySelected = { selectedDay = it }
             )
@@ -62,8 +176,15 @@ fun ItineraryEditor(
                 MapViewPlaceholder()
             } else {
                 ActivityTimeline(
-                    activities = sampleActivities,
-                    onActivityClick = { /* Handle activity click */ }
+                    activities = activities,
+                    onActivityClick = { activity ->
+                        selectedActivity = activity
+                        showActivityDialog = true
+                    },
+                    onDeleteActivity = { activity ->
+                        selectedActivity = activity
+                        showDeleteConfirmation = true
+                    }
                 )
             }
         }
@@ -93,19 +214,30 @@ fun DaySelector(
 
 @Composable
 fun ActivityTimeline(
-    activities: List<Activity>,
-    onActivityClick: (Activity) -> Unit
+    activities: List<TripActivity>,
+    onActivityClick: (TripActivity) -> Unit,
+    onDeleteActivity: (TripActivity) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(activities) { activity ->
-            ActivityCard(
-                activity = activity,
-                onClick = { onActivityClick(activity) }
-            )
+    if (activities.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("No activities for this day. Add one using the + button.")
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(activities) { activity ->
+                ActivityCard(
+                    activity = activity,
+                    onClick = { onActivityClick(activity) },
+                    onDelete = { onDeleteActivity(activity) }
+                )
+            }
         }
     }
 }
@@ -113,8 +245,9 @@ fun ActivityTimeline(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityCard(
-    activity: Activity,
-    onClick: () -> Unit
+    activity: TripActivity,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
         onClick = onClick,
@@ -127,7 +260,7 @@ fun ActivityCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = activity.time,
                     style = MaterialTheme.typography.titleMedium
@@ -143,8 +276,13 @@ fun ActivityCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            IconButton(onClick = { /* Handle drag */ }) {
-                Icon(Icons.Default.ArrowDropDown, contentDescription = "Reorder")
+            Row {
+                IconButton(onClick = onClick) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit activity")
+                }
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete activity")
+                }
             }
         }
     }
@@ -161,34 +299,3 @@ fun MapViewPlaceholder() {
         Text("Map View Coming Soon")
     }
 }
-
-data class Activity(
-    val id: String,
-    val time: String,
-    val title: String,
-    val location: String
-)
-
-// Sample data for preview
-val sampleDays = listOf("Day 1", "Day 2", "Day 3", "Day 4", "Day 5")
-
-val sampleActivities = listOf(
-    Activity(
-        id = "1",
-        time = "09:00 AM",
-        title = "Breakfast at Cafe Central",
-        location = "1st District"
-    ),
-    Activity(
-        id = "2",
-        time = "11:00 AM",
-        title = "Visit Schönbrunn Palace",
-        location = "Schönbrunn"
-    ),
-    Activity(
-        id = "3",
-        time = "02:00 PM",
-        title = "Lunch at Naschmarkt",
-        location = "6th District"
-    )
-)
