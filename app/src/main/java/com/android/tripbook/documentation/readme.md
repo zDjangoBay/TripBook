@@ -75,7 +75,6 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
 ---
 
 ## 📷 Screenshots (To Be Added)
-> _Note: Add actual screenshots after UI implementation is complete._
 
 - Trip Catalog Screen  
   ![Trip Catalog Screenshot](images/trip-catalog.png)
