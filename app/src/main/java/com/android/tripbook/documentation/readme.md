@@ -76,17 +76,30 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
 
 ## 📷 Screenshots (To Be Added)
 
-- Trip Catalog Screen  
-  ![Trip Catalog Screenshot](images/trip-catalog.png)
+## 📷 Screenshots (To Be Added)
 
-- Trip Detail Screen
-  ![Trip Detail Screenshot](images/trip-details.png)
-
-- Horizontal Review Section  
-  ![Review Carousel Screenshot](images/trip-review.png)
-
-- All Reviews Screen  
-  ![All Reviews Screenshot](images/trip-all-review.png)
+<table>
+  <tr>
+    <td align="center">
+      <strong>Trip Catalog Screen</strong><br>
+      <img src="images/trip-catalog.png" width="300px">
+    </td>
+    <td align="center">
+      <strong>Trip Detail Screen</strong><br>
+      <img src="images/trip-details.png" width="300px">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Horizontal Review Section</strong><br>
+      <img src="images/trip-review.png" width="300px">
+    </td>
+    <td align="center">
+      <strong>All Reviews Screen</strong><br>
+      <img src="images/trip-all-review.png" width="300px">
+    </td>
+  </tr>
+</table>
 
 
 ---
