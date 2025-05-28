@@ -49,7 +49,7 @@ fun ItineraryEditor(
     }
     
     // Get activities for the selected day
-    val activities = remember(tripId, selectedDay) {
+    val activities = remember(tripId, selectedDay, ActivityRepository.activities) {
         tripId?.let {
             // Initialize with sample data if empty
             if (ActivityRepository.activities.isEmpty() && tripId.isNotEmpty()) {
