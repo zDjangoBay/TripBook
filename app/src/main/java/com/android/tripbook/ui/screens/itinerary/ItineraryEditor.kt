@@ -86,14 +86,19 @@ fun ItineraryEditor(
     }
     
     // Get activities for the selected day
-    val activities = remember(tripId, selectedDay, ActivityRepository.activities) {
-        tripId?.let {
-            // Initialize with sample data if empty
-            if (ActivityRepository.activities.isEmpty() && tripId.isNotEmpty()) {
-                ActivityRepository.addSampleActivities(tripId)
-            }
-            ActivityRepository.getActivitiesForTripAndDay(tripId, selectedDay)
-        } ?: emptyList()
+    val activitiesState = ActivityRepository.activities
+    
+    // Use collectAsState to observe changes to the activities list
+    val activities by remember(tripId, selectedDay) {
+        derivedStateOf {
+            tripId?.let {
+                // Initialize with sample data if empty
+                if (ActivityRepository.activities.isEmpty() && tripId.isNotEmpty()) {
+                    ActivityRepository.addSampleActivities(tripId)
+                }
+                ActivityRepository.getActivitiesForTripAndDay(tripId, selectedDay)
+            } ?: emptyList()
+        }
     }
     
     // Activity dialog
