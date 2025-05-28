@@ -63,4 +63,11 @@ object TripRepository {
     fun clearSampleData() {
         _trips.removeAll { it.id == "1" || it.id == "2" }
     }
+    
+    /**
+     * Delete a trip by its ID
+     */
+    fun deleteTrip(id: String) {
+        _trips.removeAll { it.id == id }
+    }
 }

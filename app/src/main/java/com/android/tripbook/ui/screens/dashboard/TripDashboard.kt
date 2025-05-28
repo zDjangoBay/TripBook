@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -60,7 +61,8 @@ fun TripDashboard(
                 items(TripRepository.trips) { trip ->
                     TripCard(
                         trip = trip,
-                        onClick = { onOpenItinerary(trip.id) }
+                        onClick = { onOpenItinerary(trip.id) },
+                        onDelete = { TripRepository.deleteTrip(trip.id) }
                     )
                 }
             }
@@ -90,10 +92,12 @@ fun SearchBar(
 fun TripCard(
     trip: Trip,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDelete: () -> Unit = {}
 ) {
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    
     Card(
-        onClick = onClick,
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -101,10 +105,20 @@ fun TripCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = trip.destination,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = trip.destination,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = { showDeleteConfirmation = true }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete trip")
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "${trip.startDate} - ${trip.endDate}",
@@ -122,7 +136,37 @@ fun TripCard(
                 progress = trip.completionStatus,
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = onClick,
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("View Itinerary")
+            }
         }
+    }
+    
+    if (showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmation = false },
+            title = { Text("Delete Trip") },
+            text = { Text("Are you sure you want to delete this trip to ${trip.destination}?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDelete()
+                        showDeleteConfirmation = false
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmation = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
