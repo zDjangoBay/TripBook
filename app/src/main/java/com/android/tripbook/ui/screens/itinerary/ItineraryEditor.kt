@@ -15,6 +15,27 @@ import androidx.compose.ui.unit.dp
 import com.android.tripbook.data.ActivityRepository
 import com.android.tripbook.data.TripActivity
 import com.android.tripbook.data.TripRepository
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+
+/**
+ * Helper function to parse trip dates in different formats
+ */
+private fun parseTripDate(dateString: String): LocalDate? {
+    return try {
+        // Try ISO format (YYYY-MM-DD) first
+        LocalDate.parse(dateString)
+    } catch (e: Exception) {
+        try {
+            // Try to parse format like "May 1, 2024"
+            LocalDate.parse(dateString, DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.US))
+        } catch (e: Exception) {
+            null
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,13 +56,29 @@ fun ItineraryEditor(
     // Calculate number of days in trip
     val numberOfDays = remember(trip) {
         if (trip != null) {
-            // In a real app, calculate days between start and end date
-            // For now, use a placeholder of 5 days
-            5
+            // Calculate days between start and end date
+            try {
+                // Try to parse dates in different formats
+                val startDate = parseTripDate(trip.startDate)
+                val endDate = parseTripDate(trip.endDate)
+                
+                if (startDate != null && endDate != null) {
+                    val daysBetween = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1 // +1 to include the start day
+                    maxOf(1, daysBetween) // Ensure at least 1 day
+                } else {
+                    // Fallback if parsing fails
+                    1
+                }
+            } catch (e: Exception) {
+                // Fallback to 1 day if date calculation fails
+                1
+            }
         } else {
             0
         }
     }
+    
+
     
     // Generate day labels
     val dayLabels = remember(numberOfDays) {
