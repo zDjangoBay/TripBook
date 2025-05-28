@@ -1,8 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
+    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
 }
 
 android {
@@ -44,7 +43,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-//        dataBinding= true
+        dataBinding= true
     }
 
     composeOptions {
@@ -64,7 +63,6 @@ dependencies {
     //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -77,7 +75,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -94,7 +91,7 @@ dependencies {
 
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
+        ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
         // ... other dependencies ...
 
 
