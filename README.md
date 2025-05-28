@@ -14,12 +14,13 @@ TripBook: A mobile social network for travelers exploring Africa &amp; beyond. S
 
 ## 📱 Screenshots
 
-| Home | Discover | Profile |
-|:----:|:--------:|:-------:|
-| ![Home](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png) | ![Discover](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png) | ![Profile](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png) |
-| **Your Account** | **Your Style** | **Upload Picture** |
-| ![Account](app/src/main/java/com/android/tripbook/screenshots/create_account.png) | ![Style](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png) | ![Picture](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
-
+|                                           Home                                            |                                      Discover                                      |                                      Profile                                      |
+|:-----------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------:|
+|       ![Home](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png)        |  ![Discover](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png)  |  ![Profile](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png)  |
+|                                     **Your Account**                                      |                                   **Your Style**                                   |                                **Upload Picture**                                 |
+|     ![Account](app/src/main/java/com/android/tripbook/screenshots/create_account.png)     |   ![Style](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png)   | ![Picture](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
+|                                    **mediamanagement**                                    |                                    **actions**                                     |                                  **mediashare**                                   |
+|        ![mediamanagement](app/src/main/java/com/android/tripbook/screenshots/mediamanagement.png)        |        ![actions](app/src/main/java/com/android/tripbook/screenshots/actions.png)         | ![media share](app/src/main/java/com/android/tripbook/screenshots/mediashare.png) |
 ---
 
 ## 🛠️ Stack technique
