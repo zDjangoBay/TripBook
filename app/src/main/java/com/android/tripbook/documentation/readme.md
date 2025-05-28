@@ -74,9 +74,7 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
 
 ---
 
-## 📷 Screenshots (To Be Added)
-
-## 📷 Screenshots (To Be Added)
+## 📷 Screenshots
 
 <table>
   <tr>
