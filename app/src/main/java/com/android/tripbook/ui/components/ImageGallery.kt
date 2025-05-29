@@ -143,7 +143,7 @@ fun ImageGallery(
 }
 
 /**
- * Fullscreen gallery dialog with swipeable images
+ * Fullscreen gallery dialog with swipeable images and zoom
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -168,20 +168,34 @@ private fun FullscreenGalleryDialog(
         ) {
             val pagerState = rememberPagerState(initialPage = initialPage) { images.size }
             
-            // Image pager
+            // Simple image pager for swiping
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
             ) { page ->
-                // Simple AsyncImage without zoom for now to ensure swiping works
-                AsyncImage(
-                    model = images[page],
-                    contentDescription = "Gallery image ${page + 1}",
-                    contentScale = ContentScale.Fit,
+                // Simple image display with optional zoom on double tap
+                var scale by remember { mutableStateOf(1f) }
+                
+                // Double tap to toggle zoom
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable(onClick = onDismiss)
-                )
+                        .clickable {
+                            scale = if (scale > 1f) 1f else 2f
+                        }
+                ) {
+                    AsyncImage(
+                        model = images[page],
+                        contentDescription = "Gallery image ${page + 1}",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale
+                            )
+                    )
+                }
             }
             
             // Close button
@@ -222,6 +236,8 @@ private fun FullscreenGalleryDialog(
         }
     }
 }
+
+
 
 
 
