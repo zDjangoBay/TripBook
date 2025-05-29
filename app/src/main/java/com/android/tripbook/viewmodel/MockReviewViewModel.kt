@@ -14,8 +14,4 @@ class MockReviewViewModel : ViewModel() {
     fun getReviewsForTrip(tripId: Int): List<Review> {
         return _reviews.value.filter { it.tripId == tripId }
     }
-
-//    fun addReview(review: Review): Review{
-//        // todo implement this
-//    }
 }
