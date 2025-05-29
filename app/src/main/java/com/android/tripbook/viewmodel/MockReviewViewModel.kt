@@ -1,8 +1,8 @@
-package com.android.tripbook.viewmodel
+package com.android.tripbook.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleReviews
-import com.android.tripbook.model.Review
+import com.android.tripbook.Model.Review
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

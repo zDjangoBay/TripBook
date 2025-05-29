@@ -3,7 +3,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.tripbook.model.Trip
+import com.android.tripbook.Model.Trip
 import com.android.tripbook.databinding.ViewholderTripBinding
 import com.bumptech.glide.Glide
 

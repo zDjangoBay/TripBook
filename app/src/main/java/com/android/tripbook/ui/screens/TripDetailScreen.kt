@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.viewmodel.MockReviewViewModel
-import com.android.tripbook.viewmodel.MockTripViewModel
+import com.android.tripbook.viewModel.MockReviewViewModel
+import com.android.tripbook.viewModel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageCarousel
 import com.android.tripbook.ui.components.ReviewCard
 

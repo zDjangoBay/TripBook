@@ -1,4 +1,4 @@
-package com.android.tripbook.model
+package com.android.tripbook.Model
 
 data class Review(
     val tripId: Int,

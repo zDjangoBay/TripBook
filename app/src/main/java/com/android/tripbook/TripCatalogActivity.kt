@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.ui.components.BaseScaffold
-import com.android.tripbook.ui.navigation.TripNavGraph
+//import com.android.tripbook.ui.navigation.TripNavGraph
 import com.android.tripbook.ui.navigation.navigateTo
 import com.android.tripbook.ui.theme.TripBookTheme
 
@@ -34,17 +34,17 @@ class TripCatalogActivity : ComponentActivity() {
                     }
                 }
 
-                BaseScaffold(
-                    currentRoute = "trip_catalog",
-                    title = "Trip Catalog",
-                    onNavigate = { destination ->
-                        pendingNavigation = destination
-                    },
-                    isLoading = isLoading
-                ) { paddingValues ->
-                    // 👇 Insert your trip navigation graph here
-                    TripNavGraph(modifier = Modifier.padding(paddingValues))
-                }
+//                BaseScaffold(
+//                    currentRoute = "trip_catalog",
+//                    title = "Trip Catalog",
+//                    onNavigate = { destination ->
+//                        pendingNavigation = destination
+//                    },
+//                    isLoading = isLoading
+//                ) { paddingValues ->
+//                    // 👇 Insert your trip navigation graph here
+//                    TripNavGraph(modifier = Modifier.padding(paddingValues))
+//                }
             }
         }
     }
