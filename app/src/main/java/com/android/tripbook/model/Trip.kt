@@ -1,4 +1,6 @@
 package com.android.tripbook.model
+import java.io.Serializable
+
 
 
 /**
@@ -8,9 +10,13 @@ package com.android.tripbook.model
  * @param description A brief summary of the trip
  * @param imageUrl Optional image to show for the trip
  */
+
 data class Trip(
     val id: Int,
     val title: String,
+    val caption: String,
     val description: String,
-    val imageUrl: String,
-)
+    val imageUrl: List<String>
+) : Serializable
+
+

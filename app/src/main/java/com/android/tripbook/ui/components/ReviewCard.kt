@@ -1,6 +1,5 @@
 package com.android.tripbook.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -14,7 +13,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
     Card(
