@@ -13,21 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook" >
-        <activity
-            android:name=".FeedActivity"
-            android:exported="false"
-            android:label="@string/title_activity_feed"
-            android:theme="@style/Theme.TripBook" />
+
         <activity
             android:name=".PostActivity"
             android:exported="false"
             android:label="@string/title_activity_post"
             android:theme="@style/Theme.TripBook" />
-        <activity
-            android:name=".Profilescreen"
-            android:exported="false"
-            android:label="@string/title_activity_profilescreen"
-            android:theme="@style/Theme.TripBook" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
