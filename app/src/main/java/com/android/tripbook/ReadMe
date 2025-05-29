@@ -1,0 +1,20 @@
+# TripBook — Custom UI Components
+
+This work focuses on building **three Jetpack Compose UI components** for the Trip Scheduling feature in the TripBook Android app.
+
+## 👩🏽‍💻 Task Done by: Fonguh Joy Akwi
+
+### ✅ Components Implemented:
+1. `DateTimePicker.kt`
+   - Opens a date and time picker
+   - Returns a `LocalDateTime` on selection
+
+2. `LocationSelector.kt`
+   - Fetches device’s current GPS location using FusedLocationProviderClient
+   - Displays selected latitude and longitude
+
+3. `ItineraryBuilder.kt`
+   - Allows users to add multiple trip stops
+   - Displays them as a list below the input field
+
+### 📦 Location:
