@@ -76,4 +76,19 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Extended Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
+    // Calendar
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
 }
