@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.viewmodel.MockTripViewModel
-import com.android.tripbook.ui.components.ImageCarousel
+import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +79,7 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
                         .fillMaxWidth()
                         .height(280.dp)
                 ) {
-                    ImageCarousel(images = trip.imageUrl, modifier = Modifier.fillMaxSize())
+                    ImageGallery(images = trip.imageUrl, modifier = Modifier.fillMaxSize())
                 }
             }
 
