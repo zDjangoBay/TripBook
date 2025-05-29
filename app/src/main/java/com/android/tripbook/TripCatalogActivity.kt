@@ -1,36 +1,28 @@
 package com.android.tripbook
 
-import TripCatalogScreen
-import TripCatalogViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.navigation.compose.rememberNavController
+import com.android.tripbook.ui.components.BaseScaffold
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class TripCatalogActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                val viewModel = remember { TripCatalogViewModel() }
+                val navController = rememberNavController()
+                var isLoading by remember { mutableStateOf(false) }
 
-                Scaffold(
-                    topBar = {
-                        TopAppBar(title = { Text("Trip Catalog") })
-                    }
-                ) { innerPadding ->
-                    TripCatalogScreen(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+
+                BaseScaffold(
+                    navController = navController,
+                    isLoading = isLoading
+                ) { }
             }
         }
     }
