@@ -93,14 +93,23 @@ dependencies {
 
 
 
+
+
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
     implementation(libs.coil.compose)
-    // Navigation
-//    implementation(libs.androidx.navigation.compose)
-//    // ViewModel
-//    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
 
+    // Google Maps Compose
+    implementation(libs.maps.compose.v430)
 
+    // Accompanist for sticky headers (optional if using custom pinned behavior)
+    implementation(libs.accompanist.placeholder)
+
+    // Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
 }
