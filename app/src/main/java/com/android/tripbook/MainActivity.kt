@@ -4,14 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
+import com.android.tripbook.ui.components.BaseScaffold
+import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.navigation.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,30 +20,32 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                val navController = rememberNavController()
+                var isLoading by remember { mutableStateOf(false) }
+                var showWelcome by remember { mutableStateOf(true) }
+
+                if (showWelcome) {
+                    // Show welcome screen first
+                    WelcomeScreen(
+                        onGetStarted = {
+                            showWelcome = false
+                        }
                     )
+                } else {
+                    BaseScaffold(
+                        navController = navController,
+                        isLoading = isLoading
+                    ) { padding ->
+                        MainNavGraph(
+                            navController = navController,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding)
+                                .padding(2.dp)
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview
-@Composable
-fun GreetingPreview() {
-    TripBookTheme {
-        Greeting("Android")
     }
 }
