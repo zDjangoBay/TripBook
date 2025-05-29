@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="700" viewBox="0 0 900 700">
+  <!-- Styles -->
+  <style>
+    .actor {
+      fill: #ffeb3b;
+      stroke: #f57f17;
+      stroke-width: 2;
+    }
+    .system-box {
+      fill: #e1f5fe;
+      stroke: #0288d1;
+      stroke-width: 2;
+    }
+    .lifeline {
+      stroke: #9e9e9e;
+      stroke-width: 1.5;
+      stroke-dasharray: 5,3;
+    }
+    .actor-line {
+      stroke: #f57f17;
+      stroke-width: 1.5;
+      stroke-dasharray: 5,3;
+    }
+    .message {
+      stroke: #424242;
+      stroke-width: 1.5;
+      fill: none;
+      marker-end: url(#arrow);
+    }
+    .return-message {
+      stroke: #424242;
+      stroke-width: 1.5;
+      stroke-dasharray: 2,2;
+      fill: none;
+      marker-end: url(#arrow);
+    }
+    .activation {
+      fill: #bbdefb;
+      stroke: #0288d1;
+      stroke-width: 1;
+    }
+    .actor-activation {
+      fill: #fff9c4;
+      stroke: #fbc02d;
+      stroke-width: 1;
+    }
+    .label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-anchor: middle;
+    }
+    .actor-label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .system-label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .message-label {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-anchor: middle;
+    }
+    .note {
+      fill: #fff8e1;
+      stroke: #ffca28;
+      stroke-width: 1;
+    }
+    .note-text {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-anchor: middle;
+    }
+  </style>
+  
+  <!-- Markers -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+        markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#424242"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="450" y="30" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle">Post Creation and Viewing Sequence</text>
+  
+  <!-- Actors and Systems -->
+  <!-- User Actor -->
+  <circle cx="100" cy="80" r="20" class="actor"/>
+  <line x1="100" y1="100" x2="100" y2="140" class="actor"/>
+  <line x1="80" y1="120" x2="120" y2="120" class="actor"/>
+  <line x1="100" y1="140" x2="80" y2="170" class="actor"/>
+  <line x1="100" y1="140" x2="120" y2="170" class="actor"/>
+  <text x="100" y="200" class="actor-label">User</text>
+  
+  <!-- UI System -->
+  <rect x="200" y="60" width="120" height="60" rx="5" ry="5" class="system-box"/>
+  <text x="260" y="95" class="system-label">UI Components</text>
+  
+  <!-- ViewModel System -->
+  <rect x="350" y="60" width="120" height="60" rx="5" ry="5" class="system-box"/>
+  <text x="410" y="95" class="system-label">ViewModel</text>
+  
+  <!-- Repository System -->
+  <rect x="500" y="60" width="120" height="60" rx="5" ry="5" class="system-box"/>
+  <text x="560" y="95" class="system-label">Repository</text>
+  
+  <!-- API Service System -->
+  <rect x="650" y="60" width="120" height="60" rx="5" ry="5" class="system-box"/>
+  <text x="710" y="95" class="system-label">API Service</text>
+  
+  <!-- Database System -->
+  <rect x="800" y="60" width="120" height="60" rx="5" ry="5" class="system-box"/>
+  <text x="860" y="95" class="system-label">Database</text>
+  
+  <!-- Lifelines -->
+  <line x1="100" y1="220" x2="100" y2="680" class="actor-line"/>
+  <line x1="260" y1="120" x2="260" y2="680" class="lifeline"/>
+  <line x1="410" y1="120" x2="410" y2="680" class="lifeline"/>
+  <line x1="560" y1="120" x2="560" y2="680" class="lifeline"/>
+  <line x1="710" y1="120" x2="710" y2="680" class="lifeline"/>
+  <line x1="860" y1="120" x2="860" y2="680" class="lifeline"/>
+  
+  <!-- Sequence: User Creates a Post -->
+  <!-- User activates UI -->
+  <rect x="90" y="240" width="20" height="420" class="actor-activation"/>
+  <rect x="250" y="240" width="20" height="200" class="activation"/>
+  
+  <!-- User navigates to create post -->
+  <path d="M 110 240 L 250 240" class="message"/>
+  <text x="180" y="230" class="message-label">1. Navigate to Create Post</text>
+  
+  <!-- UI activates ViewModel -->
+  <rect x="400" y="280" width="20" height="160" class="activation"/>
+  <path d="M 270 280 L 400 280" class="message"/>
+  <text x="335" y="270" class="message-label">2. Request Create Post Form</text>
+  
+  <!-- ViewModel returns form data -->
+  <path d="M 400 320 L 270 320" class="return-message"/>
+  <text x="335" y="310" class="message-label">3. Return Form Data</text>
+  
+  <!-- User inputs post data -->
+  <path d="M 110 360 L 250 360" class="message"/>
+  <text x="180" y="350" class="message-label">4. Submit Post Data</text>
+  
+  <!-- UI sends post data to ViewModel -->
+  <path d="M 270 380 L 400 380" class="message"/>
+  <text x="335" y="370" class="message-label">5. Create Post</text>
+  
+  <!-- ViewModel activates Repository -->
+  <rect x="550" y="400" width="20" height="120" class="activation"/>
+  <path d="M 420 400 L 550 400" class="message"/>
+  <text x="485" y="390" class="message-label">6. Save Post</text>
+  
+  <!-- Repository activates API Service -->
+  <rect x="700" y="420" width="20" height="80" class="activation"/>
+  <path d="M 570 420 L 700 420" class="message"/>
+  <text x="635" y="410" class="message-label">7. API Call: Create Post</text>
+  
+  <!-- API Service activates Database -->
+  <rect x="850" y="440" width="20" height="40" class="activation"/>
+  <path d="M 720 440 L 850 440" class="message"/>
+  <text x="785" y="430" class="message-label">8. Store Post Data</text>
+  
+  <!-- Database returns success -->
+  <path d="M 850 460 L 720 460" class="return-message"/>
+  <text x="785" y="475" class="message-label">9. Confirm Storage</text>
+  
+  <!-- API Service returns response -->
+  <path d="M 700 480 L 570 480" class="return-message"/>
+  <text x="635" y="495" class="message-label">10. API Response</text>
+  
+  <!-- Repository returns result -->
+  <path d="M 550 500 L 420 500" class="return-message"/>
+  <text x="485" y="515" class="message-label">11. Post Saved Result</text>
+  
+  <!-- ViewModel returns to UI -->
+  <path d="M 400 520 L 270 520" class="return-message"/>
+  <text x="335" y="535" class="message-label">12. Post Creation Result</text>
+  
+  <!-- Sequence: User Views Post -->
+  <rect x="250" y="560" width="20" height="100" class="activation"/>
+  <path d="M 110 560 L 250 560" class="message"/>
+  <text x="180" y="550" class="message-label">13. View Posts</text>
+  
+  <rect x="400" y="580" width="20" height="80" class="activation"/>
+  <path d="M 270 580 L 400 580" class="message"/>
+  <text x="335" y="570" class="message-label">14. Request Posts</text>
+  
+  <rect x="550" y="600" width="20" height="40" class="activation"/>
+  <path d="M 420 600 L 550 600" class="message"/>
+  <text x="485" y="590" class="message-label">15. Get Posts</text>
+  
+  <path d="M 550 620 L 420 620" class="return-message"/>
+  <text x="485" y="635" class="message-label">16. Return Posts</text>
+  
+  <path d="M 400 640 L 270 640" class="return-message"/>
+  <text x="335" y="655" class="message-label">17. Display Posts</text>
+  
+  <!-- Note -->
+  <rect x="150" y="150" width="220" height="40" class="note"/>
+  <text x="260" y="175" class="note-text">User flow for creating and viewing posts</text>
+</svg>

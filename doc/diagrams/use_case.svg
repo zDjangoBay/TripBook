@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="700" viewBox="0 0 800 700">
+  <!-- Styles -->
+  <style>
+    .actor {
+      fill: #ffeb3b;
+      stroke: #f57f17;
+      stroke-width: 2;
+    }
+    .use-case {
+      fill: #e1f5fe;
+      stroke: #0288d1;
+      stroke-width: 2;
+      rx: 20;
+      ry: 15;
+    }
+    .system {
+      fill: none;
+      stroke: #9e9e9e;
+      stroke-width: 2;
+      stroke-dasharray: 10,5;
+    }
+    .connection {
+      stroke: #424242;
+      stroke-width: 1.5;
+      fill: none;
+    }
+    .label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-anchor: middle;
+    }
+    .actor-label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .system-label {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+    .includes {
+      stroke: #424242;
+      stroke-width: 1.5;
+      fill: none;
+      stroke-dasharray: 5,3;
+      marker-end: url(#arrow);
+    }
+    .extends {
+      stroke: #424242;
+      stroke-width: 1.5;
+      fill: none;
+      stroke-dasharray: 5,3;
+      marker-end: url(#arrow);
+    }
+    .relationship-text {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-style: italic;
+    }
+  </style>
+  
+  <!-- Markers for arrows -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+        markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#424242"/>
+    </marker>
+  </defs>
+  
+  <!-- System boundary -->
+  <rect x="150" y="50" width="500" height="600" class="system"/>
+  <text x="400" y="80" class="system-label">TripBook System</text>
+  
+  <!-- Actors -->
+  <!-- Regular Traveler -->
+  <circle cx="80" cy="200" r="20" class="actor"/>
+  <line x1="80" y1="220" x2="80" y2="260" class="actor"/>
+  <line x1="60" y1="240" x2="100" y2="240" class="actor"/>
+  <line x1="80" y1="260" x2="60" y2="290" class="actor"/>
+  <line x1="80" y1="260" x2="100" y2="290" class="actor"/>
+  <text x="80" y="320" class="actor-label">Regular Traveler</text>
+  
+  <!-- Travel Blogger -->
+  <circle cx="80" cy="450" r="20" class="actor"/>
+  <line x1="80" y1="470" x2="80" y2="510" class="actor"/>
+  <line x1="60" y1="490" x2="100" y2="490" class="actor"/>
+  <line x1="80" y1="510" x2="60" y2="540" class="actor"/>
+  <line x1="80" y1="510" x2="100" y2="540" class="actor"/>
+  <text x="80" y="570" class="actor-label">Travel Blogger</text>
+  
+  <!-- Admin -->
+  <circle cx="720" cy="200" r="20" class="actor"/>
+  <line x1="720" y1="220" x2="720" y2="260" class="actor"/>
+  <line x1="700" y1="240" x2="740" y2="240" class="actor"/>
+  <line x1="720" y1="260" x2="700" y2="290" class="actor"/>
+  <line x1="720" y1="260" x2="740" y2="290" class="actor"/>
+  <text x="720" y="320" class="actor-label">Administrator</text>
+  
+  <!-- Travel Agency Rep -->
+  <circle cx="720" cy="450" r="20" class="actor"/>
+  <line x1="720" y1="470" x2="720" y2="510" class="actor"/>
+  <line x1="700" y1="490" x2="740" y2="490" class="actor"/>
+  <line x1="720" y1="510" x2="700" y2="540" class="actor"/>
+  <line x1="720" y1="510" x2="740" y2="540" class="actor"/>
+  <text x="720" y="570" class="actor-label">Travel Agency Rep</text>
+  
+  <!-- Use Cases -->
+  <!-- Registration and Login -->
+  <ellipse cx="300" cy="150" rx="80" ry="30" class="use-case"/>
+  <text x="300" y="155" class="label">Register and Login</text>
+  
+  <!-- View Destination Catalog -->
+  <ellipse cx="300" cy="250" rx="80" ry="30" class="use-case"/>
+  <text x="300" y="255" class="label">View Destinations</text>
+  
+  <!-- Create Travel Post -->
+  <ellipse cx="300" cy="350" rx="80" ry="30" class="use-case"/>
+  <text x="300" y="355" class="label">Create Travel Post</text>
+  
+  <!-- Manage Own Posts -->
+  <ellipse cx="300" cy="450" rx="80" ry="30" class="use-case"/>
+  <text x="300" y="455" class="label">Manage Own Posts</text>
+  
+  <!-- View Post Details -->
+  <ellipse cx="300" cy="550" rx="80" ry="30" class="use-case"/>
+  <text x="300" y="555" class="label">View Post Details</text>
+  
+  <!-- Rate and Review Agency -->
+  <ellipse cx="500" cy="150" rx="80" ry="30" class="use-case"/>
+  <text x="500" y="155" class="label">Rate Travel Agency</text>
+  
+  <!-- Search and Filter Posts -->
+  <ellipse cx="500" cy="250" rx="80" ry="30" class="use-case"/>
+  <text x="500" y="255" class="label">Search and Filter</text>
+  
+  <!-- Comment on Posts -->
+  <ellipse cx="500" cy="350" rx="80" ry="30" class="use-case"/>
+  <text x="500" y="355" class="label">Comment on Posts</text>
+  
+  <!-- Manage Agency Profile -->
+  <ellipse cx="500" cy="450" rx="80" ry="30" class="use-case"/>
+  <text x="500" y="455" class="label">Manage Agency Profile</text>
+  
+  <!-- Moderate Content -->
+  <ellipse cx="500" cy="550" rx="80" ry="30" class="use-case"/>
+  <text x="500" y="555" class="label">Moderate Content</text>
+  
+  <!-- Actor to Use Case connections -->
+  <!-- Regular Traveler connections -->
+  <line x1="100" y1="200" x2="220" y2="150" class="connection"/>
+  <line x1="100" y1="200" x2="220" y2="250" class="connection"/>
+  <line x1="100" y1="200" x2="220" y2="350" class="connection"/>
+  <line x1="100" y1="200" x2="220" y2="450" class="connection"/>
+  <line x1="100" y1="200" x2="220" y2="550" class="connection"/>
+  <line x1="100" y1="200" x2="420" y2="150" class="connection"/>
+  <line x1="100" y1="200" x2="420" y2="250" class="connection"/>
+  <line x1="100" y1="200" x2="420" y2="350" class="connection"/>
+  
+  <!-- Travel Blogger connections -->
+  <line x1="100" y1="450" x2="220" y2="150" class="connection"/>
+  <line x1="100" y1="450" x2="220" y2="250" class="connection"/>
+  <line x1="100" y1="450" x2="220" y2="350" class="connection"/>
+  <line x1="100" y1="450" x2="220" y2="450" class="connection"/>
+  <line x1="100" y1="450" x2="220" y2="550" class="connection"/>
+  <line x1="100" y1="450" x2="420" y2="150" class="connection"/>
+  <line x1="100" y1="450" x2="420" y2="250" class="connection"/>
+  <line x1="100" y1="450" x2="420" y2="350" class="connection"/>
+  
+  <!-- Admin connections -->
+  <line x1="700" y1="200" x2="580" y2="250" class="connection"/>
+  <line x1="700" y1="200" x2="580" y2="550" class="connection"/>
+  <line x1="700" y1="200" x2="380" y2="150" class="connection"/> <!-- Admin can also login -->
+  
+  <!-- Travel Agency Rep connections -->
+  <line x1="700" y1="450" x2="580" y2="150" class="connection"/>
+  <line x1="700" y1="450" x2="580" y2="450" class="connection"/>
+  <line x1="700" y1="450" x2="380" y2="150" class="connection"/> <!-- Agency rep can also login -->
+  
+  <!-- Use case relationships -->
+  <!-- Create Post includes Upload Media -->
+  <path d="M 380 350 Q 400 380 430 400" class="includes"/>
+  <text x="440" y="410" class="relationship-text">«include»</text>
+  <ellipse cx="460" cy="400" rx="60" ry="25" class="use-case" opacity="0.7"/>
+  <text x="460" y="405" class="label">Upload Media</text>
+  
+  <!-- View Post Details extends Rate Post -->
+  <path d="M 370 550 Q 390 580 430 600" class="extends"/>
+  <text x="440" y="610" class="relationship-text">«extend»</text>
+  <ellipse cx="460" cy="600" rx="60" ry="25" class="use-case" opacity="0.7"/>
+  <text x="460" y="605" class="label">Rate Post</text>
+  
+  <!-- Authentication relationship with other use cases -->
+  <path d="M 300 180 Q 300 200 300 220" class="includes"/>
+  <text x="340" y="200" class="relationship-text">«include»</text>
+</svg>

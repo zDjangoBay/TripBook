@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="600" viewBox="0 0 800 600">
+  <!-- Styles -->
+  <style>
+    .entity {
+      fill: #e1f5fe;
+      stroke: #0288d1;
+      stroke-width: 2;
+    }
+    .relationship {
+      fill: #fff9c4;
+      stroke: #fbc02d;
+      stroke-width: 2;
+    }
+    .label {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      text-anchor: middle;
+    }
+    .entity-label {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .line {
+      stroke: #424242;
+      stroke-width: 1.5;
+    }
+    .cardinality {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .attribute {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      text-anchor: start;
+    }
+    .pk {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  </style>
+
+  <!-- User Entity -->
+  <rect x="50" y="100" width="160" height="180" rx="5" ry="5" class="entity" />
+  <text x="130" y="125" class="label entity-label">User</text>
+  <text x="60" y="150" class="attribute pk">user_id</text>
+  <text x="60" y="170" class="attribute">username</text>
+  <text x="60" y="190" class="attribute">email</text>
+  <text x="60" y="210" class="attribute">password_hash</text>
+  <text x="60" y="230" class="attribute">profile_pic_url</text>
+  <text x="60" y="250" class="attribute">created_at</text>
+  <text x="60" y="270" class="attribute">last_login</text>
+
+  <!-- Post Entity -->
+  <rect x="400" y="100" width="160" height="180" rx="5" ry="5" class="entity" />
+  <text x="480" y="125" class="label entity-label">Post</text>
+  <text x="410" y="150" class="attribute pk">post_id</text>
+  <text x="410" y="170" class="attribute">user_id (FK)</text>
+  <text x="410" y="190" class="attribute">title</text>
+  <text x="410" y="210" class="attribute">content</text>
+  <text x="410" y="230" class="attribute">location_data</text>
+  <text x="410" y="250" class="attribute">created_at</text>
+  <text x="410" y="270" class="attribute">updated_at</text>
+
+  <!-- Destination Entity -->
+  <rect x="400" y="380" width="160" height="160" rx="5" ry="5" class="entity" />
+  <text x="480" y="405" class="label entity-label">Destination</text>
+  <text x="410" y="430" class="attribute pk">destination_id</text>
+  <text x="410" y="450" class="attribute">name</text>
+  <text x="410" y="470" class="attribute">country</text>
+  <text x="410" y="490" class="attribute">coordinates</text>
+  <text x="410" y="510" class="attribute">description</text>
+  <text x="410" y="530" class="attribute">popularity_score</text>
+
+  <!-- TravelAgency Entity -->
+  <rect x="50" y="380" width="160" height="160" rx="5" ry="5" class="entity" />
+  <text x="130" y="405" class="label entity-label">TravelAgency</text>
+  <text x="60" y="430" class="attribute pk">agency_id</text>
+  <text x="60" y="450" class="attribute">name</text>
+  <text x="60" y="470" class="attribute">contact_info</text>
+  <text x="60" y="490" class="attribute">website</text>
+  <text x="60" y="510" class="attribute">location</text>
+  <text x="60" y="530" class="attribute">verified</text>
+
+  <!-- Media Entity -->
+  <rect x="650" y="100" width="140" height="140" rx="5" ry="5" class="entity" />
+  <text x="720" y="125" class="label entity-label">Media</text>
+  <text x="660" y="150" class="attribute pk">media_id</text>
+  <text x="660" y="170" class="attribute">post_id (FK)</text>
+  <text x="660" y="190" class="attribute">file_url</text>
+  <text x="660" y="210" class="attribute">type</text>
+  <text x="660" y="230" class="attribute">created_at</text>
+
+  <!-- Comment Entity -->
+  <rect x="650" y="300" width="140" height="140" rx="5" ry="5" class="entity" />
+  <text x="720" y="325" class="label entity-label">Comment</text>
+  <text x="660" y="350" class="attribute pk">comment_id</text>
+  <text x="660" y="370" class="attribute">post_id (FK)</text>
+  <text x="660" y="390" class="attribute">user_id (FK)</text>
+  <text x="660" y="410" class="attribute">content</text>
+  <text x="660" y="430" class="attribute">created_at</text>
+
+  <!-- Rating Entity -->
+  <rect x="220" y="480" width="140" height="120" rx="5" ry="5" class="entity" />
+  <text x="290" y="505" class="label entity-label">Rating</text>
+  <text x="230" y="530" class="attribute pk">rating_id</text>
+  <text x="230" y="550" class="attribute">user_id (FK)</text>
+  <text x="230" y="570" class="attribute">agency_id (FK)</text>
+  <text x="230" y="590" class="attribute">score</text>
+
+  <!-- Relationship: User creates Post -->
+  <line x1="210" y1="190" x2="400" y2="190" class="line" />
+  <text x="220" y1="180" class="cardinality">1</text>
+  <text x="390" y1="180" class="cardinality">N</text>
+  <text x="305" y="170" class="label">Creates</text>
+
+  <!-- Relationship: Post references Destination -->
+  <line x1="480" y1="280" x2="480" y2="380" class="line" />
+  <text x="470" y1="290" class="cardinality">N</text>
+  <text x="470" y1="370" class="cardinality">1</text>
+  <text x="510" y="330" class="label">References</text>
+
+  <!-- Relationship: Post has Media -->
+  <line x1="560" y1="170" x2="650" y2="170" class="line" />
+  <text x="570" y1="160" class="cardinality">1</text>
+  <text x="640" y1="160" class="cardinality">N</text>
+  <text x="605" y="150" class="label">Has</text>
+
+  <!-- Relationship: Post has Comments -->
+  <line x1="480" y1="280" x2="650" y2="350" class="line" />
+  <text x="490" y1="290" class="cardinality">1</text>
+  <text x="640" y1="340" class="cardinality">N</text>
+  <text x="560" y="300" class="label">Has</text>
+
+  <!-- Relationship: User gives Ratings -->
+  <line x1="130" y1="280" x2="240" y2="480" class="line" />
+  <text x="140" y1="290" class="cardinality">1</text>
+  <text x="230" y1="470" class="cardinality">N</text>
+  <text x="170" y="350" class="label">Gives</text>
+
+  <!-- Relationship: Rating for TravelAgency -->
+  <line x1="220" y1="530" x2="130" y2="530" class="line" />
+  <text x="210" y1="520" class="cardinality">N</text>
+  <text x="140" y1="520" class="cardinality">1</text>
+  <text x="175" y="550" class="label">For</text>
+
+  <!-- Relationship: User comments on Post -->
+  <line x1="210" y1="170" x2="650" y2="380" class="line" />
+  <text x="220" y1="165" class="cardinality">1</text>
+  <text x="640" y1="370" class="cardinality">N</text>
+  <text x="400" y="270" class="label">Comments On</text>
+</svg>
