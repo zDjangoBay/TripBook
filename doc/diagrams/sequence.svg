@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="700" viewBox="0 0 900 700">
+  <!-- Background -->
+  <rect width="900" height="700" fill="white"/>
+  
   <!-- Styles -->
   <style>
     .actor {
@@ -86,9 +89,12 @@
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#424242"/>
     </marker>
   </defs>
-  
-  <!-- Title -->
+    <!-- Title -->
   <text x="450" y="30" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle">Post Creation and Viewing Sequence</text>
+  
+  <!-- Implementation Notes -->
+  <rect x="50" y="40" width="250" height="35" rx="5" ry="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+  <text x="175" y="62" font-family="Arial" font-size="12" text-anchor="middle">Flow demonstrates MVVM architecture pattern</text>
   
   <!-- Actors and Systems -->
   <!-- User Actor -->

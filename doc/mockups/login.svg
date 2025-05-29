@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="360" height="800" viewBox="0 0 360 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="360" height="800" fill="#F9F7F4"/>
+  
+  <!-- Status Bar -->
+  <rect x="0" y="0" width="360" height="24" fill="#0C3F33" opacity="0.95"/>
+  
+  <!-- App Header -->
+  <rect x="0" y="24" width="360" height="56" fill="#175E4C"/>
+  <text x="180" y="62" font-family="Montserrat" font-size="22" font-weight="bold" fill="white" text-anchor="middle">TripBook</text>
+  
+  <!-- Back Button -->
+  <circle cx="30" cy="52" r="18" fill="transparent" stroke="white" stroke-width="2"/>
+  <path d="M36,52 L24,52 M24,52 L30,46 M24,52 L30,58" stroke="white" stroke-width="2" fill="transparent"/>
+  
+  <!-- Login Card -->
+  <rect x="20" y="100" width="320" height="580" rx="16" ry="16" fill="white" filter="url(#cardShadow)"/>
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Login Illustration (Simple abstract shape) -->
+  <circle cx="180" cy="170" r="60" fill="#E9B44C" opacity="0.2"/>
+  <path d="M145,170 Q180,120 215,170 T255,170" stroke="#175E4C" stroke-width="3" fill="none"/>
+  <circle cx="180" cy="170" r="25" fill="#3A8C78" opacity="0.6"/>
+  
+  <!-- Form Header -->
+  <text x="180" y="260" font-family="Montserrat" font-size="24" font-weight="bold" fill="#1C2826" text-anchor="middle">Welcome Back!</text>
+  <text x="180" y="290" font-family="Roboto" font-size="16" fill="#5B6B67" text-anchor="middle">Sign in to continue your journey</text>
+  
+  <!-- Email Field -->
+  <text x="50" y="340" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Email</text>
+  <rect x="50" y="350" width="260" height="56" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="385" font-family="Roboto" font-size="16" fill="#9AACA8">your.email@example.com</text>
+  
+  <!-- Password Field -->
+  <text x="50" y="440" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Password</text>
+  <rect x="50" y="450" width="260" height="56" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="485" font-family="Roboto" font-size="16" fill="#9AACA8">••••••••</text>
+  
+  <!-- Forgot Password Link -->
+  <text x="250" y="520" font-family="Montserrat" font-size="14" fill="#175E4C" text-anchor="middle" font-weight="500">Forgot Password?</text>
+  
+  <!-- Login Button -->
+  <rect x="50" y="550" width="260" height="56" rx="28" ry="28" fill="#175E4C" filter="url(#buttonShadow)"/>
+  <defs>
+    <filter id="buttonShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <text x="180" y="585" font-family="Montserrat" font-size="18" font-weight="bold" fill="white" text-anchor="middle">Login</text>
+  
+  <!-- Social Login Options -->
+  <text x="180" y="630" font-family="Montserrat" font-size="14" fill="#5B6B67" text-anchor="middle">Or login with</text>
+  
+  <!-- Social Login Buttons with improved styling -->
+  <circle cx="140" cy="670" r="28" fill="white" stroke="#E9B44C" stroke-width="2" filter="url(#socialShadow)"/>
+  <defs>
+    <filter id="socialShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <text x="140" y="678" font-family="Montserrat" font-size="18" font-weight="bold" fill="#1877F2" text-anchor="middle">f</text>
+  
+  <circle cx="220" cy="670" r="28" fill="white" stroke="#E9B44C" stroke-width="2" filter="url(#socialShadow)"/>
+  <text x="220" y="678" font-family="Montserrat" font-size="18" font-weight="bold" fill="#DB4437" text-anchor="middle">G</text>
+  
+  <!-- Register Link -->
+  <text x="120" y="730" font-family="Roboto" font-size="14" fill="#5B6B67" text-anchor="middle">Don't have an account?</text>
+  <text x="255" y="730" font-family="Montserrat" font-size="14" font-weight="bold" fill="#175E4C" text-anchor="middle">Register Now</text>
+</svg>

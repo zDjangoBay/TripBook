@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="390" height="1400" viewBox="0 0 390 1400" xmlns="http://www.w3.org/2000/svg">  <!-- Enhanced Background with subtle pattern and design elements -->
+  <defs>
+    <pattern id="subtlePattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="40" height="40" fill="#F9F7F4"/>
+      <path d="M0,20 L40,20 M20,0 L20,40" stroke="#3A8C78" stroke-width="0.3" opacity="0.05"/>
+      <circle cx="20" cy="20" r="1" fill="#E9B44C" opacity="0.1"/>
+    </pattern>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F7F4"/>
+      <stop offset="100%" stop-color="#F2F0ED"/>
+    </linearGradient>
+  </defs>  <rect x="0" y="0" width="390" height="1600" fill="url(#backgroundGradient)"/>
+  <rect x="0" y="0" width="390" height="1600" fill="url(#subtlePattern)"/>
+  
+  <!-- Status Bar with battery and network indicators -->
+  <rect x="0" y="0" width="390" height="32" fill="#0C3F33" opacity="0.98"/>
+  <!-- Time -->
+  <text x="195" y="20" font-family="Roboto" font-size="14" font-weight="medium" fill="white" text-anchor="middle">12:30</text>
+  <!-- Battery -->
+  <rect x="350" y="11" width="24" height="12" rx="2" ry="2" fill="none" stroke="white" stroke-width="1.5"/>
+  <rect x="374" y="15" width="2" height="4" fill="white"/>
+  <rect x="352" y="13" width="20" height="8" fill="white"/>
+  <!-- Network signal -->
+  <path d="M330,10 L330,22 M334,12 L334,22 M338,14 L338,22" stroke="white" stroke-width="1.5"/>
+  
+  <!-- App Header with enhanced styling and subtle gradient -->
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0C3F33"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="32" width="390" height="60" fill="url(#headerGradient)"/>
+  <text x="195" y="70" font-family="Montserrat" font-size="24" font-weight="bold" fill="white" text-anchor="middle">Explore</text>
+  
+  <!-- Back Button with improved touch target and hover effect -->
+  <circle cx="36" cy="62" r="24" fill="white" opacity="0.1"/>
+  <circle cx="36" cy="62" r="22" fill="transparent" stroke="white" stroke-width="2"/>
+  <path d="M42,62 L30,62 M30,62 L36,56 M30,62 L36,68" stroke="white" stroke-width="2" fill="transparent"/>
+  
+  <!-- Actions Menu Button with updated design -->
+  <circle cx="354" cy="62" r="22" fill="white" opacity="0.1"/>
+  <circle cx="354" cy="62" r="4" fill="white"/>
+  <circle cx="344" cy="62" r="4" fill="white"/>
+  <circle cx="364" cy="62" r="4" fill="white"/>
+    <!-- Scrollable Content Container with enhanced shadow -->
+  <rect x="0" y="92" width="390" height="908" fill="white" rx="20" ry="20" filter="url(#contentShadow)"/>
+  <defs>
+    <filter id="contentShadow" x="0%" y="0%" width="100%" height="100%">
+      <feDropShadow dx="0" dy="-2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Post Header with enhanced user info and improved styling -->
+  <rect x="0" y="92" width="390" height="92" fill="white" filter="url(#headerShadow)"/>
+  <defs>
+    <filter id="headerShadow" x="0%" y="0%" width="100%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+  
+  <defs>
+    <clipPath id="avatarClip">
+      <circle cx="46" cy="138" r="26"/>
+    </clipPath>
+    <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E9B44C"/>
+      <stop offset="100%" stop-color="#C79532"/>
+    </linearGradient>
+  </defs>
+  <circle cx="46" cy="138" r="28" fill="#E9B44C" opacity="0.15"/>
+  <circle cx="46" cy="138" r="26" fill="url(#avatarGradient)" stroke="white" stroke-width="2" clip-path="url(#avatarClip)"/>
+  <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1mYW1pbHk9Ik1vbnRzZXJyYXQiIGZvbnQtc2l6ZT0iMzAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSI+SlQ8L3RleHQ+PC9zdmc+" x="20" y="112" width="52" height="52" clip-path="url(#avatarClip)"/>
+  
+  <text x="92" y="132" font-family="Montserrat" font-size="18" font-weight="bold" fill="#1C2826">Jane Traveler</text>
+  <text x="92" y="154" font-family="Roboto" font-size="14" fill="#5B6B67">Professional Photographer • 2K followers</text>
+  
+  <!-- Online Status Indicator -->
+  <circle cx="82" cy="132" r="4" fill="#4CAF50" stroke="white" stroke-width="1"/>
+  
+  <!-- Follow Button with improved styling and hover effect -->
+  <rect x="304" y="124" width="70" height="32" rx="16" ry="16" fill="#175E4C" filter="url(#buttonGlow)"/>
+  <defs>
+    <filter id="buttonGlow" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#175E4C" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <text x="339" y="145" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Follow</text>    <!-- Enhanced Image Gallery with improved aspect ratio and visual elements -->
+  <rect x="16" y="184" width="358" height="280" rx="20" ry="20" fill="url(#imgZanzibar)" filter="url(#imgShadow)"/>
+  <defs>
+    <pattern id="imgZanzibar" patternUnits="userSpaceOnUse" width="358" height="280">
+      <linearGradient id="imgOverlay" x1="0%" y1="40%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0C3F33" stop-opacity="0.6"/>
+      </linearGradient>
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkWiIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgwKSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNBOEM3OCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwODBCMyIvPjwvbGluZWFyR3JhZGllbnQ+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI1MCIgZmlsbD0idXJsKCNiZ2dyYWRaKSIvPjx0ZXh0IHg9IjUwIiB5PSIyNSIgZm9udC1mYW1pbHk9Ik1vbnRzZXJyYXQiIGZvbnQtc2l6ZT0iOCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjRkZGRkZGIj5CZWFjaGZyb250IGluIFphbnppYmFyPC90ZXh0Pjwvc3ZnPg==" x="0" y="0" width="358" height="280" />
+      <rect x="0" y="0" width="358" height="280" fill="url(#imgOverlay)"/>
+    </pattern>
+    <filter id="imgShadow" x="-4%" y="-5%" width="108%" height="108%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="3"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Enhanced shimmer animation -->
+    <linearGradient id="shimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.3">
+        <animate attributeName="offset" values="0;1" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Enhanced Location Tag with improved sizing and alignment -->
+  <rect x="24" y="200" width="180" height="40" rx="20" ry="20" fill="white" opacity="0.95" filter="url(#tagShadow)"/>
+  <defs>
+    <filter id="tagShadow" x="-10%" y="-30%" width="120%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Location Pin Icon with improved animation and alignment -->
+  <circle cx="48" cy="220" r="8" fill="#175E4C" opacity="0.2">
+    <animate attributeName="r" values="8;10;8" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.2;0.1;0.2" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <path d="M48,213 Q43,213 43,218 Q43,223 48,223 Q53,223 53,218 Q53,213 48,213 M48,223 L48,228" stroke="#175E4C" stroke-width="2" fill="none"/>
+  <text x="124" y="224" font-family="Montserrat" font-size="15" font-weight="600" fill="#175E4C">Zanzibar, Tanzania</text>
+  
+  <!-- Image Gallery Counter with improved styling -->
+  <rect x="308" y="200" width="50" height="28" rx="14" ry="14" fill="black" opacity="0.7"/>
+  <text x="333" y="218" font-family="Roboto" font-size="13" font-weight="medium" fill="white" text-anchor="middle">2/4</text>
+  
+  <!-- Enhanced Image Navigation Controls with proper positioning -->
+  <g transform="translate(0, 12)">
+    <circle cx="40" cy="314" r="24" fill="white" opacity="0.92" filter="url(#navEnhancedShadow)"/>
+    <defs>
+      <filter id="navEnhancedShadow" x="-25%" y="-25%" width="150%" height="150%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25"/>
+      </filter>
+    </defs>
+    <path d="M46,314 L34,314 M34,314 L40,308 M34,314 L40,320" stroke="#175E4C" stroke-width="2.5" fill="transparent"/>
+    
+    <circle cx="350" cy="314" r="24" fill="white" opacity="0.92" filter="url(#navEnhancedShadow)"/>
+    <path d="M344,314 L356,314 M356,314 L350,308 M356,314 L350,320" stroke="#175E4C" stroke-width="2.5" fill="transparent"/>
+  </g>
+  
+  <!-- Image Pagination with improved positioning and spacing -->
+  <g transform="translate(0, 6)">
+    <rect x="165" y="440" width="60" height="8" rx="4" ry="4" fill="white" opacity="0.8" filter="url(#dotEnhancedShadow)"/>
+    <defs>
+      <filter id="dotEnhancedShadow" x="-30%" y="-100%" width="160%" height="300%">
+        <feDropShadow dx="0" dy="0" stdDeviation="1" flood-opacity="0.3"/>
+      </filter>
+    </defs>
+    <!-- Pagination dots with consistent spacing -->
+    <circle cx="177" cy="444" r="4" fill="#E9B44C">
+      <animate attributeName="opacity" values="1;0.7;1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="195" cy="444" r="4" fill="#3A8C78"/>
+    <circle cx="213" cy="444" r="4" fill="#9AACA8"/>
+  </g>
+  
+  <!-- Image Gallery Labels with improved positioning and typography -->
+  <text x="36" y="425" font-family="Montserrat" font-size="18" font-weight="bold" fill="white" filter="url(#textShadow)">Pristine Beach</text>
+  <text x="36" y="448" font-family="Roboto" font-size="15" fill="white" opacity="0.9" filter="url(#textShadow)">Crystal clear waters</text>
+  <defs>
+    <filter id="textShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+  
+  <!-- Interactive Element - Save to Collection button with improved positioning -->
+  <g transform="translate(340, 224)">
+    <circle cx="0" cy="0" r="24" fill="white" opacity="0.92" filter="url(#btnShadow)"/>
+    <defs>
+      <filter id="btnShadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3"/>
+      </filter>
+    </defs>
+    <path d="M-9,-8 L9,-8 L9,8 L0,3 L-9,8 Z" stroke="#D95829" stroke-width="2" fill="white"/>
+  </g>  <!-- Post Title & Date with improved typography, spacing and alignment -->
+  <rect x="16" y="464" width="358" height="6" rx="3" ry="3" fill="#E9B44C" opacity="0.3"/>
+  <text x="24" y="495" font-family="Montserrat" font-size="26" font-weight="bold" fill="#1C2826">Paradise Found in Zanzibar</text>
+  
+  <!-- Enhanced metadata row with improved alignment and sizing -->
+  <g transform="translate(0, 4)">
+    <!-- Verified badge with improved styling -->
+    <rect x="24" y="505" width="90" height="28" rx="14" ry="14" fill="#175E4C" opacity="0.1"/>
+    <text x="64" y="524" font-family="Montserrat" font-size="13" font-weight="bold" fill="#175E4C" text-anchor="middle">Verified</text>
+    <path d="M38,520 L42,524 L50,516" stroke="#175E4C" stroke-width="1.8" fill="none"/>
+    
+    <!-- Date with improved alignment -->
+    <text x="130" y="524" font-family="Roboto" font-size="15" fill="#5B6B67">May 29, 2025 • 3 min read</text>
+  </g>
+  
+  <!-- Post Interaction Buttons with improved layout and spacing -->
+  <rect x="0" y="545" width="390" height="80" fill="white" filter="url(#actionEnhancedShadow)"/>
+  <defs>
+    <filter id="actionEnhancedShadow" x="0%" y="-20%" width="100%" height="140%">
+      <feDropShadow dx="0" dy="-1" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <g transform="translate(0, 5)">
+    <!-- Enhanced Like Button with improved sizing and positioning -->
+    <g transform="translate(60, 580)">
+      <circle cx="0" cy="0" r="30" fill="#D95829" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.15;0.08" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M0,-12 Q-6,-18 -12,-12 Q-18,-6 -12,0 L0,12 L12,0 Q18,-6 12,-12 Q6,-18 0,-12" stroke="#D95829" stroke-width="2.5" fill="#FFE0D6"/>
+      <text x="40" y="5" font-family="Montserrat" font-size="18" font-weight="600" fill="#1C2826">143</text>
+    </g>
+    
+    <!-- Enhanced Comment Button with improved positioning -->
+    <g transform="translate(160, 580)">
+      <circle cx="0" cy="0" r="30" fill="#3A8C78" opacity="0.08"/>
+      <path d="M0,-12 Q-8,-12 -14,-6 Q-20,0 -14,6 L-14,12 L-8,6 Q0,12 8,6 Q14,0 8,-6 Q4,-12 0,-12" stroke="#3A8C78" stroke-width="2.5" fill="white"/>
+      <text x="40" y="5" font-family="Montserrat" font-size="18" font-weight="600" fill="#1C2826">28</text>
+    </g>
+    
+    <!-- Enhanced Bookmark Button with improved alignment -->
+    <g transform="translate(260, 580)">
+      <circle cx="0" cy="0" r="30" fill="transparent"/>
+      <path d="M-12,-12 L12,-12 L12,12 L0,0 L-12,12 Z" stroke="#E9B44C" stroke-width="2.5" fill="white">
+        <animate attributeName="stroke" values="#E9B44C;#C79532;#E9B44C" dur="3s" repeatCount="indefinite"/>
+      </path>
+      <text x="34" y="5" font-family="Montserrat" font-size="18" font-weight="600" fill="#1C2826">Save</text>
+    </g>
+    
+    <!-- Enhanced Share Button with improved sizing -->
+    <g transform="translate(340, 580)">
+      <circle cx="0" cy="0" r="30" fill="#F9F7F4"/>
+      <circle cx="0" cy="0" r="26" fill="#F9F7F4" stroke="#9AACA8" stroke-width="2"/>
+      <path d="M0,-9 L-10,1 L0,11 M-10,1 L10,1" stroke="#9AACA8" stroke-width="2.2"/>
+    </g>
+  </g>
+  <!-- Enhanced Post Content with better typography and visual elements -->
+  <foreignObject x="24" y="595" width="342" height="155">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Roboto', sans-serif; font-size: 17px; color: #1C2826; line-height: 1.7; letter-spacing: 0.01em;">
+      <p style="margin-bottom: 16px;">Spent an incredible week in this paradise and it was absolutely breathtaking! The crystal clear turquoise waters, pristine white sandy beaches, and friendly locals made this trip unforgettable.</p>
+      <p style="color: #5B6B67;">The seafood was amazing and trying local cuisine at the night market was a highlight of my trip...</p>
+    </div>
+  </foreignObject>
+  <!-- Content tags have been removed as requested -->  <!-- Enhanced Read More Link with improved alignment and more prominent styling -->
+  <g transform="translate(0, 10)">
+    <rect x="24" y="650" width="140" height="42" rx="21" ry="21" fill="#175E4C" opacity="0.1"/>
+    <text x="34" y="677" font-family="Montserrat" font-size="16" font-weight="600" fill="#175E4C">Read more</text>
+    <path d="M116,677 L126,677 M126,677 L122,673 M126,677 L122,681" stroke="#175E4C" stroke-width="2" fill="none"/>
+    
+    <!-- Enhanced hover effect indicator -->
+    <circle cx="34" cy="677" r="3" fill="#E9B44C" opacity="0">
+      <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Enhanced Trip Details Card with improved layout and proportions -->
+  <rect x="16" y="710" width="358" height="160" rx="20" ry="20" fill="#F9F7F4" filter="url(#enhancedDetailsShadow)"/>
+  <defs>
+    <filter id="enhancedDetailsShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+    <!-- Trip Details Header with accent decoration and improved alignment -->
+  <rect x="16" y="710" width="358" height="5" rx="2.5" ry="2.5" fill="#E9B44C"/>
+  <text x="36" y="740" font-family="Montserrat" font-size="19" font-weight="bold" fill="#1C2826">Trip Details</text>
+    <!-- Structured grid layout for trip details with improved spacing -->
+  <g transform="translate(0, 8)">
+    <!-- Duration Detail with enhanced icon and alignment -->
+    <g transform="translate(50, 765)" text-anchor="middle">
+      <circle cx="0" cy="0" r="24" fill="#3A8C78" opacity="0.15"/>
+      <path d="M0,-10 L0,0 L8,5" stroke="#175E4C" stroke-width="2.5" fill="none"/>
+      <text x="0" y="30" font-family="Montserrat" font-size="16" font-weight="600" fill="#1C2826">7 Days</text>
+      <text x="0" y="50" font-family="Roboto" font-size="13" fill="#5B6B67">May 22-29</text>
+    </g>
+      <!-- Cost Detail with enhanced icon and alignment -->
+    <g transform="translate(195, 765)" text-anchor="middle">
+      <circle cx="0" cy="0" r="24" fill="#E9B44C" opacity="0.15"/>
+      <path d="M0,-7 Q-3,-7 -3,-4 L-3,4 Q-3,7 0,7 L3,7 Q6,7 6,4 L6,1 Q6,-2 9,-2 L9,4" stroke="#C79532" stroke-width="2" fill="none"/>
+      <text x="0" y="30" font-family="Montserrat" font-size="16" font-weight="600" fill="#1C2826">$$$$</text>
+      <text x="0" y="50" font-family="Roboto" font-size="13" fill="#5B6B67">~$2,000</text>
+    </g>
+      <!-- Rating Detail with enhanced icon and alignment -->
+    <g transform="translate(340, 765)" text-anchor="middle">
+      <circle cx="0" cy="0" r="24" fill="#D95829" opacity="0.15"/>
+      <path d="M0,-9 L5,6 L0,2 L-5,6 L0,-9" stroke="#B13D17" stroke-width="2" fill="none"/>
+      <text x="0" y="30" font-family="Montserrat" font-size="16" font-weight="600" fill="#E9B44C">★★★★★</text>
+      <text x="0" y="50" font-family="Roboto" font-size="13" fill="#5B6B67">Excellent</text>
+    </g>
+  </g>  <!-- Location Map Section with improved spacing and alignment -->
+  <g transform="translate(0, 20)">
+    <!-- Section header with improved spacing -->
+    <text x="24" y="850" font-family="Montserrat" font-size="22" font-weight="bold" fill="#1C2826">Location</text>
+      <!-- Map Toggle Tabs with improved alignment and styling -->
+    <rect x="270" y="832" width="104" height="36" rx="18" ry="18" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1"/>
+    <rect x="270" y="832" width="52" height="36" rx="18" ry="18" fill="#175E4C"/>
+    <text x="296" y="855" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Map</text>
+    <text x="348" y="855" font-family="Montserrat" font-size="14" font-weight="medium" fill="#5B6B67" text-anchor="middle">Satellite</text>
+      <!-- Enhanced Map Container with improved sizing and shadow -->
+    <rect x="16" y="875" width="358" height="200" rx="20" ry="20" fill="white" filter="url(#enhancedMapShadow)"/>
+    <defs>
+      <filter id="enhancedMapShadow" x="-2%" y="-2%" width="104%" height="104%">
+        <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.15"/>
+      </filter>
+    </defs>
+      <!-- Enhanced Map with improved visual elements and spacing -->
+    <rect x="20" y="879" width="350" height="192" rx="18" ry="18" fill="url(#enhancedMap)"/>
+    <defs>
+      <pattern id="enhancedMap" patternUnits="userSpaceOnUse" width="350" height="192">
+        <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#C6E5DF"/>
+          <stop offset="100%" stop-color="#9CCCE0"/>
+        </linearGradient>
+        <rect x="0" y="0" width="350" height="192" fill="#EBEFED"/>
+        
+        <!-- Land masses with improved styling -->
+        <path d="M0,130 L100,130 L100,40 L170,40 L170,100 L210,100 L210,0 L350,0 L350,80 L290,80 L290,150 L210,150 L210,192 L0,192 Z" fill="#E8EFE6" stroke="#DEE5E2" stroke-width="1"/>
+        
+        <!-- Roads with better spacing -->
+        <path d="M40,130 L40,192 M160,0 L160,90 M60,160 L260,160" fill="none" stroke="#D5D9D3" stroke-width="2"/>
+        
+        <!-- Water features with enhanced styling -->
+        <path d="M100,130 L100,40 L170,40 L170,100 L210,100 L210,0" fill="url(#waterGradient)" opacity="0.7"/>
+        
+        <!-- Location pin with enhanced animation -->
+        <circle cx="140" cy="80" r="14" fill="#175E4C" opacity="0.3">
+          <animate attributeName="r" values="14;18;14" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0.15;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="140" cy="80" r="10" fill="#175E4C"/>
+        <circle cx="140" cy="80" r="5" fill="white"/>
+        
+        <!-- Location label with enhanced styling -->
+        <rect x="110" y="42" width="60" height="24" rx="12" ry="12" fill="white" stroke="#175E4C" stroke-width="1"/>
+        <text x="140" y="58" font-family="Montserrat" font-size="8" font-weight="bold" text-anchor="middle" fill="#175E4C">Zanzibar</text>
+      </pattern>
+    </defs>
+      <!-- Map Controls with improved positioning and styling -->
+    <g transform="translate(332, 895)">
+      <!-- Zoom Controls with better spacing -->
+      <rect x="0" y="0" width="32" height="70" rx="16" ry="16" fill="white" filter="url(#controlsShadow)"/>
+      <defs>
+        <filter id="controlsShadow" x="-20%" y="-10%" width="140%" height="120%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+        </filter>
+      </defs>
+      <line x1="10" y1="35" x2="22" y2="35" stroke="#5B6B67" stroke-width="2"/>
+      <line x1="16" y1="17" x2="16" y2="29" stroke="#5B6B67" stroke-width="2"/>
+      <line x1="10" y1="17" x2="22" y2="17" stroke="#5B6B67" stroke-width="2"/>
+      <line x1="10" y1="53" x2="22" y2="53" stroke="#5B6B67" stroke-width="2"/>
+    </g>
+      <!-- Directions Button with improved sizing and alignment -->
+    <rect x="32" y="895" width="120" height="40" rx="20" ry="20" fill="#175E4C" filter="url(#directionsGlow)"/>
+    <defs>
+      <filter id="directionsGlow" x="-10%" y="-10%" width="120%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#175E4C" flood-opacity="0.3"/>
+      </filter>
+    </defs>
+    <text x="92" y="921" font-family="Montserrat" font-size="15" font-weight="bold" fill="white" text-anchor="middle">Directions</text>
+    <path d="M45,911 L55,921 L45,931" stroke="white" stroke-width="2.5" fill="none"/>
+      <!-- Current location button -->
+    <g transform="translate(332, 985)">
+      <circle cx="0" cy="0" r="20" fill="white" filter="url(#locationBtnShadow)"/>
+      <defs>
+        <filter id="locationBtnShadow">
+          <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.2"/>
+        </filter>
+      </defs>
+      <circle cx="0" cy="0" r="6" fill="#3A8C78"/>
+      <path d="M0,-12 L0,-6 M0,6 L0,12 M-12,0 L-6,0 M6,0 L12,0" stroke="#3A8C78" stroke-width="1.5"/>
+    </g>
+  </g>
+  <!-- Comments Section with enhanced visual styling and improved spacing -->
+  <g transform="translate(0, 35)">
+    <!-- Section separator -->
+    <rect x="0" y="1070" width="390" height="5" fill="#E9B44C" opacity="0.2"/>
+      <!-- Comments header with improved alignment -->
+    <g transform="translate(0, 10)">
+      <text x="24" y="1105" font-family="Montserrat" font-size="22" font-weight="bold" fill="#1C2826">Comments</text>
+      <text x="112" y="1106" font-family="Montserrat" font-size="16" font-weight="medium" fill="#5B6B67">(28)</text>
+      
+      <!-- Sort dropdown with improved styling -->
+      <rect x="290" y="1090" width="84" height="32" rx="16" ry="16" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1"/>
+      <text x="324" y="1110" font-family="Montserrat" font-size="13" font-weight="medium" fill="#5B6B67" text-anchor="middle">Recent</text>
+      <path d="M350,1105 L362,1105 M356,1100 L356,1110 M356,1110 L351,1105 M356,1110 L361,1105" stroke="#5B6B67" stroke-width="1.5" fill="none"/>
+    </g>
+      <!-- Enhanced Comment Card with improved spacing and styling -->
+    <rect x="16" y="1135" width="358" height="100" rx="18" ry="18" fill="white" filter="url(#commentShadow)"/>
+    <defs>
+      <filter id="commentShadow" x="-2%" y="-5%" width="104%" height="110%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+      </filter>
+    </defs>
+      <!-- Avatar with enhanced styling and alignment -->
+    <defs>
+      <clipPath id="commentAvatar">
+        <circle cx="52" cy="1165" r="22"/>
+      </clipPath>
+    </defs>
+    <circle cx="52" cy="1165" r="24" fill="#3A8C78" opacity="0.15"/>
+    <circle cx="52" cy="1165" r="22" fill="#3A8C78" stroke="white" stroke-width="2"/>
+    <text x="52" cy="1165" y="1172" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">AK</text>
+      <!-- Comment text with improved sizing and spacing -->
+    <foreignObject x="88" y="1145" width="274" height="60">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Roboto', sans-serif;">
+        <p style="margin: 0; font-family: 'Montserrat'; font-weight: bold; font-size: 16px; color: #1C2826;">Alex K. <span style="font-weight: normal; font-size: 13px; color: #9AACA8; font-family: 'Roboto';">• 2h ago</span></p>
+        <p style="margin-top: 8px; font-size: 15px; color: #1C2826; line-height: 1.5;">Beautiful view! How was the weather during your stay? I'm planning to visit next month.</p>
+      </div>
+    </foreignObject>
+      <!-- Comment interaction buttons with improved spacing -->
+    <g transform="translate(95, 1210)">
+      <circle cx="0" cy="0" r="18" fill="transparent"/>
+      <path d="M0,-8 Q-5,-12 -10,-8 Q-15,-4 -10,0 L0,10 L10,0 Q15,-4 10,-8 Q5,-12 0,-8" stroke="#9AACA8" stroke-width="2" fill="transparent"/>
+      <text x="22" y="5" font-family="Montserrat" font-size="14" font-weight="medium" fill="#9AACA8">5</text>
+    </g>
+    
+    <g transform="translate(160, 1210)">
+      <circle cx="0" cy="0" r="18" fill="transparent"/>
+      <path d="M-10,-6 L10,-6 L10,6 L0,0 L-10,6 Z" stroke="#9AACA8" stroke-width="2" fill="transparent"/>
+      <text x="22" y="5" font-family="Montserrat" font-size="14" font-weight="medium" fill="#9AACA8">Reply</text>
+    </g>
+      <!-- Enhanced Comment Input with improved sizing and positioning -->
+    <g transform="translate(0, 15)">
+      <rect x="16" y="1225" width="300" height="54" rx="27" ry="27" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+      <text x="62" y="1258" font-family="Roboto" font-size="16" fill="#9AACA8">Add a comment...</text>
+      
+      <!-- User avatar with improved styling -->
+      <circle cx="52" cy="1252" r="18" fill="#E9B44C" opacity="0.2"/>
+      <circle cx="52" cy="1252" r="16" fill="white" stroke="#E9B44C" stroke-width="1.8"/>
+      <text x="52" y="1258" font-family="Montserrat" font-size="11" font-weight="bold" fill="#1C2826" text-anchor="middle">Me</text>
+        <!-- Send button with enhanced styling and animation -->
+      <circle cx="344" cy="1252" r="28" fill="#175E4C" filter="url(#enhancedSendShadow)">
+        <animate attributeName="fill" values="#175E4C;#0C3F33;#175E4C" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <defs>
+        <filter id="enhancedSendShadow" x="-25%" y="-25%" width="150%" height="150%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#175E4C" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+      <path d="M344,1240 L344,1264 M332,1252 L356,1252" stroke="white" stroke-width="2.8"/>
+    </g>
+  </g>
+    <!-- Bottom Navigation Bar with improved sizing, spacing and visual hierarchy -->
+  <rect x="0" y="1340" width="390" height="70" fill="white" filter="url(#navBarShadow)"/>
+  <defs>
+    <filter id="navBarShadow" x="0%" y="-30%" width="100%" height="130%">
+      <feDropShadow dx="0" dy="-3" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Home Tab with improved sizing and spacing -->
+  <g transform="translate(50, 1370)">
+    <rect x="-30" y="-24" width="60" height="48" fill="transparent"/>
+    <path d="M-18,-12 L0,-24 L18,-12 L18,12 L6,12 L6,0 L-6,0 L-6,12 L-18,12 Z" fill="#9AACA8"/>
+    <text x="0" y="28" font-family="Montserrat" font-size="12" font-weight="medium" fill="#9AACA8" text-anchor="middle">Home</text>
+  </g>
+  
+  <!-- Explore Tab (Active) with enhanced visual indicators -->
+  <g transform="translate(130, 1370)">
+    <!-- Active indicator dot -->
+    <circle cx="0" cy="-26" r="3" fill="#175E4C"/>
+    <!-- Active tab highlight -->
+    <rect x="-40" y="-30" width="80" height="58" rx="10" ry="10" fill="#175E4C" opacity="0.08"/>
+    
+    <path d="M-18,-12 C-18,-18 -10,-26 0,-26 C10,-26 18,-18 18,-12 L18,6 L9,15 L-9,15 L-18,6 Z" fill="#175E4C"/>
+    <circle cx="0" cy="0" r="5" fill="white"/>
+    <text x="0" y="28" font-family="Montserrat" font-size="12" font-weight="bold" fill="#175E4C" text-anchor="middle">Explore</text>
+  </g>
+  
+  <!-- Create Post Tab with improved sizing and animation -->
+  <g transform="translate(195, 1352)">
+    <circle cx="0" cy="0" r="30" fill="#D95829" filter="url(#createBtnShadow)">
+      <animate attributeName="opacity" values="1;0.9;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <defs>
+      <filter id="createBtnShadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#D95829" flood-opacity="0.35"/>
+      </filter>
+    </defs>
+    <!-- Plus icon with improved dimensions -->
+    <path d="M0,-14 L0,14 M-14,0 L14,0" stroke="white" stroke-width="3.5"/>
+    <text x="0" y="44" font-family="Montserrat" font-size="12" font-weight="medium" fill="#9AACA8" text-anchor="middle">Create</text>
+  </g>
+  
+  <!-- Messages Tab with improved sizing and notification -->
+  <g transform="translate(260, 1370)">
+    <rect x="-30" y="-24" width="60" height="48" fill="transparent"/>
+    <path d="M-18,-12 Q-18,-18 -12,-18 L12,-18 Q18,-18 18,-12 L18,6 Q18,12 12,12 L0,12 L-6,18 L-6,12 L-12,12 Q-18,12 -18,6 Z" fill="#9AACA8"/>
+    <!-- Notification badge with animation -->
+    <circle cx="12" cy="-18" r="6" fill="#D95829">
+      <animate attributeName="opacity" values="1;0.8;1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="0" y="28" font-family="Montserrat" font-size="12" font-weight="medium" fill="#9AACA8" text-anchor="middle">Messages</text>
+  </g>
+  
+  <!-- Profile Tab with improved sizing -->
+  <g transform="translate(340, 1370)">
+    <rect x="-30" y="-24" width="60" height="48" fill="transparent"/>
+    <circle cx="0" cy="-10" r="9" fill="#9AACA8"/>
+    <path d="M-14,12 Q-14,0 0,0 Q14,0 14,12" fill="#9AACA8"/>
+    <text x="0" y="28" font-family="Montserrat" font-size="12" font-weight="medium" fill="#9AACA8" text-anchor="middle">Profile</text>
+  </g>
+  
+  <!-- Home Indicator for newer phone models with improved styling -->
+  <rect x="145" y="1395" width="100" height="5" rx="2.5" ry="2.5" fill="#9AACA8" opacity="0.35"/>
+</svg>

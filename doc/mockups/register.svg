@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="360" height="800" viewBox="0 0 360 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="360" height="800" fill="#F9F7F4"/>
+  
+  <!-- Status Bar -->
+  <rect x="0" y="0" width="360" height="24" fill="#0C3F33" opacity="0.95"/>
+  
+  <!-- App Header -->
+  <rect x="0" y="24" width="360" height="56" fill="#175E4C"/>
+  <text x="180" y="62" font-family="Montserrat" font-size="22" font-weight="bold" fill="white" text-anchor="middle">TripBook</text>
+  
+  <!-- Back Button -->
+  <circle cx="30" cy="52" r="18" fill="transparent" stroke="white" stroke-width="2"/>
+  <path d="M36,52 L24,52 M24,52 L30,46 M24,52 L30,58" stroke="white" stroke-width="2" fill="transparent"/>
+  
+  <!-- Register Card with improved shadow -->
+  <rect x="20" y="100" width="320" height="650" rx="16" ry="16" fill="white" filter="url(#cardShadow)"/>
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+    <!-- Register Illustration (Simple abstract shape) -->
+  <circle cx="180" cy="150" r="40" fill="#E9B44C" opacity="0.2"/>
+  <path d="M155,150 Q180,120 205,150" stroke="#D95829" stroke-width="3" fill="none"/>
+  <circle cx="180" cy="150" r="15" fill="#3A8C78" opacity="0.6"/>
+  
+  <!-- Form Header -->
+  <text x="180" y="220" font-family="Montserrat" font-size="24" font-weight="bold" fill="#1C2826" text-anchor="middle">Create Account</text>
+  <text x="180" y="250" font-family="Roboto" font-size="16" fill="#5B6B67" text-anchor="middle">Join our travel community</text>
+  
+  <!-- Name Fields -->
+  <text x="50" y="290" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Full Name</text>
+  <rect x="50" y="300" width="260" height="50" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="332" font-family="Roboto" font-size="16" fill="#9AACA8">Your name</text>
+  
+  <!-- Email Field -->
+  <text x="50" y="370" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Email</text>
+  <rect x="50" y="380" width="260" height="50" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="412" font-family="Roboto" font-size="16" fill="#9AACA8">your.email@example.com</text>
+  
+  <!-- Password Field -->
+  <text x="50" y="450" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Password</text>
+  <rect x="50" y="460" width="260" height="50" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="492" font-family="Roboto" font-size="16" fill="#9AACA8">••••••••</text>
+  
+  <!-- Confirm Password Field -->
+  <text x="50" y="530" font-family="Montserrat" font-size="14" font-weight="500" fill="#5B6B67">Confirm Password</text>
+  <rect x="50" y="540" width="260" height="50" rx="12" ry="12" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <text x="70" y="572" font-family="Roboto" font-size="16" fill="#9AACA8">••••••••</text>
+  
+  <!-- Terms & Conditions with improved checkbox -->
+  <rect x="50" y="610" width="22" height="22" rx="6" ry="6" fill="white" stroke="#3A8C78" stroke-width="2"/>
+  <text x="85" y="626" font-family="Roboto" font-size="14" fill="#5B6B67" text-align="left" text-anchor="start">I agree to the <tspan fill="#175E4C" font-weight="500">Terms</tspan> and <tspan fill="#175E4C" font-weight="500">Privacy Policy</tspan></text>
+    <!-- Register Button with improved styling -->
+  <rect x="50" y="650" width="260" height="56" rx="28" ry="28" fill="#175E4C" filter="url(#buttonShadow)"/>
+  <defs>
+    <filter id="buttonShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <text x="180" y="685" font-family="Montserrat" font-size="18" font-weight="bold" fill="white" text-anchor="middle">Create Account</text>
+  
+  <!-- Login Link with improved styling -->
+  <text x="120" y="730" font-family="Roboto" font-size="14" fill="#5B6B67" text-anchor="middle">Already have an account?</text>
+  <text x="255" y="730" font-family="Montserrat" font-size="14" font-weight="bold" fill="#175E4C" text-anchor="middle">Login Now</text>
+</svg>

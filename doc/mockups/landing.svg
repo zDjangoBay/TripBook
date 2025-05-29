@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="360" height="800" viewBox="0 0 360 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Full-screen Gradient Background -->
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0C3F33"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+    
+    <!-- Overlay Pattern -->
+    <pattern id="overlayPattern" x="0" y="0" width="360" height="800" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="360" height="800" fill="url(#backgroundGradient)"/>
+      <path d="M0,400 C180,320 200,480 360,400" stroke="rgba(255,255,255,0.05)" stroke-width="120" fill="none"/>
+      <path d="M0,500 C120,450 240,550 360,500" stroke="rgba(255,255,255,0.05)" stroke-width="80" fill="none"/>
+      <path d="M0,600 C180,650 180,550 360,600" stroke="rgba(255,255,255,0.05)" stroke-width="60" fill="none"/>
+    </pattern>
+  </defs>
+  
+  <rect x="0" y="0" width="360" height="800" fill="url(#overlayPattern)"/>
+  
+  <!-- Status Bar -->
+  <rect x="0" y="0" width="360" height="24" fill="#0C3F33" opacity="0.95"/>
+  
+  <!-- App Logo & Name -->
+  <circle cx="180" cy="200" r="60" fill="#FFFFFF"/>
+  <circle cx="180" cy="200" r="54" fill="#175E4C"/>
+  <path d="M155,200 Q180,150 205,200 T255,200" stroke="#FFD279" stroke-width="4" fill="none"/>
+  <circle cx="180" cy="200" r="15" fill="#E9B44C"/>
+  
+  <!-- App Name with Glow Effect -->
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <text x="180" y="310" font-family="Montserrat" font-size="44" font-weight="bold" fill="white" text-anchor="middle" filter="url(#glow)">TripBook</text>
+  <text x="180" y="340" font-family="Roboto" font-size="18" fill="white" text-anchor="middle" opacity="0.8">Your Travel Community</text>
+  
+  <!-- Tagline -->
+  <text x="180" y="390" font-family="Montserrat" font-size="20" font-weight="bold" fill="white" text-anchor="middle" opacity="0.9">Discover Africa Together</text>
+  
+  <!-- Feature Icons in Horizontal Layout -->
+  <g opacity="0.9">
+    <!-- Share Icon -->
+    <circle cx="90" cy="450" r="30" fill="white" opacity="0.2"/>
+    <path d="M82,450 L98,450 M90,442 L90,458 M80,440 Q90,430 100,440" stroke="white" stroke-width="2" fill="none"/>
+    <text x="90" y="500" font-family="Montserrat" font-size="14" font-weight="500" fill="white" text-anchor="middle">Share</text>
+    
+    <!-- Discover Icon -->
+    <circle cx="180" cy="450" r="30" fill="white" opacity="0.2"/>
+    <path d="M180,442 L180,458 M172,450 L188,450 M174,444 Q180,438 186,444" stroke="white" stroke-width="2" fill="none"/>
+    <text x="180" y="500" font-family="Montserrat" font-size="14" font-weight="500" fill="white" text-anchor="middle">Discover</text>
+    
+    <!-- Connect Icon -->
+    <circle cx="270" cy="450" r="30" fill="white" opacity="0.2"/>
+    <path d="M264,450 Q270,440 276,450 T288,450" stroke="white" stroke-width="2" fill="none"/>
+    <text x="270" y="500" font-family="Montserrat" font-size="14" font-weight="500" fill="white" text-anchor="middle">Connect</text>
+  </g>
+  
+  <!-- Animated Dots (Simulated) -->
+  <circle cx="160" cy="550" r="6" fill="#FFD279" opacity="0.8"/>
+  <circle cx="180" cy="550" r="8" fill="white" opacity="0.9"/>
+  <circle cx="200" cy="550" r="6" fill="#FFD279" opacity="0.8"/>
+  
+  <!-- App Version -->
+  <text x="180" y="580" font-family="Roboto" font-size="12" fill="white" text-anchor="middle" opacity="0.6">Version 1.0</text>
+  
+  <!-- Get Started Button with Glow Effect -->
+  <defs>
+    <filter id="buttonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#FFD279" flood-opacity="0.6" result="glow"/>
+      <feComposite in="glow" in2="blur" operator="in" result="glowBlur"/>
+      <feComposite in="SourceGraphic" in2="glowBlur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <rect x="80" y="650" width="200" height="60" rx="30" ry="30" fill="#E9B44C" filter="url(#buttonGlow)"/>
+  <text x="180" y="687" font-family="Montserrat" font-size="20" font-weight="bold" fill="white" text-anchor="middle">Get Started</text>
+  
+  <!-- Sign In Option -->
+  <text x="180" y="740" font-family="Roboto" font-size="16" fill="white" text-anchor="middle" opacity="0.8">Already have an account? <tspan font-weight="bold">Sign In</tspan></text>
+  
+  <!-- Copyright -->
+  <text x="180" y="780" font-family="Roboto" font-size="12" fill="white" text-anchor="middle" opacity="0.5">© 2025 TripBook • All rights reserved</text>
+</svg>

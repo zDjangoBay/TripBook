@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="390" height="900" viewBox="0 0 390 900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enhanced Background with subtle pattern and design elements -->
+  <defs>
+    <pattern id="subtlePattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="40" height="40" fill="#F9F7F4"/>
+      <path d="M0,20 L40,20 M20,0 L20,40" stroke="#3A8C78" stroke-width="0.3" opacity="0.05"/>
+      <circle cx="20" cy="20" r="1" fill="#E9B44C" opacity="0.1"/>
+    </pattern>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F7F4"/>
+      <stop offset="100%" stop-color="#F2F0ED"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="390" height="900" fill="url(#backgroundGradient)"/>
+  <rect x="0" y="0" width="390" height="900" fill="url(#subtlePattern)"/>
+  
+  <!-- Status Bar with battery and network indicators -->
+  <rect x="0" y="0" width="390" height="32" fill="#0C3F33" opacity="0.98"/>
+  <!-- Time -->
+  <text x="195" y="20" font-family="Roboto" font-size="14" font-weight="medium" fill="white" text-anchor="middle">12:30</text>
+  <!-- Battery -->
+  <rect x="350" y="11" width="24" height="12" rx="2" ry="2" fill="none" stroke="white" stroke-width="1.5"/>
+  <rect x="374" y="15" width="2" height="4" fill="white"/>
+  <rect x="352" y="13" width="20" height="8" fill="white"/>
+  <!-- Network signal -->
+  <path d="M330,10 L330,22 M334,12 L334,22 M338,14 L338,22" stroke="white" stroke-width="1.5"/>
+  
+  <!-- App Header with enhanced styling and subtle gradient -->
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0C3F33"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="32" width="390" height="60" fill="url(#headerGradient)"/>
+  <text x="195" y="70" font-family="Montserrat" font-size="24" font-weight="bold" fill="white" text-anchor="middle">Discover</text>
+  
+  <!-- Enhanced Search Bar with improved styling and shadow -->
+  <rect x="20" y="106" width="350" height="56" rx="28" ry="28" fill="white" filter="url(#searchShadow)"/>
+  <defs>
+    <filter id="searchShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <text x="70" y="140" font-family="Roboto" font-size="16" fill="#9AACA8">Search destinations...</text>
+  <circle cx="46" cy="134" r="16" fill="#F9F7F4"/>
+  <circle cx="46" cy="134" r="8" fill="transparent" stroke="#5B6B67" stroke-width="2"/>
+  <path d="M52,140 L58,146" stroke="#5B6B67" stroke-width="2"/>
+  
+  <!-- Enhanced Filter Button with improved styling -->
+  <circle cx="345" cy="134" r="24" fill="#F9F7F4" stroke="#9AACA8" stroke-width="1.5"/>
+  <path d="M335,134 L355,134 M335,128 L345,128 M335,140 L345,140" stroke="#5B6B67" stroke-width="1.5"/>
+  
+  <!-- Enhanced Tab Navigation with improved styling -->
+  <rect x="0" y="178" width="390" height="2" fill="#E5E5E5"/>
+  
+  <!-- Tab Items with improved styling and visual indicators -->
+  <rect x="0" y="180" width="130" height="48" fill="transparent"/>
+  <text x="65" y="208" font-family="Montserrat" font-size="16" font-weight="bold" fill="#175E4C" text-anchor="middle">Popular</text>
+  <rect x="50" y="226" width="30" height="3" rx="1.5" ry="1.5" fill="#E9B44C"/>
+  
+  <rect x="130" y="180" width="130" height="48" fill="transparent"/>
+  <text x="195" y="208" font-family="Montserrat" font-size="16" fill="#5B6B67" text-anchor="middle">Near Me</text>
+  
+  <rect x="260" y="180" width="130" height="48" fill="transparent"/>
+  <text x="325" y="208" font-family="Montserrat" font-size="16" fill="#5B6B67" text-anchor="middle">Trending</text>
+  
+  <!-- Destinations Section with enhanced typography -->
+  <text x="20" y="255" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Top Destinations</text>
+  
+  <!-- Enhanced Destination Cards with improved design and shadow effect -->
+  <rect x="0" y="265" width="390" height="200" fill="transparent"/>
+  
+  <!-- Destination Card 1 with improved styling -->
+  <rect x="20" y="275" width="170" height="190" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect x="28" y="283" width="154" height="120" rx="16" ry="16" fill="url(#imgMarrakech)"/>
+  <defs>
+    <pattern id="imgMarrakech" patternUnits="userSpaceOnUse" width="154" height="120">
+      <linearGradient id="imgOverlay1" x1="0%" y1="60%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0C3F33" stop-opacity="0.5"/>
+      </linearGradient>
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkMSIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNFOUI0NEMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNEOTU4MjkiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iNTAiIGZpbGw9InVybCgjYmdncmFkMSkiLz48L3N2Zz4=" x="0" y="0" width="154" height="120" />
+      <rect x="0" y="0" width="154" height="120" fill="url(#imgOverlay1)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Enhanced Rating Badge with improved styling -->
+  <rect x="36" y="303" width="60" height="28" rx="14" ry="14" fill="white" opacity="0.9" filter="url(#badgeShadow)"/>
+  <defs>
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <text x="54" y="321" font-family="Montserrat" font-size="14" font-weight="bold" fill="#175E4C" text-anchor="middle">★ 4.8</text>
+  
+  <!-- Enhanced Destination Info with improved typography -->
+  <text x="40" y="425" font-family="Montserrat" font-size="18" font-weight="bold" fill="#1C2826">Marrakech</text>
+  <text x="40" y="448" font-family="Roboto" font-size="15" fill="#5B6B67">Morocco</text>
+  
+  <!-- Destination Card 2 with improved styling -->
+  <rect x="200" y="275" width="170" height="190" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  <rect x="208" y="283" width="154" height="120" rx="16" ry="16" fill="url(#imgCapeTown)"/>
+  <defs>
+    <pattern id="imgCapeTown" patternUnits="userSpaceOnUse" width="154" height="120">
+      <linearGradient id="imgOverlay2" x1="0%" y1="60%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0C3F33" stop-opacity="0.5"/>
+      </linearGradient>
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkMiIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzQThDNzgiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwQzNGMzMiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iNTAiIGZpbGw9InVybCgjYmdncmFkMikiLz48L3N2Zz4=" x="0" y="0" width="154" height="120" />
+      <rect x="0" y="0" width="154" height="120" fill="url(#imgOverlay2)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Enhanced Rating Badge with improved styling -->
+  <rect x="216" y="303" width="60" height="28" rx="14" ry="14" fill="white" opacity="0.9" filter="url(#badgeShadow)"/>
+  <text x="234" y="321" font-family="Montserrat" font-size="14" font-weight="bold" fill="#175E4C" text-anchor="middle">★ 4.9</text>
+  
+  <!-- Enhanced Destination Info with improved typography -->
+  <text x="220" y="425" font-family="Montserrat" font-size="18" font-weight="bold" fill="#1C2826">Cape Town</text>
+  <text x="220" y="448" font-family="Roboto" font-size="15" fill="#5B6B67">South Africa</text>
+  
+  <!-- Scroll Indicator with improved styling -->
+  <circle cx="175" cy="475" r="3" fill="#175E4C"/>
+  <circle cx="195" cy="475" r="3" fill="#9AACA8"/>
+  <circle cx="215" cy="475" r="3" fill="#9AACA8"/>
+  
+  <!-- Recent Travel Stories Section with enhanced typography -->
+  <text x="20" y="495" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Recent Travel Stories</text>
+  
+  <!-- Enhanced Story Post 1 with improved styling -->
+  <rect x="20" y="515" width="350" height="185" rx="20" ry="20" fill="white" filter="url(#storyShadow)"/>
+  <defs>
+    <filter id="storyShadow" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect x="20" y="515" width="350" height="120" rx="20" ry="20" fill="url(#imgStory1)"/>
+  <defs>
+    <pattern id="imgStory1" patternUnits="userSpaceOnUse" width="350" height="120">
+      <linearGradient id="storyOverlay1" x1="0%" y1="40%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#D95829" stop-opacity="0.6"/>
+      </linearGradient>
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkUyIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgwKSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0U5QjQ0QyIgc3RvcC1vcGFjaXR5PSIwLjgiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNEOTU4MjkiIHN0b3Atb3BhY2l0eT0iMC44Ii8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ1cmwoI2JnZ3JhZFMpIi8+PC9zdmc+" x="0" y="0" width="350" height="120" />
+      <rect x="0" y="0" width="350" height="120" fill="url(#storyOverlay1)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Enhanced Location Tag with improved styling -->
+  <rect x="38" y="531" width="124" height="32" rx="16" ry="16" fill="white" opacity="0.9" filter="url(#locationShadow)"/>
+  <defs>
+    <filter id="locationShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <circle cx="54" cy="547" r="6" fill="#175E4C" opacity="0.3"/>
+  <circle cx="54" cy="547" r="4" fill="#175E4C"/>
+  <text x="100" y="551" font-family="Montserrat" font-size="13" font-weight="bold" fill="#175E4C" text-anchor="middle">Serengeti, Tanzania</text>
+  
+  <!-- Enhanced User Info with improved styling -->
+  <circle cx="54" cy="655" r="22" fill="#E9B44C" opacity="0.2"/>
+  <circle cx="54" cy="655" r="20" fill="white" stroke="#E9B44C" stroke-width="2"/>
+  <text x="54" y="661" font-family="Montserrat" font-size="15" font-weight="bold" fill="#1C2826" text-anchor="middle">SJ</text>
+  
+  <text x="95" y="651" font-family="Montserrat" font-size="15" font-weight="bold" fill="#1C2826">Sarah Johnson</text>
+  <text x="95" y="671" font-family="Roboto" font-size="13" fill="#5B6B67">2 days ago</text>
+  
+  <!-- Enhanced Like Button with improved styling -->
+  <rect x="296" y="647" width="54" height="28" rx="14" ry="14" fill="#F9F7F4" filter="url(#likeShadow)"/>
+  <defs>
+    <filter id="likeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <text x="323" y="664" font-family="Montserrat" font-size="14" font-weight="bold" fill="#D95829" text-anchor="middle">30 ♥</text>
+  
+  <!-- Enhanced Post Caption with improved typography -->
+  <text x="195" y="694" font-family="Roboto" font-size="14" fill="#5B6B67" text-anchor="middle">Amazing safari experience in Serengeti National Park!</text>
+  
+  <!-- Enhanced Story Post 2 with improved styling -->
+  <rect x="20" y="715" width="350" height="185" rx="20" ry="20" fill="white" filter="url(#storyShadow)"/>
+  <rect x="20" y="715" width="350" height="120" rx="20" ry="20" fill="url(#imgStory2)"/>
+  <defs>
+    <pattern id="imgStory2" patternUnits="userSpaceOnUse" width="350" height="120">
+      <linearGradient id="storyOverlay2" x1="0%" y1="40%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="transparent" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#0C3F33" stop-opacity="0.6"/>
+      </linearGradient>
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkUzIiIGdyYWRpZW50VHJhbnNmb3JtPSJyb3RhdGUoMCkiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzQThDNzgiIHN0b3Atb3BhY2l0eT0iMC44Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMEM0RjYzIiBzdG9wLW9wYWNpdHk9IjAuOCIvPjwvbGluZWFyR3JhZGllbnQ+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI1MCIgZmlsbD0idXJsKCNiZ2dyYWRTMikiLz48L3N2Zz4=" x="0" y="0" width="350" height="120" />
+      <rect x="0" y="0" width="350" height="120" fill="url(#storyOverlay2)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Enhanced Location Tag with improved styling -->
+  <rect x="38" y="731" width="94" height="32" rx="16" ry="16" fill="white" opacity="0.9" filter="url(#locationShadow)"/>
+  <circle cx="54" cy="747" r="6" fill="#175E4C" opacity="0.3"/>
+  <circle cx="54" cy="747" r="4" fill="#175E4C"/>
+  <text x="85" y="751" font-family="Montserrat" font-size="13" font-weight="bold" fill="#175E4C" text-anchor="middle">Cairo, Egypt</text>
+  
+  <!-- Enhanced User Info with improved styling -->
+  <circle cx="54" cy="855" r="22" fill="#3A8C78" opacity="0.2"/>
+  <circle cx="54" cy="855" r="20" fill="white" stroke="#3A8C78" stroke-width="2"/>
+  <text x="54" y="861" font-family="Montserrat" font-size="15" font-weight="bold" fill="#1C2826" text-anchor="middle">DR</text>
+  
+  <text x="95" y="851" font-family="Montserrat" font-size="15" font-weight="bold" fill="#1C2826">David Richards</text>
+  <text x="95" y="871" font-family="Roboto" font-size="13" fill="#5B6B67">5 days ago</text>
+  
+  <!-- Enhanced Like Button with improved styling -->
+  <rect x="296" y="847" width="54" height="28" rx="14" ry="14" fill="#F9F7F4" filter="url(#likeShadow)"/>
+  <text x="323" y="864" font-family="Montserrat" font-size="14" font-weight="bold" fill="#D95829" text-anchor="middle">42 ♥</text>
+  
+  <!-- Enhanced Post Caption with improved typography -->
+  <text x="195" y="894" font-family="Roboto" font-size="14" fill="#5B6B67" text-anchor="middle">My journey through the ancient pyramids of Egypt</text>
+  
+  <!-- Bottom Navigation Bar with improved styling -->
+  <rect x="0" y="832" width="390" height="68" fill="white" filter="url(#navShadow)"/>
+  <defs>
+    <filter id="navShadow" x="0%" y="-50%" width="100%" height="150%">
+      <feDropShadow dx="0" dy="-2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Nav Icons with improved styling -->
+  <circle cx="65" cy="866" r="24" fill="#3A8C78" opacity="0.1"/>
+  <circle cx="65" cy="866" r="4" fill="#175E4C"/>
+  <text x="65" y="884" font-family="Montserrat" font-size="12" fill="#175E4C" text-anchor="middle">Discover</text>
+  
+  <circle cx="155" cy="866" r="4" fill="#9AACA8"/>
+  <text x="155" y="884" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Posts</text>
+  
+  <circle cx="245" cy="866" r="4" fill="#9AACA8"/>
+  <text x="245" y="884" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Agencies</text>
+  
+  <circle cx="335" cy="866" r="4" fill="#9AACA8"/>
+  <text x="335" y="884" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Profile</text>
+</svg>

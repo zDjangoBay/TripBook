@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="800" viewBox="0 0 1000 800">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="800" viewBox="0 0 1000 800">  <!-- Background -->
+  <rect width="1000" height="800" fill="white"/>
+  
+  <!-- Title -->
+  <text x="500" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle">TripBook Class Diagram</text>
+  
+  <!-- Implementation Notes -->
+  <rect x="30" y="20" width="300" height="60" rx="5" ry="5" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
+  <text x="180" y="40" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">Implementation Notes</text>
+  <text x="180" y="60" font-family="Arial" font-size="12" text-anchor="middle">MVVM Architecture Pattern</text>
+  <text x="180" y="75" font-family="Arial" font-size="12" text-anchor="middle">Uses Android Jetpack ViewModel + LiveData</text>
+  
   <!-- Styles -->
   <style>
     .class-box {

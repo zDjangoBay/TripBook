@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="390" height="800" viewBox="0 0 390 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enhanced Background with subtle pattern and design elements -->
+  <defs>
+    <pattern id="subtlePattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="40" height="40" fill="#F9F7F4"/>
+      <path d="M0,20 L40,20 M20,0 L20,40" stroke="#3A8C78" stroke-width="0.3" opacity="0.05"/>
+      <circle cx="20" cy="20" r="1" fill="#E9B44C" opacity="0.1"/>
+    </pattern>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F7F4"/>
+      <stop offset="100%" stop-color="#F2F0ED"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="390" height="800" fill="url(#backgroundGradient)"/>
+  <rect x="0" y="0" width="390" height="800" fill="url(#subtlePattern)"/>
+  
+  <!-- Status Bar with battery and network indicators -->
+  <rect x="0" y="0" width="390" height="32" fill="#0C3F33" opacity="0.98"/>
+  <!-- Time -->
+  <text x="195" y="20" font-family="Roboto" font-size="14" font-weight="medium" fill="white" text-anchor="middle">12:30</text>
+  <!-- Battery -->
+  <rect x="350" y="11" width="24" height="12" rx="2" ry="2" fill="none" stroke="white" stroke-width="1.5"/>
+  <rect x="374" y="15" width="2" height="4" fill="white"/>
+  <rect x="352" y="13" width="20" height="8" fill="white"/>
+  <!-- Network signal -->
+  <path d="M330,10 L330,22 M334,12 L334,22 M338,14 L338,22" stroke="white" stroke-width="1.5"/>
+  
+  <!-- App Header with enhanced styling and subtle gradient -->
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0C3F33"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="32" width="390" height="60" fill="url(#headerGradient)"/>
+  <text x="195" y="70" font-family="Montserrat" font-size="24" font-weight="bold" fill="white" text-anchor="middle">Agency Dashboard</text>
+  
+  <!-- Profile Button with improved touch target and hover effect -->
+  <circle cx="350" cy="62" r="24" fill="white" opacity="0.1"/>
+  <circle cx="350" cy="62" r="22" fill="transparent" stroke="white" stroke-width="2"/>
+  <circle cx="350" cy="54" r="7" fill="white"/>
+  <path d="M335,74 Q350,66 365,74" stroke="white" stroke-width="2" fill="transparent"/>
+  
+  <!-- Dashboard Stats Panel with enhanced styling -->
+  <rect x="16" y="106" width="358" height="110" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Enhanced Stats Grid with subtle dividers -->
+  <line x1="130" y1="106" x2="130" y2="216" stroke="#E5E5E5" stroke-width="1.5"/>
+  <line x1="260" y1="106" x2="260" y2="216" stroke="#E5E5E5" stroke-width="1.5"/>
+  
+  <!-- Stat 1 with improved typography and visual treatment -->
+  <text x="65" y="140" font-family="Montserrat" font-size="28" font-weight="bold" fill="#175E4C" text-anchor="middle">124</text>
+  <text x="65" y="168" font-family="Roboto" font-size="15" fill="#5B6B67" text-anchor="middle">Reviews</text>
+  <rect x="55" y="188" width="60" height="20" rx="10" ry="10" fill="#E9F4F1"/>
+  <text x="65" y="202" font-family="Montserrat" font-size="12" font-weight="600" fill="#175E4C" text-anchor="middle">+12% ↑</text>
+  
+  <!-- Stat 2 with improved typography and visual treatment -->
+  <text x="195" y="140" font-family="Montserrat" font-size="28" font-weight="bold" fill="#175E4C" text-anchor="middle">4.8</text>
+  <text x="195" y="168" font-family="Roboto" font-size="15" fill="#5B6B67" text-anchor="middle">Avg. Rating</text>
+  <rect x="165" y="188" width="60" height="20" rx="10" ry="10" fill="#E9F4F1"/>
+  <text x="195" y="202" font-family="Montserrat" font-size="12" font-weight="600" fill="#175E4C" text-anchor="middle">+0.3 ↑</text>
+  
+  <!-- Stat 3 with improved typography and visual treatment -->
+  <text x="325" y="140" font-family="Montserrat" font-size="28" font-weight="bold" fill="#175E4C" text-anchor="middle">856</text>
+  <text x="325" y="168" font-family="Roboto" font-size="15" fill="#5B6B67" text-anchor="middle">Views</text>
+  <rect x="295" y="188" width="60" height="20" rx="10" ry="10" fill="#E9F4F1"/>
+  <text x="325" y="202" font-family="Montserrat" font-size="12" font-weight="600" fill="#175E4C" text-anchor="middle">+23% ↑</text>
+  
+  <!-- Agency Information Section with improved typography -->
+  <text x="16" y="244" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Agency Information</text>
+  <rect x="16" y="260" width="358" height="190" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  
+  <!-- Enhanced Agency Logo Preview with subtle glow effect -->
+  <circle cx="66" cy="310" r="35" fill="#F9F7F4" stroke="#3A8C78" stroke-width="2" filter="url(#logoGlow)"/>
+  <defs>
+    <filter id="logoGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3A8C78" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <text x="66" y="305" font-family="Montserrat" font-size="12" font-weight="bold" fill="#175E4C" text-anchor="middle">AFRICA</text>
+  <text x="66" y="320" font-family="Montserrat" font-size="9" font-weight="bold" fill="#175E4C" text-anchor="middle">EXPLORERS</text>
+  
+  <!-- Agency Details with improved typography and spacing -->
+  <text x="120" y="285" font-family="Montserrat" font-size="16" font-weight="bold" fill="#1C2826">Name:</text>
+  <text x="210" y="285" font-family="Roboto" font-size="16" fill="#5B6B67">Africa Explorers</text>
+  
+  <text x="120" y="315" font-family="Montserrat" font-size="16" font-weight="bold" fill="#1C2826">Type:</text>
+  <text x="210" y="315" font-family="Roboto" font-size="16" fill="#5B6B67">Safari Specialist</text>
+  
+  <text x="120" y="345" font-family="Montserrat" font-size="16" font-weight="bold" fill="#1C2826">Founded:</text>
+  <text x="210" y="345" font-family="Roboto" font-size="16" fill="#5B6B67">2010</text>
+  
+  <text x="120" y="375" font-family="Montserrat" font-size="16" font-weight="bold" fill="#1C2826">Location:</text>
+  <text x="210" y="375" font-family="Roboto" font-size="16" fill="#5B6B67">Arusha, Tanzania</text>
+  
+  <!-- Enhanced Edit Button with glow effect -->
+  <rect x="120" y="395" width="90" height="36" rx="18" ry="18" fill="#175E4C" filter="url(#buttonGlow)"/>
+  <defs>
+    <filter id="buttonGlow" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#175E4C" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <text x="165" y="417" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Edit</text>
+  
+  <!-- Tours Management Section with improved typography -->
+  <text x="16" y="474" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Tours Management</text>
+  <rect x="16" y="490" width="358" height="190" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  
+  <!-- Enhanced Tour List with improved typography and spacing -->
+  <rect x="30" y="510" width="330" height="44" rx="12" ry="12" fill="#F9F7F4"/>
+  <text x="54" y="537" font-family="Roboto" font-size="15" fill="#1C2826">Serengeti Safari - 6 Days</text>
+  <circle cx="300" cy="532" r="18" fill="white" stroke="#175E4C" stroke-width="1.5"/>
+  <text x="300" y="537" font-family="Montserrat" font-size="14" fill="#175E4C" text-anchor="middle">✏️</text>
+  
+  <rect x="30" y="564" width="330" height="44" rx="12" ry="12" fill="#F9F7F4"/>
+  <text x="54" y="591" font-family="Roboto" font-size="15" fill="#1C2826">Tanzania Cultural Tour - 4 Days</text>
+  <circle cx="300" cy="586" r="18" fill="white" stroke="#175E4C" stroke-width="1.5"/>
+  <text x="300" y="591" font-family="Montserrat" font-size="14" fill="#175E4C" text-anchor="middle">✏️</text>
+  
+  <rect x="30" y="618" width="330" height="44" rx="12" ry="12" fill="#F9F7F4"/>
+  <text x="54" y="645" font-family="Roboto" font-size="15" fill="#1C2826">Zanzibar Beach Holiday - 7 Days</text>
+  <circle cx="300" cy="640" r="18" fill="white" stroke="#175E4C" stroke-width="1.5"/>
+  <text x="300" y="645" font-family="Montserrat" font-size="14" fill="#175E4C" text-anchor="middle">✏️</text>
+  
+  <!-- Enhanced Add Tour Button with glow effect -->
+  <rect x="125" y="672" width="140" height="44" rx="22" ry="22" fill="#175E4C" filter="url(#buttonGlow)"/>
+  <text x="195" y="699" font-family="Montserrat" font-size="16" font-weight="bold" fill="white" text-anchor="middle">+ Add Tour</text>
+  
+  <!-- Recent Reviews Section with improved typography -->
+  <text x="16" y="704" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Recent Reviews</text>
+  <rect x="16" y="720" width="358" height="90" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  
+  <!-- Enhanced Review Preview with improved styling -->
+  <circle cx="50" cy="755" r="20" fill="#E9B44C" opacity="0.2"/>
+  <circle cx="50" cy="755" r="18" fill="white" stroke="#E9B44C" stroke-width="2"/>
+  <text x="50" y="761" font-family="Montserrat" font-size="14" font-weight="bold" fill="#1C2826" text-anchor="middle">SJ</text>
+  
+  <text x="85" y="750" font-family="Montserrat" font-size="15" font-weight="bold" fill="#1C2826">Sarah Johnson</text>
+  <text x="290" y="750" font-family="Montserrat" font-size="15" font-weight="bold" fill="#E9B44C" text-anchor="end">★★★★★</text>
+  <text x="85" y="770" font-family="Roboto" font-size="14" fill="#5B6B67">Amazing safari experience! Our guide was...</text>
+  
+  <rect x="260" y="785" width="100" height="20" rx="10" ry="10" fill="#F9F7F4"/>
+  <text x="310" y="798" font-family="Montserrat" font-size="12" font-weight="bold" fill="#175E4C" text-anchor="middle">View All →</text>
+</svg>

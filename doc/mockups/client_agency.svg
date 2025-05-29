@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="390" height="800" viewBox="0 0 390 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Enhanced Background with subtle pattern and design elements -->
+  <defs>
+    <pattern id="subtlePattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="40" height="40" fill="#F9F7F4"/>
+      <path d="M0,20 L40,20 M20,0 L20,40" stroke="#3A8C78" stroke-width="0.3" opacity="0.05"/>
+      <circle cx="20" cy="20" r="1" fill="#E9B44C" opacity="0.1"/>
+    </pattern>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9F7F4"/>
+      <stop offset="100%" stop-color="#F2F0ED"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="390" height="800" fill="url(#backgroundGradient)"/>
+  <rect x="0" y="0" width="390" height="800" fill="url(#subtlePattern)"/>
+  
+  <!-- Status Bar with battery and network indicators -->
+  <rect x="0" y="0" width="390" height="32" fill="#0C3F33" opacity="0.98"/>
+  <!-- Time -->
+  <text x="195" y="20" font-family="Roboto" font-size="14" font-weight="medium" fill="white" text-anchor="middle">12:30</text>
+  <!-- Battery -->
+  <rect x="350" y="11" width="24" height="12" rx="2" ry="2" fill="none" stroke="white" stroke-width="1.5"/>
+  <rect x="374" y="15" width="2" height="4" fill="white"/>
+  <rect x="352" y="13" width="20" height="8" fill="white"/>
+  <!-- Network signal -->
+  <path d="M330,10 L330,22 M334,12 L334,22 M338,14 L338,22" stroke="white" stroke-width="1.5"/>
+  
+  <!-- App Header with enhanced styling and subtle gradient -->
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0C3F33"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="32" width="390" height="60" fill="url(#headerGradient)"/>
+  <text x="195" y="70" font-family="Montserrat" font-size="24" font-weight="bold" fill="white" text-anchor="middle">Travel Agency</text>
+  
+  <!-- Back Button with improved touch target and hover effect -->
+  <circle cx="36" cy="62" r="24" fill="white" opacity="0.1"/>
+  <circle cx="36" cy="62" r="22" fill="transparent" stroke="white" stroke-width="2"/>
+  <path d="M42,62 L30,62 M30,62 L36,56 M30,62 L36,68" stroke="white" stroke-width="2" fill="transparent"/>
+  
+  <!-- Agency Hero Section with enhanced styling -->
+  <rect x="0" y="92" width="390" height="190" fill="url(#agencyHeroGradient)" filter="url(#heroShadow)"/>
+  <defs>
+    <linearGradient id="agencyHeroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A8C78"/>
+      <stop offset="100%" stop-color="#175E4C"/>
+    </linearGradient>
+    <filter id="heroShadow" x="0%" y="0%" width="100%" height="105%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <!-- Enhanced Background Pattern for Hero Section -->
+  <defs>
+    <pattern id="heroBgPattern" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M0,25 L50,25 M25,0 L25,50" stroke="#3A8C78" stroke-width="0.5" opacity="0.1"/>
+      <circle cx="25" cy="25" r="1" fill="#E9B44C" opacity="0.2"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="92" width="390" height="190" fill="url(#heroBgPattern)"/>
+  
+  <!-- Hero Image Overlay -->
+  <defs>
+    <pattern id="agencyBanner" patternUnits="userSpaceOnUse" width="390" height="190">
+      <image href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgNTAiPjxsaW5lYXJHcmFkaWVudCBpZD0iYmdncmFkWiIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgwKSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNBOEM3OCIgc3RvcC1vcGFjaXR5PSIwLjQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxNzVFNEMiIHN0b3Atb3BhY2l0eT0iMC42Ii8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiBmaWxsPSJ1cmwoI2JnZ3JhZFopIi8+PHRleHQgeD0iNTAiIHk9IjI1IiBmb250LWZhbWlseT0iTW9udHNlcnJhdCIgZm9udC1zaXplPSI4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzBDM0YzMyIgc3Ryb2tlLXdpZHRoPSIwLjEiPkFmcmljYW4gU2FmYXJpIEV4cGVyaWVuY2VzPC90ZXh0Pjwvc3ZnPg==" x="0" y="0" width="390" height="190" />
+    </pattern>
+  </defs>
+  <rect x="0" y="92" width="390" height="190" fill="url(#agencyBanner)"/>
+  
+  <!-- Enhanced Agency Logo with better positioning -->
+  <filter id="logoShadow" x="-10%" y="-10%" width="120%" height="120%">
+    <feDropShadow dx="0" dy="4" stdDeviation="5" flood-opacity="0.2"/>
+  </filter>
+  <circle cx="80" cy="230" r="50" fill="white" stroke="#3A8C78" stroke-width="3" filter="url(#logoShadow)"/>
+  <circle cx="80" cy="230" r="48" fill="white"/>
+  
+  <!-- Logo Inner Elements -->
+  <circle cx="80" cy="230" r="40" fill="#F9F7F4"/>
+  <path d="M55,230 L105,230 M80,205 L80,255" stroke="#E9B44C" stroke-width="0.5"/>
+  <text x="80" y="222" font-family="Montserrat" font-size="16" font-weight="bold" fill="#175E4C" text-anchor="middle">AFRICA</text>
+  <text x="80" y="242" font-family="Montserrat" font-size="12" font-weight="bold" fill="#175E4C" text-anchor="middle">EXPLORERS</text>
+  
+  <!-- Agency Info with improved typography and spacing -->
+  <text x="155" y="210" font-family="Montserrat" font-size="26" font-weight="bold" fill="#1C2826">Africa Explorers</text>
+  <text x="155" y="235" font-family="Roboto" font-size="16" fill="#5B6B67">Safari Specialists</text>
+  
+  <!-- Enhanced Rating Section with improved alignment -->
+  <rect x="155" y="247" width="120" height="24" rx="12" ry="12" fill="#F9F7F4"/>
+  <text x="175" y="265" font-family="Montserrat" font-size="16" font-weight="bold" fill="#1C2826">4.8</text>
+  <text x="200" y="264" font-family="Montserrat" font-size="14" fill="#E9B44C">★★★★★</text>
+  <text x="265" y="265" font-family="Roboto" font-size="14" fill="#5B6B67">(124)</text>
+  
+  <!-- Contact Button with improved styling and placement -->
+  <rect x="290" y="247" width="90" height="40" rx="20" ry="20" fill="#175E4C" filter="url(#buttonGlow)"/>
+  <defs>
+    <filter id="buttonGlow" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#175E4C" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <text x="335" y="271" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Contact</text>
+  
+  <!-- Enhanced Tab Navigation with improved styling and consistent spacing -->
+  <rect x="0" y="300" width="390" height="60" fill="white" filter="url(#tabShadow)"/>
+  <defs>
+    <filter id="tabShadow" x="0%" y="-20%" width="100%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Improved Tab Items with equal spacing and visual indicators -->
+  <rect x="0" y="300" width="130" height="60" fill="white"/>
+  <text x="65" y="335" font-family="Montserrat" font-size="16" font-weight="bold" fill="#175E4C" text-anchor="middle">About</text>
+  <rect x="40" y="358" width="50" height="3" rx="1.5" ry="1.5" fill="#E9B44C"/>
+  
+  <rect x="130" y="300" width="130" height="60" fill="white"/>
+  <text x="195" y="335" font-family="Montserrat" font-size="16" fill="#5B6B67" text-anchor="middle">Tours</text>
+  
+  <rect x="260" y="300" width="130" height="60" fill="white"/>
+  <text x="325" y="335" font-family="Montserrat" font-size="16" fill="#5B6B67" text-anchor="middle">Reviews</text>
+  
+  <!-- Scrollable Content Container with enhanced shadow -->
+  <rect x="0" y="360" width="390" height="400" fill="transparent" filter="url(#contentShadow)"/>
+  <defs>
+    <filter id="contentShadow" x="0%" y="0%" width="100%" height="100%">
+      <feDropShadow dx="0" dy="-2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- About Section with enhanced styling and consistent spacing -->
+  <rect x="20" y="380" width="350" height="160" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <text x="40" y="410" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">About Us</text>
+  <foreignObject x="40" y="420" width="310" height="100">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Roboto; font-size: 15px; color: #5B6B67; line-height: 1.6;">
+      Established in 2010, Africa Explorers specializes in authentic safari experiences across East and South Africa. Our expert guides ensure unforgettable wildlife encounters while prioritizing sustainability and conservation efforts.
+    </div>
+  </foreignObject>
+  
+  <!-- Popular Destinations with enhanced styling and proper spacing -->
+  <text x="20" y="560" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Popular Destinations</text>
+  
+  <!-- Enhanced Destination Pills with consistent sizing and spacing -->
+  <rect x="20" y="580" width="100" height="36" rx="18" ry="18" fill="#175E4C" opacity="0.9" filter="url(#pillGlow)"/>
+  <defs>
+    <filter id="pillGlow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <text x="70" y="603" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Serengeti</text>
+  
+  <rect x="130" y="580" width="120" height="36" rx="18" ry="18" fill="#175E4C" opacity="0.9" filter="url(#pillGlow)"/>
+  <text x="190" y="603" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Masai Mara</text>
+  
+  <rect x="260" y="580" width="110" height="36" rx="18" ry="18" fill="#175E4C" opacity="0.9" filter="url(#pillGlow)"/>
+  <text x="315" y="603" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Kruger</text>
+  
+  <rect x="20" y="626" width="100" height="36" rx="18" ry="18" fill="#175E4C" opacity="0.9" filter="url(#pillGlow)"/>
+  <text x="70" y="649" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Zanzibar</text>
+  
+  <rect x="130" y="626" width="140" height="36" rx="18" ry="18" fill="#175E4C" opacity="0.9" filter="url(#pillGlow)"/>
+  <text x="200" y="649" font-family="Montserrat" font-size="14" font-weight="bold" fill="white" text-anchor="middle">Victoria Falls</text>
+  
+  <!-- Contact Information with enhanced styling and consistent spacing -->
+  <rect x="20" y="672" width="350" height="140" rx="20" ry="20" fill="white" filter="url(#cardShadow)"/>
+  <text x="40" y="702" font-family="Montserrat" font-size="20" font-weight="bold" fill="#1C2826">Contact</text>
+  
+  <!-- Contact Icons with improved alignment and spacing -->
+  <circle cx="40" cy="727" r="16" fill="#3A8C78" opacity="0.1"/>
+  <text x="40" y="732" font-family="Montserrat" font-size="12" fill="#175E4C" text-anchor="middle">📞</text>
+  <text x="70" y="732" font-family="Roboto" font-size="15" fill="#5B6B67">+255 123 456 789</text>
+  
+  <circle cx="40" cy="762" r="16" fill="#3A8C78" opacity="0.1"/>
+  <text x="40" y="767" font-family="Montserrat" font-size="12" fill="#175E4C" text-anchor="middle">✉️</text>
+  <text x="70" y="767" font-family="Roboto" font-size="15" fill="#5B6B67">info@africaexplorers.com</text>
+  
+  <circle cx="40" cy="797" r="16" fill="#3A8C78" opacity="0.1"/>
+  <text x="40" y="802" font-family="Montserrat" font-size="12" fill="#175E4C" text-anchor="middle">🌐</text>
+  <text x="70" y="802" font-family="Roboto" font-size="15" fill="#5B6B67">www.africaexplorers.com</text>
+  
+  <!-- Bottom Navigation Bar with improved styling -->
+  <rect x="0" y="732" width="390" height="68" fill="white" filter="url(#navShadow)"/>
+  <defs>
+    <filter id="navShadow" x="0%" y="-50%" width="100%" height="150%">
+      <feDropShadow dx="0" dy="-2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Nav Icons with equal spacing -->
+  <circle cx="65" cy="766" r="4" fill="#9AACA8"/>
+  <text x="65" y="784" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Discover</text>
+  
+  <circle cx="155" cy="766" r="4" fill="#9AACA8"/>
+  <text x="155" y="784" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Posts</text>
+  
+  <circle cx="245" cy="766" r="24" fill="#3A8C78" opacity="0.1"/>
+  <circle cx="245" cy="766" r="4" fill="#175E4C"/>
+  <text x="245" y="784" font-family="Montserrat" font-size="12" fill="#175E4C" text-anchor="middle">Agencies</text>
+  
+  <circle cx="335" cy="766" r="4" fill="#9AACA8"/>
+  <text x="335" y="784" font-family="Montserrat" font-size="12" fill="#9AACA8" text-anchor="middle">Profile</text>
+</svg>
