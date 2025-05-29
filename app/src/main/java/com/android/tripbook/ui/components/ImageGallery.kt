@@ -132,29 +132,26 @@ fun ImageGallery(
         }
     }
     
-    // Fullscreen gallery dialog - Using if statement instead of conditional call
+    // Fullscreen gallery dialog
     if (showFullscreenGallery) {
-        FullscreenImageGallery(
+        FullscreenGalleryDialog(
             images = images,
             initialPage = initialPage,
-            onDismiss = { 
-                showFullscreenGallery = false 
-            }
+            onDismiss = { showFullscreenGallery = false }
         )
     }
 }
 
 /**
- * Fullscreen image gallery with zoom and swipe capabilities
+ * Fullscreen gallery dialog with swipeable images
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun FullscreenImageGallery(
+private fun FullscreenGalleryDialog(
     images: List<String>,
     initialPage: Int,
     onDismiss: () -> Unit
 ) {
-    // Using Dialog with fullscreen properties
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -170,6 +167,22 @@ private fun FullscreenImageGallery(
                 .background(Color.Black)
         ) {
             val pagerState = rememberPagerState(initialPage = initialPage) { images.size }
+            
+            // Image pager
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                // Simple AsyncImage without zoom for now to ensure swiping works
+                AsyncImage(
+                    model = images[page],
+                    contentDescription = "Gallery image ${page + 1}",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable(onClick = onDismiss)
+                )
+            }
             
             // Close button
             IconButton(
@@ -187,17 +200,6 @@ private fun FullscreenImageGallery(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close gallery",
                     tint = Color.White
-                )
-            }
-            
-            // Image pager with zoom
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { page ->
-                ZoomableImage(
-                    imageUrl = images[page],
-                    modifier = Modifier.fillMaxSize()
                 )
             }
             
@@ -221,57 +223,5 @@ private fun FullscreenImageGallery(
     }
 }
 
-/**
- * A zoomable image component that supports pinch-to-zoom and panning
- */
-@Composable
-private fun ZoomableImage(
-    imageUrl: String,
-    modifier: Modifier = Modifier
-) {
-    var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
-    
-    // Add double-tap detection to reset zoom
-    Box(
-        modifier = modifier
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    scale = (scale * zoom).coerceIn(1f, 3f)
-                    
-                    // Only allow panning when zoomed in
-                    if (scale > 1f) {
-                        val maxX = (size.width * (scale - 1)) / 2
-                        val maxY = (size.height * (scale - 1)) / 2
-                        
-                        offsetX = (offsetX + pan.x).coerceIn(-maxX, maxX)
-                        offsetY = (offsetY + pan.y).coerceIn(-maxY, maxY)
-                    } else {
-                        offsetX = 0f
-                        offsetY = 0f
-                    }
-                }
-            }
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-                translationX = offsetX,
-                translationY = offsetY
-            )
-    ) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = "Zoomable image",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-    
-    // Reset zoom when image changes
-    LaunchedEffect(imageUrl) {
-        scale = 1f
-        offsetX = 0f
-        offsetY = 0f
-    }
-}
+
+
