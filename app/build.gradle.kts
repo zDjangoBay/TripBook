@@ -1,8 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
+    alias(libs.plugins.google.gms.google.services) apply false
 }
 
 android {
@@ -44,7 +43,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-//        dataBinding= true
+        //dataBinding= true
     }
 
     composeOptions {
@@ -64,7 +63,6 @@ dependencies {
     //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -77,7 +75,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.database)
+    implementation("com.google.firebase:firebase-database-ktx:20.3.0")
+    //implementation(libs.support.annotations)
+    //implementation(libs.androidx.annotation)
+    //implementation(libs.support.v4)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,22 +86,22 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation("com.google.maps.android:maps-compose:4.3.0") // Or latest
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     // Google Maps Compose
-    implementation(libs.maps.compose.v430)
+    implementation("com.google.maps.android:maps-compose:4.3.0")
 
 // Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.32.0")
 
 // Compose + lifecycle
 //    implementation(libs.androidx.lifecycle.runtime.compose)
 
 // Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
 
 
@@ -112,7 +113,7 @@ dependencies {
 
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
+        //ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
         // ... other dependencies ...
 
 
