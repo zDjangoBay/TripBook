@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<item
-    android:id="@+id/home"
-    android:icon="@drawable/bottom_btn1"
-    android:title="@string/Home"
-    app:cnb_backgroundColor="@color/Blue"
-    app:cnb_iconColor="@color/white"
-    />
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/bottom_btn1"
+        android:title="@string/Home"
+        app:cnb_backgroundColor="@color/Light_Blue"
+        app:cnb_iconColor="@color/white"
+        />
 
     <item
         android:id="@+id/explorer"
