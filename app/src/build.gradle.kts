@@ -8,6 +8,7 @@ android {
     namespace = "com.tripbook.catalog"
     compileSdk = 34
 
+
     defaultConfig {
         applicationId = "com.tripbook.catalog"
         minSdk = 24
