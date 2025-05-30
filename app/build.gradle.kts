@@ -91,9 +91,27 @@ dependencies {
 
 
 
+
+
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
+
+    // Google Maps Compose
+    implementation(libs.maps.compose.v430)
+
+    // Accompanist for sticky headers (optional if using custom pinned behavior)
+    implementation(libs.accompanist.placeholder)
+
+    // Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
 
 }
+
+
