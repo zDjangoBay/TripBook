@@ -84,7 +84,7 @@ fun EnhancedCalendarView(
                     Icon(
                         imageVector = Icons.Default.ChevronLeft,
                         contentDescription = "Previous",
-                        tint = TripBookPrimary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
 
@@ -122,7 +122,7 @@ fun EnhancedCalendarView(
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
                         contentDescription = "Next",
-                        tint = TripBookPrimary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -138,7 +138,7 @@ fun EnhancedCalendarView(
                     Icon(
                         imageVector = Icons.Default.CalendarViewMonth,
                         contentDescription = "Month View",
-                        tint = if (viewMode == CalendarViewMode.MONTH) TripBookPrimary else TextSecondary
+                        tint = if (viewMode == CalendarViewMode.MONTH) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -149,7 +149,7 @@ fun EnhancedCalendarView(
                     Icon(
                         imageVector = Icons.Default.CalendarViewWeek,
                         contentDescription = "Week View",
-                        tint = if (viewMode == CalendarViewMode.WEEK) TripBookPrimary else TextSecondary
+                        tint = if (viewMode == CalendarViewMode.WEEK) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -160,7 +160,7 @@ fun EnhancedCalendarView(
                     Icon(
                         imageVector = Icons.Default.ViewAgenda,
                         contentDescription = "Agenda View",
-                        tint = if (viewMode == CalendarViewMode.AGENDA) TripBookPrimary else TextSecondary
+                        tint = if (viewMode == CalendarViewMode.AGENDA) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -318,14 +318,14 @@ private fun MonthCalendarView(
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             when {
-                                isToday -> TripBookPrimary.copy(alpha = 0.1f)
+                                isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                 !isCurrentMonth -> Color.Transparent
                                 else -> MaterialTheme.colorScheme.surface
                             }
                         )
                         .border(
                             width = if (isToday) 1.dp else 0.dp,
-                            color = if (isToday) TripBookPrimary else Color.Transparent,
+                            color = if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable { onDateClick(date) },
@@ -342,7 +342,7 @@ private fun MonthCalendarView(
                                 fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
                                 color = when {
                                     !isCurrentMonth -> TextDisabled
-                                    isToday -> TripBookPrimary
+                                    isToday -> MaterialTheme.colorScheme.primary
                                     else -> TextPrimary
                                 }
                             )

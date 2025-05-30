@@ -23,7 +23,7 @@ import com.android.tripbook.repository.ReservationRepository
 import com.android.tripbook.ui.animation.AnimationUtils
 import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.AppIcons
-import com.android.tripbook.ui.theme.TripBookPrimary
+
 import com.android.tripbook.ui.theme.TextPrimary
 import com.android.tripbook.ui.theme.TextSecondary
 import java.time.LocalDate
@@ -105,7 +105,7 @@ fun ReservationsDashboard() {
                             Icon(
                                 imageVector = AppIcons.Flight,
                                 contentDescription = null,
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier
                                     .size(32.dp)
                                     .padding(end = 8.dp)
@@ -147,7 +147,7 @@ fun ReservationsDashboard() {
                                 Icon(
                                     imageVector = if (isCalendarViewState) AppIcons.List else AppIcons.Calendar,
                                     contentDescription = if (isCalendarViewState) "Switch to List View" else "Switch to Calendar View",
-                                    tint = TripBookPrimary,
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.then(AnimationUtils.pulseAnimation(pulseFraction = 1.1f, duration = 1500))
                                 )
                             }
@@ -161,7 +161,7 @@ fun ReservationsDashboard() {
                             Icon(
                                 imageVector = AppIcons.Filter,
                                 contentDescription = "Filter Reservations",
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = if (currentFilter != ReservationFilter.empty() &&
                                     (selectedTabIndex == 0 && currentFilter != ReservationFilter.upcoming() ||
                                      selectedTabIndex == 1 && currentFilter != ReservationFilter.past())) {
@@ -285,7 +285,7 @@ fun ReservationsDashboard() {
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .then(AnimationUtils.pulseAnimation(pulseFraction = 1.05f, duration = 2000)),
-                    containerColor = TripBookPrimary,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
                     icon = {
                         Icon(

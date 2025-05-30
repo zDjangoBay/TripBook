@@ -95,7 +95,7 @@ fun SearchAndSortBar(
                 Icon(
                     imageVector = AppIcons.Search,
                     contentDescription = "Search",
-                    tint = TripBookPrimary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.then(
                         if (isSearchExpanded)
                             AnimationUtils.pulseAnimation(pulseFraction = 1.1f, duration = 1500)
@@ -158,7 +158,7 @@ fun SearchAndSortBar(
                 Icon(
                     imageVector = AppIcons.Sort,
                     contentDescription = "Sort",
-                    tint = TripBookPrimary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.then(AnimationUtils.rotateAnimation(degrees = 5f, duration = 2000))
                 )
             }
@@ -213,7 +213,7 @@ private fun SortOptionsDialog(
                             .clip(RoundedCornerShape(8.dp))
                             .clickable { onSortOptionSelected(option) }
                             .background(
-                                if (isSelected) TripBookPrimary.copy(alpha = 0.1f) else Color.Transparent
+                                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent
                             )
                             .padding(vertical = 12.dp, horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -222,7 +222,7 @@ private fun SortOptionsDialog(
                             selected = isSelected,
                             onClick = { onSortOptionSelected(option) },
                             colors = RadioButtonDefaults.colors(
-                                selectedColor = TripBookPrimary
+                                selectedColor = MaterialTheme.colorScheme.primary
                             )
                         )
 
@@ -231,7 +231,7 @@ private fun SortOptionsDialog(
                         Text(
                             text = option.displayName,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = if (isSelected) TripBookPrimary else TextPrimary
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

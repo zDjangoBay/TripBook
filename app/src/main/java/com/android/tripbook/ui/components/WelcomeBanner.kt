@@ -27,7 +27,7 @@ import com.android.tripbook.R
 import com.android.tripbook.ui.animation.AnimationUtils
 import com.android.tripbook.ui.theme.AppIcons
 import com.android.tripbook.ui.theme.TextSecondary
-import com.android.tripbook.ui.theme.TripBookPrimary
+
 
 /**
  * Welcome banner with illustration and call-to-action
@@ -126,7 +126,7 @@ fun WelcomeBanner(
                             Icon(
                                 imageVector = AppIcons.FlightTakeoff,
                                 contentDescription = null,
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.then(AnimationUtils.rotateAnimation(degrees = 5f, duration = 2500))
                             )
 
@@ -134,7 +134,7 @@ fun WelcomeBanner(
 
                             Text(
                                 text = "Book Now",
-                                color = TripBookPrimary,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
                             )
 
@@ -143,7 +143,7 @@ fun WelcomeBanner(
                             Icon(
                                 imageVector = Icons.Default.ArrowForward,
                                 contentDescription = null,
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.then(AnimationUtils.waveAnimation(amplitude = 3f, frequency = 0.3f))
                             )
                         }
@@ -189,7 +189,7 @@ fun SectionHeader(
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = TripBookPrimary
+                color = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -197,7 +197,7 @@ fun SectionHeader(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = if (isHovered) TripBookPrimary.copy(alpha = 0.7f) else TextSecondary
+                color = if (isHovered) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else TextSecondary
             )
 
             // Extra info that appears when hovered
