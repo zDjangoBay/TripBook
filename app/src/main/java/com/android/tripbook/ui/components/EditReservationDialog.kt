@@ -290,7 +290,7 @@ fun EditReservationDialog(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TripBookPrimary
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Text("Save")

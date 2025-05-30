@@ -16,7 +16,7 @@ import com.android.tripbook.R
 import com.android.tripbook.ui.animation.AnimationUtils
 import com.android.tripbook.ui.theme.TextPrimary
 import com.android.tripbook.ui.theme.TextSecondary
-import com.android.tripbook.ui.theme.TripBookPrimary
+
 
 /**
  * Enhanced empty state component with illustrations
@@ -46,9 +46,9 @@ fun EnhancedEmptyState(
                 .then(AnimationUtils.floatingAnimation(offsetY = 10, duration = 3000)),
             contentScale = ContentScale.Fit
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Title
         Text(
             text = title,
@@ -59,9 +59,9 @@ fun EnhancedEmptyState(
             color = TextPrimary,
             textAlign = TextAlign.Center
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         // Message
         Text(
             text = message,
@@ -70,15 +70,15 @@ fun EnhancedEmptyState(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        
+
         // Action button
         if (actionText != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             Button(
                 onClick = onActionClick,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = TripBookPrimary
+                    containerColor = MaterialTheme.colorScheme.primary
                 ),
                 modifier = Modifier.then(AnimationUtils.pulseAnimation(pulseFraction = 1.05f, duration = 2000))
             ) {

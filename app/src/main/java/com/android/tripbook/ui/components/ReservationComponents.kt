@@ -90,7 +90,7 @@ fun ReservationCard(
                     Icon(
                         imageVector = AppIcons.Location,
                         contentDescription = null,
-                        tint = TripBookPrimary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .size(20.dp)
                             .then(AnimationUtils.rotateAnimation(degrees = 5f, duration = 2500))
@@ -125,7 +125,7 @@ fun ReservationCard(
                 Icon(
                     imageVector = AppIcons.CalendarToday,
                     contentDescription = null,
-                    tint = TripBookPrimary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -144,7 +144,7 @@ fun ReservationCard(
                     Icon(
                         imageVector = AppIcons.Hotel,
                         contentDescription = null,
-                        tint = TripBookPrimary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -165,7 +165,7 @@ fun ReservationCard(
                 Icon(
                     imageVector = AppIcons.Money,
                     contentDescription = null,
-                    tint = TripBookPrimary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -195,7 +195,7 @@ fun ReservationCard(
                             Icon(
                                 imageVector = AppIcons.Flight,
                                 contentDescription = null,
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -214,7 +214,7 @@ fun ReservationCard(
                         Icon(
                             imageVector = AppIcons.Bookmark,
                             contentDescription = null,
-                            tint = TripBookPrimary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -233,7 +233,7 @@ fun ReservationCard(
                             Icon(
                                 imageVector = AppIcons.Notes,
                                 contentDescription = null,
-                                tint = TripBookPrimary,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
@@ -360,7 +360,7 @@ fun QuickActionButton(
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = TripBookPrimary,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.then(
                 if (!isPressed) AnimationUtils.pulseAnimation(
                     pulseFraction = 1.1f,
@@ -424,8 +424,8 @@ fun ReservationTabs(
                         )
                 )
             },
-            selectedContentColor = TabSelected,
-            unselectedContentColor = TabUnselected
+            selectedContentColor = MaterialTheme.colorScheme.primary,
+            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         // Past tab with animation
@@ -455,8 +455,8 @@ fun ReservationTabs(
                         )
                 )
             },
-            selectedContentColor = TabSelected,
-            unselectedContentColor = TabUnselected
+            selectedContentColor = MaterialTheme.colorScheme.primary,
+            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
