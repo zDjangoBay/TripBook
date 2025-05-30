@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -55,6 +55,7 @@ dependencies {
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -76,11 +77,4 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    val navVersion = "2.9.0"
-
-    implementation("androidx.navigation:navigation-compose:$navVersion")
-    
-    // Date Picker dependencies
-    implementation("androidx.compose.material3:material3:1.3.2")
-    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
 }
