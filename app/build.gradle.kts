@@ -1,17 +1,19 @@
 plugins {
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+
 }
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -39,19 +41,26 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         compose = true
+        viewBinding = true
+//        dataBinding= true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -61,10 +70,11 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
+    //           Default dependencies for the project
+    //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -75,8 +85,14 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation("androidx.navigation:navigation-runtime:2.8.0")
     implementation("androidx.navigation:navigation-compose:2.8.0")
+
+
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -90,6 +106,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.4.3")//---------------------------------------------------------
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
@@ -114,5 +131,20 @@ dependencies {
 
 
 //      You can add your own dependencies down here
+
     //---------------------------------------------------------
+    //        Custom dependencies
+
+    //---------------------------------------------------------
+
+    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
+
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
+        // ... other dependencies ...
+
+
+
+
 }
