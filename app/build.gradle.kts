@@ -1,8 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
+    id("com.google.gms.google-services") // ✅ This is required
 }
 
 android {
@@ -44,7 +43,6 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-//        dataBinding= true
     }
 
     composeOptions {
@@ -61,10 +59,8 @@ android {
 dependencies {
     //------------------------------------------------------
     //           Default dependencies for the project
-    //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -91,15 +87,8 @@ dependencies {
     //---------------------------------------------------------
 
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
-
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
-
-
-
-
+    // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
 
     // Extended Icons
     implementation("androidx.compose.material:material-icons-extended")
@@ -115,4 +104,15 @@ dependencies {
 
     // Calendar
     implementation("com.kizitonwose.calendar:compose:2.4.0")
+
+    ///// Firebase SDK using BoM for version management
+    implementation (platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }
+//configurations.all {
+//    resolutionStrategy {
+//        force 'com.google.firebase:firebase-common:21.1.0'
+//        force 'com.google.firebase:firebase-firestore:24.10.2'
+//    }
+//}
