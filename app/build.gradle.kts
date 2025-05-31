@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -64,20 +64,18 @@ dependencies {
     //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.firebase.database)
+    implementation(libs.androidx.navigation.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,13 +89,17 @@ dependencies {
     //---------------------------------------------------------
 
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
-
-
+    implementation(libs.androidx.navigation.runtime.android)
+//    implementation(libs.androidx.databinding.ktx)
+    implementation ("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.github.bumptech.glide:glide:4.16.0")
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
 
-
+   implementation(libs.firebase.database)
 
 
 }
