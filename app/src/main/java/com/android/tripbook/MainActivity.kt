@@ -20,9 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                    InscriptionScreen()
                     )
                 }
             }
