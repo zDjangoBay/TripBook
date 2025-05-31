@@ -76,4 +76,9 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
+
+
 }
