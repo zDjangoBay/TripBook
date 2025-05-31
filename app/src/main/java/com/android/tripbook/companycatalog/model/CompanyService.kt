@@ -4,4 +4,8 @@
  */
 
 package com.android.tripbook.companycatalog.model
+data class CompanyService(
+    val title: String,
+    val description: String
+)
 
