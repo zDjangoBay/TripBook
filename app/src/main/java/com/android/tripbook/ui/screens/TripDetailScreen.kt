@@ -1,169 +1,315 @@
+// ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.viewmodel.MockReviewViewModel
-import com.android.tripbook.viewmodel.MockTripViewModel
-import com.android.tripbook.ui.components.ImageCarousel
-import com.android.tripbook.ui.components.ReviewCard
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.android.tripbook.ui.components.MiniMap
+import com.android.tripbook.viewmodel.MapViewModel
+import com.android.tripbook.data.SampleTripsWithLocation
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> Unit) {
-    val tripViewModel = remember {MockTripViewModel()}
-    val trip = remember { tripViewModel.getTripById(tripId) }
-    val reviewViewModel = remember { MockReviewViewModel() }
-    val allReviews by reviewViewModel.reviews.collectAsState()
-    val reviewsForTrip = allReviews.filter { it.tripId == tripId }
-
-    if (trip == null) {
-        Scaffold(
-            topBar = {
-                SmallTopAppBar(
-                    title = { Text("Trip Not Found") },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                        }
-                    }
-                )
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Sorry, this trip does not exist.")
-            }
-        }
-        return
+fun TripDetailScreen(
+    tripId: Int,
+    onBackClick: () -> Unit,
+    onAllReviewsClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    mapViewModel: MapViewModel = viewModel()
+) {
+    val allTrips by mapViewModel.allTrips
+    val trip = remember(tripId, allTrips) {
+        allTrips.find { it.id == tripId }
     }
 
-    var reviewText by remember { mutableStateOf(TextFieldValue("")) }
+    trip?.let { currentTrip ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            // Hero Image
+            AsyncImage(
+                model = currentTrip.imageUrl,
+                contentDescription = currentTrip.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp),
+                contentScale = ContentScale.Crop
+            )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Trip Details") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            // Content Section
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                // Title and Location
+                Text(
+                    text = currentTrip.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${currentTrip.city}, ${currentTrip.country}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    currentTrip.region?.let { region ->
+                        Text(
+                            text = " • $region",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
-            )
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp)
+
+                // Rating and Reviews
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 4.dp)
                 ) {
-                    ImageCarousel(images = trip.imageUrl, modifier = Modifier.fillMaxSize())
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Rating",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${currentTrip.rating}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = " (${currentTrip.reviewCount} reviews)",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-            }
 
-            item {
-                Text(trip.title, style = MaterialTheme.typography.headlineMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(trip.description, style = MaterialTheme.typography.bodyLarge)
                 Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = Color.LightGray, thickness = 1.dp)
-            }
 
-            item {
+                // Price and Duration
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("User Reviews", style = MaterialTheme.typography.titleLarge)
-                    TextButton(onClick = { onSeeAllReviews(tripId) }) {
-                        Text("See All", style = MaterialTheme.typography.bodyMedium)
+                    Column {
+                        Text(
+                            text = "Price",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = currentTrip.price,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = "Duration",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = currentTrip.duration,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-                if (reviewsForTrip.isEmpty()) {
-                    Text("No reviews yet for this trip.", color = Color.Gray)
-                } else {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(reviewsForTrip.take(5)) { review -> // limit to preview size
-                            ReviewCard(
-                                review = review,
-                                modifier = Modifier
-                                    .width(280.dp)
-                                    .padding(vertical = 4.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = Color.LightGray, thickness = 1.dp)
-            }
-
-
-            item {
-                Text("Add Your Review", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = reviewText,
-                    onValueChange = { reviewText = it },
-                    label = { Text("Your Comment") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    maxLines = 6,
-                    singleLine = false,
-                    textStyle = MaterialTheme.typography.bodyMedium
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = { /* Simulate image picker */ },
-                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                    contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
+                // Description
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Text("Upload Images")
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "About This Trip",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = currentTrip.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
+                // Location Map
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Location",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            TextButton(
+                                onClick = {
+                                    // Navigate to full map view centered on this trip
+                                    mapViewModel.selectTrip(currentTrip)
+                                    onBackClick() // Go back to catalog with selected trip
+                                }
+                            ) {
+                                Text("View on Map")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "${currentTrip.city}, ${currentTrip.country}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Mini Map
+                        MiniMap(
+                            trip = currentTrip,
+                            height = 200
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Reviews Section
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Reviews",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            TextButton(
+                                onClick = { onAllReviewsClick(currentTrip.id) }
+                            ) {
+                                Text("See All")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "${currentTrip.reviewCount} reviews • ${currentTrip.rating} average rating",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Button(
-                        onClick = { /* Submit Review */ },
-                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                        contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
+                        onClick = { /* Handle booking */ },
+                        modifier = Modifier.weight(1f)
                     ) {
-                        Text("Submit")
+                        Text("Book Now")
                     }
+
+                    OutlinedButton(
+                        onClick = { /* Handle add to favorites */ },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Save Trip")
+                    }
+                }
+
+                // Bottom spacing for navigation
+                Spacer(modifier = Modifier.height(100.dp))
+            }
+        }
+    } ?: run {
+        // Trip not found
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Trip not found",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = "The requested trip could not be loaded",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = onBackClick) {
+                    Text("Go Back")
                 }
             }
         }

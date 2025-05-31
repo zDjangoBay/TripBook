@@ -65,7 +65,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.foundation.layout.android)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.play.services.location)
     // implementation(libs.androidx.material3.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -77,7 +78,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
+
 
     // Google Maps Compose
     implementation(libs.maps.compose.v430)
@@ -90,6 +91,8 @@ dependencies {
 
 // Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.utils.ktx)
 
 
 
