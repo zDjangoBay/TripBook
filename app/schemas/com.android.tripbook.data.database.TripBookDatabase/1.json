@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "fd724748e2098aba5e1297476711927e",
+    "identityHash": "a5440f80a87513b314e06d5d2b669ad5",
     "entities": [
       {
         "tableName": "trips",
@@ -150,7 +150,7 @@
       },
       {
         "tableName": "users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `date_of_birth` TEXT, `profile_image_url` TEXT, `preferred_currency` TEXT NOT NULL, `preferred_language` TEXT NOT NULL, `notification_enabled` INTEGER NOT NULL, `email_notifications` INTEGER NOT NULL, `push_notifications` INTEGER NOT NULL, `marketing_emails` INTEGER NOT NULL, `travel_preferences` TEXT, `emergency_contact_name` TEXT, `emergency_contact_phone` TEXT, `is_active` INTEGER NOT NULL, `is_verified` INTEGER NOT NULL, `last_login` INTEGER, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT NOT NULL, `password_hash` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `phone` TEXT, `date_of_birth` TEXT, `profile_image_url` TEXT, `preferred_currency` TEXT NOT NULL, `preferred_language` TEXT NOT NULL, `notification_enabled` INTEGER NOT NULL, `email_notifications` INTEGER NOT NULL, `push_notifications` INTEGER NOT NULL, `marketing_emails` INTEGER NOT NULL, `travel_preferences` TEXT, `emergency_contact_name` TEXT, `emergency_contact_phone` TEXT, `is_active` INTEGER NOT NULL, `is_verified` INTEGER NOT NULL, `last_login` INTEGER, `created_at` INTEGER NOT NULL, `updated_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -167,6 +167,12 @@
           {
             "fieldPath": "email",
             "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passwordHash",
+            "columnName": "password_hash",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -1479,7 +1485,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fd724748e2098aba5e1297476711927e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a5440f80a87513b314e06d5d2b669ad5')"
     ]
   }
 }

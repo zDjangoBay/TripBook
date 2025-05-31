@@ -9,9 +9,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.data.managers.ReservationSessionManager
+import com.android.tripbook.data.managers.UserSessionManager
 import com.android.tripbook.data.providers.DummyTripDataProvider
 import com.android.tripbook.ui.components.StepProgressIndicator
+import com.android.tripbook.TripBookApplication
 
 /**
  * Multi-step reservation flow activity
@@ -23,7 +26,14 @@ fun ReservationFlowActivity(
     onNavigateBack: () -> Unit,
     onNavigateToPayment: (String) -> Unit
 ) {
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
+    val context = LocalContext.current
+    val application = context.applicationContext as TripBookApplication
+    val userSessionManager = remember {
+        UserSessionManager.getInstance(context, application.database)
+    }
+    val sessionManager = remember {
+        ReservationSessionManager.getInstance(context, application.database, userSessionManager)
+    }
     val trip = remember { DummyTripDataProvider.getTripById(tripId) }
     var currentStep by remember { mutableStateOf(0) }
     

@@ -42,7 +42,10 @@ data class UserEntity(
     
     @ColumnInfo(name = "email")
     val email: String,
-    
+
+    @ColumnInfo(name = "password_hash")
+    val passwordHash: String,
+
     @ColumnInfo(name = "first_name")
     val firstName: String,
     
@@ -51,7 +54,10 @@ data class UserEntity(
     
     @ColumnInfo(name = "phone")
     val phone: String? = null,
-    
+
+    @ColumnInfo(name = "bio")
+    val bio: String? = null,
+
     @ColumnInfo(name = "date_of_birth")
     val dateOfBirth: String? = null, // Stored as ISO date string
     
@@ -140,12 +146,14 @@ data class UserEntity(
             username: String,
             email: String,
             firstName: String,
-            lastName: String
+            lastName: String,
+            passwordHash: String = ""
         ): UserEntity {
             return UserEntity(
                 id = id,
                 username = username,
                 email = email,
+                passwordHash = passwordHash,
                 firstName = firstName,
                 lastName = lastName
             )

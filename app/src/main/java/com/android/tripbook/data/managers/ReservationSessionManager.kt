@@ -5,14 +5,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.android.tripbook.data.models.*
 import com.android.tripbook.data.providers.DummyTripDataProvider
+import com.android.tripbook.data.database.TripBookDatabase
+import com.android.tripbook.data.database.entities.ReservationEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import android.content.Context
 
 /**
  * Manages the current reservation session state
  */
-class ReservationSessionManager {
+class ReservationSessionManager private constructor(
+    private val context: Context,
+    private val database: TripBookDatabase,
+    private val userSessionManager: UserSessionManager
+) {
 
     private val _currentSession = MutableStateFlow<ReservationSession?>(null)
     val currentSession: StateFlow<ReservationSession?> = _currentSession.asStateFlow()
@@ -87,6 +97,7 @@ class ReservationSessionManager {
     fun completeReservation(): TripReservation? {
         val session = _currentSession.value ?: return null
         val transport = session.selectedTransport ?: return null
+        val currentUserId = userSessionManager.getCurrentUserId() ?: return null
 
         val reservation = TripReservation(
             id = "reservation_${System.currentTimeMillis()}",
@@ -101,8 +112,32 @@ class ReservationSessionManager {
             paymentStatus = PaymentStatus.PENDING
         )
 
-        // Add to reservations list
-        _reservations.value = _reservations.value + reservation
+        // Save to database
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val reservationEntity = ReservationEntity(
+                    id = reservation.id,
+                    userId = currentUserId,
+                    tripId = session.tripId,
+                    transportId = transport.id,
+                    hotelId = session.selectedHotel?.id,
+                    hotelNights = session.hotelNights,
+                    totalCost = session.totalCost,
+                    status = reservation.status.name,
+                    paymentStatus = reservation.paymentStatus.name,
+                    bookingDate = reservation.bookingDate,
+                    notes = "Reservation created via app"
+                )
+
+                database.reservationDao().insertReservation(reservationEntity)
+
+                // Update in-memory list
+                _reservations.value = _reservations.value + reservation
+            } catch (e: Exception) {
+                // Handle error - could show toast or log
+                android.util.Log.e("ReservationManager", "Failed to save reservation", e)
+            }
+        }
 
         // Clear current session
         clearSession()
@@ -138,9 +173,17 @@ class ReservationSessionManager {
         @Volatile
         private var INSTANCE: ReservationSessionManager? = null
 
-        fun getInstance(): ReservationSessionManager {
+        fun getInstance(
+            context: Context,
+            database: TripBookDatabase,
+            userSessionManager: UserSessionManager
+        ): ReservationSessionManager {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ReservationSessionManager().also { INSTANCE = it }
+                INSTANCE ?: ReservationSessionManager(
+                    context.applicationContext,
+                    database,
+                    userSessionManager
+                ).also { INSTANCE = it }
             }
         }
     }

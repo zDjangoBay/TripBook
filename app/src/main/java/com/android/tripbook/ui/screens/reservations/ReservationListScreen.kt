@@ -14,10 +14,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import com.android.tripbook.data.managers.ReservationSessionManager
-import com.android.tripbook.data.models.ReservationStatus
-import com.android.tripbook.data.models.TripReservation
+import com.android.tripbook.data.managers.UserSessionManager
+import com.android.tripbook.data.repositories.ReservationRepository
+import com.android.tripbook.model.Reservation
+import com.android.tripbook.model.ReservationStatus
+import com.android.tripbook.TripBookApplication
 import java.time.format.DateTimeFormatter
 
 /**
@@ -27,14 +31,25 @@ import java.time.format.DateTimeFormatter
 fun ReservationListScreen(
     onReservationClick: (String) -> Unit
 ) {
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
-    val reservations by sessionManager.reservations.collectAsState()
+    val context = LocalContext.current
+    val application = context.applicationContext as TripBookApplication
+    val userSessionManager = remember {
+        UserSessionManager.getInstance(context, application.database)
+    }
+    val reservationRepository = remember {
+        ReservationRepository(application.database)
+    }
+
+    val currentUser by userSessionManager.currentUser.collectAsState()
+    val reservations by reservationRepository.getUserReservations(
+        currentUser?.id ?: ""
+    ).collectAsState(initial = emptyList())
 
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Pending", "Upcoming", "Completed")
     val statuses = listOf(
         ReservationStatus.PENDING,
-        ReservationStatus.UPCOMING,
+        ReservationStatus.CONFIRMED,
         ReservationStatus.COMPLETED
     )
 
@@ -104,18 +119,9 @@ fun ReservationListScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(filteredReservations) { reservation ->
-                    ReservationCard(
+                    SimpleReservationCard(
                         reservation = reservation,
-                        onClick = { onReservationClick(reservation.id) },
-                        onCancel = if (reservation.status == ReservationStatus.PENDING ||
-                                      reservation.status == ReservationStatus.UPCOMING) {
-                            {
-                                sessionManager.updateReservationStatus(
-                                    reservation.id,
-                                    ReservationStatus.CANCELLED
-                                )
-                            }
-                        } else null
+                        onClick = { onReservationClick(reservation.id) }
                     )
                 }
             }
@@ -125,8 +131,82 @@ fun ReservationListScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun SimpleReservationCard(
+    reservation: Reservation,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = reservation.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+
+                StatusBadge(status = reservation.status)
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Destination: ${reservation.destination}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Start: ${reservation.startDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${reservation.currency} ${String.format("%.2f", reservation.price)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Text(
+                    text = "Ref: ${reservation.bookingReference}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun ReservationCard(
-    reservation: TripReservation,
+    reservation: Reservation,
     onClick: () -> Unit,
     onCancel: (() -> Unit)? = null
 ) {
@@ -142,8 +222,8 @@ fun ReservationCard(
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = reservation.trip.imageUrl,
-                contentDescription = reservation.trip.title,
+                model = reservation.imageUrl,
+                contentDescription = reservation.title,
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight()
@@ -162,7 +242,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = reservation.trip.title,
+                        text = reservation.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
@@ -174,7 +254,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${reservation.trip.fromLocation} → ${reservation.trip.toLocation}",
+                    text = "Destination: ${reservation.destination}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -182,7 +262,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Booked: ${reservation.bookingDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
+                    text = "Start: ${reservation.startDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -195,7 +275,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$${String.format("%.2f", reservation.totalCost)}",
+                        text = "${reservation.currency} ${String.format("%.2f", reservation.price)}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -227,10 +307,10 @@ fun StatusBadge(
             MaterialTheme.colorScheme.tertiary,
             "Pending"
         )
-        ReservationStatus.UPCOMING -> Triple(
+        ReservationStatus.CONFIRMED -> Triple(
             MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
             MaterialTheme.colorScheme.primary,
-            "Upcoming"
+            "Confirmed"
         )
         ReservationStatus.COMPLETED -> Triple(
             MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),

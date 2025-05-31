@@ -7,22 +7,31 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
 import com.android.tripbook.ui.screens.DashboardActivity
+import com.android.tripbook.ui.screens.auth.AuthActivity
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.data.managers.UserSessionManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,43 +61,79 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SafeDashboardLoader() {
-    var showDashboard by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val application = context.applicationContext as TripBookApplication
+    val userSessionManager = remember {
+        UserSessionManager.getInstance(context, application.database)
+    }
+
+    val isLoggedIn by userSessionManager.isLoggedIn.collectAsState()
+    var isInitialized by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    if (errorMessage != null) {
-        // Show error screen
-        ErrorScreen(
-            error = errorMessage!!,
-            onRetry = {
-                errorMessage = null
-                showDashboard = false
-            },
-            onUseTestScreen = {
-                errorMessage = null
-                showDashboard = false
-            }
-        )
-    } else if (showDashboard) {
-        // Load dashboard with logging
-        Log.d("TripBook", "=== DASHBOARD LOADING START ===")
-        Log.d("TripBook", "Step 1: About to call DashboardActivity composable")
-        Log.d("TripBook", "Step 2: Testing DashboardActivity import")
-        Log.d("TripBook", "Step 3: Calling real DashboardActivity")
+    LaunchedEffect(Unit) {
+        delay(1000) // Simulate loading time
+        try {
+            Log.d("TripBook", "=== APP INITIALIZATION START ===")
+            Log.d("TripBook", "Step 1: Checking authentication status")
+            delay(500)
+            Log.d("TripBook", "Step 2: Loading user session")
+            delay(500)
+            Log.d("TripBook", "Step 3: Initialization complete")
+            isInitialized = true
+            Log.d("TripBook", "=== APP INITIALIZATION END ===")
+        } catch (e: Exception) {
+            Log.e("TripBook", "Error during app initialization", e)
+            errorMessage = "Failed to initialize: ${e.message}"
+        }
+    }
 
-        DashboardActivity()
-
-        Log.d("TripBook", "Step 4: DashboardActivity completed successfully")
-        Log.d("TripBook", "=== DASHBOARD LOADING END ===")
-    } else {
-        // Show test screen with option to load dashboard
-        TestScreen(
-            onLoadDashboard = {
-                Log.d("TripBook", "=== USER CLICKED LOAD DASHBOARD ===")
-                Log.d("TripBook", "Setting showDashboard = true")
-                showDashboard = true
-                Log.d("TripBook", "showDashboard state updated")
+    when {
+        errorMessage != null -> {
+            // Show error state
+            ErrorScreen(
+                error = errorMessage!!,
+                onRetry = {
+                    errorMessage = null
+                    isInitialized = false
+                },
+                onUseTestScreen = {
+                    errorMessage = null
+                    isInitialized = false
+                }
+            )
+        }
+        !isInitialized -> {
+            // Show loading state
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Initializing TripBook...",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
-        )
+        }
+        isLoggedIn -> {
+            // User is logged in, show dashboard
+            Log.d("TripBook", "=== DASHBOARD LOADING START ===")
+            Log.d("TripBook", "User is authenticated, loading dashboard")
+            DashboardActivity()
+            Log.d("TripBook", "=== DASHBOARD LOADING END ===")
+        }
+        else -> {
+            // User not logged in, show authentication
+            Log.d("TripBook", "=== AUTHENTICATION REQUIRED ===")
+            AuthActivity(
+                onAuthSuccess = {
+                    Log.d("TripBook", "Authentication successful, dashboard will load automatically")
+                }
+            )
+        }
     }
 }
 
