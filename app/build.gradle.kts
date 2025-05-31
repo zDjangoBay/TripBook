@@ -51,7 +51,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -65,6 +65,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    //implementation(libs.androidx.material3.android)
+    //implementation(libs.androidx.navigation.compose.jvmstubs)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,18 +82,22 @@ dependencies {
     // Google Maps Compose
     implementation(libs.maps.compose.v430)
 
-// Accompanist for sticky headers (optional if using custom pinned behavior)
+    // Accompanist for sticky headers (optional if using custom pinned behavior)
     implementation(libs.accompanist.placeholder)
 
-// Compose + lifecycle
-//    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
+    // Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
-
-
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Material Icons Extended (for Star icons)
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    // ViewModel Compose
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // StateFlow support (already included in lifecycle-runtime-ktx, but explicit for clarity)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 }

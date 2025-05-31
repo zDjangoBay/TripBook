@@ -1,51 +1,127 @@
+// ReviewCard.kt
 package com.android.tripbook.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.android.tripbook.model.Review
+
 @Composable
-fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = review.username, style = MaterialTheme.typography.titleSmall)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = review.comment, style = MaterialTheme.typography.bodyMedium)
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // User Info Row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // User Avatar
+                AsyncImage(
+                    model = review.userAvatar.ifEmpty { "https://via.placeholder.com/40" },
+                    contentDescription = "User Avatar",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = review.userName,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = review.date.ifEmpty { "Recent" },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Rating Display
+            StarRatingDisplay(
+                rating = review.rating.toFloat(),
+                starSize = 18,
+                showRatingText = false
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Review Text
+            Text(
+                text = review.comment,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.DarkGray
+            )
+
+            // Review Images (if any)
             if (review.images.isNotEmpty()) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 320.dp), // max height, adjust if needed
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    userScrollEnabled = false // prevent nested scroll in LazyColumn
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(review.images) { imageUrl ->
-                        Image(
-                            painter = rememberAsyncImagePainter(imageUrl),
-                            contentDescription = null,
+                    review.images.take(3).forEach { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Review Image",
                             modifier = Modifier
-                                .aspectRatio(1f) // make images square
-                                .clip(RoundedCornerShape(8.dp))
-                                .fillMaxWidth()
+                                .size(60.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
                         )
+                    }
+                    if (review.images.size > 3) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Card(
+                                modifier = Modifier.fillMaxSize(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color.Gray.copy(alpha = 0.1f)
+                                )
+                            ) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "+${review.images.size - 3}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

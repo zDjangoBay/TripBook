@@ -11,26 +11,59 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.viewmodel.MockReviewViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import android.util.Log
 import com.android.tripbook.viewmodel.MockTripViewModel
+import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.ui.components.ImageCarousel
 import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.ui.components.StarRatingInput
+import com.android.tripbook.ui.components.StarRatingDisplay
+import com.android.tripbook.ui.components.RatingSummary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> Unit) {
-    val tripViewModel = remember {MockTripViewModel()}
+fun TripDetailScreen(
+    tripId: Int,
+    onBack: () -> Unit,
+    onSeeAllReviews: (Int) -> Unit,
+    reviewViewModel: ReviewViewModel = viewModel()
+) {
+    val tripViewModel = remember { MockTripViewModel() }
     val trip = remember { tripViewModel.getTripById(tripId) }
-    val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
-    val reviewsForTrip = allReviews.filter { it.tripId == tripId }
+    val reviewsForTrip = remember(allReviews, tripId) {
+        allReviews.filter { it.tripId == tripId }
+    }
+
+    // Add LaunchedEffect here for logging
+    LaunchedEffect(reviewsForTrip) {
+        Log.d("TripDetail", "Reviews for trip $tripId: ${reviewsForTrip.size}")
+        reviewsForTrip.forEach { review ->
+            Log.d("TripDetail", "Review: ${review.userName} - ${review.comment} - Rating: ${review.rating}")
+        }
+    }
+
+    // Calculate rating statistics
+    val averageRating = remember(reviewsForTrip) {
+        if (reviewsForTrip.isNotEmpty()) {
+            reviewsForTrip.map { it.rating.toDouble() }.average().toFloat()
+        } else 0f
+    }
+
+    val ratingBreakdown = remember(reviewsForTrip) {
+        (1..5).associateWith { ratingValue ->
+            reviewsForTrip.count { review -> review.rating == ratingValue.toFloat() }
+        }
+    }
 
     if (trip == null) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(
+                TopAppBar(
                     title = { Text("Trip Not Found") },
                     navigationIcon = {
                         IconButton(onClick = onBack) {
@@ -46,13 +79,19 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Sorry, this trip does not exist.")
+                Text(
+                    text = "Sorry, this trip does not exist.",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
         return
     }
 
     var reviewText by remember { mutableStateOf(TextFieldValue("")) }
+    var userRating by remember { mutableFloatStateOf(0f) }
+    var showRatingError by remember { mutableStateOf(false) }
+    var userName by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -84,11 +123,51 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
             }
 
             item {
-                Text(trip.title, style = MaterialTheme.typography.headlineMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(trip.description, style = MaterialTheme.typography.bodyLarge)
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider(color = Color.LightGray, thickness = 1.dp)
+                Column {
+                    Text(
+                        text = trip.title,
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Display overall rating
+                    if (reviewsForTrip.isNotEmpty()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            StarRatingDisplay(
+                                rating = averageRating,
+                                starSize = 24,
+                                showRatingText = true
+                            )
+                            Text(
+                                text = "(${reviewsForTrip.size} reviews)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    Text(
+                        text = trip.description,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Divider(color = Color.LightGray, thickness = 1.dp)
+                }
+            }
+
+            // Rating Summary Section
+            if (reviewsForTrip.isNotEmpty()) {
+                item {
+                    RatingSummary(
+                        averageRating = averageRating,
+                        totalReviews = reviewsForTrip.size,
+                        ratingBreakdown = ratingBreakdown
+                    )
+                }
             }
 
             item {
@@ -97,19 +176,30 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("User Reviews", style = MaterialTheme.typography.titleLarge)
-                    TextButton(onClick = { onSeeAllReviews(tripId) }) {
-                        Text("See All", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "User Reviews",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    if (reviewsForTrip.isNotEmpty()) {
+                        TextButton(onClick = { onSeeAllReviews(tripId) }) {
+                            Text(
+                                text = "See All",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 if (reviewsForTrip.isEmpty()) {
-                    Text("No reviews yet for this trip.", color = Color.Gray)
+                    Text(
+                        text = "No reviews yet for this trip.",
+                        color = Color.Gray
+                    )
                 } else {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(reviewsForTrip.take(5)) { review -> // limit to preview size
+                        items(reviewsForTrip.take(5)) { review ->
                             ReviewCard(
                                 review = review,
                                 modifier = Modifier
@@ -126,43 +216,106 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
 
 
             item {
-                Text("Add Your Review", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(12.dp))
+                Column {
+                    Text(
+                        text = "Add Your Review",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                OutlinedTextField(
-                    value = reviewText,
-                    onValueChange = { reviewText = it },
-                    label = { Text("Your Comment") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    maxLines = 6,
-                    singleLine = false,
-                    textStyle = MaterialTheme.typography.bodyMedium
-                )
+                    // User Name Input
+                    OutlinedTextField(
+                        value = userName,
+                        onValueChange = { userName = it },
+                        label = { Text("Your Name") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = { /* Simulate image picker */ },
-                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                    contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
-                ) {
-                    Text("Upload Images")
-                }
+                    // Rating Input Section
+                    Text(
+                        text = "Rate this trip",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    StarRatingInput(
+                        rating = userRating.toInt(),
+                        onRatingChanged = {
+                            userRating = it.toFloat()
+                            showRatingError = false
+                        },
+                        starSize = 40
+                    )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Button(
-                        onClick = { /* Submit Review */ },
-                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
-                        contentPadding = PaddingValues(vertical = 14.dp, horizontal = 24.dp)
+                    if (showRatingError) {
+                        Text(
+                            text = "Please select a rating",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Review Text Input
+                    OutlinedTextField(
+                        value = reviewText,
+                        onValueChange = { reviewText = it },
+                        label = { Text("Your Comment") },
+                        placeholder = { Text("Share your experience...") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        maxLines = 6,
+                        singleLine = false,
+                        textStyle = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Action Buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("Submit")
+                        OutlinedButton(
+                            onClick = { /* Simulate image picker */ },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Add Photos")
+                        }
+
+                        Button(
+                            onClick = {
+                                if (userRating == 0f) {
+                                    showRatingError = true
+                                } else if (userName.isNotBlank() && reviewText.text.isNotBlank()) {
+                                    Log.d("TripDetail", "Submitting review for trip $tripId")
+                                    // Submit review
+                                    reviewViewModel.addReview(
+                                        tripId = tripId,
+                                        userName = userName.trim(),
+                                        comment = reviewText.text.trim(),
+                                        rating = userRating
+                                    )
+                                    Log.d("TripDetail", "Review submitted, total reviews: ${reviewViewModel.reviews.value.size}")
+
+                                    // Reset form
+                                    reviewText = TextFieldValue("")
+                                    userRating = 0f
+                                    userName = ""
+                                    showRatingError = false
+                                }
+                            },
+                            modifier = Modifier.weight(1f),
+                            enabled = reviewText.text.isNotBlank() && userName.isNotBlank()
+                        ) {
+                            Text("Submit Review")
+                        }
                     }
                 }
             }

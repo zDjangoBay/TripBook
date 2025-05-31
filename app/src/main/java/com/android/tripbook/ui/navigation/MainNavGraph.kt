@@ -1,6 +1,7 @@
+// Update your MainNavGraph.kt to share the same ViewModel instance
+
 package com.android.tripbook.ui.navigation
 
-import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
@@ -13,13 +14,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.ui.screens.*
+import com.android.tripbook.viewmodel.ReviewViewModel
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    // CREATE SINGLE INSTANCE HERE
+    val sharedReviewViewModel: ReviewViewModel = viewModel()
+
     NavHost(
         navController = navController,
         startDestination = "home",
@@ -79,14 +85,17 @@ fun MainNavGraph(
                 onBack = { navController.popBackStack() },
                 onSeeAllReviews = { id ->
                     navController.navigate("reviews/$id")
-                }
+                },
+                reviewViewModel = sharedReviewViewModel // PASS THE SAME INSTANCE
             )
         }
         composable("reviews/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
-            AllReviewsScreen(tripId = tripId, onBack = { navController.popBackStack() })
+            AllReviewsScreen(
+                tripId = tripId,
+                onBack = { navController.popBackStack() },
+                reviewViewModel = sharedReviewViewModel // PASS THE SAME INSTANCE
+            )
         }
-
-
     }
 }
