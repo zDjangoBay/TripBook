@@ -47,4 +47,25 @@ class SummaryCalculatorTest {
         // Assert that the calculated total matches the expected value, within a small margin of error
         assertEquals(expected, total, 0.01)
     }
+
+    @Test
+    fun testCalculateTotal_whenHotelOptionNotSelected(){
+        // Get the first trip from the dummy data
+        val trip = DummyTripDataProvider.getTrips().first()
+
+        // Get the first transport option for the selected trip
+        val transportation = DummyTripDataProvider.getTransportOptions(trip.id).first()
+
+        // Take the first two activities from the dummy data
+        val activities = DummyActivityProvider.getActivities().take(2)
+
+        // Manually calculate the expected total cost using the same logic as the calculator (No hotel chosen)
+        val expected = trip.basePrice + transportation.price + activities.sumOf { it.price }
+
+        // Call the calculator's method to compute the total
+        val total = calculator.totalCost(trip = trip, transportOption = transportation, hotelOption = null, hotelNights = 0, activityOption = activities)
+
+        // Assert that the calculated total matches the expected value, within a small margin of error
+        assertEquals(expected, total, 0.01)
+    }
 }
