@@ -79,7 +79,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
@@ -98,8 +97,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.github.bumptech.glide:glide:4.16.0")
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
-   implementation(libs.firebase.database)
+    implementation(libs.firebase.database)
 
 
 }
