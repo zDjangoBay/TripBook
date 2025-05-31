@@ -54,24 +54,24 @@ fun ReservationDetailsScreen(
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    
+
     // Get the reservation from the repository
     val allReservations by repository.reservations.collectAsState()
     val reservation = remember(allReservations, reservationId) {
         allReservations.find { it.id == reservationId }
     }
-    
+
     // State for edit mode
     var isEditMode by remember { mutableStateOf(false) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
     var showShareOptions by remember { mutableStateOf(false) }
-    
+
     // Animated visibility for the screen
     AnimatedVisibility(
         visible = reservation != null,
-        enter = fadeIn(animationSpec = tween(300)) + 
+        enter = fadeIn(animationSpec = tween(300)) +
                 slideInVertically(animationSpec = tween(300)) { it / 2 },
-        exit = fadeOut(animationSpec = tween(300)) + 
+        exit = fadeOut(animationSpec = tween(300)) +
                slideOutVertically(animationSpec = tween(300)) { -it / 2 }
     ) {
         reservation?.let { res ->
@@ -100,25 +100,25 @@ fun ReservationDetailsScreen(
                                 Icon(
                                     imageVector = Icons.Default.Share,
                                     contentDescription = "Share",
-                                    tint = TripBookPrimary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            
+
                             // Edit button
                             IconButton(onClick = { isEditMode = true }) {
                                 Icon(
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = "Edit",
-                                    tint = TripBookPrimary
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            
+
                             // Delete button
                             IconButton(onClick = { showDeleteConfirmation = true }) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "Delete",
-                                    tint = TripBookError
+                                    tint = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
@@ -155,7 +155,7 @@ fun ReservationDetailsScreen(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
-                        
+
                         // Gradient overlay
                         Box(
                             modifier = Modifier
@@ -169,7 +169,7 @@ fun ReservationDetailsScreen(
                                     )
                                 )
                         )
-                        
+
                         // Destination and status
                         Column(
                             modifier = Modifier
@@ -183,16 +183,16 @@ fun ReservationDetailsScreen(
                                     color = Color.White
                                 )
                             )
-                            
+
                             Spacer(modifier = Modifier.height(8.dp))
-                            
+
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 StatusIndicator(status = res.status)
-                                
+
                                 Spacer(modifier = Modifier.width(8.dp))
-                                
+
                                 Text(
                                     text = res.title,
                                     style = MaterialTheme.typography.titleMedium.copy(
@@ -202,7 +202,7 @@ fun ReservationDetailsScreen(
                             }
                         }
                     }
-                    
+
                     // Details section
                     Column(
                         modifier = Modifier
@@ -219,18 +219,18 @@ fun ReservationDetailsScreen(
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = TextPrimary
                             )
-                            
+
                             Spacer(modifier = Modifier.height(4.dp))
-                            
+
                             Text(
                                 text = "Check-in: ${DateUtils.formatTime(res.startDate)} • Check-out: ${DateUtils.formatTime(res.endDate)}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = TextSecondary
                             )
                         }
-                        
+
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
-                        
+
                         // Accommodation
                         if (res.accommodationName != null) {
                             DetailSection(
@@ -242,10 +242,10 @@ fun ReservationDetailsScreen(
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = TextPrimary
                                 )
-                                
+
                                 if (res.accommodationAddress != null) {
                                     Spacer(modifier = Modifier.height(4.dp))
-                                    
+
                                     Text(
                                         text = res.accommodationAddress,
                                         style = MaterialTheme.typography.bodyMedium,
@@ -253,10 +253,10 @@ fun ReservationDetailsScreen(
                                     )
                                 }
                             }
-                            
+
                             Divider(modifier = Modifier.padding(vertical = 16.dp))
                         }
-                        
+
                         // Transport
                         if (res.transportInfo != null) {
                             DetailSection(
@@ -269,10 +269,10 @@ fun ReservationDetailsScreen(
                                     color = TextPrimary
                                 )
                             }
-                            
+
                             Divider(modifier = Modifier.padding(vertical = 16.dp))
                         }
-                        
+
                         // Price
                         DetailSection(
                             title = "Price",
@@ -286,9 +286,9 @@ fun ReservationDetailsScreen(
                                 color = TextPrimary
                             )
                         }
-                        
+
                         Divider(modifier = Modifier.padding(vertical = 16.dp))
-                        
+
                         // Booking reference
                         DetailSection(
                             title = "Booking Reference",
@@ -300,11 +300,11 @@ fun ReservationDetailsScreen(
                                 color = TextPrimary
                             )
                         }
-                        
+
                         // Notes
                         if (res.notes != null) {
                             Divider(modifier = Modifier.padding(vertical = 16.dp))
-                            
+
                             DetailSection(
                                 title = "Notes",
                                 icon = Icons.Default.Notes
@@ -319,7 +319,7 @@ fun ReservationDetailsScreen(
                     }
                 }
             }
-            
+
             // Delete confirmation dialog
             if (showDeleteConfirmation) {
                 AlertDialog(
@@ -334,7 +334,7 @@ fun ReservationDetailsScreen(
                                 onNavigateBack()
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = TripBookError
+                                containerColor = MaterialTheme.colorScheme.error
                             )
                         ) {
                             Text("Delete")
@@ -347,7 +347,7 @@ fun ReservationDetailsScreen(
                     }
                 )
             }
-            
+
             // Share options dialog
             if (showShareOptions) {
                 ShareOptionsDialog(
@@ -358,19 +358,19 @@ fun ReservationDetailsScreen(
                             ShareType.TEXT -> buildShareText(res)
                             ShareType.CALENDAR -> buildCalendarText(res)
                         }
-                        
+
                         val sendIntent = Intent().apply {
                             action = Intent.ACTION_SEND
                             putExtra(Intent.EXTRA_TEXT, shareText)
                             type = "text/plain"
                         }
-                        
+
                         context.startActivity(Intent.createChooser(sendIntent, "Share Reservation"))
                         showShareOptions = false
                     }
                 )
             }
-            
+
             // Edit mode dialog
             if (isEditMode) {
                 EditReservationDialog(
@@ -413,12 +413,12 @@ private fun DetailSection(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = TripBookPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -427,9 +427,9 @@ private fun DetailSection(
                 color = TextPrimary
             )
         }
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         Box(modifier = Modifier.padding(start = 32.dp)) {
             content()
         }

@@ -120,8 +120,8 @@ fun AddReservationDialog(
                         .background(
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
-                                    TripBookPrimary,
-                                    TripBookSecondary
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary
                                 )
                             )
                         )
@@ -177,8 +177,8 @@ fun AddReservationDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp),
-                    color = TripBookPrimary,
-                    trackColor = TripBookPrimary.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                 )
 
                 // Step indicator
@@ -198,8 +198,8 @@ fun AddReservationDialog(
                                 .clip(CircleShape)
                                 .background(
                                     when {
-                                        isCurrentStep -> TripBookPrimary
-                                        isCompletedStep -> TripBookSecondary
+                                        isCurrentStep -> MaterialTheme.colorScheme.primary
+                                        isCompletedStep -> MaterialTheme.colorScheme.secondary
                                         else -> Color.LightGray
                                     }
                                 ),
@@ -315,7 +315,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.Title,
                                                 contentDescription = null,
-                                                tint = if (title.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (title.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -336,7 +336,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.LocationOn,
                                                 contentDescription = null,
-                                                tint = if (destination.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (destination.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -351,7 +351,7 @@ fun AddReservationDialog(
                                         Icon(
                                             imageVector = Icons.Rounded.Flight,
                                             contentDescription = null,
-                                            tint = TripBookPrimary,
+                                            tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier
                                                 .size(100.dp)
                                                 .then(AnimationUtils.floatingAnimation(offsetY = 10, duration = 3000))
@@ -390,7 +390,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.CalendarToday,
                                                 contentDescription = null,
-                                                tint = TripBookPrimary
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     )
@@ -409,7 +409,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.CalendarToday,
                                                 contentDescription = null,
-                                                tint = TripBookPrimary
+                                                tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
                                     )
@@ -500,7 +500,7 @@ fun AddReservationDialog(
                                             Text(
                                                 text = "$",
                                                 style = MaterialTheme.typography.bodyLarge,
-                                                color = if (price.isNotBlank()) TripBookPrimary else TextSecondary
+                                                color = if (price.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -521,7 +521,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.ConfirmationNumber,
                                                 contentDescription = null,
-                                                tint = if (bookingReference.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (bookingReference.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -536,7 +536,7 @@ fun AddReservationDialog(
                                         Icon(
                                             imageVector = Icons.Rounded.CreditCard,
                                             contentDescription = null,
-                                            tint = TripBookPrimary,
+                                            tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier
                                                 .size(100.dp)
                                                 .then(AnimationUtils.pulseAnimation(pulseFraction = 1.05f, duration = 2000))
@@ -576,7 +576,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.Hotel,
                                                 contentDescription = null,
-                                                tint = if (accommodationName.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (accommodationName.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -596,7 +596,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.Place,
                                                 contentDescription = null,
-                                                tint = if (accommodationAddress.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (accommodationAddress.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -624,7 +624,7 @@ fun AddReservationDialog(
                                             Icon(
                                                 imageVector = Icons.Rounded.FlightTakeoff,
                                                 contentDescription = null,
-                                                tint = if (transportInfo.isNotBlank()) TripBookPrimary else TextSecondary
+                                                tint = if (transportInfo.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     )
@@ -673,7 +673,7 @@ fun AddReservationDialog(
                             }
                         },
                         modifier = Modifier.weight(1f),
-                        border = BorderStroke(1.dp, TripBookPrimary),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
@@ -752,7 +752,7 @@ fun AddReservationDialog(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TripBookPrimary
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Text(if (currentStep < totalSteps - 1) "Next" else "Add Trip")
@@ -788,13 +788,13 @@ private fun StepHeader(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(TripBookPrimary.copy(alpha = 0.1f)),
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = TripBookPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
         }

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.Reservation
 import com.android.tripbook.ui.theme.TextPrimary
 import com.android.tripbook.ui.theme.TextSecondary
-import com.android.tripbook.ui.theme.TripBookPrimary
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -41,9 +41,9 @@ fun AgendaView(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             color = TextPrimary
         )
-        
+
         Divider()
-        
+
         if (reservations.isEmpty()) {
             // Empty state
             Box(
@@ -61,30 +61,30 @@ fun AgendaView(
                         modifier = Modifier.size(64.dp),
                         tint = TextSecondary.copy(alpha = 0.5f)
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     Text(
                         text = "No reservations for this date",
                         style = MaterialTheme.typography.bodyLarge,
                         color = TextSecondary
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     Button(
                         onClick = onAddReservationClick,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TripBookPrimary
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = null
                         )
-                        
+
                         Spacer(modifier = Modifier.width(8.dp))
-                        
+
                         Text("Add Reservation")
                     }
                 }
