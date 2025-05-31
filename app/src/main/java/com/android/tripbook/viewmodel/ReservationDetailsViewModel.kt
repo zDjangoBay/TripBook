@@ -1,3 +1,11 @@
+package com.android.tripbook.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import com.android.tripbook.model.Reservation
+import com.android.tripbook.model.ReservationStatus
+
 class ReservationDetailsViewModel : ViewModel() {
 
     private val _reservation = MutableLiveData<Reservation?>()
@@ -11,18 +19,19 @@ class ReservationDetailsViewModel : ViewModel() {
     private fun mockFetchReservation(id: String): Reservation? {
         return Reservation(
             id = id,
-            userId = "user1",
-            busName = "ExpressLine",
-            departure = "Yaoundé",
-            arrival = "Douala",
-            date = "2025-05-10",
-            time = "09:00",
-            seatNumber = "A12",
-            status = ReservationStatus.UPCOMING,
-            ticketUrl = "https://yourserver.com/tickets/$id.pdf",
-            contactNumber = "+237123456789",
-            locationCoordinates = Pair(3.848, 11.502),
-            createdAt = System.currentTimeMillis()
+            title = "ExpressLine Bus Trip",
+            destination = "Douala",
+            startDate = java.time.LocalDateTime.now().plusDays(7),
+            endDate = java.time.LocalDateTime.now().plusDays(7).plusHours(4),
+            status = ReservationStatus.CONFIRMED,
+            imageUrl = null,
+            price = 47.50,
+            currency = "USD",
+            bookingReference = "BG${id.takeLast(4)}",
+            notes = "Window seat requested",
+            accommodationName = null,
+            accommodationAddress = null,
+            transportInfo = "Seat A12"
         )
     }
 

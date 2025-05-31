@@ -1,14 +1,23 @@
+package com.android.tripbook.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+import com.android.tripbook.model.Reservation
+import com.android.tripbook.model.ReservationStatus
+
 class ReservationsDashboardViewModel : ViewModel() {
 
     private val _allReservations = MutableLiveData<List<Reservation>>()
     val allReservations: LiveData<List<Reservation>> = _allReservations
 
-    val upcomingReservations: LiveData<List<Reservation>> = Transformations.map(_allReservations) {
-        it.filter { res -> res.status == ReservationStatus.UPCOMING }
+    val upcomingReservations: LiveData<List<Reservation>> = _allReservations.map { reservations ->
+        reservations.filter { res -> res.status == ReservationStatus.CONFIRMED || res.status == ReservationStatus.PENDING }
     }
 
-    val pastReservations: LiveData<List<Reservation>> = Transformations.map(_allReservations) {
-        it.filter { res -> res.status == ReservationStatus.COMPLETED }
+    val pastReservations: LiveData<List<Reservation>> = _allReservations.map { reservations ->
+        reservations.filter { res -> res.status == ReservationStatus.COMPLETED }
     }
 
     fun loadReservations(userId: String) {
@@ -16,18 +25,19 @@ class ReservationsDashboardViewModel : ViewModel() {
         val dummyData = listOf(
             Reservation(
                 id = "res123",
-                userId = userId,
-                busName = "ExpressLine",
-                departure = "Yaoundé",
-                arrival = "Douala",
-                date = "2025-05-10",
-                time = "09:00",
-                seatNumber = "A12",
-                status = ReservationStatus.UPCOMING,
-                ticketUrl = "https://yourserver.com/tickets/res123.pdf",
-                contactNumber = "+237123456789",
-                locationCoordinates = Pair(3.848, 11.502),
-                createdAt = System.currentTimeMillis()
+                title = "ExpressLine Bus Trip",
+                destination = "Douala",
+                startDate = java.time.LocalDateTime.now().plusDays(7),
+                endDate = java.time.LocalDateTime.now().plusDays(7).plusHours(4),
+                status = ReservationStatus.CONFIRMED,
+                imageUrl = null,
+                price = 47.50,
+                currency = "USD",
+                bookingReference = "BG1234",
+                notes = "Window seat requested",
+                accommodationName = null,
+                accommodationAddress = null,
+                transportInfo = "Seat A12"
             )
         )
         _allReservations.value = dummyData

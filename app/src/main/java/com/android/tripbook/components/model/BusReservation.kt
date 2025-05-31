@@ -1,7 +1,5 @@
 package com.android.tripbook.model
 
-package com.android.tripbook.model
-
 import java.time.LocalDate
 import java.time.LocalTime
 
