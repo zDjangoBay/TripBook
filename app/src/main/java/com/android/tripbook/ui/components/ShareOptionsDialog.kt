@@ -16,7 +16,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.android.tripbook.model.Reservation
 import com.android.tripbook.ui.theme.TextPrimary
 import com.android.tripbook.ui.theme.TextSecondary
-import com.android.tripbook.ui.theme.TripBookPrimary
+
 import com.android.tripbook.util.DateUtils
 
 /**
@@ -66,7 +66,7 @@ fun ShareOptionsDialog(
                         ),
                         color = TextPrimary
                     )
-                    
+
                     IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -75,9 +75,9 @@ fun ShareOptionsDialog(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Share options
                 Column {
                     // Share as text
@@ -87,9 +87,9 @@ fun ShareOptionsDialog(
                         description = "Share the reservation details as plain text",
                         onClick = { onShare(ShareType.TEXT) }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     // Share as calendar event
                     ShareOption(
                         icon = Icons.Default.CalendarMonth,
@@ -98,9 +98,9 @@ fun ShareOptionsDialog(
                         onClick = { onShare(ShareType.CALENDAR) }
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Cancel button
                 TextButton(
                     onClick = onDismiss,
@@ -138,12 +138,12 @@ private fun ShareOption(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = TripBookPrimary,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column {
                 Text(
                     text = title,
@@ -152,9 +152,9 @@ private fun ShareOption(
                     ),
                     color = TextPrimary
                 )
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
@@ -171,16 +171,16 @@ private fun ShareOption(
 fun buildShareText(reservation: Reservation): String {
     return """
         🧳 Trip to ${reservation.destination}
-        
+
         📅 ${DateUtils.formatDateRange(reservation.startDate, reservation.endDate)}
         🏨 ${reservation.accommodationName ?: "Not specified"}
         💰 ${reservation.price} ${reservation.currency}
         🎫 Booking Reference: ${reservation.bookingReference}
-        
+
         Status: ${reservation.status.name.lowercase().replaceFirstChar { it.uppercase() }}
-        
+
         ${reservation.notes ?: ""}
-        
+
         Shared via TripBook
     """.trimIndent()
 }
@@ -215,29 +215,29 @@ private fun formatCalendarDate(date: java.time.LocalDateTime): String {
  */
 private fun buildCalendarDescription(reservation: Reservation): String {
     val description = StringBuilder()
-    
+
     description.append("Destination: ${reservation.destination}\\n")
     description.append("Price: ${reservation.price} ${reservation.currency}\\n")
     description.append("Booking Reference: ${reservation.bookingReference}\\n")
-    
+
     if (reservation.accommodationName != null) {
         description.append("Accommodation: ${reservation.accommodationName}\\n")
     }
-    
+
     if (reservation.accommodationAddress != null) {
         description.append("Address: ${reservation.accommodationAddress}\\n")
     }
-    
+
     if (reservation.transportInfo != null) {
         description.append("Transport: ${reservation.transportInfo}\\n")
     }
-    
+
     if (reservation.notes != null) {
         description.append("Notes: ${reservation.notes}\\n")
     }
-    
+
     description.append("Status: ${reservation.status.name.lowercase().replaceFirstChar { it.uppercase() }}\\n")
     description.append("Shared via TripBook")
-    
+
     return description.toString()
 }

@@ -43,10 +43,10 @@ fun WeekCalendarView(
     // Calculate the start of the week
     val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
     val startOfWeek = selectedDate.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
-    
+
     // Create a list of days in the week
     val daysInWeek = (0..6).map { startOfWeek.plusDays(it.toLong()) }
-    
+
     // Group reservations by date
     val reservationsByDate = reservations.flatMap { reservation ->
         val startDate = LocalDate.of(
@@ -59,19 +59,19 @@ fun WeekCalendarView(
             reservation.endDate.month,
             reservation.endDate.dayOfMonth
         )
-        
+
         // Create a list of all dates in the reservation range
         var currentDate = startDate
         val dates = mutableListOf<Pair<LocalDate, Reservation>>()
-        
+
         while (!currentDate.isAfter(endDate)) {
             dates.add(Pair(currentDate, reservation))
             currentDate = currentDate.plusDays(1)
         }
-        
+
         dates
     }.groupBy { it.first }
-    
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -83,7 +83,7 @@ fun WeekCalendarView(
             items(daysInWeek) { date ->
                 val isToday = date.equals(LocalDate.now())
                 val isSelected = date.equals(selectedDate)
-                
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -97,9 +97,9 @@ fun WeekCalendarView(
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     // Date
                     Box(
                         modifier = Modifier
@@ -107,8 +107,8 @@ fun WeekCalendarView(
                             .clip(CircleShape)
                             .background(
                                 when {
-                                    isSelected -> TripBookPrimary
-                                    isToday -> TripBookPrimary.copy(alpha = 0.1f)
+                                    isSelected -> MaterialTheme.colorScheme.primary
+                                    isToday -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                     else -> Color.Transparent
                                 }
                             ),
@@ -121,14 +121,14 @@ fun WeekCalendarView(
                             ),
                             color = when {
                                 isSelected -> Color.White
-                                isToday -> TripBookPrimary
+                                isToday -> MaterialTheme.colorScheme.primary
                                 else -> TextPrimary
                             }
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     // Reservation indicator
                     val hasReservations = reservationsByDate[date]?.isNotEmpty() == true
                     if (hasReservations) {
@@ -136,7 +136,7 @@ fun WeekCalendarView(
                             modifier = Modifier
                                 .size(6.dp)
                                 .clip(CircleShape)
-                                .background(TripBookPrimary)
+                                .background(MaterialTheme.colorScheme.primary)
                         )
                     } else {
                         Spacer(modifier = Modifier.height(6.dp))
@@ -144,12 +144,12 @@ fun WeekCalendarView(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Time slots (8 AM to 8 PM)
         val timeSlots = (8..20).toList()
-        
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 16.dp)
@@ -181,20 +181,20 @@ private fun TimeSlot(
     val timeFormatter = DateTimeFormatter.ofPattern("h a")
     val slotTime = LocalTime.of(hour, 0)
     val slotDateTime = LocalDateTime.of(date, slotTime)
-    
+
     // Filter reservations that overlap with this time slot
     val slotReservations = reservations.filter { reservation ->
         val reservationStart = reservation.startDate
         val reservationEnd = reservation.endDate
-        
+
         // Check if the reservation overlaps with this hour
         val slotStart = slotDateTime
         val slotEnd = slotDateTime.plusHours(1)
-        
+
         (reservationStart.isBefore(slotEnd) || reservationStart.isEqual(slotEnd)) &&
         (reservationEnd.isAfter(slotStart) || reservationEnd.isEqual(slotStart))
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -214,7 +214,7 @@ private fun TimeSlot(
                 color = TextSecondary,
                 modifier = Modifier.width(60.dp)
             )
-            
+
             // Line
             Divider(
                 modifier = Modifier
@@ -222,7 +222,7 @@ private fun TimeSlot(
                     .padding(horizontal = 8.dp),
                 color = CardBorder
             )
-            
+
             // Add button
             if (slotReservations.isEmpty()) {
                 IconButton(
@@ -232,12 +232,12 @@ private fun TimeSlot(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Reservation",
-                        tint = TripBookPrimary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         }
-        
+
         // Reservations in this time slot
         slotReservations.forEach { reservation ->
             Card(
@@ -272,9 +272,9 @@ private fun TimeSlot(
                             fontWeight = FontWeight.Bold
                         )
                     )
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     Text(
                         text = reservation.destination,
                         style = MaterialTheme.typography.bodySmall

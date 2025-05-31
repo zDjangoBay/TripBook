@@ -111,8 +111,8 @@ fun FilterDialog(
                         .background(
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
-                                    TripBookPrimary,
-                                    TripBookSecondary
+                                    MaterialTheme.colorScheme.primary,
+                                    MaterialTheme.colorScheme.secondary
                                 )
                             )
                         )
@@ -177,7 +177,7 @@ fun FilterDialog(
                         Icon(
                             imageVector = Icons.Rounded.Info,
                             contentDescription = null,
-                            tint = TripBookPrimary,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
 
@@ -186,7 +186,7 @@ fun FilterDialog(
                         Text(
                             text = "Active filters applied",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TripBookPrimary
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -211,7 +211,7 @@ fun FilterDialog(
                                 Icon(
                                     imageVector = Icons.Rounded.Search,
                                     contentDescription = null,
-                                    tint = if (searchQuery.isNotBlank()) TripBookPrimary else TextSecondary
+                                    tint = if (searchQuery.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             },
                             singleLine = true,
@@ -230,7 +230,7 @@ fun FilterDialog(
                                 Icon(
                                     imageVector = Icons.Rounded.LocationOn,
                                     contentDescription = null,
-                                    tint = if (destination.isNotBlank()) TripBookPrimary else TextSecondary
+                                    tint = if (destination.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             },
                             singleLine = true,
@@ -256,7 +256,7 @@ fun FilterDialog(
                                     Text(
                                         text = "$",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = if (priceMin.isNotBlank()) TripBookPrimary else TextSecondary
+                                        color = if (priceMin.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 },
                                 singleLine = true,
@@ -272,7 +272,7 @@ fun FilterDialog(
                                     Text(
                                         text = "$",
                                         style = MaterialTheme.typography.bodyLarge,
-                                        color = if (priceMax.isNotBlank()) TripBookPrimary else TextSecondary
+                                        color = if (priceMax.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 },
                                 singleLine = true,
@@ -349,7 +349,7 @@ fun FilterDialog(
                             onDismiss()
                         },
                         modifier = Modifier.weight(1f),
-                        border = BorderStroke(1.dp, TripBookPrimary),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
@@ -378,7 +378,7 @@ fun FilterDialog(
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = TripBookPrimary
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Icon(
@@ -441,7 +441,7 @@ private fun FilterSectionCard(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = TripBookPrimary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
 

@@ -63,10 +63,10 @@ fun CalendarViewComponent(
                 Icon(
                     imageVector = Icons.Default.ChevronLeft,
                     contentDescription = "Previous Month",
-                    tint = TripBookPrimary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
-            
+
             Text(
                 text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -74,20 +74,20 @@ fun CalendarViewComponent(
                 ),
                 color = TextPrimary
             )
-            
+
             IconButton(onClick = {
                 onMonthChanged(selectedMonth.plusMonths(1))
             }) {
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = "Next Month",
-                    tint = TripBookPrimary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Days of week header
         Row(modifier = Modifier.fillMaxWidth()) {
             for (dayOfWeek in DayOfWeek.values()) {
@@ -105,32 +105,32 @@ fun CalendarViewComponent(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         // Calendar grid
         val firstDayOfMonth = selectedMonth.atDay(1)
         val lastDayOfMonth = selectedMonth.atEndOfMonth()
         val firstDayOfGrid = firstDayOfMonth.minusDays(firstDayOfMonth.dayOfWeek.value.toLong() - 1)
-        
+
         val daysInGrid = mutableListOf<LocalDate>()
         var currentDay = firstDayOfGrid
-        
+
         // Add days to grid (6 weeks)
         repeat(42) {
             daysInGrid.add(currentDay)
             currentDay = currentDay.plusDays(1)
         }
-        
+
         // Group reservations by date
-        val reservationsByDate = reservations.groupBy { 
+        val reservationsByDate = reservations.groupBy {
             LocalDate.of(
-                it.startDate.year, 
-                it.startDate.monthValue, 
+                it.startDate.year,
+                it.startDate.monthValue,
                 it.startDate.dayOfMonth
             )
         }
-        
+
         // Calendar grid
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
@@ -141,7 +141,7 @@ fun CalendarViewComponent(
             items(daysInGrid) { date ->
                 val isCurrentMonth = date.month == selectedMonth.month
                 val hasReservations = reservationsByDate[date]?.isNotEmpty() == true
-                
+
                 Box(
                     modifier = Modifier
                         .aspectRatio(1f)
@@ -149,18 +149,18 @@ fun CalendarViewComponent(
                         .clip(CircleShape)
                         .background(
                             when {
-                                hasReservations -> TripBookPrimary.copy(alpha = 0.1f)
+                                hasReservations -> MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                                 else -> Color.Transparent
                             }
                         )
                         .border(
                             width = if (date == LocalDate.now()) 2.dp else 0.dp,
-                            color = if (date == LocalDate.now()) TripBookPrimary else Color.Transparent,
+                            color = if (date == LocalDate.now()) MaterialTheme.colorScheme.primary else Color.Transparent,
                             shape = CircleShape
                         )
                         .clickable(enabled = hasReservations) {
-                            reservationsByDate[date]?.firstOrNull()?.let { 
-                                onReservationClick(it) 
+                            reservationsByDate[date]?.firstOrNull()?.let {
+                                onReservationClick(it)
                             }
                         },
                     contentAlignment = Alignment.Center
@@ -168,16 +168,16 @@ fun CalendarViewComponent(
                     Text(
                         text = date.dayOfMonth.toString(),
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = if (hasReservations || date == LocalDate.now()) 
+                            fontWeight = if (hasReservations || date == LocalDate.now())
                                 FontWeight.Bold else FontWeight.Normal
                         ),
                         color = when {
                             !isCurrentMonth -> TextDisabled
-                            hasReservations -> TripBookPrimary
+                            hasReservations -> MaterialTheme.colorScheme.primary
                             else -> TextPrimary
                         }
                     )
-                    
+
                     if (hasReservations) {
                         Box(
                             modifier = Modifier
@@ -185,24 +185,24 @@ fun CalendarViewComponent(
                                 .padding(bottom = 2.dp)
                                 .size(4.dp)
                                 .clip(CircleShape)
-                                .background(TripBookPrimary)
+                                .background(MaterialTheme.colorScheme.primary)
                         )
                     }
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Reservations for selected month
         Text(
             text = "Reservations for ${selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))}",
             style = MaterialTheme.typography.titleSmall,
             color = TextSecondary
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         if (reservations.isEmpty()) {
             Box(
                 modifier = Modifier
