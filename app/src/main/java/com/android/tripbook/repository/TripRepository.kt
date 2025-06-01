@@ -40,41 +40,8 @@ class TripRepository {
     }
 
     private fun getInitialTrips(): List<Trip> {
-        return listOf(
-            Trip(
-                id = "1",
-                name = "Safari Adventure",
-                startDate = LocalDate.of(2024, 12, 15),
-                endDate = LocalDate.of(2024, 12, 22),
-                destination = "Kenya, Tanzania",
-                travelers = 4,
-                budget = 2400,
-                status = TripStatus.PLANNED,
-                category = TripCategory.WILDLIFE
-            ),
-            Trip(
-                id = "2",
-                name = "Morocco Discovery",
-                startDate = LocalDate.of(2025, 1, 10),
-                endDate = LocalDate.of(2025, 1, 18),
-                destination = "Marrakech, Fez",
-                travelers = 2,
-                budget = 1800,
-                status = TripStatus.ACTIVE,
-                category = TripCategory.CULTURAL
-            ),
-            Trip(
-                id = "3",
-                name = "Cape Town Explorer",
-                startDate = LocalDate.of(2024, 9, 5),
-                endDate = LocalDate.of(2024, 9, 12),
-                destination = "South Africa",
-                travelers = 6,
-                budget = 3200,
-                status = TripStatus.COMPLETED,
-                category = TripCategory.ADVENTURE
-            )
-        )
+        // Start with an empty list - trips will be added through the creation flow
+        return emptyList()
     }
 
     companion object {
