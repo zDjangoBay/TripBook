@@ -18,6 +18,8 @@ import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,10 +28,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.android.tripbook.data.providers.DummyTripDataProvider
 import com.android.tripbook.data.models.Trip
+import com.android.tripbook.data.managers.FavoritesManager
+import com.android.tripbook.data.DataStoreProvider
+import kotlinx.coroutines.launch
 
 /**
  * Dashboard screen showing available trips
@@ -43,8 +49,15 @@ fun DashboardScreen(
     var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
+    var showFavoritesOnly by remember { mutableStateOf(false) }
 
     val trips = remember { DummyTripDataProvider.getTrips() }
+
+    // Initialize FavoritesManager
+    val favoritesManager = remember {
+        FavoritesManager.getInstance(DataStoreProvider.getDataStore(context))
+    }
+    val favoriteTrips by favoritesManager.favoriteTrips.collectAsState(initial = emptySet())
 
     // Location permission launcher
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -77,17 +90,25 @@ fun DashboardScreen(
         }
     }
 
-    val filteredTrips = remember(searchQuery, currentLocation) {
-        if (searchQuery.isBlank()) {
-            trips
-        } else {
-            trips.filter {
+    val filteredTrips = remember(searchQuery, currentLocation, showFavoritesOnly, favoriteTrips) {
+        var result = trips
+
+        // Filter by favorites if enabled
+        if (showFavoritesOnly) {
+            result = result.filter { it.id in favoriteTrips }
+        }
+
+        // Filter by search query
+        if (searchQuery.isNotBlank()) {
+            result = result.filter {
                 it.title.contains(searchQuery, ignoreCase = true) ||
                 it.fromLocation.contains(searchQuery, ignoreCase = true) ||
                 it.toLocation.contains(searchQuery, ignoreCase = true) ||
                 (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
             }
         }
+
+        result
     }
 
     Column(
@@ -95,14 +116,42 @@ fun DashboardScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header
-        Text(
-            text = "Discover Amazing Trips",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // Header with Favorites Toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (showFavoritesOnly) "Your Favorite Trips" else "Discover Amazing Trips",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f)
+            )
+
+            // Favorites toggle button
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${favoriteTrips.size}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                IconButton(
+                    onClick = { showFavoritesOnly = !showFavoritesOnly }
+                ) {
+                    Icon(
+                        imageVector = if (showFavoritesOnly) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (showFavoritesOnly) "Show All Trips" else "Show Favorites Only",
+                        tint = if (showFavoritesOnly) Color.Red else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
 
         // Current Location Display
         if (currentLocation.isNotBlank()) {
@@ -167,15 +216,52 @@ fun DashboardScreen(
             shape = RoundedCornerShape(16.dp)
         )
 
-        // Trip Cards
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(filteredTrips) { trip ->
-                TripCard(
-                    trip = trip,
-                    onReserveClick = { onTripClick(trip.id) }
+        // Trip Cards or Empty State
+        if (filteredTrips.isEmpty() && showFavoritesOnly) {
+            // Empty favorites state
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = "No favorites",
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "No Favorite Trips Yet",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "Tap the heart icon on trips you love to add them here",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(filteredTrips) { trip ->
+                    TripCard(
+                        trip = trip,
+                        isFavorite = trip.id in favoriteTrips,
+                        onReserveClick = { onTripClick(trip.id) },
+                        onFavoriteClick = {
+                            // Use coroutine scope to handle suspend function
+                            kotlinx.coroutines.MainScope().launch {
+                                favoritesManager.toggleFavorite(trip.id)
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -185,7 +271,9 @@ fun DashboardScreen(
 @Composable
 fun TripCard(
     trip: Trip,
-    onReserveClick: () -> Unit
+    isFavorite: Boolean = false,
+    onReserveClick: () -> Unit,
+    onFavoriteClick: () -> Unit = {}
 ) {
 
     Card(
@@ -212,6 +300,22 @@ fun TripCard(
                     ),
                 contentAlignment = Alignment.Center
             ) {
+                // Favorite button in top-right corner
+                IconButton(
+                    onClick = onFavoriteClick,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                        tint = if (isFavorite) Color.Red else Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                // Trip category icon in center
                 Icon(
                     imageVector = when (trip.category.name.lowercase()) {
                         "business" -> Icons.Default.Business
