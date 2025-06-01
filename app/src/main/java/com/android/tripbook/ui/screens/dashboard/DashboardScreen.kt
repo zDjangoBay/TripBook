@@ -78,15 +78,19 @@ fun DashboardScreen(
     }
 
     val filteredTrips = remember(searchQuery, currentLocation) {
-        if (searchQuery.isBlank()) {
-            trips
-        } else {
-            trips.filter {
-                it.title.contains(searchQuery, ignoreCase = true) ||
-                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                it.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
-            }
+        trips.filter { trip ->
+            val matchesSearchQuery = searchQuery.isNotBlank() && (
+                trip.title.contains(searchQuery, ignoreCase = true) ||
+                trip.fromLocation.contains(searchQuery, ignoreCase = true) ||
+                trip.toLocation.contains(searchQuery, ignoreCase = true)
+            )
+
+            val matchesCurrentLocation = currentLocation.isNotBlank() && (
+                trip.fromLocation.contains(currentLocation, ignoreCase = true) ||
+                trip.toLocation.contains(currentLocation, ignoreCase = true)
+            )
+
+            matchesSearchQuery || matchesCurrentLocation
         }
     }
 
