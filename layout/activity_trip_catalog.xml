@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Light_belge"
+    tools:context=".TripCatalogActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/notification_btn"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imageView7"
+                    app:srcCompat="@drawable/bell_icon"
+                    tools:layout_editor_absoluteX="344dp" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="230dp"
+                    android:text="@string/User_Name"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView7"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/imageView7"
+                    app:layout_constraintVertical_bias="0.567"
+                    tools:layout_editor_absoluteX="104dp" />
+
+                <ImageView
+                    android:id="@+id/imageView7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="60dp"
+                    android:contentDescription="@string/Profile_Image"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/profile" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/Travelling_Made_Easy"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:background="#FBF9E9"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/light_purple_bg">
+
+                    <ImageView
+                        android:id="@+id/imageView14"
+                        android:layout_width="60dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/Bus_icon"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.951"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/bus" />
+
+                    <TextView
+                        android:id="@+id/textView15"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/Bus"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/light_orange_bg">
+
+                    <ImageView
+                        android:id="@+id/imageView10"
+                        android:layout_width="60dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/Boat_icon"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.951"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/boat" />
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/Boats"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/light_blue_bg">
+
+                    <ImageView
+                        android:id="@+id/imageView11"
+                        android:layout_width="60dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/flight_image"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.951"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/airplane" />
+
+                    <TextView
+                        android:id="@+id/textView16"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/flight"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="75dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/light_green_bg">
+
+                    <ImageView
+                        android:id="@+id/imageView13"
+                        android:layout_width="60dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="8dp"
+                        android:contentDescription="@string/Train_icon"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.951"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:srcCompat="@drawable/train" />
+
+                    <TextView
+                        android:id="@+id/textView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/Trains"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/Upcoming_Schedules"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="200dp">
+
+                <ProgressBar
+                    android:id="@+id/progressBarUpcomming"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewUpcoming"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/Recommendation_Places"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="200dp">
+
+                <ProgressBar
+                    android:id="@+id/progressBarReconmendated"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewReconmendated"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+      <com.ismaeldivita.chipnavigation.ChipNavigationBar
+          android:layout_height="70dp"
+          android:layout_width="match_parent"
+          android:background="@color/white"
+          app:cnb_menuResource="@menu/menu_bottom"
+          app:cnb_radius="50dp"
+          android:padding="4dp"
+          app:cnb_iconSize="20sp"
+          app:cnb_orientationMode="horizontal"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:cnb_unselectedColor="@color/midnight_blue"
+          app:layout_constraintBaseline_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+       />
+</androidx.constraintlayout.widget.ConstraintLayout>
