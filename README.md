@@ -18,12 +18,14 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors](https://img.shields.io/github/contributors/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/network/members)
-[![Stargazers](https://img.shields.io/github/stars/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/stargazers)
-[![Issues](https://img.shields.io/github/issues/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/issues)
-[![MIT License](https://img.shields.io/github/license/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/blob/main/LICENCE)
+<!-- PROJECT SHIELDS -->
+[![Contributors](https://img.shields.io/github/contributors/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/graphs/contributors)
+[![Forks](https://img.shields.io/github/forks/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/network/members)
+[![Stargazers](https://img.shields.io/github/stars/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/stargazers)
+[![Issues](https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/issues)
+[![MIT License](https://img.shields.io/github/license/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/blob/main/LICENSE)
 [![LinkedIn](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](https://linkedin.com/in/your-linkedin)
+
 
 
 
