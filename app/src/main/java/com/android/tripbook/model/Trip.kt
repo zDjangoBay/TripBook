@@ -3,7 +3,7 @@ package com.android.tripbook.model
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+//import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import java.time.LocalDate
@@ -118,7 +118,7 @@ class TripViewModel : ViewModel() {
         tripInfo = tripInfo.copy(startDate = value)
     }
 
-    fun updateStatus() {
+    private fun updateStatus() {
         val now = LocalDate.now()
         tripInfo = tripInfo.copy(
             status = when {
