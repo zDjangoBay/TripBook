@@ -114,7 +114,10 @@ fun TripDetailScreen(tripId: Int, onBack: () -> Unit, onSeeAllReviews: (Int) -> 
                                 review = review,
                                 modifier = Modifier
                                     .width(280.dp)
-                                    .padding(vertical = 4.dp)
+                                    .padding(vertical = 4.dp),
+                                onLikeClicked = {
+                                    reviewViewModel.toggleLike(it.tripId, it.username)
+                                }
                             )
                         }
                     }

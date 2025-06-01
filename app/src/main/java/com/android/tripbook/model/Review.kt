@@ -6,5 +6,7 @@ data class Review(
     val comment: String,
     val images: List<String>,
     var isLiked: Boolean = false,
-    var isFlagged: Boolean = false
+    var isFlagged: Boolean = false,
+    var likeCount: Int = 0
+
 )

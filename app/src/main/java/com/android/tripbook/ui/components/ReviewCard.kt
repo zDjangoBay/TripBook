@@ -19,13 +19,14 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.ui.graphics.Color
+import com.android.tripbook.viewmodel.MockReviewViewModel
 
 @Composable
 fun ReviewCard(
     review: Review,
     modifier: Modifier = Modifier,
-    onLikeClicked: () -> Unit = {},
-    onFlagClicked: () -> Unit = {}
+    onLikeClicked: (Review) -> Unit = {},
+    onFlagClicked: (Review) -> Unit = {}
 )
  {
     Card(
@@ -70,7 +71,7 @@ fun ReviewCard(
                     .padding(top = 12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = onLikeClicked) {
+                IconButton(onClick = { onLikeClicked(review) }) {
                     Icon(
                         imageVector = if (review.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Like",
@@ -78,13 +79,17 @@ fun ReviewCard(
                     )
                 }
 
-                IconButton(onClick = onFlagClicked) {
+                IconButton(onClick = {onFlagClicked(review)}) {
                     Icon(
                         imageVector = Icons.Default.Flag,
                         contentDescription = "Flag",
                         tint = if (review.isFlagged) Color.Red else Color.Gray
                     )
                 }
+                Text(
+                    text = "${review.likeCount}",
+                    color = if (review.isLiked) Color.Red else Color.Gray
+                )
             }
         }
     }

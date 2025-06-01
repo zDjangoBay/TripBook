@@ -11,25 +11,20 @@ class MockReviewViewModel : ViewModel() {
     private val _reviews = MutableStateFlow<List<Review>>(SampleReviews.get())
     val reviews: StateFlow<List<Review>> = _reviews
 
-    fun getReviewsForTrip(tripId: Int): List<Review> {
-        return _reviews.value.filter { it.tripId == tripId }
-    }
-
     fun toggleLike(tripId: Int, username: String) {
-        val reviews = _reviews.value.toMutableList()
-        val index = reviews.indexOfFirst { it.tripId == tripId && it.username == username }
-        if (index != -1) {
-            reviews[index] = reviews[index].copy(isLiked = !reviews[index].isLiked)
-            _reviews.value = reviews
+        val updatedList = _reviews.value.map { review ->
+            if (review.tripId == tripId && review.username == username) {
+                val isLiked = !review.isLiked
+                review.copy(
+                    isLiked = isLiked,
+                    likeCount = if (isLiked) review.likeCount + 1 else review.likeCount - 1
+                )
+            } else review
         }
+        _reviews.value = updatedList
     }
 
     fun toggleFlag(tripId: Int, username: String) {
-        val reviews = _reviews.value.toMutableList()
-        val index = reviews.indexOfFirst { it.tripId == tripId && it.username == username }
-        if (index != -1) {
-            reviews[index] = reviews[index].copy(isFlagged = !reviews[index].isFlagged)
-            _reviews.value = reviews
-        }
+        // (optional, leave empty for now)
     }
 }

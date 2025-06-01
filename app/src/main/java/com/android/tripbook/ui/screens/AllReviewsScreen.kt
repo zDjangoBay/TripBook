@@ -12,17 +12,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.ui.components.ReviewCard
+import androidx.compose.runtime.remember
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
     val viewModel = remember { MockReviewViewModel() }
-    val reviews = remember { viewModel.getReviewsForTrip(tripId) }
+
+    // Collect reviews StateFlow as Compose state
+    val reviews by viewModel.reviews.collectAsState()
+
+    // Filter reviews locally by tripId
+    val reviewsForTrip = reviews.filter { it.tripId == tripId }
 
     Scaffold(
         topBar = {
@@ -43,12 +50,12 @@ fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (reviews.isEmpty()) {
+            if (reviewsForTrip.isEmpty()) {
                 item {
                     Text("No reviews to display.", modifier = Modifier.padding(8.dp))
                 }
             } else {
-                items(reviews) { review ->
+                items(reviewsForTrip) { review ->
                     ReviewCard(
                         review = review,
                         onLikeClicked = { viewModel.toggleLike(review.tripId, review.username) },
