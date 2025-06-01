@@ -13,8 +13,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Flag
+import androidx.compose.ui.graphics.Color
+
 @Composable
-fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier,
+    onLikeClicked: () -> Unit = {},
+    onFlagClicked: () -> Unit = {}
+)
+ {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -47,6 +60,30 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
                                 .fillMaxWidth()
                         )
                     }
+                }
+            }
+
+            // 🔽 Reaction Buttons Row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = onLikeClicked) {
+                    Icon(
+                        imageVector = if (review.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Like",
+                        tint = if (review.isLiked) Color.Red else Color.Gray
+                    )
+                }
+
+                IconButton(onClick = onFlagClicked) {
+                    Icon(
+                        imageVector = Icons.Default.Flag,
+                        contentDescription = "Flag",
+                        tint = if (review.isFlagged) Color.Red else Color.Gray
+                    )
                 }
             }
         }
