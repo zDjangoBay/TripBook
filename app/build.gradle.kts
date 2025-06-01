@@ -44,6 +44,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        viewBinding = true
 //        dataBinding= true
     }
 
@@ -84,8 +85,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //---------------------------------------------------------
-    //        Custom dependencies
+    //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
+    implementation(libs.androidx.navigation.runtime.android)
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+    implementation("io.coil-kt:coil-compose:2.3.0")
 
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
     implementation(libs.androidx.navigation.runtime.android)
@@ -98,8 +104,20 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
     androidTestImplementation(platform(libs.androidx.compose.bom))
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
 
     implementation(libs.firebase.database)
 
 
+
+    // Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
 }
+
+
