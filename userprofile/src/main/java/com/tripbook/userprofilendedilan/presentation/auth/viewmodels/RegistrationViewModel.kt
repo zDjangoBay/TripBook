@@ -24,10 +24,14 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.tripbook.userprofilendedilan.domain.repository.AuthRepository
+import com.tripbook.userprofilendedilan.data.repository.FirebaseAuthRepositoryImpl
 
-class RegistrationViewModel : ViewModel() {
-
-
+class RegistrationViewModel(
+    private val authRepository: AuthRepository = FirebaseAuthRepositoryImpl()
+) : ViewModel() {
 
     private val _nameTouched = MutableStateFlow(false)
     val nameTouched: StateFlow<Boolean> = _nameTouched.asStateFlow()
@@ -74,8 +78,6 @@ class RegistrationViewModel : ViewModel() {
     fun markBioTouched() {
         _bioTouched.value = true
     }
-
-
 
     // Current registration step
     var currentStep by mutableStateOf(0)
@@ -277,13 +279,23 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    // For later: Function to submit data to Firebase
+    // Updated to use repository
     fun registerUser(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        // Will implement Firebase registration later
-        // For now, just simulate success
-        onSuccess()
-    }
+        val email = registrationData.value.email
+        val password = registrationData.value.password
 
+        viewModelScope.launch {
+            try {
+                val result = authRepository.registerUser(email, password)
+                result.fold(
+                    onSuccess = { onSuccess() },
+                    onFailure = { e -> onError(e.message ?: "Registration failed") }
+                )
+            } catch (e: Exception) {
+                onError(e.message ?: "Registration failed")
+            }
+        }
+    }
 
     // Create a property to store the latest photo URI
     private var _latestTempUri: MutableStateFlow<Uri?> = MutableStateFlow(null)
