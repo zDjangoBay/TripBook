@@ -19,12 +19,12 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 <!-- PROJECT SHIELDS -->
-[![Contributors](https://img.shields.io/github/contributors/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/graphs/contributors)
-[![Forks](https://img.shields.io/github/forks/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/network/members)
-[![Stargazers](https://img.shields.io/github/stars/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/stargazers)
-[![Issues](https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/issues)
-[![MIT License](https://img.shields.io/github/license/sas-bergson/TripBook.svg?style=for-the-badge)](https://github.com/sas-bergson/TripBook/blob/main/LICENSE)
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](https://linkedin.com/in/your-linkedin)
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
