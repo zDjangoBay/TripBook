@@ -1,4 +1,4 @@
-package com.android.tripbook.ui.theme
+package com.android.tripbook
 
 import androidx.compose.ui.graphics.Color
 
