@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.navigation
 
-import AllReviewsScreen
+
+import com.android.tripbook.ui.screens.AllReviewsScreen
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
@@ -38,6 +40,8 @@ fun MainNavGraph(
                 )
             }
         }
+
+
         composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -84,7 +88,7 @@ fun MainNavGraph(
         }
         composable("reviews/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
-            AllReviewsScreen(tripId = tripId, onBack = { navController.popBackStack() })
+            AllReviewsScreen(reviewId = tripId, onBack = { navController.popBackStack() })
         }
 
 
