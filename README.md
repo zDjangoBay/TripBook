@@ -18,12 +18,13 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Contributors](https://img.shields.io/github/contributors/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/graphs/contributors)
+[![Forks](https://img.shields.io/github/forks/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/network/members)
+[![Stargazers](https://img.shields.io/github/stars/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/stargazers)
+[![Issues](https://img.shields.io/github/issues/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/issues)
+[![MIT License](https://img.shields.io/github/license/sas-bergson/TripBook?style=for-the-badge)](https://github.com/sas-bergson/TripBook/blob/main/LICENCE)
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555)](https://linkedin.com/in/your-linkedin)
+
 
 
 
@@ -95,7 +96,13 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![TripBook Screen Shot][product-screenshot]](https://example.com)
+## 📱 Screenshots
+
+| Home | Discover | Profile |
+|:----:|:--------:|:-------:|
+| ![Home](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png) | ![Discover](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png) | ![Profile](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png) |
+| **Your Account** | **Your Style** | **Upload Picture** |
+| ![Account](app/src/main/java/com/android/tripbook/screenshots/create_account.png) | ![Style](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png) | ![Picture](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
 
 TripBook is a mobile social network designed specifically for travelers exploring Africa and beyond. It serves as a comprehensive platform where travelers can share their experiences, connect with fellow adventurers, and access valuable information about destinations.
 
