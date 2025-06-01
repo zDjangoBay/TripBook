@@ -72,8 +72,46 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
+
+    // Google Maps Compose
+    implementation(libs.maps.compose.v430)
+
+// Accompanist for sticky headers (optional if using custom pinned behavior)
+    implementation(libs.accompanist.placeholder)
+
+// Compose + lifecycle
+//    implementation(libs.androidx.lifecycle.runtime.compose)
+
+// Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
+
+
+
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.maps.compose) // Or latest
+    implementation(libs.play.services.maps)
+
+    // Google Maps Compose
+    implementation(libs.maps.compose.v430)
+
+    // Accompanist for sticky headers (optional if using custom pinned behavior)
+    implementation(libs.accompanist.placeholder)
+
+    // Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
 }
+
+
