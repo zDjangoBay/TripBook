@@ -16,7 +16,6 @@ data class Trip(
     val budget: Int,
     val status: TripStatus,
     val type: String = "",
-
     val description: String = "",
     val activities: List<Activity> = emptyList(),
     val expenses: List<Expense> = emptyList(),
