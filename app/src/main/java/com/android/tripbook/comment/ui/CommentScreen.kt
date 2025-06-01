@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import com.android.tripbook.comment.model.Comment
 import java.util.*
 
@@ -18,7 +18,7 @@ import java.util.*
 fun CommentScreen(
     comments: List<Comment>,
     onPost: (Comment) -> Unit,
-    onBack: () -> Unit, // ← add this to handle back navigation
+    onBack: () -> Unit,
     currentUserId: String = "u1",
     currentUsername: String = "You",
     currentAvatar: String? = null
@@ -37,16 +37,17 @@ fun CommentScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1976D2) // Blue background
+                    containerColor = Color(0xFF1976D2)
                 )
             )
-        }
+        },
+        contentWindowInsets = WindowInsets.ime // ✅ Adjusts for keyboard properly
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .consumeWindowInsets(innerPadding) // ✅ Prevents duplicate spacing
                 .fillMaxSize()
-                .imePadding()
         ) {
             CommentList(
                 comments = comments,
@@ -81,6 +82,6 @@ fun PreviewCommentScreen() {
     CommentScreen(
         comments = mockComments,
         onPost = {},
-        onBack = {} // no-op in preview
+        onBack = {}
     )
 }
