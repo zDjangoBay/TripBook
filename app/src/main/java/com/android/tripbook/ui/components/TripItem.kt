@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.Model.Triphome
 @Composable
-fun TripItem(trip: Trip, onClick: () -> Unit = {}) {
+fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

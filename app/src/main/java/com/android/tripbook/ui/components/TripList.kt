@@ -6,10 +6,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.Model.Triphome
 
 @Composable
-fun TripList(trips: List<Trip>, onItemClick: (Trip) -> Unit = {}) {
+fun TripList(trips: List<Triphome>, onItemClick: (Triphome) -> Unit = {}) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()

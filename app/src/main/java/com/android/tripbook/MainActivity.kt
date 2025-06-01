@@ -3,46 +3,31 @@ package com.android.tripbook
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
+import com.android.tripbook.ViewModel.MainViewModel
+import com.android.tripbook.ui.screens.TripCatalogScreenWrapper
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val mainViewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        // Enable edge-to-edge content (same as TripCatalogActivity)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                val navController = rememberNavController()
+                TripCatalogScreenWrapper(
+                    navController = navController,
+                    mainViewModel = mainViewModel
+                )
             }
         }
-    }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview
-@Composable
-fun GreetingPreview() {
-    TripBookTheme {
-        Greeting("Android")
     }
 }

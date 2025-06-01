@@ -1,7 +1,6 @@
 package com.android.tripbook.Repository
 
 import com.android.tripbook.Model.Place
-import com.android.tripbook.Model.Trip
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -10,6 +9,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import android.util.Log
+import com.android.tripbook.Model.Triphome
 
 class TripsRepository {
     private val database by lazy {
@@ -39,9 +39,9 @@ class TripsRepository {
         }
 
     // Updated functions using generic fetch
-    suspend fun getUpcomingTrips(): List<Trip> {
+    suspend fun getUpcomingTrips(): List<Triphome> {
         return try {
-            fetchItemsFromFirebase<Trip>("Trips")
+            fetchItemsFromFirebase<Triphome>("Trips")
         } catch (e: Exception) {
             Log.e("TripsRepository", "Error loading trips: ${e.message}")
             emptyList()

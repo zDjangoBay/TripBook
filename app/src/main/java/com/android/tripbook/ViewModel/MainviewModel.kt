@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.Model.Place
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.Model.Triphome
 import com.android.tripbook.Repository.TripsRepository
 import kotlinx.coroutines.launch
 
@@ -13,8 +13,8 @@ class MainViewModel(
     private val repository: TripsRepository = TripsRepository()
 ) : ViewModel() {
 
-    private val _upcomingTrips = MutableLiveData<List<Trip>>(emptyList())
-    val upcomingTrips: LiveData<List<Trip>> = _upcomingTrips
+    private val _upcomingTrips = MutableLiveData<List<Triphome>>(emptyList())
+    val upcomingTrips: LiveData<List<Triphome>> = _upcomingTrips
 
     private val _recommendedPlaces = MutableLiveData<List<Place>>(emptyList())
     val recommendedPlaces: LiveData<List<Place>> = _recommendedPlaces

@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.android.tripbook.Model.Place
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.Model.Triphome
 import com.android.tripbook.R
 import com.android.tripbook.ui.components.*
 
 @Composable
 fun TripCatalogScreen(
     navController: NavController,
-    upcomingTrips: List<Trip>,
+    upcomingTrips: List<Triphome>,
     recommendedPlaces: List<Place>,
     isLoadingUpcoming: Boolean,
     isLoadingRecommended: Boolean
