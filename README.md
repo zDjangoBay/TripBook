@@ -18,15 +18,12 @@
 *** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-<!-- PROJECT SHIELDS -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
-
 
 
 
@@ -98,13 +95,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-## 📱 Screenshots
-
-| Home | Discover | Profile |
-|:----:|:--------:|:-------:|
-| ![Home](app/src/main/java/com/android/tripbook/screenshots/onboarding_1.png) | ![Discover](app/src/main/java/com/android/tripbook/screenshots/onboarding_2.png) | ![Profile](app/src/main/java/com/android/tripbook/screenshots/onboarding_3.png) |
-| **Your Account** | **Your Style** | **Upload Picture** |
-| ![Account](app/src/main/java/com/android/tripbook/screenshots/create_account.png) | ![Style](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png) | ![Picture](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
+[![TripBook Screen Shot][product-screenshot]](https://example.com)
 
 TripBook is a mobile social network designed specifically for travelers exploring Africa and beyond. It serves as a comprehensive platform where travelers can share their experiences, connect with fellow adventurers, and access valuable information about destinations.
 
@@ -368,16 +359,16 @@ Project Link: [https://github.com/sas-bergson/TripBook](https://github.com/sas-b
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/sas-bergson/TripBook.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/sas-bergson/TripBook?style=for-the-badge
 [contributors-url]: https://github.com/sas-bergson/TripBook/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/sas-bergson/TripBook.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/sas-bergson/TripBook?style=for-the-badge
 [forks-url]: https://github.com/sas-bergson/TripBook/network/members
-[stars-shield]: https://img.shields.io/github/stars/sas-bergson/TripBook.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/sas-bergson/TripBook?style=for-the-badge
 [stars-url]: https://github.com/sas-bergson/TripBook/stargazers
-[issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook?style=for-the-badge
 [issues-url]: https://github.com/sas-bergson/TripBook/issues
-[license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge
-[license-url]: https://github.com/sas-bergson/TripBook/blob/main/LICENCE
+[license-shield]: https://img.shields.io/github/license/sas-bergson/TripBook?style=for-the-badge
+[license-url]: https://github.com/sas-bergson/TripBook/blob/main/LICENCE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/your-linkedin
 [product-screenshot]: https://images.pexels.com/photos/32099220/pexels-photo-32099220.jpeg?cs=srgb&dl=pexels-unknown_entity-2151399066-32099220.jpg&fm=jpg
