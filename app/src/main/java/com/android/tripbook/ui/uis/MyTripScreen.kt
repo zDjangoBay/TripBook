@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,11 +31,15 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.model.TripCategory
 import com.android.tripbook.ui.theme.Purple40
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun MyTripsScreen(onPlanNewTripClick: () -> Unit) {
+fun MyTripsScreen(
+    tripViewModel: TripViewModel,
+    onPlanNewTripClick: () -> Unit
+) {
     TripBookTheme {
         Box(
             modifier = Modifier
@@ -110,40 +115,7 @@ fun MyTripsScreen(onPlanNewTripClick: () -> Unit) {
                 }
 
                 // Trip List
-                val trips = remember {
-                    listOf(
-                        Trip(
-                            name = "Safari Adventure",
-                            startDate = LocalDate.of(2024, 12, 15),
-                            endDate = LocalDate.of(2024, 12, 22),
-                            destination = "Kenya, Tanzania",
-                            travelers = 4,
-                            budget = 2400,
-                            status = TripStatus.PLANNED,
-                            category = TripCategory.WILDLIFE
-                        ),
-                        Trip(
-                            name = "Morocco Discovery",
-                            startDate = LocalDate.of(2025, 1, 10),
-                            endDate = LocalDate.of(2025, 1, 18),
-                            destination = "Marrakech, Fez",
-                            travelers = 2,
-                            budget = 1800,
-                            status = TripStatus.ACTIVE,
-                            category = TripCategory.CULTURAL
-                        ),
-                        Trip(
-                            name = "Cape Town Explorer",
-                            startDate = LocalDate.of(2024, 9, 5),
-                            endDate = LocalDate.of(2024, 9, 12),
-                            destination = "South Africa",
-                            travelers = 6,
-                            budget = 3200,
-                            status = TripStatus.COMPLETED,
-                            category = TripCategory.ADVENTURE
-                        )
-                    )
-                }
+                val trips by tripViewModel.trips.collectAsState()
 
                 LazyColumn {
                     items(trips.filter {

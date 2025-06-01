@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,15 +18,28 @@ import com.android.tripbook.ui.components.ProgressIndicator
 import com.android.tripbook.ui.components.StepNavigationButtons
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.ui.uis.tripcreation.*
+import com.android.tripbook.viewmodel.TripViewModel
 
 @Composable
 fun TripCreationFlowScreen(
+    tripViewModel: TripViewModel,
     onBackClick: () -> Unit,
     onTripCreated: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var tripState by remember { mutableStateOf(TripCreationState()) }
-    
+    val isLoading by tripViewModel.isLoading.collectAsState()
+    val error by tripViewModel.error.collectAsState()
+
+    // Handle error display
+    error?.let { errorMessage ->
+        LaunchedEffect(errorMessage) {
+            // You could show a snackbar or toast here
+            // For now, we'll just clear the error after showing it
+            tripViewModel.clearError()
+        }
+    }
+
     TripBookTheme {
         Box(
             modifier = modifier
@@ -110,24 +124,41 @@ fun TripCreationFlowScreen(
                 StepNavigationButtons(
                     currentStep = tripState.currentStep,
                     totalSteps = tripState.totalSteps,
-                    canProceed = tripState.canProceedToNextStep(),
+                    canProceed = tripState.canProceedToNextStep() && !isLoading,
                     onPreviousClick = {
-                        if (tripState.currentStep > 1) {
+                        if (tripState.currentStep > 1 && !isLoading) {
                             tripState = tripState.copy(currentStep = tripState.currentStep - 1)
                         }
                     },
                     onNextClick = {
-                        if (tripState.currentStep < tripState.totalSteps && tripState.canProceedToNextStep()) {
+                        if (tripState.currentStep < tripState.totalSteps && tripState.canProceedToNextStep() && !isLoading) {
                             tripState = tripState.copy(currentStep = tripState.currentStep + 1)
                         }
                     },
                     onFinishClick = {
-                        // Here you would typically save the trip to a database
-                        // For now, we'll just navigate back
-                        onTripCreated()
+                        if (!isLoading) {
+                            // Create the trip using the ViewModel
+                            tripViewModel.createTrip(tripState)
+                            onTripCreated()
+                        }
                     },
                     modifier = Modifier.padding(top = 16.dp)
                 )
+
+                // Loading indicator
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
         }
     }
