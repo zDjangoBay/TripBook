@@ -12,7 +12,7 @@ class EditProfileActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.saveProfileButton).setOnClickListener {
             Toast.makeText(this, "Changes saved (demo)", Toast.LENGTH_SHORT).show()
-            finish() // Go back to the previous screen
+            finish() // Going back to the previous screen
         }
     }
 }
