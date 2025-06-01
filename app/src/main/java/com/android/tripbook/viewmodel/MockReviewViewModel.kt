@@ -14,4 +14,22 @@ class MockReviewViewModel : ViewModel() {
     fun getReviewsForTrip(tripId: Int): List<Review> {
         return _reviews.value.filter { it.tripId == tripId }
     }
+
+    fun toggleLike(tripId: Int, username: String) {
+        val reviews = _reviews.value.toMutableList()
+        val index = reviews.indexOfFirst { it.tripId == tripId && it.username == username }
+        if (index != -1) {
+            reviews[index] = reviews[index].copy(isLiked = !reviews[index].isLiked)
+            _reviews.value = reviews
+        }
+    }
+
+    fun toggleFlag(tripId: Int, username: String) {
+        val reviews = _reviews.value.toMutableList()
+        val index = reviews.indexOfFirst { it.tripId == tripId && it.username == username }
+        if (index != -1) {
+            reviews[index] = reviews[index].copy(isFlagged = !reviews[index].isFlagged)
+            _reviews.value = reviews
+        }
+    }
 }

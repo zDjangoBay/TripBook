@@ -21,7 +21,8 @@ import com.android.tripbook.ui.components.ReviewCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
-    val reviews = remember { MockReviewViewModel().getReviewsForTrip(tripId) }
+    val viewModel = remember { MockReviewViewModel() }
+    val reviews = remember { viewModel.getReviewsForTrip(tripId) }
 
     Scaffold(
         topBar = {
@@ -48,7 +49,11 @@ fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
                 }
             } else {
                 items(reviews) { review ->
-                    ReviewCard(review = review)
+                    ReviewCard(
+                        review = review,
+                        onLikeClicked = { viewModel.toggleLike(review.tripId, review.username) },
+                        onFlagClicked = { viewModel.toggleFlag(review.tripId, review.username) }
+                    )
                 }
             }
         }
