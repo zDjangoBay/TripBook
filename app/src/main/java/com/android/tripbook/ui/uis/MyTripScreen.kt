@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.TripStatus
+import com.android.tripbook.model.TripCategory
 import com.android.tripbook.ui.theme.Purple40
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.LocalDate
@@ -118,7 +119,8 @@ fun MyTripsScreen(onPlanNewTripClick: () -> Unit) {
                             destination = "Kenya, Tanzania",
                             travelers = 4,
                             budget = 2400,
-                            status = TripStatus.PLANNED
+                            status = TripStatus.PLANNED,
+                            category = TripCategory.WILDLIFE
                         ),
                         Trip(
                             name = "Morocco Discovery",
@@ -127,7 +129,8 @@ fun MyTripsScreen(onPlanNewTripClick: () -> Unit) {
                             destination = "Marrakech, Fez",
                             travelers = 2,
                             budget = 1800,
-                            status = TripStatus.ACTIVE
+                            status = TripStatus.ACTIVE,
+                            category = TripCategory.CULTURAL
                         ),
                         Trip(
                             name = "Cape Town Explorer",
@@ -136,7 +139,8 @@ fun MyTripsScreen(onPlanNewTripClick: () -> Unit) {
                             destination = "South Africa",
                             travelers = 6,
                             budget = 3200,
-                            status = TripStatus.COMPLETED
+                            status = TripStatus.COMPLETED,
+                            category = TripCategory.ADVENTURE
                         )
                     )
                 }

@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
-import com.android.tripbook.ui.uis.PlanNewTripScreen
+import com.android.tripbook.ui.uis.TripCreationFlowScreen
 import com.android.tripbook.ui.uis.MyTripsScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 
@@ -26,7 +26,10 @@ fun TripBookApp() {
     var currentScreen by remember { mutableStateOf("MyTrips") }
 
     when (currentScreen) {
-        "MyTrips" -> MyTripsScreen(onPlanNewTripClick = { currentScreen = "PlanNewTrip" })
-        "PlanNewTrip" -> PlanNewTripScreen(onBackClick = { currentScreen = "MyTrips" })
+        "MyTrips" -> MyTripsScreen(onPlanNewTripClick = { currentScreen = "CreateTrip" })
+        "CreateTrip" -> TripCreationFlowScreen(
+            onBackClick = { currentScreen = "MyTrips" },
+            onTripCreated = { currentScreen = "MyTrips" }
+        )
     }
 }
