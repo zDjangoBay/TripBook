@@ -95,7 +95,12 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![TripBook Screen Shot][product-screenshot]](https://example.com)
+| Home | Discover | Profile |
+|:----:|:--------:|:-------:|
+| ![Home](screenshots/onboarding_1.png) | ![Discover](screenshots/onboarding_2.png) | ![Profile](screenshots/onboarding_3.png) |
+| **Your Account** | **Your Style** | **Upload Picture** |
+| ![Account](screenshots/create_account.png) | ![Style](screenshots/travel_styles.png) | ![Picture](screenshots/upload_picture.png) |
+
 
 TripBook is a mobile social network designed specifically for travelers exploring Africa and beyond. It serves as a comprehensive platform where travelers can share their experiences, connect with fellow adventurers, and access valuable information about destinations.
 
