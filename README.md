@@ -359,19 +359,18 @@ Project Link: [https://github.com/sas-bergson/TripBook](https://github.com/sas-b
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/sas-bergson/TripBook?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/sas-bergson/TripBook.svg?style=for-the-badge
 [contributors-url]: https://github.com/sas-bergson/TripBook/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/sas-bergson/TripBook?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/sas-bergson/TripBook.svg?style=for-the-badge
 [forks-url]: https://github.com/sas-bergson/TripBook/network/members
-[stars-shield]: https://img.shields.io/github/stars/sas-bergson/TripBook?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/sas-bergson/TripBook.svg?style=for-the-badge
 [stars-url]: https://github.com/sas-bergson/TripBook/stargazers
-[issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/sas-bergson/TripBook.svg?style=for-the-badge
 [issues-url]: https://github.com/sas-bergson/TripBook/issues
-[license-shield]: https://img.shields.io/github/license/sas-bergson/TripBook?style=for-the-badge
-[license-url]: https://github.com/sas-bergson/TripBook/blob/main/LICENCE.txt
+[license-shield]: https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge
+[license-url]: https://github.com/sas-bergson/TripBook/blob/main/LICENCE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/your-linkedin
-[product-screenshot]: https://images.pexels.com/photos/32099220/pexels-photo-32099220.jpeg?cs=srgb&dl=pexels-unknown_entity-2151399066-32099220.jpg&fm=jpg
 [Kotlin]: https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white
 [Kotlin-url]: https://kotlinlang.org/
 [Jetpack-Compose]: https://img.shields.io/badge/Jetpack_Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white
