@@ -33,12 +33,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -78,6 +78,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -92,12 +95,29 @@ dependencies {
 
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
 
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
         // ... other dependencies ...
 
-
-
-
+    // DataStore for preferences is basically for datastorage of the profile components
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    
+    // For Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    
+    // The ViewModel and LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    
+    // For Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    
+    // For Image cropping
+    implementation("com.github.CanHub:Android-Image-Cropper:4.4.0")
+    
+    // For Camera X
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
 }
