@@ -52,10 +52,10 @@ object AppIcons {
 
     // Status icons
     val CheckCircle = Icons.Rounded.CheckCircle
-    val Pending = Icons.Rounded.Schedule
-    val Cancel = Icons.Rounded.Cancel
+    val Pending = Icons.Rounded.AccessTime
+    val Cancel = Icons.Rounded.Close
     val Warning = Icons.Rounded.Warning
-    val Error = Icons.Rounded.Error
+    val Error = Icons.Rounded.ErrorOutline
     val Info = Icons.Rounded.Info
 
     // UI icons
@@ -87,17 +87,17 @@ object AppIcons {
     // Settings icons
     val Settings = Icons.Rounded.Settings
     val Tune = Icons.Rounded.Tune
-    val Visibility = Icons.Rounded.Visibility
+    val Visibility = Icons.Rounded.RemoveRedEye
     val VisibilityOff = Icons.Rounded.VisibilityOff
 
     // Payment icons
     val Payment = Icons.Rounded.Payment
     val CreditCard = Icons.Rounded.CreditCard
     val AccountBalance = Icons.Rounded.AccountBalance
-    val MonetizationOn = Icons.Rounded.MonetizationOn
+    val MonetizationOn = Icons.Rounded.AttachMoney
 
     // Booking icons
-    val BookOnline = Icons.Rounded.BookOnline
+    val BookOnline = Icons.Rounded.Book
     val Bookmark = Icons.Rounded.Bookmark
     val BookmarkBorder = Icons.Rounded.BookmarkBorder
     val Favorite = Icons.Rounded.Favorite

@@ -37,6 +37,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    // Room schema export configuration
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
+    }
     buildFeatures {
         compose = true
     }
@@ -78,29 +85,23 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    // Extended Icons
-    implementation("androidx.compose.material:material-icons-extended")
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
-
-    // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
-
-    // Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
-
-    // Calendar
-    implementation("com.kizitonwose.calendar:compose:2.4.0")
-
-    // Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // DataStore for preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Room database
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 }
