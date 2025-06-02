@@ -1,15 +1,16 @@
 package com.android.tripbook.ui.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.android.tripbook.ViewModel.MainViewModel
 
 @Composable
-fun TripCatalogScreenWrapper(
+fun HomeScreenWrapper(
     navController: NavHostController,
     mainViewModel: MainViewModel = viewModel()
 ) {
@@ -18,7 +19,7 @@ fun TripCatalogScreenWrapper(
     val isLoadingUpcoming by mainViewModel.isLoadingUpcoming.observeAsState(true)
     val isLoadingRecommended by mainViewModel.isLoadingRecommended.observeAsState(true)
 
-    TripCatalogScreen(
+    HomeScreen(
         navController = navController,
         upcomingTrips = upcomingTrips,
         recommendedPlaces = recommendedPlaces,
@@ -30,4 +31,3 @@ fun TripCatalogScreenWrapper(
         modifier = Modifier.fillMaxSize()
     )
 }
-

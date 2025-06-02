@@ -28,7 +28,7 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable("home") {
-            TripCatalogScreenWrapper(
+            HomeScreenWrapper(
                 navController = navController,
                 mainViewModel = mainViewModel
             )
@@ -39,7 +39,7 @@ fun MainNavGraph(
         }
 
         composable("catalog") {
-            TripCatalogScreenWrapper(
+            HomeScreenWrapper(
                 navController = navController,
                 mainViewModel = mainViewModel
             )

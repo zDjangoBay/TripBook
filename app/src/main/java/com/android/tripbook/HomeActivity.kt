@@ -17,7 +17,7 @@ import com.android.tripbook.ui.components.BottomNavigationBar
 import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
 
-class TripCatalogActivity : ComponentActivity() {
+class HomeActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
 
