@@ -42,3 +42,21 @@ Lecturer Android Mobile App,
 ICT University, Spring 2025 GitHub  <hr></hr>
 🌍 Licence
 Ce projet est sous licence MIT.
+
+
+
+
+To run app, run the following commands
+npx react-native init TripBook --version 0.72.0
+cd TripBook
+
+npm install @react-navigation/native @react-navigation/stack react-native-maps react-native-svg axios
+
+npm install react-native-maps
+npx react-native install react-native-maps
+
+# Kotlin tests
+./gradlew test
+
+# React Native tests
+npm test
