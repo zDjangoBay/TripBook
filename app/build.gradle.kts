@@ -92,10 +92,10 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    // Material Icons Extended (for Star icons)
-    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    // Material Icons Extended (for Star icons) - Using newer version
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
-    // ViewModel Compose
+    // ViewModel Compose (from your original work)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     // StateFlow support (already included in lifecycle-runtime-ktx, but explicit for clarity)

@@ -8,9 +8,9 @@ fun navigateTo(context: Context, destination: String) {
     val intent = when (destination) {
         "home" -> Intent(context, MainActivity::class.java)
         "catalog" -> Intent(context, TripCatalogActivity::class.java)
-        // Add others when created
         "schedule" -> Intent(context, BookTripsActivity::class.java)
         "profile" -> Intent(context, ProfileActivity::class.java)
+        "booking" -> Intent(context, BookingActivity::class.java)
         else -> null
     }
     intent?.let {

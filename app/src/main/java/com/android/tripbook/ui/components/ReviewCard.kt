@@ -1,11 +1,16 @@
 // ReviewCard.kt
 package com.android.tripbook.ui.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,13 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
+import com.android.tripbook.ui.components.FullscreenGalleryDialog
 
 @Composable
-fun ReviewCard(
-    review: Review,
-    modifier: Modifier = Modifier
-) {
+fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
+    var showFullscreenGallery by remember { mutableStateOf(false) }
+    var initialImageIndex by remember { mutableStateOf(0) }
+
     Card(
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -84,47 +91,43 @@ fun ReviewCard(
             // Review Images (if any)
             if (review.images.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 320.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    userScrollEnabled = false
                 ) {
-                    review.images.take(3).forEach { imageUrl ->
-                        AsyncImage(
-                            model = imageUrl,
-                            contentDescription = "Review Image",
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    if (review.images.size > 3) {
+                    items(review.images) { imageUrl ->
                         Box(
                             modifier = Modifier
-                                .size(60.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Card(
-                                modifier = Modifier.fillMaxSize(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color.Gray.copy(alpha = 0.1f)
-                                )
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "+${review.images.size - 3}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color.Gray
-                                    )
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    initialImageIndex = review.images.indexOf(imageUrl)
+                                    showFullscreenGallery = true
                                 }
-                            }
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(imageUrl),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
                         }
                     }
                 }
             }
         }
+    }
+
+    if (showFullscreenGallery) {
+        FullscreenGalleryDialog(
+            images = review.images,
+            initialPage = initialImageIndex,
+            onDismiss = { showFullscreenGallery = false }
+        )
     }
 }
