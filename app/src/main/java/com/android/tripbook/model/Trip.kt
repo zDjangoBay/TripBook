@@ -1,5 +1,8 @@
 package com.android.tripbook.model
 
+
+
+import com.android.tripbook.service.AgencyService
 import java.time.LocalDate
 
 enum class TripStatus {
@@ -10,6 +13,16 @@ enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
 }
 
+data class ItineraryItem(
+    val date: LocalDate,
+    val time: String,
+    val title: String,
+    val location: String,
+    val type: ItineraryType,
+    val notes: String = "",
+    val agencyService: AgencyService? = null // Reference to booked service
+)
+
 data class Trip(
     val id: String,
     val name: String,
@@ -18,39 +31,11 @@ data class Trip(
     val destination: String,
     val travelers: Int,
     val budget: Int,
-    val status: TripStatus,
+    val status: TripStatus = TripStatus.PLANNED,
     val type: String = "",
     val description: String = "",
-    val activities: List<Activity> = emptyList(),
-    val expenses: List<Expense> = emptyList(),
-    val travelersList: List<Traveler> = emptyList(),
+    val activities: List<String> = emptyList(),
+    val expenses: List<String> = emptyList(),
+    val travelersList: List<String> = emptyList(),
     val itinerary: List<ItineraryItem> = emptyList()
-)
-
-data class ItineraryItem(
-    val date: LocalDate,
-    val time: String,
-    val title: String,
-    val location: String,
-    val type: ItineraryType,
-    val notes: String = ""
-)
-
-data class Activity(
-    val date: LocalDate,
-    val time: String,
-    val title: String,
-    val location: String,
-    val description: String = ""
-)
-
-data class Expense(
-    val category: String,
-    val description: String,
-    val amount: Int
-)
-
-data class Traveler(
-    val name: String,
-    val isLeader: Boolean = false
 )

@@ -401,9 +401,9 @@ private fun ExpensesTab(trip: Trip) {
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    BudgetRow("Total Budget:", "$${trip.budget}", Color(0xFF667EEA))
-                    BudgetRow("Spent:", "$1680", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "$720", Color(0xFF059669))
+                    BudgetRow("Total Budget:", "FCFA ${trip.budget}", Color(0xFF667EEA))
+                    BudgetRow("Spent:", "FCFA 68000", Color(0xFFDC2626))
+                    BudgetRow("Remaining:", "FCfA 72000", Color(0xFF059669))
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -426,9 +426,9 @@ private fun ExpensesTab(trip: Trip) {
         }
 
         items(listOf(
-            ExpenseItem("Accommodation", "Safari Lodge (4 nights)", "$960"),
-            ExpenseItem("Transportation", "4x4 Vehicle rental", "$480"),
-            ExpenseItem("Activities", "Game drives & balloon safari", "$320")
+            ExpenseItem("Accommodation", "Safari Lodge (4 nights)", "FCFA 9600"),
+            ExpenseItem("Transportation", "4x4 Vehicle rental", "FCFA 4800"),
+            ExpenseItem("Activities", "Game drives & balloon safari", "FCFA 3200")
         )) { expense ->
             Card(
                 modifier = Modifier.fillMaxWidth(),

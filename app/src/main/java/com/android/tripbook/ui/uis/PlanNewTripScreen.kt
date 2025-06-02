@@ -28,6 +28,7 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
+import com.android.tripbook.service.TravelAgencyService
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -40,13 +41,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanNewTripScreen(
     onBackClick: () -> Unit,
     onTripCreated: (Trip) -> Unit,
-    nominatimService: NominatimService
+    nominatimService: NominatimService,
+    travelAgencyService: TravelAgencyService,
+    onBrowseAgencies: (String) -> Unit
 ) {
     var tripName by remember { mutableStateOf("") }
     var destination by remember { mutableStateOf("") }
@@ -276,6 +278,28 @@ fun PlanNewTripScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    // Browse Travel Agencies Button
+                    if (destination.isNotEmpty()) {
+                        Button(
+                            onClick = { onBrowseAgencies(destination) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFE91E63)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "Browse Travel Agencies",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                    }
+
                     // Trip Type Selection
                     Text(
                         text = "Trip Type",
@@ -470,7 +494,7 @@ fun PlanNewTripScreen(
                         // Budget
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Budget (USD)",
+                                text = "Budget (FCFA)",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color(0xFF374151),
@@ -484,7 +508,7 @@ fun PlanNewTripScreen(
                                 },
                                 modifier = Modifier.fillMaxWidth(),
                                 placeholder = { Text("0") },
-                                prefix = { Text("$") },
+                                prefix = { Text("FCFA") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 isError = budgetError.isNotEmpty(),
                                 supportingText = {
@@ -1008,6 +1032,14 @@ private fun ItineraryItemCard(item: ItineraryItem) {
                     ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
                 }
             )
+            if (item.agencyService != null) {
+                Text(
+                    text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
             if (item.notes.isNotEmpty()) {
                 Text(
                     text = "Notes: ${item.notes}",

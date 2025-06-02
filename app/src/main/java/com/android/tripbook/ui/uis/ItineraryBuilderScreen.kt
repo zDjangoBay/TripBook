@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.ItineraryItem
@@ -28,17 +27,15 @@ import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
+import com.android.tripbook.service.TravelAgencyService
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +43,9 @@ fun ItineraryBuilderScreen(
     trip: Trip,
     onBackClick: () -> Unit,
     onItineraryUpdated: (List<ItineraryItem>) -> Unit,
-    nominatimService: NominatimService
+    nominatimService: NominatimService,
+    travelAgencyService: TravelAgencyService,
+    onBrowseAgencies: (String) -> Unit
 ) {
     var date by remember { mutableStateOf<LocalDate?>(null) }
     var time by remember { mutableStateOf("") }
@@ -134,6 +133,26 @@ fun ItineraryBuilderScreen(
                         .verticalScroll(rememberScrollState())
                         .padding(20.dp)
                 ) {
+                    // Browse Travel Agencies Button
+                    Button(
+                        onClick = { onBrowseAgencies(trip.destination) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE91E63)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Browse Travel Agencies",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+
                     // Date
                     Text(
                         text = "Date",
@@ -424,7 +443,6 @@ fun ItineraryBuilderScreen(
                                     notes = notes.trim()
                                 )
                                 itineraryItems = itineraryItems + newItem
-                                onItineraryUpdated(itineraryItems)
                                 // Reset form
                                 date = null
                                 time = ""
@@ -432,8 +450,54 @@ fun ItineraryBuilderScreen(
                                 location = ""
                                 selectedType = null
                                 notes = ""
-                                locationSuggestions = emptyList()
                             }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF667EEA)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Add Itinerary Item",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Itinerary List
+                    if (itineraryItems.isNotEmpty()) {
+                        Text(
+                            text = "Itinerary Items",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF374151),
+                            modifier = Modifier.padding(bottom = 12.dp)
+                        )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 200.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(itineraryItems) { item ->
+                                ItineraryItemCard(item = item)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    // Save Itinerary Button
+                    Button(
+                        onClick = {
+                            onItineraryUpdated(itineraryItems)
+                            onBackClick()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -444,7 +508,7 @@ fun ItineraryBuilderScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Add to Itinerary",
+                            text = "Save Itinerary",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
@@ -486,6 +550,68 @@ fun ItineraryBuilderScreen(
                 state = datePickerState,
                 modifier = Modifier.wrapContentSize()
             )
+        }
+    }
+}
+
+@Composable
+private fun ItineraryItemCard(item: ItineraryItem) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = "${item.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${item.time}",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF667EEA)
+            )
+            Text(
+                text = item.title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A202C),
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            Text(
+                text = item.location,
+                fontSize = 14.sp,
+                color = Color(0xFF64748B)
+            )
+            Text(
+                text = item.type.name,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = when (item.type) {
+                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
+                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
+                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                }
+            )
+            if (item.agencyService != null) {
+                Text(
+                    text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+            if (item.notes.isNotEmpty()) {
+                Text(
+                    text = "Notes: ${item.notes}",
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
     }
 }
