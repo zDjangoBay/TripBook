@@ -6,6 +6,10 @@ enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
 }
 
+enum class ItineraryType {
+    ACTIVITY, ACCOMMODATION, TRANSPORTATION
+}
+
 data class Trip(
     val id: String,
     val name: String,
@@ -19,7 +23,17 @@ data class Trip(
     val description: String = "",
     val activities: List<Activity> = emptyList(),
     val expenses: List<Expense> = emptyList(),
-    val travelersList: List<Traveler> = emptyList()
+    val travelersList: List<Traveler> = emptyList(),
+    val itinerary: List<ItineraryItem> = emptyList()
+)
+
+data class ItineraryItem(
+    val date: LocalDate,
+    val time: String,
+    val title: String,
+    val location: String,
+    val type: ItineraryType,
+    val notes: String = ""
 )
 
 data class Activity(

@@ -1,6 +1,5 @@
 package com.android.tripbook
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
+import com.android.tripbook.service.NominatimService
 import com.android.tripbook.ui.uis.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.LocalDate
@@ -15,17 +15,19 @@ import java.time.LocalDate
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val nominatimService = NominatimService()
+
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                TripBookApp()
+                TripBookApp(nominatimService)
             }
         }
     }
 }
 
 @Composable
-fun TripBookApp() {
+fun TripBookApp(nominatimService: NominatimService) {
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember { mutableStateOf<Trip?>(null) }
     var trips by remember {
@@ -44,7 +46,8 @@ fun TripBookApp() {
                     description = "An amazing safari adventure through Kenya and Tanzania",
                     activities = listOf(),
                     expenses = listOf(),
-                    travelersList = listOf()
+                    travelersList = listOf(),
+                    itinerary = listOf()
                 ),
                 Trip(
                     id = "2",
@@ -54,7 +57,8 @@ fun TripBookApp() {
                     destination = "Marrakech, Fez",
                     travelers = 2,
                     budget = 1800,
-                    status = TripStatus.ACTIVE
+                    status = TripStatus.ACTIVE,
+                    itinerary = listOf()
                 ),
                 Trip(
                     id = "3",
@@ -64,7 +68,8 @@ fun TripBookApp() {
                     destination = "South Africa",
                     travelers = 6,
                     budget = 3200,
-                    status = TripStatus.COMPLETED
+                    status = TripStatus.COMPLETED,
+                    itinerary = listOf()
                 )
             )
         )
@@ -84,11 +89,24 @@ fun TripBookApp() {
             onTripCreated = { newTrip ->
                 trips = trips + newTrip
                 currentScreen = "MyTrips"
-            }
+            },
+            nominatimService = nominatimService
         )
         "TripDetails" -> TripDetailsScreen(
             trip = selectedTrip ?: trips.first(),
-            onBackClick = { currentScreen = "MyTrips" }
+            onBackClick = { currentScreen = "MyTrips" },
+            onEditItineraryClick = { currentScreen = "ItineraryBuilder" }
+        )
+        "ItineraryBuilder" -> ItineraryBuilderScreen(
+            trip = selectedTrip ?: trips.first(),
+            onBackClick = { currentScreen = "TripDetails" },
+            onItineraryUpdated = { updatedItinerary ->
+                selectedTrip?.let { trip ->
+                    trips = trips.map { if (it.id == trip.id) it.copy(itinerary = updatedItinerary) else it }
+                    selectedTrip = selectedTrip?.copy(itinerary = updatedItinerary)
+                }
+            },
+            nominatimService = nominatimService
         )
     }
 }

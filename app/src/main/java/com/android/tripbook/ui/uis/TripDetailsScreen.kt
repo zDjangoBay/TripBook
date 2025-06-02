@@ -22,13 +22,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.model.ItineraryType
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun TripDetailsScreen(
     trip: Trip,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onEditItineraryClick: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
@@ -154,7 +157,7 @@ fun TripDetailsScreen(
                     ) {
                         when (selectedTab) {
                             "Overview" -> OverviewTab(trip)
-                            "Itinerary" -> ItineraryTab(trip)
+                            "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
@@ -234,82 +237,138 @@ private fun OverviewTab(trip: Trip) {
 }
 
 @Composable
-private fun ItineraryTab(trip: Trip) {
-    val activities = listOf(
-        ActivityItem("Dec 15 - 9:00 AM", "Arrival in Nairobi", "Jomo Kenyatta International Airport"),
-        ActivityItem("Dec 16 - 6:00 AM", "Masai Mara Game Drive", "Masai Mara National Reserve"),
-        ActivityItem("Dec 17 - 5:30 AM", "Hot Air Balloon Safari", "Masai Mara National Reserve"),
-        ActivityItem("Dec 18 - 8:00 AM", "Travel to Serengeti", "Border crossing to Tanzania")
-    )
-
+private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 30.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Timeline
-        activities.forEachIndexed { index, activity ->
-            Row(
-                modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = onEditItineraryClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF667EEA)
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                // Timeline indicator
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.width(30.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp)
-                            .background(Color(0xFF667EEA), CircleShape)
-                            .border(
-                                width = 3.dp,
-                                color = Color.White,
-                                shape = CircleShape
-                            )
-                    )
-                    if (index < activities.size - 1) {
-                        Box(
-                            modifier = Modifier
-                                .width(2.dp)
-                                .height(80.dp)
-                                .background(Color(0xFFE2E8F0))
-                        )
-                    }
-                }
+                Text(
+                    text = "Edit Itinerary",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
 
-                // Activity card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, bottom = 20.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
+        if (trip.itinerary.isEmpty()) {
+            Text(
+                text = "No itinerary items added yet.",
+                fontSize = 16.sp,
+                color = Color(0xFF64748B),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 30.dp)
+            ) {
+                trip.itinerary.sortedBy { it.date }.forEachIndexed { index, item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(
-                            text = activity.time,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF667EEA),
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Text(
-                            text = activity.title,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A202C),
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                        Text(
-                            text = activity.location,
-                            fontSize = 14.sp,
-                            color = Color(0xFF64748B)
-                        )
+                        // Timeline indicator
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.width(30.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .background(
+                                        when (item.type) {
+                                            ItineraryType.ACTIVITY -> Color(0xFF667EEA)
+                                            ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
+                                            ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                                        },
+                                        CircleShape
+                                    )
+                                    .border(
+                                        width = 3.dp,
+                                        color = Color.White,
+                                        shape = CircleShape
+                                    )
+                            )
+                            if (index < trip.itinerary.size - 1) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(2.dp)
+                                        .height(100.dp)
+                                        .background(Color(0xFFE2E8F0))
+                                )
+                            }
+                        }
+
+                        // Itinerary item card
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, bottom = 20.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "${item.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${item.time}",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF667EEA),
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Text(
+                                    text = item.title,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1A202C),
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Text(
+                                    text = item.location,
+                                    fontSize = 14.sp,
+                                    color = Color(0xFF64748B),
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                Text(
+                                    text = item.type.name,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = when (item.type) {
+                                        ItineraryType.ACTIVITY -> Color(0xFF667EEA)
+                                        ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
+                                        ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                                    },
+                                    modifier = Modifier.padding(bottom = 4.dp)
+                                )
+                                if (item.notes.isNotEmpty()) {
+                                    Text(
+                                        text = item.notes,
+                                        fontSize = 14.sp,
+                                        color = Color(0xFF64748B)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -481,12 +540,6 @@ private fun BudgetRow(label: String, amount: String, color: Color) {
         )
     }
 }
-
-private data class ActivityItem(
-    val time: String,
-    val title: String,
-    val location: String
-)
 
 private data class ExpenseItem(
     val category: String,
