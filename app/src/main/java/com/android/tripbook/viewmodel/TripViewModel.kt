@@ -4,69 +4,69 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripCreationState
-import com.android.tripbook.repository.TripRepository
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.android.tripbook.repository.SupabaseTripRepository
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TripViewModel(
-    private val repository: TripRepository = TripRepository.getInstance()
+    private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance()
 ) : ViewModel() {
 
     val trips: StateFlow<List<Trip>> = repository.trips
+    val isLoading: StateFlow<Boolean> = repository.isLoading
+    val error: StateFlow<String?> = repository.error
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    init {
+        // Load trips when ViewModel is created
+        loadTrips()
+    }
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error.asStateFlow()
+    private fun loadTrips() {
+        viewModelScope.launch {
+            repository.loadTrips()
+        }
+    }
+
+    fun refreshTrips() {
+        loadTrips()
+    }
 
     fun createTrip(tripCreationState: TripCreationState) {
         viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _error.value = null
-                
-                val trip = tripCreationState.toTrip()
-                repository.addTrip(trip)
-                
-            } catch (e: Exception) {
-                _error.value = "Failed to create trip: ${e.message}"
-            } finally {
-                _isLoading.value = false
+            val trip = tripCreationState.toTrip()
+            val result = repository.addTrip(trip)
+
+            if (result.isFailure) {
+                // Error is already handled in repository
+                result.exceptionOrNull()?.let { exception ->
+                    // Additional error handling if needed
+                }
             }
         }
     }
 
     fun updateTrip(trip: Trip) {
         viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _error.value = null
-                
-                repository.updateTrip(trip)
-                
-            } catch (e: Exception) {
-                _error.value = "Failed to update trip: ${e.message}"
-            } finally {
-                _isLoading.value = false
+            val result = repository.updateTrip(trip)
+
+            if (result.isFailure) {
+                // Error is already handled in repository
+                result.exceptionOrNull()?.let { exception ->
+                    // Additional error handling if needed
+                }
             }
         }
     }
 
     fun deleteTrip(tripId: String) {
         viewModelScope.launch {
-            try {
-                _isLoading.value = true
-                _error.value = null
-                
-                repository.deleteTrip(tripId)
-                
-            } catch (e: Exception) {
-                _error.value = "Failed to delete trip: ${e.message}"
-            } finally {
-                _isLoading.value = false
+            val result = repository.deleteTrip(tripId)
+
+            if (result.isFailure) {
+                // Error is already handled in repository
+                result.exceptionOrNull()?.let { exception ->
+                    // Additional error handling if needed
+                }
             }
         }
     }
@@ -76,6 +76,6 @@ class TripViewModel(
     }
 
     fun clearError() {
-        _error.value = null
+        repository.clearError()
     }
 }

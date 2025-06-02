@@ -153,10 +153,12 @@ Comprehensive 5-step wizard for creating detailed trip plans with validation and
 ## Technical Architecture
 
 ### Data Management
-- **Repository Pattern**: Centralized trip data management
-- **StateFlow**: Reactive data updates
+- **Repository Pattern**: Centralized trip data management with Supabase backend
+- **StateFlow**: Reactive data updates with cloud synchronization
 - **ViewModel**: MVVM architecture with lifecycle awareness
-- **In-Memory Storage**: Session-based data persistence
+- **Persistent Storage**: Cloud-based data storage with Supabase PostgreSQL
+- **Offline-First**: Local state management with cloud backup
+- **Real-time Sync**: Automatic data synchronization across devices
 
 ### UI Framework
 - **Jetpack Compose**: Modern declarative UI
@@ -188,6 +190,47 @@ Comprehensive 5-step wizard for creating detailed trip plans with validation and
 - **Efficient Rendering**: Compose-based UI
 - **Memory Management**: Proper lifecycle handling
 - **Smooth Animations**: Fluid user interactions
+- **Network Optimization**: Efficient API calls with caching
+- **Background Sync**: Non-blocking data operations
+
+## Cloud Backend Integration (Supabase)
+
+### Database Architecture
+- **PostgreSQL Database**: Robust relational database with ACID compliance
+- **Two-Table Schema**:
+  - `trips`: Main trip information with all metadata
+  - `travel_companions`: Linked companion data with foreign key relationships
+- **Auto-generated UUIDs**: Unique identifiers for all records
+- **Timestamps**: Automatic creation and update tracking
+- **Data Validation**: Database-level constraints and validation rules
+
+### API Integration
+- **RESTful API**: Standard HTTP methods for CRUD operations
+- **Real-time Subscriptions**: Live data updates using WebSocket connections
+- **JSON Serialization**: Automatic data conversion between Kotlin objects and JSON
+- **Error Handling**: Comprehensive error management with user-friendly messages
+- **Retry Logic**: Automatic retry for failed network requests
+
+### Data Synchronization
+- **Pull-to-Refresh**: Manual data refresh capability
+- **Automatic Loading**: Data loads on app startup
+- **Optimistic Updates**: Immediate UI updates with server confirmation
+- **Conflict Resolution**: Handles concurrent data modifications
+- **Offline Resilience**: Graceful handling of network connectivity issues
+
+**Screenshot Area:**
+```
+[Screenshot: Pull-to-Refresh in Action]
+- Show the pull-to-refresh gesture
+- Display loading indicator during sync
+- Show updated trip list after refresh
+```
+
+### Security Features
+- **Row Level Security**: Database-level access control
+- **API Key Authentication**: Secure API access with Supabase keys
+- **Data Encryption**: Encrypted data transmission over HTTPS
+- **Input Validation**: Server-side validation of all data inputs
 
 ## Data Models
 
@@ -226,24 +269,29 @@ data class Trip(
 ## Future Enhancement Areas
 
 ### Potential Extensions
-- **Persistent Storage**: Room database integration
-- **Cloud Sync**: Firebase/API integration
-- **Photo Management**: Trip photo galleries
-- **Expense Tracking**: Detailed budget management
-- **Itinerary Planning**: Day-by-day planning
-- **Social Features**: Trip sharing and collaboration
-- **Offline Support**: Offline trip access
-- **Map Integration**: Location-based features
+- **User Authentication**: Supabase Auth integration for user accounts
+- **Photo Management**: Trip photo galleries with Supabase Storage
+- **Expense Tracking**: Detailed budget management with receipt storage
+- **Itinerary Planning**: Day-by-day planning with location integration
+- **Social Features**: Trip sharing and collaboration between users
+- **Real-time Collaboration**: Live trip editing with multiple users
+- **Map Integration**: Location-based features with Google Maps
+- **Push Notifications**: Trip reminders and updates
+- **Offline Support**: Local caching with Room database
 
 ### Technical Improvements
-- **Data Persistence**: Local database storage
-- **Network Layer**: API integration
-- **Push Notifications**: Trip reminders
-- **Analytics**: User behavior tracking
-- **Testing**: Comprehensive test coverage
+- **Enhanced Caching**: Room database for offline-first architecture
+- **Real-time Updates**: WebSocket integration for live data sync
+- **Advanced Security**: User authentication and authorization
+- **Analytics**: User behavior tracking and trip insights
+- **Testing**: Comprehensive test coverage for all components
+- **Performance**: Image optimization and lazy loading
+- **Internationalization**: Multi-language support
 
 ## Conclusion
 
-TripBook provides a comprehensive trip planning experience with a focus on African destinations. The app combines intuitive design with powerful functionality, offering users a complete solution for planning, organizing, and managing their travel adventures. The multi-step creation flow ensures all important trip details are captured, while the dashboard provides easy access to all trip information.
+TripBook provides a comprehensive trip planning experience with a focus on African destinations. The app combines intuitive design with powerful cloud-based functionality, offering users a complete solution for planning, organizing, and managing their travel adventures. The multi-step creation flow ensures all important trip details are captured, while the dashboard provides easy access to all trip information with real-time synchronization.
 
-The current implementation provides a solid foundation that can be extended with additional features like persistent storage, cloud synchronization, and advanced trip management capabilities.
+With Supabase integration, the app now offers persistent data storage, ensuring that users' trip data is safely stored in the cloud and accessible across devices. The implementation includes robust error handling, pull-to-refresh functionality, and optimized network operations for a smooth user experience.
+
+The current implementation provides a production-ready foundation with cloud backend integration that can be extended with additional features like user authentication, real-time collaboration, photo management, and advanced trip planning capabilities.

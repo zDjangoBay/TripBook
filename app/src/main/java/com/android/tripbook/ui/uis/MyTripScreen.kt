@@ -1,14 +1,12 @@
-package com.android.tripbook.ui.uis
+@file:OptIn(ExperimentalMaterial3Api::class)
 
-import androidx.compose.runtime.Composable
-import com.android.tripbook.model.Trip
+package com.android.tripbook.ui.uis
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -22,8 +20,9 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.TravelExplore
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.model.TripCategory
 import com.android.tripbook.ui.theme.Purple40
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.viewmodel.TripViewModel
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -45,6 +43,33 @@ fun MyTripsScreen(
     tripViewModel: TripViewModel,
     onPlanNewTripClick: () -> Unit
 ) {
+    val trips by tripViewModel.trips.collectAsState()
+    val isLoading by tripViewModel.isLoading.collectAsState()
+    val error by tripViewModel.error.collectAsState()
+    val pullToRefreshState = rememberPullToRefreshState()
+
+    // Handle error display
+    error?.let { errorMessage ->
+        LaunchedEffect(errorMessage) {
+            // Clear error after showing it
+            tripViewModel.clearError()
+        }
+    }
+
+    // Handle pull to refresh
+    LaunchedEffect(pullToRefreshState.isRefreshing) {
+        if (pullToRefreshState.isRefreshing) {
+            tripViewModel.refreshTrips()
+        }
+    }
+
+    // Reset refresh state when loading completes
+    LaunchedEffect(isLoading) {
+        if (!isLoading && pullToRefreshState.isRefreshing) {
+            pullToRefreshState.endRefresh()
+        }
+    }
+
     TripBookTheme {
         Box(
             modifier = Modifier
@@ -120,7 +145,6 @@ fun MyTripsScreen(
                 }
 
                 // Trip List
-                val trips by tripViewModel.trips.collectAsState()
                 val filteredTrips = trips.filter {
                     when (selectedTab) {
                         "ALL" -> true
@@ -131,17 +155,44 @@ fun MyTripsScreen(
                     }
                 }
 
-                if (filteredTrips.isEmpty()) {
-                    // Empty State
-                    EmptyTripsState(
-                        selectedTab = selectedTab,
-                        onCreateTripClick = onPlanNewTripClick,
-                        modifier = Modifier.weight(1f)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    if (filteredTrips.isEmpty() && !isLoading) {
+                        // Empty State
+                        EmptyTripsState(
+                            selectedTab = selectedTab,
+                            onCreateTripClick = onPlanNewTripClick,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(filteredTrips) { trip ->
+                                TripCard(trip)
+                            }
+                        }
+                    }
+
+                    // Pull to refresh indicator
+                    PullToRefreshContainer(
+                        state = pullToRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
                     )
-                } else {
-                    LazyColumn {
-                        items(filteredTrips) { trip ->
-                            TripCard(trip)
+
+                    // Loading indicator
+                    if (isLoading && trips.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(48.dp)
+                            )
                         }
                     }
                 }
