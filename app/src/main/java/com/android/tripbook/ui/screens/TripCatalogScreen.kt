@@ -28,145 +28,138 @@ fun TripCatalogScreen(
     upcomingTrips: List<Triphome>,
     recommendedPlaces: List<Place>,
     isLoadingUpcoming: Boolean,
-    isLoadingRecommended: Boolean
+    isLoadingRecommended: Boolean,
+    onTripClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    LazyColumn(
+        modifier = modifier
             .background(color = Color.White)
+            .padding(bottom = 80.dp) // Space for bottom navigation
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp, bottom = 72.dp) // Space for bottom navigation
-        ) {
-
-            // Header
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.profile),
-                        contentDescription = stringResource(R.string.Profile_Image),
-                        modifier = Modifier.size(48.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = stringResource(R.string.User_Name),
-                        fontSize = 18.sp,
-                        color = Color.Black
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Image(
-                        painter = painterResource(R.drawable.bell_icon),
-                        contentDescription = stringResource(R.string.notification_btn),
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
-
-            // Main Title
-            item {
-                Text(
-                    text = stringResource(R.string.Travelling_Made_Easy),
-                    fontSize = 25.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        // Header
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.profile),
+                    contentDescription = stringResource(R.string.Profile_Image),
+                    modifier = Modifier.size(48.dp),
+                    contentScale = ContentScale.Crop
                 )
-            }
-
-            // Transport Options
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    TransportOption(R.drawable.bus, R.string.Bus, Color(0xFFE0BBE4))
-                    TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2))
-                    TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC))
-                    TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9))
-                }
-            }
-
-            item { Spacer(modifier = Modifier.height(30.dp)) }
-
-            // Upcoming Trips Header
-            item {
+                Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(R.string.Upcoming_Schedules),
+                    text = stringResource(R.string.User_Name),
                     fontSize = 18.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(start = 16.dp)
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Image(
+                    painter = painterResource(R.drawable.bell_icon),
+                    contentDescription = stringResource(R.string.notification_btn),
+                    modifier = Modifier.size(40.dp)
                 )
             }
+        }
 
-            // Upcoming Trips Content
-            if (isLoadingUpcoming) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+        // Main Title
+        item {
+            Text(
+                text = stringResource(R.string.Travelling_Made_Easy),
+                fontSize = 25.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+
+        // Transport Options
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TransportOption(R.drawable.bus, R.string.Bus, Color(0xFFE0BBE4))
+                TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2))
+                TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC))
+                TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9))
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(30.dp)) }
+
+        // Upcoming Trips Header
+        item {
+            Text(
+                text = stringResource(R.string.Upcoming_Schedules),
+                fontSize = 18.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+
+        // Upcoming Trips Content
+        if (isLoadingUpcoming) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            item {
+                TripList(
+                    trips = upcomingTrips,
+                    onTripClick = onTripClick
+                )
+            }
+        }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        // Recommended Places Header
+        item {
+            Text(
+                text = stringResource(R.string.Recommendation_Places),
+                fontSize = 18.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+
+        // Recommended Places Content
+        item {
+            if (isLoadingRecommended) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             } else {
-                item {
-                    TripList(trips = upcomingTrips)
-                }
-            }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            // Recommended Places Header
-            item {
-                Text(
-                    text = stringResource(R.string.Recommendation_Places),
-                    fontSize = 18.sp,
-                    color = Color.Black,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            // Recommended Places Content (always horizontal)
-            item {
-                if (isLoadingRecommended) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                } else {
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(recommendedPlaces) { place ->
-                            PlaceItem(
-                                place = place,
-                                onClick = { /* Handle place click here */ }
-                            )
-                        }
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(recommendedPlaces) { place ->
+                        PlaceItem(
+                            place = place,
+                            onClick = { /* Handle place click here */ }
+                        )
                     }
                 }
             }
         }
-
-        BottomNavigationBar(
-            navController = navController,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }

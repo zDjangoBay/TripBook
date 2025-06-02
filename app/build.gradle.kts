@@ -105,17 +105,24 @@ dependencies {
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
     androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
+    //implementation(libs.coil.compose)
+
+
+
+
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
 
     implementation(libs.firebase.database)
 
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+
+    implementation(libs.androidx.navigation.runtime.android)
+
 
 
     // Kotlin coroutines
+
     implementation(libs.kotlinx.coroutines.android)
 
 }

@@ -1,8 +1,6 @@
 package com.android.tripbook.ui.components
 
-
 import androidx.compose.material3.*
-import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,24 +19,25 @@ fun BottomNavigationBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // Extract the base route (remove parameters like detail/{tripId})
+    val currentBaseRoute = when {
+        currentRoute?.startsWith("detail/") == true -> "catalog" // Show catalog as selected when on detail
+        currentRoute?.startsWith("reviews/") == true -> "catalog" // Show catalog as selected when on reviews
+        else -> currentRoute
+    }
+
     NavigationBar(
         modifier = modifier,
         containerColor = Color.White,
-        tonalElevation = 6.dp
+        tonalElevation = 3.dp
     ) {
         items.forEach { item ->
+            val isSelected = currentBaseRoute == item.route
+
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                selected = isSelected,
                 onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    navigateToBottomNavDestination(navController, item.route, currentBaseRoute)
                 },
                 icon = {
                     Icon(
@@ -49,16 +48,35 @@ fun BottomNavigationBar(
                 label = {
                     Text(
                         text = stringResource(id = item.labelRes),
-                        color = if (currentRoute == item.route) Color.Black else Color(0xFF191970) // midnight blue
+                        color = if (isSelected) Color.Black else Color(0xFF191970)
                     )
                 },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFFE8EAF6), // Light selection color
-                    unselectedIconColor = Color(0xFF191970), // Midnight blue
+                    indicatorColor = Color(0xFFE8EAF6),
+                    unselectedIconColor = Color(0xFF191970),
                     selectedIconColor = Color.Black
                 )
             )
+        }
+    }
+}
+
+private fun navigateToBottomNavDestination(
+    navController: NavController,
+    destination: String,
+    currentRoute: String?
+) {
+    if (currentRoute != destination) {
+        navController.navigate(destination) {
+            // Pop up to the start destination and save state
+            popUpTo(navController.graph.startDestinationId) {
+                saveState = true
+            }
+            // Avoid multiple copies of the same destination
+            launchSingleTop = true
+            // Restore state when reselecting a previously selected item
+            restoreState = true
         }
     }
 }

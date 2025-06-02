@@ -13,11 +13,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.android.tripbook.ViewModel.MainViewModel
 import com.android.tripbook.ui.screens.*
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
+    mainViewModel: MainViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -26,54 +28,29 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable("home") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Home Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        composable("schedule") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Schedule Trips Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-        composable("catalog") {
-            TripCatalogScreen(
-                modifier = Modifier.fillMaxSize(),
-                onTripClick = { tripId ->
-                    navController.navigate("detail/$tripId")
-                }
+            TripCatalogScreenWrapper(
+                navController = navController,
+                mainViewModel = mainViewModel
             )
         }
-        composable("profile") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Profile Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
+
+        composable("schedule") {
+            ScheduleScreen(navController = navController)
         }
-        composable("detail/{tripId}") {
-            val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
+
+        composable("catalog") {
+            TripCatalogScreenWrapper(
+                navController = navController,
+                mainViewModel = mainViewModel
+            )
+        }
+
+        composable("profile") {
+            ProfileScreen(navController = navController)
+        }
+
+        composable("detail/{tripId}") { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
@@ -82,11 +59,43 @@ fun MainNavGraph(
                 }
             )
         }
+
         composable("reviews/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
-            AllReviewsScreen(tripId = tripId, onBack = { navController.popBackStack() })
+            AllReviewsScreen(
+                tripId = tripId,
+                onBack = { navController.popBackStack() }
+            )
         }
+    }
+}
 
+@Composable
+private fun ScheduleScreen(navController: NavHostController) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Schedule Trips Screen",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+    }
+}
 
+@Composable
+private fun ProfileScreen(navController: NavHostController) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Profile Screen",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
     }
 }
