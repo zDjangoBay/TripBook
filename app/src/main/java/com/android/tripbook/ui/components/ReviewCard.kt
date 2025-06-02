@@ -7,8 +7,12 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -17,10 +21,10 @@ import com.android.tripbook.model.Review
 import com.android.tripbook.ui.components.FullscreenGalleryDialog
 
 @Composable
-fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
+fun ReviewCard(review: Review, modifier: Modifier = Modifier, onVote: ((Boolean) -> Unit)? = null) {
     var showFullscreenGallery by remember { mutableStateOf(false) }
     var initialImageIndex by remember { mutableStateOf(0) }
-    
+    var votes by remember { mutableStateOf(review.votes) }
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -62,9 +66,27 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = {
+                    votes++
+                    onVote?.invoke(true)
+                }) {
+                    Icon(Icons.Filled.ArrowUpward, contentDescription = "Upvote")
+                }
+                Text(text = votes.toString(), style = MaterialTheme.typography.bodyMedium)
+                IconButton(onClick = {
+                    votes--
+                    onVote?.invoke(false)
+                }) {
+                    Icon(Icons.Filled.ArrowDownward, contentDescription = "Downvote")
+                }
+            }
         }
     }
-    
+
     if (showFullscreenGallery) {
         FullscreenGalleryDialog(
             images = review.images,
