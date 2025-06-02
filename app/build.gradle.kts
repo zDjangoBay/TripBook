@@ -96,14 +96,4 @@ dependencies {
     //        Custom dependencies
     //---------------------------------------------------------
 
-    // implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
-
-
-    // implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
-
-
-
-
 }
