@@ -90,6 +90,7 @@ To run TripBook locally:
 ```bash
 git clone https://github.com/sas-bergson/TripBook.git
 cd TripBook
+```
 
 ## 🧪 Testing
 
