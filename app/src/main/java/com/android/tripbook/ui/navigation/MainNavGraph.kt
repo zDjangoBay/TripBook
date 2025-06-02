@@ -2,7 +2,6 @@
 
 package com.android.tripbook.ui.navigation
 
-import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,9 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.ui.screens.*
-import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.ui.screens.booking.BookingScreen
+import com.android.tripbook.viewmodel.ReviewViewModel
 
 @Composable
 fun MainNavGraph(
@@ -91,8 +91,7 @@ fun MainNavGraph(
                 onSeeAllReviews = { id ->
                     navController.navigate("reviews/$id")
                 },
-                reviewViewModel = sharedReviewViewModel // PASS THE SAME INSTANCE
-                },
+                reviewViewModel = sharedReviewViewModel, // PASS THE SAME INSTANCE
                 onBookTrip = { id ->
                     navController.navigate("booking/$id")
                 }

@@ -186,7 +186,7 @@ fun TripDetailScreen(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
+            Divider(color = Color.LightGray, thickness = 1.dp)
 
             // Rating Summary Section
             if (reviewsForTrip.isNotEmpty()) {
@@ -239,7 +239,7 @@ fun TripDetailScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider(color = Color.LightGray, thickness = 1.dp)
+                Divider(color = Color.LightGray, thickness = 1.dp)
             }
 
             // Add Review Form
