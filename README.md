@@ -1,4 +1,4 @@
-<a id="readme-top"></a>
+![travel_styles](https://github.com/user-attachments/assets/f7ce7528-0051-4ead-855a-676a8765231a)<a id="readme-top"></a>
 
 # TripBook 🌍✈️
 
@@ -32,7 +32,21 @@
 
 | Booking Flow | Agency Selection | Trip Summary |
 |:-----------:|:---------------:|:------------:|
-| ![Booking](app/src/main/java/com/android/tripbook/screenshots/create_account.png) | ![Agency](app/src/main/java/com/android/tripbook/screenshots/travel_styles.png) | ![Summary](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
+| ![Booking](![trep](https://github.com/user-attachments/assets/164bd002-4bc9-45ef-a920-f749b09c6d37)
+![mieiei](https://github.com/user-attachments/assets/0e660d4a-e8eb-4cd8-8b28-ecfd465123f4)
+![tripviw](https://github.com/user-attachments/assets/2cdd8dd9-e9c3-4712-9a7c-81d3ae29e084)
+![mekdk](https://github.com/user-attachments/assets/23835478-1928-410c-8ecf-bfe0b05574ec)
+![mejd](https://github.com/user-attachments/assets/182a0569-5bac-4f6e-aad5-0ca1be7d4fb1)
+![meueu](https://github.com/user-attachments/assets/839dcca4-b134-4fdd-a8cc-f2478628c9a9)
+![meejjj](https://github.com/user-attachments/assets/0212bed3-6000-4c58-8708-e6fa14acf6d5)
+![medavid](https://github.com/user-attachments/assets/88918578-cacc-414c-8d08-433888bb891e)
+) | ![Onboarding $ registration](![Uploading travel_styles.png…](![onboarding_2](https://github.com/user-attachments/assets/8b51a170-e9fe-42c0-a32e-c5a243164b62)
+![onboarding_1](https://github.com/user-attachments/assets/d1bef56b-2fca-4b76-a1a4-d1a070802a48)
+![create_account](https://github.com/user-attachments/assets/9b58c3fd-749a-48ac-80d3-ae91cd359f0e)
+![upload_picture](https://github.com/user-attachments/assets/0e53d5f9-c0ec-44ca-8807-27a72fd77b4e)
+)
+![onboarding_3](https://github.com/user-attachments/assets/2c5b69d4-c16c-4c7d-9f52-504f830058c4)
+) | ![Summary](app/src/main/java/com/android/tripbook/screenshots/upload_picture.png) |
 
 ## 🚀 Getting Started
 
