@@ -39,11 +39,14 @@ fun MainNavGraph(
         }
 
         composable("catalog") {
-            HomeScreenWrapper(
-                navController = navController,
-                mainViewModel = mainViewModel
+            TripCatalogScreen(
+                modifier = Modifier.fillMaxSize(),
+                onTripClick = { tripId ->
+                    navController.navigate("detail/$tripId")
+                }
             )
         }
+
 
         composable("profile") {
             ProfileScreen(navController = navController)
