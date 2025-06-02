@@ -76,8 +76,4 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    // Coil for Jetpack Compose
-implementation("io.coil-kt:coil-compose:2.2.2") // or latest version
-implementation("io.coil-kt:coil:2.2.2")
-
 }
