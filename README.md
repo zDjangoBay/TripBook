@@ -1,4 +1,4 @@
-![travel_styles](https://github.com/user-attachments/assets/f7ce7528-0051-4ead-855a-676a8765231a)<a id="readme-top"></a>
+
 
 # TripBook 🌍✈️
 
