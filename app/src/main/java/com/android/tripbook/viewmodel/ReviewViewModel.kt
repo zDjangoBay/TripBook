@@ -1,4 +1,4 @@
-// Create this as a NEW file (this replaces your MockReviewViewModel)
+// Enhanced ReviewViewModel.kt - Acts as persistent mock data storage
 package com.android.tripbook.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -14,6 +14,63 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 class ReviewViewModel : ViewModel() {
+    companion object {
+        // Static storage to persist reviews across ViewModel instances
+        private var persistentReviews = mutableListOf<Review>()
+        private var nextIdCounter = 1
+
+        // Initialize with some sample data if empty
+        fun initializeSampleData() {
+            if (persistentReviews.isEmpty()) {
+                persistentReviews.addAll(
+                    listOf(
+                        Review(
+                            id = nextIdCounter++,
+                            tripId = 1,
+                            userName = "Sarah Johnson",
+                            userAvatar = "https://ui-avatars.com/api/?name=Sarah+Johnson&background=0D8ABC&color=fff",
+                            comment = "Amazing trip! The scenery was breathtaking and the guide was very knowledgeable.",
+                            rating = 5.0f,
+                            date = "2024-05-15",
+                            images = listOf()
+                        ),
+                        Review(
+                            id = nextIdCounter++,
+                            tripId = 1,
+                            userName = "Mike Chen",
+                            userAvatar = "https://ui-avatars.com/api/?name=Mike+Chen&background=28a745&color=fff",
+                            comment = "Great experience overall. Would definitely recommend to friends and family.",
+                            rating = 4.5f,
+                            date = "2024-05-10",
+                            images = listOf()
+                        ),
+                        Review(
+                            id = nextIdCounter++,
+                            tripId = 2,
+                            userName = "Emma Davis",
+                            userAvatar = "https://ui-avatars.com/api/?name=Emma+Davis&background=dc3545&color=fff",
+                            comment = "Beautiful locations but the weather wasn't great. Still enjoyed it though!",
+                            rating = 4.0f,
+                            date = "2024-05-08",
+                            images = listOf()
+                        ),
+                        Review(
+                            id = nextIdCounter++,
+                            tripId = 3,
+                            userName = "Alex Rodriguez",
+                            userAvatar = "https://ui-avatars.com/api/?name=Alex+Rodriguez&background=6c757d&color=fff",
+                            comment = "Perfect for adventure seekers! Challenging but totally worth it.",
+                            rating = 4.8f,
+                            date = "2024-05-05",
+                            images = listOf()
+                        )
+                    )
+                )
+                Log.d("ReviewViewModel", "Initialized with ${persistentReviews.size} sample reviews")
+            }
+        }
+    }
+
     // Private mutable state
     private val _reviews = MutableStateFlow<List<Review>>(emptyList())
     private val _isLoading = MutableStateFlow(false)
@@ -24,10 +81,10 @@ class ReviewViewModel : ViewModel() {
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    private var nextId = 1
-
     init {
-        // Load any existing reviews (you can integrate with Room database later)
+        // Initialize sample data if needed
+        initializeSampleData()
+        // Load reviews from persistent storage
         loadReviews()
     }
 
@@ -35,11 +92,10 @@ class ReviewViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Here you would load from database
-                // For now, we start with empty list
-                _reviews.value = emptyList()
+                // Load from our persistent mock storage
+                _reviews.value = persistentReviews.toList().sortedByDescending { it.id }
                 _error.value = null
-                Log.d("ReviewViewModel", "Reviews loaded. Total reviews: ${_reviews.value.size}")
+                Log.d("ReviewViewModel", "Reviews loaded from persistent storage. Total reviews: ${_reviews.value.size}")
             } catch (e: Exception) {
                 _error.value = "Failed to load reviews: ${e.message}"
                 Log.e("ReviewViewModel", "Failed to load reviews", e)
@@ -62,7 +118,7 @@ class ReviewViewModel : ViewModel() {
                 Log.d("ReviewViewModel", "Adding review for trip $tripId by $userName with rating $rating")
 
                 val newReview = Review(
-                    id = nextId++,
+                    id = nextIdCounter++,
                     tripId = tripId,
                     userName = userName,
                     userAvatar = userAvatar ?: generateAvatarUrl(userName),
@@ -72,11 +128,13 @@ class ReviewViewModel : ViewModel() {
                     images = images
                 )
 
-                val currentReviews = _reviews.value.toMutableList()
-                currentReviews.add(0, newReview) // Add to the beginning
-                _reviews.value = currentReviews
+                // Add to persistent storage
+                persistentReviews.add(0, newReview)
 
-                Log.d("ReviewViewModel", "Added review. Total reviews: ${_reviews.value.size}")
+                // Update StateFlow
+                _reviews.value = persistentReviews.toList().sortedByDescending { it.id }
+
+                Log.d("ReviewViewModel", "Added review to persistent storage. Total reviews: ${persistentReviews.size}")
                 Log.d("ReviewViewModel", "Review details: ID=${newReview.id}, TripID=${newReview.tripId}, User=${newReview.userName}")
 
                 _error.value = null
@@ -88,19 +146,20 @@ class ReviewViewModel : ViewModel() {
     }
 
     fun getReviewsForTrip(tripId: Int): List<Review> {
-        val tripReviews = _reviews.value.filter { it.tripId == tripId }
+        val tripReviews = persistentReviews.filter { it.tripId == tripId }
         Log.d("ReviewViewModel", "Getting reviews for trip $tripId: found ${tripReviews.size} reviews")
-        return tripReviews
+        return tripReviews.sortedByDescending { it.id }
     }
 
     fun deleteReview(reviewId: Int) {
         viewModelScope.launch {
             try {
-                val currentReviews = _reviews.value.toMutableList()
-                val removedCount = currentReviews.removeAll { it.id == reviewId }
-                _reviews.value = currentReviews
+                val removedCount = persistentReviews.removeAll { it.id == reviewId }
 
-                Log.d("ReviewViewModel", "Deleted review $reviewId. Removed: $removedCount, Total reviews: ${_reviews.value.size}")
+                // Update StateFlow
+                _reviews.value = persistentReviews.toList().sortedByDescending { it.id }
+
+                Log.d("ReviewViewModel", "Deleted review $reviewId from persistent storage. Removed: $removedCount, Total reviews: ${persistentReviews.size}")
                 _error.value = null
             } catch (e: Exception) {
                 _error.value = "Failed to delete review: ${e.message}"
@@ -117,20 +176,21 @@ class ReviewViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             try {
-                val currentReviews = _reviews.value.toMutableList()
-                val index = currentReviews.indexOfFirst { it.id == reviewId }
+                val index = persistentReviews.indexOfFirst { it.id == reviewId }
 
                 if (index != -1) {
-                    val updatedReview = currentReviews[index].copy(
+                    val updatedReview = persistentReviews[index].copy(
                         comment = comment,
                         rating = rating,
                         images = images,
                         date = getCurrentDate() // Update date when modified
                     )
-                    currentReviews[index] = updatedReview
-                    _reviews.value = currentReviews
+                    persistentReviews[index] = updatedReview
 
-                    Log.d("ReviewViewModel", "Updated review $reviewId with new rating $rating")
+                    // Update StateFlow
+                    _reviews.value = persistentReviews.toList().sortedByDescending { it.id }
+
+                    Log.d("ReviewViewModel", "Updated review $reviewId in persistent storage with new rating $rating")
                 } else {
                     Log.w("ReviewViewModel", "Review $reviewId not found for update")
                 }
@@ -157,6 +217,39 @@ class ReviewViewModel : ViewModel() {
         val count = getReviewsForTrip(tripId).size
         Log.d("ReviewViewModel", "Total review count for trip $tripId: $count")
         return count
+    }
+
+    fun getAllReviews(): List<Review> {
+        return persistentReviews.toList().sortedByDescending { it.id }
+    }
+
+    fun getReviewById(reviewId: Int): Review? {
+        return persistentReviews.find { it.id == reviewId }
+    }
+
+    fun clearAllReviews() {
+        viewModelScope.launch {
+            persistentReviews.clear()
+            nextIdCounter = 1
+            _reviews.value = emptyList()
+            Log.d("ReviewViewModel", "Cleared all reviews from persistent storage")
+        }
+    }
+
+    fun refreshReviews() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                _reviews.value = persistentReviews.toList().sortedByDescending { it.id }
+                _error.value = null
+                Log.d("ReviewViewModel", "Refreshed reviews from persistent storage")
+            } catch (e: Exception) {
+                _error.value = "Failed to refresh reviews: ${e.message}"
+                Log.e("ReviewViewModel", "Failed to refresh reviews", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 
     fun clearError() {
