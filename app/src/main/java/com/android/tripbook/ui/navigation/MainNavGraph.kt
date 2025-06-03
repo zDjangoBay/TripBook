@@ -1,4 +1,5 @@
 package com.android.tripbook.ui.navigation
+import com.android.tripbook.ui.screens.DetailReviewScreen
 
 import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
@@ -81,6 +82,7 @@ fun MainNavGraph(
             val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
+                navController = navController,
                 onBack = { navController.popBackStack() },
                 onSeeAllReviews = { id ->
                     navController.navigate("reviews/$id")
@@ -90,10 +92,40 @@ fun MainNavGraph(
                 }
             )
         }
+
         composable("reviews/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
-            AllReviewsScreen(tripId = tripId, onBack = { navController.popBackStack() })
+            AllReviewsScreen(
+                tripId = tripId,
+                onBack = { navController.popBackStack() },
+                onReviewClicked = { reviewId ->
+                    // Navigate to a detail screen or do something on review click
+                    navController.navigate("detailReviewScreen/$reviewId")
+                },
+                onLikeClicked = { reviewId ->
+                    println("Liked review ID: $reviewId")
+                },
+                onFlagClicked = { reviewId ->
+                    println("Flagged review ID: $reviewId")
+                }
+            )
+
+
+    }
+        composable("detailReview/{reviewId}/{tripId}") { backStackEntry ->
+            val reviewId = backStackEntry.arguments?.getString("reviewId")?.toIntOrNull() ?: return@composable
+            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
+
+            DetailReviewScreen(
+                reviewId = reviewId,
+                tripId = tripId,
+                onLikeClicked = { println("Liked review ID: $it") },
+                onFlagClicked = { println("Flagged review ID: $it") },
+                onBack = { navController.popBackStack() }
+            )
         }
+
+
         composable("booking/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
             BookingScreen(
