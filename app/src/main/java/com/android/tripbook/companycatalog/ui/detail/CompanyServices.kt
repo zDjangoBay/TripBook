@@ -5,7 +5,7 @@ package com.android.tripbook.companycatalog.ui.detail
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check // Import for tick icon
+import androidx.compose.material.icons.filled.Check // Import for the tick icon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,14 +28,14 @@ fun CompanyServices(services: List<CompanyService>) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),// padding between cards
+                    .padding(vertical = 4.dp),// padding between the cards
                 shape = RoundedCornerShape(12.dp), //round corners for the service containers
                 elevation = CardDefault.cardElevation(defaultElevation = 2.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp) //service card paddings
+                        .padding(vertical = 4.dp) // for the service card paddings
                             verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -50,3 +50,4 @@ fun CompanyServices(services: List<CompanyService>) {
             }
         }
     }
+
