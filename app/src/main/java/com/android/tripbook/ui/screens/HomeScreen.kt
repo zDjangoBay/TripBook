@@ -36,8 +36,12 @@ fun HomeScreen(
 ) {
     LazyColumn(
         modifier = modifier
-            .background(color = Color.White)
-            .padding(bottom = 80.dp) // Space for bottom navigation
+            .fillMaxSize()
+            .background(color = Color.White), // White looks better with black text
+        contentPadding = PaddingValues(
+            bottom = 100.dp, // Safe space for bottom nav bar
+            top = 0.dp
+        )
     ) {
         // Header
         item {
@@ -68,7 +72,6 @@ fun HomeScreen(
             }
         }
 
-        // Main Title
         item {
             Text(
                 text = stringResource(R.string.Travelling_Made_Easy),
@@ -78,7 +81,6 @@ fun HomeScreen(
             )
         }
 
-        // Transport Options
         item {
             Row(
                 modifier = Modifier
@@ -95,7 +97,6 @@ fun HomeScreen(
 
         item { Spacer(modifier = Modifier.height(30.dp)) }
 
-        // Upcoming Trips Header
         item {
             Text(
                 text = stringResource(R.string.Upcoming_Schedules),
@@ -105,7 +106,6 @@ fun HomeScreen(
             )
         }
 
-        // Upcoming Trips Content
         if (isLoadingUpcoming) {
             item {
                 Box(
@@ -128,7 +128,6 @@ fun HomeScreen(
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
 
-        // Recommended Places Header
         item {
             Text(
                 text = stringResource(R.string.Recommendation_Places),
@@ -138,7 +137,6 @@ fun HomeScreen(
             )
         }
 
-        // Recommended Places Content
         item {
             if (isLoadingRecommended) {
                 Box(
@@ -157,7 +155,7 @@ fun HomeScreen(
                     items(recommendedPlaces) { place ->
                         PlaceItem(
                             place = place,
-                            onClick = { /* Handle place click here */ }
+                            onClick = { /* Handle click */ }
                         )
                     }
                 }

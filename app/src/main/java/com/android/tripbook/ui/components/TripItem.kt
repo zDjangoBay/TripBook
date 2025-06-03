@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape  // <-- Add this import
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.android.tripbook.Model.Triphome
+
 @Composable
 fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {
     Card(
@@ -29,134 +30,123 @@ fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Box(modifier = Modifier.padding(8.dp)) {
-            // Airline Logo
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            // Company Logo (top-left)
             AsyncImage(
                 model = trip.companyLogo,
                 contentDescription = "Company Logo",
                 modifier = Modifier
                     .size(55.dp)
-                    .offset(x = 0.dp, y = 0.dp)
+                    .offset(x = 8.dp, y = 8.dp)
                     .clip(CircleShape)
                     .background(Color.LightGray),
                 contentScale = ContentScale.Crop
             )
 
-            // Airline Name
+            // Company Name (next to logo)
             Text(
                 text = trip.companyName,
-                color = Color(0xFF001F54),
+                color = Color(0xFF001F54), // dark_blue color
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 71.dp) // 55dp logo + 16dp spacing
-                    .offset(y = 16.dp) // Align with logo vertically
+                modifier = Modifier.offset(x = 79.dp, y = 24.dp) // 8 + 55 + 16 = 79dp from left, centered with logo
             )
 
-            // Divider Line (Replace with your dash_line drawable)
+            // Dash Line (centered horizontally, below logo)
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(100.dp)
                     .height(1.dp)
-                    .background(Color.LightGray)
-                    .padding(top = 71.dp) // 55dp logo + 16dp spacing
+                    .background(Color.Gray)
+                    .align(Alignment.TopCenter)
+                    .offset(y = 95.dp) // 8 + 55 + 32 = 95dp from top
             )
 
-            // FROM Section
-            Column(modifier = Modifier.offset(x = 0.dp, y = 87.dp)) {
+            // FROM Section (left side)
+            Column(
+                modifier = Modifier
+                    .offset(x = 16.dp, y = 79.dp)
+                    .width(80.dp)
+            ) {
                 Text(
                     text = "FROM",
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
-                Text(
-                    text = trip.from,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
                     color = Color.Black
                 )
                 Text(
                     text = trip.fromshort,
-                    fontSize = 14.sp,
-                    color = Color.Black
-                )
-            }
-
-            // DURATION Section (Centered)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = 87.dp)
-            ) {
-                Text(
-                    text = "DURATION",
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
-                Text(
-                    text = trip.arriveTime,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-            }
-
-            // TO Section
-            Column(
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = 87.dp)
-            ) {
-                Text(
-                    text = "TO",
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
-                Text(
-                    text = trip.to,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
+            }
+
+            // Arrival Time (center, above dash line)
+            Text(
+                text = trip.arriveTime,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = 79.dp)
+            )
+
+            // TO Section (right side)
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-16).dp, y = 79.dp)
+                    .width(80.dp)
+            ) {
+                Text(
+                    text = "TO",
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
                 Text(
                     text = trip.toshort,
-                    fontSize = 14.sp,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
             }
 
-            // Rating Star
+            // Star Icon (bottom-left)
             Icon(
                 painter = painterResource(android.R.drawable.btn_star_big_on),
                 contentDescription = "Rating",
-                tint = Color.Yellow,
+                tint = Color.Unspecified, // Keep original star color
                 modifier = Modifier
                     .size(24.dp)
-                    .offset(x = 8.dp, y = 133.dp)
+                    .align(Alignment.BottomStart)
+                    .offset(x = 16.dp, y = (-16).dp)
             )
 
-            // Rating Score
+            // Rating Score (next to star)
             Text(
                 text = trip.score.toString(),
                 fontSize = 14.sp,
                 color = Color.Black,
                 modifier = Modifier
-                    .offset(x = 40.dp, y = 136.dp)
+                    .align(Alignment.BottomStart)
+                    .offset(x = 48.dp, y = (-13).dp) // 16 + 24 + 8 = 48dp from left
             )
 
-            // Price
+            // Price (bottom-right)
             Text(
                 text = "$${trip.price}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 modifier = Modifier
-                    .offset(x = (-16).dp, y = 133.dp)
                     .align(Alignment.BottomEnd)
+                    .offset(x = (-16).dp, y = (-8).dp)
             )
         }
     }
