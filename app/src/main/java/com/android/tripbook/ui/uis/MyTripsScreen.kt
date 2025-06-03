@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,17 +23,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
+import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun MyTripsScreen(
-    trips: List<Trip>,
+    tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
-    onTripClick: (Trip) -> Unit
+    onTripClick: ((Trip) -> Unit)? = null
 ) {
+    val trips by tripViewModel.trips.collectAsState()
+    val isLoading by tripViewModel.isLoading.collectAsState()
+    val error by tripViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("All") }
 
@@ -164,7 +170,7 @@ fun MyTripsScreen(
                                     trip.name.contains(searchText, ignoreCase = true) ||
                                     trip.destination.contains(searchText, ignoreCase = true))
                 }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick(trip) })
+                    TripCard(trip = trip, onClick = { onTripClick?.invoke(trip) })
                 }
             }
         }
