@@ -8,12 +8,13 @@ TripBook is a mobile social network for travelers exploring Africa & beyond. Sha
 
 ## 📌 Badges
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stars][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Contributors](https://img.shields.io/github/contributors/zDjangoBay/TripBook.svg?style=for-the-badge)](https://github.com/zDjangoBay/TripBook/graphs/contributors)
+[![Forks](https://img.shields.io/github/forks/zDjangoBay/TripBook.svg?style=for-the-badge)](https://github.com/zDjangoBay/TripBook/network/members)
+[![Stars](https://img.shields.io/github/stars/zDjangoBay/TripBook.svg?style=for-the-badge)](https://github.com/zDjangoBay/TripBook/stargazers)
+[![Issues](https://img.shields.io/github/issues/zDjangoBay/TripBook.svg?style=for-the-badge)](https://github.com/zDjangoBay/TripBook/issues)
+[![MIT License](https://img.shields.io/github/license/zDjangoBay/TripBook.svg?style=for-the-badge)](https://github.com/zDjangoBay/TripBook/blob/main/LICENSE)
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/your-linkedin)
+
 
 ---
 
@@ -33,12 +34,13 @@ TripBook is designed to connect and empower African travelers by providing a dig
 
 ## 🛠️ Built With
 
-- ![Kotlin][Kotlin]
-- ![Jetpack Compose][Jetpack-Compose]
-- ![Firebase][Firebase]
-- ![Android][Android]
-- ![Material Design][Material-Design]
-- ![Google Maps][Google-Maps]
+![Kotlin](https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Material Design](https://img.shields.io/badge/Material_Design-757575?style=for-the-badge&logo=materialdesign&logoColor=white)
+![Google Maps](https://img.shields.io/badge/Google_Maps-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white)
+
 
 ---
 
@@ -88,5 +90,69 @@ TripBook is designed to connect and empower African travelers by providing a dig
 ```bash
 git clone https://github.com/zDjangoBay/TripBook.git
 cd TripBook
+```
 
 
+🧪 Testing
+TripBook will include:
+
+✅ Unit tests (ViewModels, Repos)
+
+✅ Integration tests (APIs, DB)
+
+✅ UI tests (Jetpack Compose flows)
+
+To be added as modules are developed.
+
+📸 Screenshots
+Screenshots will be uploaded once modules are ready.
+
+🛣️ Roadmap
+ User Authentication
+
+ Profile Management
+
+ Trip Catalog & Search
+
+ Social Feed
+
+ Booking Engine
+
+ Notifications
+
+ Real-time Chat
+
+ Multi-language Support (French, Swahili)
+
+📌 See issues for more.
+
+🤝 Contributing
+Contributions are welcome!
+
+bash
+Copier
+Modifier
+# Fork the repo
+git checkout -b feature/my-feature
+git commit -m '✨ Add new feature'
+git push origin feature/my-feature
+Then open a pull request.
+
+📄 License
+Distributed under the MIT License. See LICENSE for details.
+
+📬 Contact
+Author: Bergson
+📧 Email: your.email@example.com
+🔗 GitHub: sas-bergson
+
+🙌 Acknowledgments
+Jetpack Compose
+
+Firebase
+
+Material Design
+
+Google Maps API
+
+Everyone contributing to African tourism 💚
