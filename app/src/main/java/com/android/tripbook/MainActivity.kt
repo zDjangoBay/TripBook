@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
         val nominatimService = NominatimService()
         val travelAgencyService = TravelAgencyService()
 
-        // ✅ Get API key from manifest
         val apiKey = applicationContext.packageManager
             .getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
             .metaData.getString("com.google.android.geo.API_KEY") ?: ""
