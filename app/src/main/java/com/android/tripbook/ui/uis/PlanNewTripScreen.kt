@@ -29,6 +29,8 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
+import com.android.tripbook.service.GoogleMapsService
+import com.android.tripbook.service.PlaceResult
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -41,6 +43,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanNewTripScreen(
@@ -48,6 +51,7 @@ fun PlanNewTripScreen(
     onTripCreated: (Trip) -> Unit,
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
+    googleMapsService: GoogleMapsService,
     onBrowseAgencies: (String) -> Unit
 ) {
     var tripName by remember { mutableStateOf("") }
@@ -58,8 +62,10 @@ fun PlanNewTripScreen(
     var budget by remember { mutableStateOf("") }
     var selectedTripType by remember { mutableStateOf("") }
     var itineraryItems by remember { mutableStateOf<List<ItineraryItem>>(emptyList()) }
-    var destinationSuggestions by remember { mutableStateOf<List<Attraction>>(emptyList()) }
+    var destinationSuggestions by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
+    var itineraryLocationSuggestions by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
     var isLoadingSuggestions by remember { mutableStateOf(false) }
+    var isLoadingItinerarySuggestions by remember { mutableStateOf(false) }
 
     var date by remember { mutableStateOf<LocalDate?>(null) }
     var time by remember { mutableStateOf("") }
@@ -203,8 +209,28 @@ fun PlanNewTripScreen(
                                 if (it.trim().length >= 3) {
                                     isLoadingSuggestions = true
                                     coroutineScope.launch {
-                                        destinationSuggestions = nominatimService.getNearbyAttractions(it)
-                                        isLoadingSuggestions = false
+                                        try {
+                                            // Try Google Places API first
+                                            destinationSuggestions = googleMapsService.searchPlaces(it)
+                                            isLoadingSuggestions = false
+                                        } catch (e: Exception) {
+                                            // Fallback to Nominatim
+                                            try {
+                                                val attractions = nominatimService.getNearbyAttractions(it)
+                                                destinationSuggestions = attractions.map { attraction ->
+                                                    PlaceResult(
+                                                        placeId = "",
+                                                        name = attraction.name,
+                                                        address = attraction.location,
+                                                        types = listOf("tourist_attraction")
+                                                    )
+                                                }
+                                                isLoadingSuggestions = false
+                                            } catch (e2: Exception) {
+                                                destinationSuggestions = emptyList()
+                                                isLoadingSuggestions = false
+                                            }
+                                        }
                                     }
                                 } else {
                                     destinationSuggestions = emptyList()
@@ -250,20 +276,20 @@ fun PlanNewTripScreen(
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
                                 LazyColumn(
-                                    modifier = Modifier.heightIn(max = 150.dp)
+                                    modifier = Modifier.heightIn(max = 200.dp)
                                 ) {
                                     items(destinationSuggestions) { suggestion ->
-                                        SuggestionItem(
+                                        EnhancedSuggestionItem(
                                             suggestion = suggestion,
                                             onClick = {
-                                                destination = suggestion.location
+                                                destination = "${suggestion.name}, ${suggestion.address}"
                                                 destinationSuggestions = emptyList()
                                                 if (startDate != null) {
                                                     itineraryItems = itineraryItems + ItineraryItem(
                                                         date = startDate!!,
                                                         time = "10:00 AM",
                                                         title = suggestion.name,
-                                                        location = suggestion.location,
+                                                        location = suggestion.address,
                                                         type = ItineraryType.ACTIVITY,
                                                         notes = "Suggested attraction"
                                                     )
@@ -658,11 +684,108 @@ fun PlanNewTripScreen(
                         color = Color(0xFF374151),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
+                    Column {
+                        OutlinedTextField(
+                            value = location,
+                            onValueChange = {
+                                location = it
+                                locationError = ""
+                                if (it.trim().length >= 3) {
+                                    isLoadingItinerarySuggestions = true
+                                    coroutineScope.launch {
+                                        try {
+                                            itineraryLocationSuggestions = googleMapsService.searchPlaces(it)
+                                            isLoadingItinerarySuggestions = false
+                                        } catch (e: Exception) {
+                                            try {
+                                                val attractions = nominatimService.getNearbyAttractions(it)
+                                                itineraryLocationSuggestions = attractions.map { attraction ->
+                                                    PlaceResult(
+                                                        placeId = "",
+                                                        name = attraction.name,
+                                                        address = attraction.location,
+                                                        types = listOf("tourist_attraction")
+                                                    )
+                                                }
+                                                isLoadingItinerarySuggestions = false
+                                            } catch (e2: Exception) {
+                                                itineraryLocationSuggestions = emptyList()
+                                                isLoadingItinerarySuggestions = false
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    itineraryLocationSuggestions = emptyList()
+                                    isLoadingItinerarySuggestions = false
+                                }
+                            },)
+
+                        // Location suggestions for itinerary
+                        if (isLoadingItinerarySuggestions) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 8.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else if (itineraryLocationSuggestions.isNotEmpty()) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            ) {
+                                LazyColumn(
+                                    modifier = Modifier.heightIn(max = 150.dp)
+                                ) {
+                                    items(itineraryLocationSuggestions) { suggestion ->
+                                        EnhancedSuggestionItem(
+                                            suggestion = suggestion,
+                                            onClick = {
+                                                location = "${suggestion.name}, ${suggestion.address}"
+                                                itineraryLocationSuggestions = emptyList()
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                     OutlinedTextField(
                         value = location,
                         onValueChange = {
                             location = it
                             locationError = ""
+                            if (it.trim().length >= 3) {
+                                isLoadingItinerarySuggestions = true
+                                coroutineScope.launch {
+                                    try {
+                                        itineraryLocationSuggestions = googleMapsService.searchPlaces(it)
+                                        isLoadingItinerarySuggestions = false
+                                    } catch (e: Exception) {
+                                        try {
+                                            val attractions = nominatimService.getNearbyAttractions(it)
+                                            itineraryLocationSuggestions = attractions.map { attraction ->
+                                                PlaceResult(
+                                                    placeId = "",
+                                                    name = attraction.name,
+                                                    address = attraction.location,
+                                                    types = listOf("tourist_attraction")
+                                                )
+                                            }
+                                            isLoadingItinerarySuggestions = false
+                                        } catch (e2: Exception) {
+                                            itineraryLocationSuggestions = emptyList()
+                                            isLoadingItinerarySuggestions = false
+                                        }
+                                    }
+                                }
+                            } else {
+                                itineraryLocationSuggestions = emptyList()
+                                isLoadingItinerarySuggestions = false
+                            }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("e.g., Giza, Egypt") },
@@ -1053,33 +1176,61 @@ private fun ItineraryItemCard(item: ItineraryItem) {
 }
 
 @Composable
-private fun SuggestionItem(suggestion: Attraction, onClick: () -> Unit) {
-    Row(
+private fun EnhancedSuggestionItem(suggestion: PlaceResult, onClick: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(12.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.Place,
-            contentDescription = "Attraction",
-            tint = Color(0xFF667EEA),
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
-                text = suggestion.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1A202C)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Place,
+                contentDescription = "Place",
+                tint = Color(0xFF667EEA),
+                modifier = Modifier.size(20.dp)
             )
-            Text(
-                text = suggestion.location,
-                fontSize = 12.sp,
-                color = Color(0xFF64748B)
-            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = suggestion.name,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1A202C)
+                )
+                Text(
+                    text = suggestion.address,
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    maxLines = 1
+                )
+            }
+        }
+
+        // Display place types as chips
+        if (suggestion.types.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                suggestion.types.take(3).forEach { type ->
+                    Surface(
+                        color = Color(0xFFE3F2FD),
+                        contentColor = Color(0xFF1976D2),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.padding(0.dp)
+                    ) {
+                        Text(
+                            text = type.replace("_", " ").lowercase().split(" ")
+                                .joinToString(" ") { it.capitalize() },
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
