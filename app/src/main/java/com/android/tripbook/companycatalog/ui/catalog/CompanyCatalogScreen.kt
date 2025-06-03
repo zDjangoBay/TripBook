@@ -32,3 +32,17 @@ fun CompanyCatalogScreen(
                 it.description.contains(query, ignoreCase = true)
     }
 
+    Scaffold(
+        topBar = { TopBar(title = "Company Catalogs") }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+        ) {
+            SearchBar(query = query, onQueryChanged = { query = it })
+
+            ViewModeToggleButtons(
+                isListView = isListView,
+                onToggleView = { newMode -> isListView = newMode }
+            )
+
