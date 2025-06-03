@@ -1,7 +1,5 @@
 package com.android.tripbook.model
 
-
-
 import com.android.tripbook.service.AgencyService
 import java.time.LocalDate
 
@@ -13,6 +11,20 @@ enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
 }
 
+// Location data classes for Maps integration
+data class Location(
+    val latitude: Double,
+    val longitude: Double,
+    val address: String = "",
+    val placeId: String = "" // For Places API
+)
+
+data class RouteInfo(
+    val distance: String = "",
+    val duration: String = "",
+    val polyline: String = "" // Encoded polyline for route display
+)
+
 data class ItineraryItem(
     val date: LocalDate,
     val time: String,
@@ -20,7 +32,10 @@ data class ItineraryItem(
     val location: String,
     val type: ItineraryType,
     val notes: String = "",
-    val agencyService: AgencyService? = null // Reference to booked service
+    val agencyService: AgencyService? = null,
+    // New fields for Maps integration
+    val coordinates: Location? = null,
+    val routeToNext: RouteInfo? = null // Route to next itinerary item
 )
 
 data class Trip(
@@ -37,5 +52,8 @@ data class Trip(
     val activities: List<String> = emptyList(),
     val expenses: List<String> = emptyList(),
     val travelersList: List<String> = emptyList(),
-    val itinerary: List<ItineraryItem> = emptyList()
+    val itinerary: List<ItineraryItem> = emptyList(),
+    // New fields for Maps integration
+    val destinationCoordinates: Location? = null,
+    val mapCenter: Location? = null // Center point for map display
 )
