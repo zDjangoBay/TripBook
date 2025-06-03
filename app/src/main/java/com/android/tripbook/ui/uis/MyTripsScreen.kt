@@ -108,14 +108,20 @@ fun MyTripsScreen(
                             color = Color.Black
                         ),
                         decorationBox = { innerTextField ->
-                            if (searchText.isEmpty()) {
-                                Text(
-                                    text = "Search trips...",
-                                    color = Color(0xFF9CA3AF),
-                                    fontSize = 16.sp
-                                )
+                            Box(
+                                contentAlignment = Alignment.CenterStart,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                if (searchText.isEmpty()) {
+                                    Text(
+                                        text = "Search trips...",
+                                        color = Color(0xFF9CA3AF),
+                                        fontSize = 16.sp,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                                innerTextField()
                             }
-                            innerTextField()
                         }
                     )
                 }
@@ -241,9 +247,7 @@ fun TripCard(
                         color = Color(0xFF1A202C)
                     )
                     Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
+                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
                         fontSize = 14.sp,
                         color = Color(0xFF667EEA),
                         fontWeight = FontWeight.Medium
@@ -271,10 +275,13 @@ fun TripCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Location
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
                     Text(
                         text = "📍",
                         fontSize = 14.sp,
@@ -284,12 +291,17 @@ fun TripCard(
                     Text(
                         text = trip.destination,
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B)
+                        color = Color(0xFF64748B),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
 
                 // Travelers
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
                     Text(
                         text = "👥",
                         fontSize = 14.sp,
@@ -299,12 +311,17 @@ fun TripCard(
                     Text(
                         text = "${trip.travelers} travelers",
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B)
+                        color = Color(0xFF64748B),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
 
                 // Budget
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
                     Text(
                         text = "💰",
                         fontSize = 14.sp,
@@ -314,7 +331,9 @@ fun TripCard(
                     Text(
                         text = "$${trip.budget}",
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B)
+                        color = Color(0xFF64748B),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }
