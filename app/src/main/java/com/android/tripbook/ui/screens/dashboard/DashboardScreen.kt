@@ -1,6 +1,7 @@
 package com.android.tripbook.ui.screens.dashboard
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,9 +43,7 @@ import com.android.tripbook.data.models.Trip
 @Composable
 fun DashboardScreen(
     onTripClick: (String) -> Unit
-) {
-    val context = LocalContext.current
-    var searchQuery by remember { mutableStateOf("") }
+) {    val context = LocalContext.current
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
 
@@ -75,23 +74,78 @@ fun DashboardScreen(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-            )
-        } else {
+            )        } else {
             currentLocation = "New York, NY" // Mock location
-        }    }    // State for category dropdown visibility and selected category
+        }
+    }
+
+    // Filter preferences helper functions
+    val prefs = remember { context.getSharedPreferences("trip_filters", Context.MODE_PRIVATE) }
+      fun saveFilterPreferences(
+        category: String,
+        priceStart: Float,
+        priceEnd: Float,
+        duration: String,
+        search: String
+    ) {
+        prefs.edit().apply {
+            putString("selected_category", category)
+            putFloat("price_range_start", priceStart)
+            putFloat("price_range_end", priceEnd)
+            putString("selected_duration", duration)
+            putString("search_query", search)
+            apply()
+        }
+    }
+
+    fun clearAllFilterPreferences() {
+        prefs.edit().apply {
+            remove("selected_category")
+            remove("price_range_start")
+            remove("price_range_end")
+            remove("selected_duration")
+            remove("search_query")
+            apply()
+        }
+    }
+
+    // State for category dropdown visibility and selected category with persistence
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf("All") }    // Price range state management
+    var selectedCategory by remember { 
+        mutableStateOf(prefs.getString("selected_category", "All") ?: "All") 
+    }
+      // Price range state management with persistence
     val minPrice = remember { trips.minOfOrNull { it.basePrice } ?: 0.0 }
     val maxPrice = remember { trips.maxOfOrNull { it.basePrice } ?: 5000.0 }
-    var priceRangeStart by remember { mutableFloatStateOf(minPrice.toFloat()) }
-    var priceRangeEnd by remember { mutableFloatStateOf(maxPrice.toFloat()) }
-    var isPriceDialogVisible by remember { mutableStateOf(false) }
-
-    // Duration filter state management
-    var selectedDuration by remember { mutableStateOf("All") }
-    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
+    var priceRangeStart by remember { 
+        val savedStart = prefs.getFloat("price_range_start", minPrice.toFloat())
+        // Validate saved value is within bounds
+        mutableFloatStateOf(savedStart.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
+    }
+    var priceRangeEnd by remember { 
+        val savedEnd = prefs.getFloat("price_range_end", maxPrice.toFloat())
+        // Validate saved value is within bounds
+        mutableFloatStateOf(savedEnd.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
+    }
+    var isPriceDialogVisible by remember { mutableStateOf(false) }    // Duration filter state management with persistence
     val availableDurations = remember { 
         listOf("All") + trips.map { it.duration }.distinct().sorted()
+    }
+    var selectedDuration by remember { 
+        val savedDuration = prefs.getString("selected_duration", "All") ?: "All"
+        // Validate saved duration is still available
+        mutableStateOf(if (availableDurations.contains(savedDuration)) savedDuration else "All")
+    }
+    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
+
+    // Search query with persistence
+    var searchQuery by remember { 
+        mutableStateOf(prefs.getString("search_query", "") ?: "") 
+    }
+
+    // Save preferences whenever filter state changes
+    LaunchedEffect(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery) {
+        saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
     }
 
 // search function
@@ -318,15 +372,15 @@ fun DashboardScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
-                TextButton(
+                  TextButton(
                     onClick = {
-                        // Clear all filters
+                        // Clear all filters and preferences
                         searchQuery = ""
                         selectedCategory = "All"
                         priceRangeStart = minPrice.toFloat()
                         priceRangeEnd = maxPrice.toFloat()
                         selectedDuration = "All"
+                        clearAllFilterPreferences()
                     }
                 ) {
                     Icon(
@@ -471,19 +525,20 @@ fun DashboardScreen(
                     ) {
                         Text("Apply")
                     }
-                },
-                dismissButton = {
+                },                dismissButton = {
                     TextButton(
                         onClick = {
-                            // Reset to original range
+                            // Reset to original range and clear preferences
                             priceRangeStart = minPrice.toFloat()
                             priceRangeEnd = maxPrice.toFloat()
                             isPriceDialogVisible = false
+                            // Update preferences immediately
+                            saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
                         }
                     ) {
                         Text("Reset")
                     }
-                }            )
+                })
         }
 
         // Duration Dropdown
