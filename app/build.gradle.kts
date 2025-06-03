@@ -103,5 +103,15 @@ dependencies {
         implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(project(":userprofile"))
 
-
+    // UI Testing Dependencies
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.espresso.contrib)
+    androidTestImplementation(libs.androidx.espresso.intents)
+    
+    // Screenshot Testing
+    androidTestImplementation("com.facebook.testing:screenshot:0.17.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
 }
