@@ -13,6 +13,10 @@ sealed class PostEvent {
     data class ImageRemoved(val imageUri: Uri) : PostEvent()
     object ClearAllImages : PostEvent()
 
+    // Location support for travel posts
+    data class LocationAdded(val latitude: Double, val longitude: Double, val locationName: String?) : PostEvent()
+    object ClearLocation : PostEvent()
+
     // Form submission
     object SubmitPost : PostEvent()
 }
