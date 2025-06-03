@@ -76,8 +76,8 @@ fun MainNavGraph(
             val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
-                onBack = { navController.popBackStack() },
-                onSeeAllReviews = { id ->
+                onBackClick = { navController.popBackStack() },
+                onAllReviewsClick = { id ->
                     navController.navigate("reviews/$id")
                 }
             )

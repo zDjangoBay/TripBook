@@ -93,6 +93,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.play.services.maps)
     implementation(libs.maps.utils.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
+
 
 
 
