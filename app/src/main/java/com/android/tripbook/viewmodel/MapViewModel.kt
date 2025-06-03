@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.*
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.MapRegion
-import com.android.tripbook.data.SampleTripsWithLocation
+import com.android.tripbook.data.SampleTrips // Assuming SampleTrips now includes location data
 
 class MapViewModel : ViewModel() {
 
-    private val _allTrips = mutableStateOf(SampleTripsWithLocation.get())
+    private val _allTrips = mutableStateOf(SampleTrips.get())
     val allTrips: State<List<Trip>> = _allTrips
 
     private val _filteredTrips = mutableStateOf(_allTrips.value)
@@ -35,25 +35,28 @@ class MapViewModel : ViewModel() {
         _filteredTrips.value = if (query.isEmpty()) {
             _allTrips.value
         } else {
-            _allTrips.value.filter { trip ->
-                trip.title.contains(query, ignoreCase = true) ||
-                        trip.description.contains(query, ignoreCase = true) ||
-                        trip.city.contains(query, ignoreCase = true) ||
-                        trip.country.contains(query, ignoreCase = true) ||
-                        trip.region?.contains(query, ignoreCase = true) == true
+            if (query.startsWith("region:")) {
+                val actualRegion = query.substringAfter("region:")
+                _allTrips.value.filter { trip ->
+                    trip.region?.equals(actualRegion, ignoreCase = true) == true
+                }
+            } else {
+                _allTrips.value.filter { trip ->
+                    trip.title.contains(query, ignoreCase = true) ||
+                            trip.description.contains(query, ignoreCase = true) ||
+                            trip.city.contains(query, ignoreCase = true) ||
+                            trip.country.contains(query, ignoreCase = true)
+                }
             }
         }
 
-        // Update map region to fit filtered trips
+        // This is the correct and ONLY call to updateMapRegionForTrips within filterTrips
         updateMapRegionForTrips(_filteredTrips.value)
     }
 
-    fun filterTripsByRegion(region: String) {
-        _filteredTrips.value = _allTrips.value.filter { trip ->
-            trip.region?.equals(region, ignoreCase = true) == true
-        }
-        updateMapRegionForTrips(_filteredTrips.value)
-    }
+    // The duplicate section was here. It's now removed.
+
+
 
     fun selectTrip(trip: Trip?) {
         _selectedTrip.value = trip
@@ -105,5 +108,13 @@ class MapViewModel : ViewModel() {
             .groupBy { "${it.city}, ${it.country}" }
             .map { (destination, trips) -> destination to trips.size }
             .sortedByDescending { it.second }
+    }
+
+    fun updateMapRegion(newMapRegion: MapRegion) {
+        _mapRegion.value = newMapRegion
+        // Optionally, re-filter trips based on the new map bounds if you only want to show
+        // trips that are currently visible on the map. This can be complex if you also
+        // have text-based filtering. For now, we'll keep it simple, but this is a point
+        // for future optimization with large datasets.
     }
 }

@@ -10,11 +10,11 @@ data class MapRegion(
     companion object {
         // Default region (can be user's location or world view)
         fun defaultRegion() = MapRegion(
-            centerLatitude = 0.0,
-            centerLongitude = 0.0,
-            latitudeDelta = 180.0,
-            longitudeDelta = 360.0,
-            zoomLevel = 2f
+            centerLatitude = 3.8480, // Yaoundé, Cameroon
+            centerLongitude = 11.5021, // Yaoundé, Cameroon
+            latitudeDelta = 5.0, // A bit wider view
+            longitudeDelta = 5.0,
+            zoomLevel = 6f // A more zoomed-in view of the region
         )
 
         // Create region to fit multiple trips

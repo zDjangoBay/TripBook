@@ -2,7 +2,7 @@ package com.android.tripbook.data
 
 import com.android.tripbook.model.Trip
 
-object SampleTripsWithLocation {
+object SampleTrips {
     fun get(): List<Trip> = listOf(
         Trip(
             id = 1,
@@ -16,8 +16,8 @@ object SampleTripsWithLocation {
             rating = 4.8f,
             reviewCount = 245,
             duration = "4 days",
-            latitude = 48.8566,
-            longitude = 2.3522,
+            latitude = 3.8480,  // <-- CORRECTED LATITUDE FOR YAOUNDE (was Paris)
+            longitude = 11.5021, // <-- CORRECTED LONGITUDE FOR YAOUNDE (was Paris)
             city = "Yaounde",
             country = "Cameroon",
             region = "Centre"
@@ -34,8 +34,8 @@ object SampleTripsWithLocation {
             rating = 4.9f,
             reviewCount = 189,
             duration = "7 days",
-            latitude = 35.6762,
-            longitude = 139.6503,
+            latitude = 4.1537,  // <-- CORRECTED LATITUDE FOR BUEA (was Tokyo)
+            longitude = 9.2343, // <-- CORRECTED LONGITUDE FOR BUEA (was Tokyo)
             city = "Buea",
             country = "Cameroon",
             region = "Southwest"
@@ -52,8 +52,8 @@ object SampleTripsWithLocation {
             rating = 4.7f,
             reviewCount = 156,
             duration = "5 days",
-            latitude = 36.3932,
-            longitude = 25.4615,
+            latitude = 2.9234,  // <-- CORRECTED LATITUDE FOR KRIBI (was Santorini)
+            longitude = 9.9079,  // <-- CORRECTED LONGITUDE FOR KRIBI (was Santorini)
             city = "Kribi",
             country = "Cameroon",
             region = "Littoral"
@@ -71,8 +71,8 @@ object SampleTripsWithLocation {
             rating = 4.6f,
             reviewCount = 298,
             duration = "6 days",
-            latitude = 40.7128,
-            longitude = -74.0060,
+            latitude = 5.9667,  // <-- CORRECTED LATITUDE FOR BAMENDA (was NYC)
+            longitude = 10.1667, // <-- CORRECTED LONGITUDE FOR BAMENDA (was NYC)
             city = "Bamenda",
             country = "Cameroon",
             region = "Northwest"
