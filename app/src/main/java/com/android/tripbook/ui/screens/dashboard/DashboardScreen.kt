@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -142,10 +145,19 @@ fun DashboardScreen(
                 text = "Discover Amazing Trips",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
+                color = MaterialTheme.colorScheme.primary            )
             
-            if (activeFilterCount > 0) {
+            AnimatedVisibility(
+                visible = activeFilterCount > 0,
+                enter = slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300)),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            ) {
                 Card(
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
@@ -164,12 +176,27 @@ fun DashboardScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "$activeFilterCount filter${if (activeFilterCount == 1) "" else "s"}",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                        AnimatedContent(
+                            targetState = activeFilterCount,
+                            transitionSpec = {
+                                slideInVertically(
+                                    initialOffsetY = { if (targetState > initialState) -it else it },
+                                    animationSpec = tween(300)
+                                ) + fadeIn(animationSpec = tween(300)) togetherWith
+                                slideOutVertically(
+                                    targetOffsetY = { if (targetState > initialState) it else -it },
+                                    animationSpec = tween(300)
+                                ) + fadeOut(animationSpec = tween(300))
+                            },
+                            label = "filter count"
+                        ) { count ->
+                            Text(
+                                text = "$count filter${if (count == 1) "" else "s"}",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
                     }
                 }
             }
@@ -246,16 +273,24 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),            shape = RoundedCornerShape(16.dp)
-        )
-
-        // Active Filters and Results Count
+        )        // Active Filters and Results Count
         val hasActiveFilters = selectedCategory != "All" || 
             priceRangeStart != minPrice.toFloat() || 
             priceRangeEnd != maxPrice.toFloat() || 
             selectedDuration != "All" ||
             searchQuery.isNotBlank()
 
-        if (hasActiveFilters) {
+        AnimatedVisibility(
+            visible = hasActiveFilters,
+            enter = slideInVertically(
+                initialOffsetY = { -it / 2 },
+                animationSpec = tween(400, easing = EaseOutCubic)
+            ) + fadeIn(animationSpec = tween(400)),
+            exit = slideOutVertically(
+                targetOffsetY = { -it / 2 },
+                animationSpec = tween(300, easing = EaseInCubic)
+            ) + fadeOut(animationSpec = tween(300))
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -263,11 +298,26 @@ fun DashboardScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "${filteredTrips.size} trips found",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                AnimatedContent(
+                    targetState = filteredTrips.size,
+                    transitionSpec = {
+                        slideInVertically(
+                            initialOffsetY = { if (targetState > initialState) it else -it },
+                            animationSpec = tween(300)
+                        ) + fadeIn(animationSpec = tween(300)) togetherWith
+                        slideOutVertically(
+                            targetOffsetY = { if (targetState > initialState) -it else it },
+                            animationSpec = tween(300)
+                        ) + fadeOut(animationSpec = tween(300))
+                    },
+                    label = "results count"
+                ) { count ->
+                    Text(
+                        text = "$count trips found",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 
                 TextButton(
                     onClick = {
@@ -288,7 +338,7 @@ fun DashboardScreen(
                     Text("Clear all")
                 }
             }
-        }        // Filter Section
+        }// Filter Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -462,17 +512,38 @@ fun DashboardScreen(
                         .padding(8.dp)
                 )
             }
-        }
-
-        // Trip Cards
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(filteredTrips) { trip ->
-                TripCard(
-                    trip = trip,
-                    onReserveClick = { onTripClick(trip.id) }
-                )
+        }        // Trip Cards
+        AnimatedContent(
+            targetState = filteredTrips,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(400)) togetherWith
+                fadeOut(animationSpec = tween(200))
+            },
+            label = "trip cards"
+        ) { trips ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(
+                    items = trips,
+                    key = { trip -> trip.id }
+                ) { trip ->
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = slideInVertically(
+                            initialOffsetY = { it / 3 },
+                            animationSpec = tween(300, easing = EaseOutCubic)
+                        ) + fadeIn(animationSpec = tween(300)),
+                        modifier = Modifier.animateItemPlacement(
+                            animationSpec = tween(300, easing = EaseOutCubic)
+                        )
+                    ) {
+                        TripCard(
+                            trip = trip,
+                            onReserveClick = { onTripClick(trip.id) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -585,21 +656,55 @@ fun FilterChip(
     isActive: Boolean = false,
     onClick: () -> Unit
 ) {
+    val scale by animateFloatAsState(
+        targetValue = if (isActive) 1.05f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "chip scale"
+    )
+    
+    val containerColor by animateColorAsState(
+        targetValue = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+        animationSpec = tween(300),
+        label = "container color"
+    )
+    
+    val contentColor by animateColorAsState(
+        targetValue = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
+        animationSpec = tween(300),
+        label = "content color"
+    )
+    
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
-            contentColor = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = containerColor,
+            contentColor = contentColor
         ),
         modifier = Modifier
             .height(40.dp)
             .padding(horizontal = 4.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
-        )
+        AnimatedContent(
+            targetState = label,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(200)) togetherWith
+                fadeOut(animationSpec = tween(200))
+            },
+            label = "chip label"
+        ) { currentLabel ->
+            Text(
+                text = currentLabel,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
+            )
+        }
     }
 }
