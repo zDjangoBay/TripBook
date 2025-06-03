@@ -210,12 +210,10 @@ fun DashboardScreen(
             FilterChip(
                 label = "Price Range",
                 onClick = { isPriceDialogVisible = true }
-            )
-
-            // Duration Filter
+            )            // Duration Filter
             FilterChip(
                 label = "Duration",
-                onClick = { /* Open duration filter dialog */ }
+                onClick = { isDurationDropdownExpanded = true }
             )
         }        // Category Dropdown
         DropdownMenu(
@@ -333,8 +331,35 @@ fun DashboardScreen(
                     ) {
                         Text("Reset")
                     }
-                }
-            )
+                }            )
+        }
+
+        // Duration Dropdown
+        DropdownMenu(
+            expanded = isDurationDropdownExpanded,
+            onDismissRequest = { isDurationDropdownExpanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            availableDurations.forEach { duration ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedDuration = duration
+                        isDurationDropdownExpanded = false
+                    },
+                    text = {
+                        Text(
+                            text = duration,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp)
+                )
+            }
         }
 
         // Trip Cards
