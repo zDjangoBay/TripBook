@@ -27,6 +27,8 @@ sealed class PostEvent {
     // Privacy and visibility controls
     data class VisibilityChanged(val visibility: String) : PostEvent()
 
-    // Form submission
+    // Enhanced form management
     object SubmitPost : PostEvent()
+    object ClearForm : PostEvent()
+    object SaveDraft : PostEvent()
 }
