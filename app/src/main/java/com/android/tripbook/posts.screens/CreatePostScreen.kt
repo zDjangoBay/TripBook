@@ -69,8 +69,8 @@ fun CreatePostScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(scrollState)
-                .padding(17.dp),
-            verticalArrangement = Arrangement.spacedBy(25.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // All calls to viewModel.handleEvent(...) below use the passed-in viewModel
             PostTitleInput(
@@ -129,7 +129,7 @@ fun CreatePostScreen(
                         text = uiState.error!!,
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(15.dp)
                     )
                 }
             }
