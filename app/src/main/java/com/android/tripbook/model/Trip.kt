@@ -38,6 +38,12 @@ data class ItineraryItem(
     val routeToNext: RouteInfo? = null // Route to next itinerary item
 )
 
+data class Event(
+    val title: String,
+    val date: LocalDate,
+    val description: String
+)
+
 data class Trip(
     val id: String,
     val name: String,
@@ -53,7 +59,9 @@ data class Trip(
     val expenses: List<String> = emptyList(),
     val travelersList: List<String> = emptyList(),
     val itinerary: List<ItineraryItem> = emptyList(),
-    // New fields for Maps integration
+    // New field for events
+    val events: List<Event> = emptyList(),
+    // Maps integration fields
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null
 )
