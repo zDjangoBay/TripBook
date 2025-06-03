@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.android.tripbook.data.providers.DummyTripDataProvider
 import com.android.tripbook.data.models.Trip
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 
 /**
  * Dashboard screen showing available trips
@@ -136,56 +138,115 @@ fun DashboardScreen(
         // Validate saved duration is still available
         mutableStateOf(if (availableDurations.contains(savedDuration)) savedDuration else "All")
     }
-    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
-
-    // Search query with persistence
+    var isDurationDropdownExpanded by remember { mutableStateOf(false) }    // Search query with persistence and advanced debouncing
     var searchQuery by remember { 
         mutableStateOf(prefs.getString("search_query", "") ?: "") 
     }
-
-    // Save preferences whenever filter state changes
-    LaunchedEffect(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery) {
-        saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
+    
+    // Debounced search query for performance
+    var debouncedSearchQuery by remember { mutableStateOf(searchQuery) }
+    
+    // Advanced debounce search input with job cancellation for better performance
+    LaunchedEffect(searchQuery) {
+        val searchJob = Job()
+        try {
+            delay(300) // 300ms debounce delay
+            if (searchJob.isActive) {
+                debouncedSearchQuery = searchQuery
+            }
+        } catch (e: Exception) {
+            // Handle cancellation gracefully
+        }
+    }    // Save preferences whenever filter state changes (with debounced search and throttling)
+    LaunchedEffect(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery) {
+        // Throttle preference saves to avoid excessive I/O
+        delay(100)
+        saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery)
     }
 
-// search function
-    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration) {
-        trips.filter { trip ->
-            // Text search filter
-            val matchesSearch = if (searchQuery.isBlank()) {
-                true
-            } else {
-                trip.title.contains(searchQuery, ignoreCase = true) ||
-                trip.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                trip.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && trip.fromLocation.contains(currentLocation, ignoreCase = true))
-            }
-            
-            // Category filter
-            val matchesCategory = selectedCategory == "All" || 
-                trip.category.name.equals(selectedCategory, ignoreCase = true)
-            
-            // Price range filter
-            val matchesPrice = trip.basePrice >= priceRangeStart && trip.basePrice <= priceRangeEnd
-            
-            // Duration filter
-            val matchesDuration = selectedDuration == "All" || 
-                trip.duration.equals(selectedDuration, ignoreCase = true)
-            
-            matchesSearch && matchesCategory && matchesPrice && matchesDuration
+    // Memoized category names for performance
+    val categoryNames = remember {
+        mapOf(
+            "business" to "Business",
+            "adventure" to "Adventure", 
+            "cultural" to "Cultural",
+            "relaxation" to "Relaxation",
+            "family" to "Family"
+        )
+    }    // High-performance optimized search function with advanced filtering
+    val filteredTrips = remember(debouncedSearchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration) {
+        // Early return if no trips available
+        if (trips.isEmpty()) return@remember emptyList<Trip>()
+        
+        // Pre-compute search terms for better performance
+        val searchTerms = if (debouncedSearchQuery.isBlank()) {
+            emptyList()
+        } else {
+            debouncedSearchQuery.lowercase().trim()
+                .split(Regex("\\s+")) // Split on any whitespace
+                .filter { it.isNotBlank() && it.length >= 2 } // Filter short terms for better relevance
         }
+        
+        val currentLocationLower = currentLocation.lowercase()
+        val hasLocationFilter = currentLocationLower.isNotBlank()
+        
+        // Pre-compute filter states for performance
+        val hasSearchFilter = searchTerms.isNotEmpty()
+        val hasCategoryFilter = selectedCategory != "All"
+        val hasPriceFilter = priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat()
+        val hasDurationFilter = selectedDuration != "All"
+        
+        trips.asSequence() // Use sequence for lazy evaluation
+            .filter { trip ->
+                // Category filter first (most selective)
+                if (hasCategoryFilter && !trip.category.name.equals(selectedCategory, ignoreCase = true)) {
+                    return@filter false
+                }
+                
+                // Price range filter (numeric comparison is fast)
+                if (hasPriceFilter && trip.basePrice !in priceRangeStart..priceRangeEnd) {
+                    return@filter false
+                }
+                
+                // Duration filter (simple string comparison)
+                if (hasDurationFilter && !trip.duration.equals(selectedDuration, ignoreCase = true)) {
+                    return@filter false
+                }
+                
+                // Text search filter (most expensive, so do it last)
+                if (hasSearchFilter) {
+                    val tripTitle = trip.title.lowercase()
+                    val fromLocation = trip.fromLocation.lowercase()
+                    val toLocation = trip.toLocation.lowercase()
+                    
+                    val matchesSearchTerms = searchTerms.any { term ->
+                        tripTitle.contains(term) ||
+                        fromLocation.contains(term) ||
+                        toLocation.contains(term)
+                    }
+                    
+                    val matchesCurrentLocation = hasLocationFilter && fromLocation.contains(currentLocationLower)
+                    
+                    if (!matchesSearchTerms && !matchesCurrentLocation) {
+                        return@filter false
+                    }
+                }
+                
+                true
+            }
+            .toList() // Convert sequence back to list
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ) {        // Header with filter count
+    ) {        // Header with filter count (using debounced search for consistency)
         val activeFilterCount = listOf(
             selectedCategory != "All",
             priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat(),
             selectedDuration != "All",
-            searchQuery.isNotBlank()
+            debouncedSearchQuery.isNotBlank()
         ).count { it }
 
         Row(
@@ -327,12 +388,12 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),            shape = RoundedCornerShape(16.dp)
-        )        // Active Filters and Results Count
+        )        // Active Filters and Results Count (using debounced search for consistency)
         val hasActiveFilters = selectedCategory != "All" || 
             priceRangeStart != minPrice.toFloat() || 
             priceRangeEnd != maxPrice.toFloat() || 
             selectedDuration != "All" ||
-            searchQuery.isNotBlank()
+            debouncedSearchQuery.isNotBlank()
 
         AnimatedVisibility(
             visible = hasActiveFilters,
@@ -371,11 +432,11 @@ fun DashboardScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-                  TextButton(
+                }                TextButton(
                     onClick = {
                         // Clear all filters and preferences
                         searchQuery = ""
+                        debouncedSearchQuery = ""
                         selectedCategory = "All"
                         priceRangeStart = minPrice.toFloat()
                         priceRangeEnd = maxPrice.toFloat()
