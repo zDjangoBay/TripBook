@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import com.android.tripbook.model.Event
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
@@ -149,6 +150,18 @@ fun TripBookApp(
                             it
                     }
                     selectedTrip = selectedTrip?.copy(itinerary = updatedItinerary)
+                }
+            },
+            onEventAdded = { newEvent ->
+                selectedTrip?.let { trip ->
+                    val updatedEvents = trip.events + listOf(newEvent)
+                    trips = trips.map {
+                        if (it.id == trip.id)
+                            it.copy(events = updatedEvents)
+                        else
+                            it
+                    }
+                    selectedTrip = selectedTrip?.copy(events = updatedEvents)
                 }
             },
             nominatimService = nominatimService,
