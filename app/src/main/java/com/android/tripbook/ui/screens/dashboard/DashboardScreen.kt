@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -194,7 +195,47 @@ fun DashboardScreen(
                 .padding(bottom = 16.dp),            shape = RoundedCornerShape(16.dp)
         )
 
-        // Filter Section
+        // Active Filters and Results Count
+        val hasActiveFilters = selectedCategory != "All" || 
+            priceRangeStart != minPrice.toFloat() || 
+            priceRangeEnd != maxPrice.toFloat() || 
+            selectedDuration != "All" ||
+            searchQuery.isNotBlank()
+
+        if (hasActiveFilters) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${filteredTrips.size} trips found",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                
+                TextButton(
+                    onClick = {
+                        // Clear all filters
+                        searchQuery = ""
+                        selectedCategory = "All"
+                        priceRangeStart = minPrice.toFloat()
+                        priceRangeEnd = maxPrice.toFloat()
+                        selectedDuration = "All"
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "Clear filters",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Clear all")
+                }
+            }
+        }        // Filter Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -204,18 +245,26 @@ fun DashboardScreen(
         ) {
             // Category Filter
             FilterChip(
-                label = "Category",
+                label = if (selectedCategory == "All") "Category" else selectedCategory,
+                isActive = selectedCategory != "All",
                 onClick = { isCategoryDropdownExpanded = true }
-            )            // Price Range Filter
+            )
+
+            // Price Range Filter
+            val isPriceActive = priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat()
             FilterChip(
-                label = "Price Range",
+                label = if (isPriceActive) "$${String.format("%.0f", priceRangeStart)}-$${String.format("%.0f", priceRangeEnd)}" else "Price Range",
+                isActive = isPriceActive,
                 onClick = { isPriceDialogVisible = true }
-            )            // Duration Filter
+            )
+
+            // Duration Filter
             FilterChip(
-                label = "Duration",
+                label = if (selectedDuration == "All") "Duration" else selectedDuration,
+                isActive = selectedDuration != "All",
                 onClick = { isDurationDropdownExpanded = true }
             )
-        }        // Category Dropdown
+        }// Category Dropdown
         DropdownMenu(
             expanded = isCategoryDropdownExpanded,
             onDismissRequest = { isCategoryDropdownExpanded = false },
@@ -480,19 +529,24 @@ fun TripCard(
 @Composable
 fun FilterChip(
     label: String,
+    isActive: Boolean = false,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            containerColor = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+            contentColor = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
         ),
         modifier = Modifier
             .height(40.dp)
             .padding(horizontal = 4.dp)
     ) {
-        Text(text = label, style = MaterialTheme.typography.bodySmall)
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
+        )
     }
 }
