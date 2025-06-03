@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -41,75 +43,21 @@ fun TripDetailsScreen(
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header with back button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = trip.name,
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    )
-                    Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.9f)
-                        )
-                    )
-                }
-            }
+            TripBookHeader(
+                title = trip.name,
+                subtitle = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                onBackClick = onBackClick
+            )
 
             // Content card
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
-            ) {
+            TripBookContentCard {
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {

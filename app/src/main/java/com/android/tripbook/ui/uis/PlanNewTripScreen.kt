@@ -10,6 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -95,111 +98,42 @@ fun PlanNewTripScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header with back button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Plan New Trip",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                )
-            }
+            TripBookHeader(
+                title = "Plan New Trip",
+                onBackClick = onBackClick
+            )
 
             // Form card
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
-            ) {
+            TripBookContentCard {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(20.dp)
                 ) {
                     // Trip Name
-                    Text(
-                        text = "Trip Name",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    OutlinedTextField(
+                    TripBookTextField(
                         value = tripName,
                         onValueChange = {
                             tripName = it
                             nameError = ""
                         },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g., Egyptian Pyramids Tour") },
+                        label = "Trip Name",
+                        placeholder = "e.g., Egyptian Pyramids Tour",
                         isError = nameError.isNotEmpty(),
-                        supportingText = {
-                            if (nameError.isNotEmpty()) {
-                                Text(nameError, color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
+                        errorMessage = nameError
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Destination
-                    Text(
-                        text = "Destination",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    TripBookSectionTitle("Destination")
                     Column {
                         OutlinedTextField(
                             value = destination,
@@ -243,7 +177,7 @@ fun PlanNewTripScreen(
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
                                     contentDescription = "Location",
-                                    tint = Color(0xFFE91E63)
+                                    tint = TripBookColors.Secondary
                                 )
                             },
                             isError = destinationError.isNotEmpty(),
@@ -253,9 +187,9 @@ fun PlanNewTripScreen(
                                 }
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF667EEA),
-                                focusedLabelColor = Color(0xFF667EEA),
-                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                                focusedBorderColor = TripBookColors.BorderFocused,
+                                focusedLabelColor = TripBookColors.BorderFocused,
+                                unfocusedBorderColor = TripBookColors.Border
                             ),
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true
@@ -306,34 +240,15 @@ fun PlanNewTripScreen(
 
                     // Browse Travel Agencies Button
                     if (destination.isNotEmpty()) {
-                        Button(
-                            onClick = { onBrowseAgencies(destination) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFE91E63)
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(
-                                text = "Browse Travel Agencies",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White
-                            )
-                        }
+                        TripBookSecondaryButton(
+                            text = "Browse Travel Agencies",
+                            onClick = { onBrowseAgencies(destination) }
+                        )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
 
                     // Trip Type Selection
-                    Text(
-                        text = "Trip Type",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
+                    TripBookSectionTitle("Trip Type")
                     val tripTypes = listOf("Adventure", "Cultural", "Relaxation", "Safari", "Beach")
                     Row(
                         modifier = Modifier
@@ -342,21 +257,10 @@ fun PlanNewTripScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tripTypes.take(3).forEach { type ->
-                            FilterChip(
+                            TripBookFilterChip(
                                 selected = selectedTripType == type,
                                 onClick = { selectedTripType = if (selectedTripType == type) "" else type },
-                                label = { Text(type) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color(0xFF667EEA),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF64748B)
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = if (selectedTripType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
-                                    selectedBorderColor = Color(0xFF667EEA)
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                                label = type
                             )
                         }
                     }
@@ -367,21 +271,10 @@ fun PlanNewTripScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tripTypes.drop(3).forEach { type ->
-                            FilterChip(
+                            TripBookFilterChip(
                                 selected = selectedTripType == type,
                                 onClick = { selectedTripType = if (selectedTripType == type) "" else type },
-                                label = { Text(type) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color(0xFF667EEA),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF64748B)
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = if (selectedTripType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
-                                    selectedBorderColor = Color(0xFF667EEA)
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                                label = type
                             )
                         }
                     }
@@ -718,7 +611,30 @@ fun PlanNewTripScreen(
                                     itineraryLocationSuggestions = emptyList()
                                     isLoadingItinerarySuggestions = false
                                 }
-                            },)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("e.g., Giza, Egypt") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Location",
+                                    tint = Color(0xFFE91E63)
+                                )
+                            },
+                            isError = locationError.isNotEmpty(),
+                            supportingText = {
+                                if (locationError.isNotEmpty()) {
+                                    Text(locationError, color = MaterialTheme.colorScheme.error)
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF667EEA),
+                                focusedLabelColor = Color(0xFF667EEA),
+                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
 
                         // Location suggestions for itinerary
                         if (isLoadingItinerarySuggestions) {
@@ -753,63 +669,7 @@ fun PlanNewTripScreen(
                             }
                         }
                     }
-                    OutlinedTextField(
-                        value = location,
-                        onValueChange = {
-                            location = it
-                            locationError = ""
-                            if (it.trim().length >= 3) {
-                                isLoadingItinerarySuggestions = true
-                                coroutineScope.launch {
-                                    try {
-                                        itineraryLocationSuggestions = googleMapsService.searchPlaces(it)
-                                        isLoadingItinerarySuggestions = false
-                                    } catch (e: Exception) {
-                                        try {
-                                            val attractions = nominatimService.getNearbyAttractions(it)
-                                            itineraryLocationSuggestions = attractions.map { attraction ->
-                                                PlaceResult(
-                                                    placeId = "",
-                                                    name = attraction.name,
-                                                    address = attraction.location,
-                                                    types = listOf("tourist_attraction")
-                                                )
-                                            }
-                                            isLoadingItinerarySuggestions = false
-                                        } catch (e2: Exception) {
-                                            itineraryLocationSuggestions = emptyList()
-                                            isLoadingItinerarySuggestions = false
-                                        }
-                                    }
-                                }
-                            } else {
-                                itineraryLocationSuggestions = emptyList()
-                                isLoadingItinerarySuggestions = false
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g., Giza, Egypt") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location",
-                                tint = Color(0xFFE91E63)
-                            )
-                        },
-                        isError = locationError.isNotEmpty(),
-                        supportingText = {
-                            if (locationError.isNotEmpty()) {
-                                Text(locationError, color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
-                    )
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -839,6 +699,8 @@ fun PlanNewTripScreen(
                                     labelColor = Color(0xFF64748B)
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = selectedItineraryType == type,
                                     borderColor = if (selectedItineraryType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
                                     selectedBorderColor = Color(0xFF667EEA)
                                 ),
@@ -984,7 +846,6 @@ fun PlanNewTripScreen(
                                     travelers = travelers.toInt(),
                                     budget = budget.toInt(),
                                     status = TripStatus.PLANNED,
-                                    type = selectedTripType,
                                     itinerary = itineraryItems
                                 )
                                 onTripCreated(newTrip)

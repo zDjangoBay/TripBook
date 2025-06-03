@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
+import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,107 +47,50 @@ fun TravelAgencyScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF667EEA), Color(0xFF764BA2))
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.White.copy(alpha = 0.2f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Travel Agencies in $destination",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                )
-            }
+            TripBookHeader(
+                title = "Travel Agencies in $destination",
+                onBackClick = onBackClick
+            )
 
             // Content Card
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
-            ) {
+            TripBookContentCard {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     // Filters
-                    Text(
-                        text = "Filter Services",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151)
-                    )
+                    TripBookSectionTitle("Filter Services")
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        FilterChip(
+                        TripBookFilterChip(
                             selected = minRating != null,
                             onClick = {
                                 minRating = if (minRating == null) 4.0f else null
                             },
-                            label = { Text("Rating 4.0+") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = "Rating 4.0+"
                         )
-                        FilterChip(
+                        TripBookFilterChip(
                             selected = maxPrice != null,
                             onClick = {
                                 maxPrice = if (maxPrice == null) 300 else null
                             },
-                            label = { Text("Price ≤ $300") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = "Price ≤ $300"
                         )
-                        FilterChip(
+                        TripBookFilterChip(
                             selected = serviceType != null,
                             onClick = {
                                 serviceType = if (serviceType == null) "Tour" else null
                             },
-                            label = { Text("Tours Only") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = "Tours Only"
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))

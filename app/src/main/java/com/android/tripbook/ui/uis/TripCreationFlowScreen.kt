@@ -1,22 +1,20 @@
 package com.android.tripbook.ui.uis
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.TripCreationState
 import com.android.tripbook.ui.components.ProgressIndicator
 import com.android.tripbook.ui.components.StepNavigationButtons
+import com.android.tripbook.ui.components.TripBookGradientBackground
+import com.android.tripbook.ui.components.TripBookHeader
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.ui.uis.tripcreation.*
 import com.android.tripbook.viewmodel.TripViewModel
 
@@ -41,54 +39,24 @@ fun TripCreationFlowScreen(
     }
 
     TripBookTheme {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color(0xFF6B5B95))
-        ) {
+        TripBookGradientBackground(modifier = modifier) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(bottom = 20.dp)
             ) {
                 // Header with back button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onBackClick,
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = "Create New Trip",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Step ${tripState.currentStep} of ${tripState.totalSteps}",
-                            fontSize = 16.sp,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                    }
-                }
+                TripBookHeader(
+                    title = "Create New Trip",
+                    subtitle = "Step ${tripState.currentStep} of ${tripState.totalSteps}",
+                    onBackClick = onBackClick
+                )
                 
                 // Progress Indicator
                 ProgressIndicator(
                     currentStep = tripState.currentStep,
                     totalSteps = tripState.totalSteps,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
                 )
                 
                 // Step Content
@@ -154,7 +122,7 @@ fun TripCreationFlowScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            color = Color.White,
+                            color = TripBookColors.TextOnPrimary,
                             modifier = Modifier.size(24.dp)
                         )
                     }

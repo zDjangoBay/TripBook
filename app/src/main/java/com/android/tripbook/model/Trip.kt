@@ -84,7 +84,7 @@ data class TripCreationState(
     fun canProceedToNextStep(): Boolean {
         return when (currentStep) {
             1 -> destination.isNotBlank()
-            2 -> startDate != null && endDate != null && startDate!!.isBefore(endDate)
+            2 -> startDate != null && endDate != null && startDate.isBefore(endDate)
             3 -> true // Companions step is optional
             4 -> tripName.isNotBlank()
             5 -> true // Review step
