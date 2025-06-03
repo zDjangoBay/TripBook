@@ -174,9 +174,20 @@ fun DashboardScreen(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search"
                 )
-            },
-            trailingIcon = {
-                if (currentLocation.isNotBlank()) {
+            },            trailingIcon = {
+                if (searchQuery.isNotBlank()) {
+                    IconButton(
+                        onClick = {
+                            searchQuery = ""
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear Search",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else if (currentLocation.isNotBlank()) {
                     IconButton(
                         onClick = {
                             searchQuery = currentLocation
