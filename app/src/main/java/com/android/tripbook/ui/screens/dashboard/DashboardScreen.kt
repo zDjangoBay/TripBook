@@ -43,7 +43,6 @@ fun DashboardScreen(
     var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
-    var showFilterDialog by remember { mutableStateOf(false) }
 
     val trips = remember { DummyTripDataProvider.getTrips() }
 
@@ -77,21 +76,17 @@ fun DashboardScreen(
             currentLocation = "New York, NY" // Mock location
         }
     }
-
+// search function
     val filteredTrips = remember(searchQuery, currentLocation) {
-        trips.filter { trip ->
-            val matchesSearchQuery = searchQuery.isNotBlank() && (
-                trip.title.contains(searchQuery, ignoreCase = true) ||
-                trip.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                trip.toLocation.contains(searchQuery, ignoreCase = true)
-            )
-
-            val matchesCurrentLocation = currentLocation.isNotBlank() && (
-                trip.fromLocation.contains(currentLocation, ignoreCase = true) ||
-                trip.toLocation.contains(currentLocation, ignoreCase = true)
-            )
-
-            matchesSearchQuery || matchesCurrentLocation
+        if (searchQuery.isBlank()) {
+            trips
+        } else {
+            trips.filter {
+                it.title.contains(searchQuery, ignoreCase = true) ||
+                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
+                it.toLocation.contains(searchQuery, ignoreCase = true) ||
+                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
+            }
         }
     }
 
@@ -141,51 +136,93 @@ fun DashboardScreen(
         }
 
         // Enhanced Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search destinations...") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            },
+            trailingIcon = {
+                if (currentLocation.isNotBlank()) {
+                    IconButton(
+                        onClick = {
+                            searchQuery = currentLocation
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Use Current Location",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = RoundedCornerShape(16.dp)
+        )
+
+        // State for category dropdown visibility and selected category
+        var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
+        var selectedCategory by remember { mutableStateOf("All") }
+
+        // Filter Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Search destinations...") },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
-                    )
-                },
-                trailingIcon = {
-                    Row {
-                        if (currentLocation.isNotBlank()) {
-                            IconButton(
-                                onClick = {
-                                    searchQuery = currentLocation
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.LocationOn,
-                                    contentDescription = "Use Current Location",
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
-                        IconButton(
-                            onClick = { showFilterDialog = true }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FilterAlt,
-                                contentDescription = "Filter Trips",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(16.dp)
+            // Category Filter
+            FilterChip(
+                label = "Category",
+                onClick = { isCategoryDropdownExpanded = true }
             )
+
+            // Price Range Filter
+            FilterChip(
+                label = "Price Range",
+                onClick = { /* Open price range filter dialog */ }
+            )
+
+            // Duration Filter
+            FilterChip(
+                label = "Duration",
+                onClick = { /* Open duration filter dialog */ }
+            )
+        }        // Category Dropdown
+        DropdownMenu(
+            expanded = isCategoryDropdownExpanded,
+            onDismissRequest = { isCategoryDropdownExpanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            val categories = listOf("All", "Business", "Adventure", "Cultural", "Relaxation", "Family")
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedCategory = category
+                        isCategoryDropdownExpanded = false
+                    },
+                    text = {
+                        Text(
+                            text = category,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp)
+                )
+            }
         }
 
         // Trip Cards
@@ -199,16 +236,6 @@ fun DashboardScreen(
                 )
             }
         }
-    }
-
-    // Filter Dialog
-    if (showFilterDialog) {
-        FilterDialog(
-            onDismiss = { showFilterDialog = false },
-            onFilterApplied = { filterQuery ->
-                searchQuery = filterQuery
-            }
-        )
     }
 }
 
@@ -312,37 +339,23 @@ fun TripCard(
     }
 }
 
+// Helper Composable for Filter Chips
 @Composable
-fun FilterDialog(
-    onDismiss: () -> Unit,
-    onFilterApplied: (String) -> Unit
+fun FilterChip(
+    label: String,
+    onClick: () -> Unit
 ) {
-    var filterQuery by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Filter Trips") },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = filterQuery,
-                    onValueChange = { filterQuery = it },
-                    label = { Text("Filter by keyword") }
-                )
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                onFilterApplied(filterQuery)
-                onDismiss()
-            }) {
-                Text("Apply")
-            }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        modifier = Modifier
+            .height(40.dp)
+            .padding(horizontal = 4.dp)
+    ) {
+        Text(text = label, style = MaterialTheme.typography.bodySmall)
+    }
 }
