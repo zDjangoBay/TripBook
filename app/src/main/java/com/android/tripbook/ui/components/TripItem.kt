@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,16 +30,15 @@ fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {
             .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         ConstraintLayout(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Create references for all elements (matching XML IDs)
-            val (logo, companyTxt, imageView4, fromTxt, fromshortTxt, arrivalTxt,
-                toTxt, toShortTxt, priceTxt, imageView3, scoreTxt) = createRefs()
+            val (logo, companyName, fromLabel, fromCode, dashLine, duration,
+                toLabel, toCode, star, rating, price) = createRefs()
 
-            // Logo (matching XML: 55dp size, 8dp margins from start and top)
+            // Company Logo
             AsyncImage(
                 model = trip.companyLogo,
                 contentDescription = "Company Logo",
@@ -53,123 +53,123 @@ fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {
                 contentScale = ContentScale.Crop
             )
 
-            // Company Name (matching XML: 16dp margin from logo)
+            // Company Name
             Text(
-                text = trip.companyName,
-                color = Color(0xFF001F54),
+                text = trip.companyName ?: "Delta Airlines",
+                color = Color(0xFF1565C0), // dark_blue color
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.constrainAs(companyTxt) {
+                modifier = Modifier.constrainAs(companyName) {
                     start.linkTo(logo.end, margin = 16.dp)
                     top.linkTo(logo.top)
                     bottom.linkTo(logo.bottom)
                 }
             )
 
-            // Dash Line (matching XML: centered horizontally, 32dp below logo)
+            // Dash Line (centered)
             Box(
                 modifier = Modifier
-                    .width(80.dp)
-                    .height(1.dp)
+                    .width(60.dp)
+                    .height(2.dp)
                     .background(Color.Gray)
-                    .constrainAs(imageView4) {
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                    .constrainAs(dashLine) {
+                        centerHorizontallyTo(parent)
                         top.linkTo(logo.bottom, margin = 32.dp)
                     }
             )
 
-            // FROM Label (matching XML: 16dp below logo, positioned to left of dash line)
+            // FROM Label
             Text(
                 text = "FROM",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier.constrainAs(fromTxt) {
-                    start.linkTo(parent.start, margin = 16.dp)
+                fontSize = 14.sp,
+                color = Color.Black,
+                modifier = Modifier.constrainAs(fromLabel) {
+                    start.linkTo(parent.start)
+                    end.linkTo(dashLine.start)
                     top.linkTo(logo.bottom, margin = 16.dp)
                 }
             )
 
-            // FROM Short Code (matching XML: aligned with FROM label start)
+            // FROM Code
             Text(
-                text = trip.fromshort ?: "NYC",
+                text = trip.fromshort ?: "JFK",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(fromshortTxt) {
-                    start.linkTo(fromTxt.start)
-                    top.linkTo(fromTxt.bottom, margin = 2.dp)
+                modifier = Modifier.constrainAs(fromCode) {
+                    start.linkTo(fromLabel.start)
+                    top.linkTo(fromLabel.bottom)
                 }
             )
 
-            // Arrival Time (matching XML: centered on dash line, same top as FROM)
+            // Duration (centered on dash line)
             Text(
-                text = trip.arriveTime,
+                text = trip.arriveTime ?: "2h 45m",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(arrivalTxt) {
-                    start.linkTo(imageView4.start)
-                    end.linkTo(imageView4.end)
-                    top.linkTo(logo.bottom, margin = 16.dp)
+                modifier = Modifier.constrainAs(duration) {
+                    centerHorizontallyTo(dashLine)
+                    top.linkTo(logo.bottom)
                 }
             )
 
-            // TO Label (matching XML: positioned to right of dash line)
+            // TO Label
             Text(
                 text = "TO",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier.constrainAs(toTxt) {
-                    end.linkTo(parent.end, margin = 16.dp)
-                    top.linkTo(fromTxt.top)
+                fontSize = 14.sp,
+                color = Color.Black,
+                modifier = Modifier.constrainAs(toLabel) {
+                    start.linkTo(dashLine.end)
+                    end.linkTo(parent.end)
+                    top.linkTo(fromLabel.top)
                 }
             )
 
-            // TO Short Code (matching XML: centered with TO label)
+            // TO Code
             Text(
                 text = trip.toshort ?: "LAX",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(toShortTxt) {
-                    end.linkTo(toTxt.end)
-                    top.linkTo(toTxt.bottom, margin = 2.dp)
+                modifier = Modifier.constrainAs(toCode) {
+                    centerHorizontallyTo(toLabel)
+                    top.linkTo(toLabel.bottom)
                 }
             )
 
-            // Star Icon (matching XML: 16dp from start and bottom)
+            // Star Icon
             Icon(
                 painter = painterResource(android.R.drawable.btn_star_big_on),
                 contentDescription = "Rating",
-                tint = Color.Unspecified,
+                tint = Color(0xFFFFD700), // Gold color
                 modifier = Modifier
-                    .size(24.dp)
-                    .constrainAs(imageView3) {
+                    .size(20.dp)
+                    .constrainAs(star) {
                         start.linkTo(parent.start, margin = 16.dp)
                         bottom.linkTo(parent.bottom, margin = 16.dp)
                     }
             )
 
-            // Rating Score (matching XML: 8dp from star)
+            // Rating
             Text(
-                text = trip.score.toString(),
+                text = "${trip.score ?: 4.5}",
                 fontSize = 14.sp,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(scoreTxt) {
-                    start.linkTo(imageView3.end, margin = 8.dp)
-                    top.linkTo(imageView3.top)
-                    bottom.linkTo(imageView3.bottom)
+                modifier = Modifier.constrainAs(rating) {
+                    start.linkTo(star.end, margin = 8.dp)
+                    top.linkTo(star.top)
+                    bottom.linkTo(star.bottom)
                 }
             )
 
-            // Price (matching XML: 16dp from end, 8dp from bottom)
+            // Price
             Text(
-                text = "$${trip.price}",
+                text = "$${trip.price ?: "170.6"}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(priceTxt) {
+                modifier = Modifier.constrainAs(price) {
                     end.linkTo(parent.end, margin = 16.dp)
                     bottom.linkTo(parent.bottom, margin = 8.dp)
                 }
