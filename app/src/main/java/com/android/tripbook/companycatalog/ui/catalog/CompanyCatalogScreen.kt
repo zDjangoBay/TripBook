@@ -17,4 +17,18 @@ import com.android.tripbook.companycatalog.ui.components.ViewModeToggleButtons
 import com.android.tripbook.companycatalog.ui.components.TopBar
 import com.android.tripbook.companycatalog.ui.components.EmptyState // Import EmptyState
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CompanyCatalogScreen(
+    onCompanyClick: (Company) -> Unit
+) {
+    var query by remember { mutableStateOf("") }
+    var isListView by remember { mutableStateOf(false) }
+
+    val allCompanies = CompanyRepository.companies
+
+    val filteredCompanies = allCompanies.filter {
+        it.name.contains(query, ignoreCase = true) ||
+                it.description.contains(query, ignoreCase = true)
+    }
 
