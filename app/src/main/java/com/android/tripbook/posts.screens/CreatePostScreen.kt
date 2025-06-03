@@ -69,8 +69,8 @@ fun CreatePostScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(scrollState)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(17.dp),
+            verticalArrangement = Arrangement.spacedBy(25.dp)
         ) {
             // All calls to viewModel.handleEvent(...) below use the passed-in viewModel
             PostTitleInput(
@@ -143,7 +143,7 @@ fun CreatePostScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
