@@ -1,10 +1,13 @@
 package com.android.tripbook.model
 
-data class ReviewComment(
-    val id: Int,
-    val tripId: Int,
-    val username: String,
-    val content: String,
-    val timestamp: String,
-    val imageUri: String? = null
+import java.text.SimpleDateFormat
+import java.util.*
+
+data class Comment(
+    val id: String = UUID.randomUUID().toString(),
+    val text: String,
+    val imageUri: String? = null,
+    val timestamp: String = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault()).format(Date()),
+    val authorName: String = "You",
+    val authorAvatar: String? = null
 )
