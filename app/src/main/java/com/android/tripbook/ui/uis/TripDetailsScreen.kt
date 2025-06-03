@@ -19,11 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
+import com.android.tripbook.model.Event
 import com.android.tripbook.model.Location
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -430,69 +432,93 @@ private fun LegendItem(
     }
 }
 
-// Keep all existing composables unchanged
 @Composable
 private fun OverviewTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
-        item {
-            // Trip Summary Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        // Existing overview content
+        
+        // Add Events Section
+        if (trip.events.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            Text(
+                text = "Upcoming Events",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF374151),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+            
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Trip Summary",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
+                trip.events.sortedBy { it.date }.forEach { event ->
+                    EventCard(event = event)
                 }
             }
         }
+    }
+}
 
-        item {
-            // Travelers Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+@Composable
+private fun EventCard(event: Event) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Date circle
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(Color(0xFFE91E63).copy(alpha = 0.1f), CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Travelers",
-                        fontSize = 18.sp,
+                        text = event.date.dayOfMonth.toString(),
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
+                        color = Color(0xFFE91E63)
                     )
-
-                    TravelerItem(
-                        initials = "JD",
-                        name = "John Doe (Trip Leader)",
-                        color = Color(0xFF667EEA)
+                    Text(
+                        text = event.date.month.toString().take(3),
+                        fontSize = 12.sp,
+                        color = Color(0xFFE91E63)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Jane Smith",
-                        color = Color(0xFF764BA2)
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = event.title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A202C)
+                )
+                
+                if (event.description.isNotEmpty()) {
+                    Text(
+                        text = event.description,
+                        fontSize = 14.sp,
+                        color = Color(0xFF64748B),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
