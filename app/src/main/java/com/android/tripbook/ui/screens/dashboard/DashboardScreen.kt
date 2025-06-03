@@ -206,12 +206,10 @@ fun DashboardScreen(
             FilterChip(
                 label = "Category",
                 onClick = { isCategoryDropdownExpanded = true }
-            )
-
-            // Price Range Filter
+            )            // Price Range Filter
             FilterChip(
                 label = "Price Range",
-                onClick = { /* Open price range filter dialog */ }
+                onClick = { isPriceDialogVisible = true }
             )
 
             // Duration Filter
@@ -245,7 +243,98 @@ fun DashboardScreen(
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(8.dp)
                 )
-            }
+            }        }
+
+        // Price Range Dialog
+        if (isPriceDialogVisible) {
+            AlertDialog(
+                onDismissRequest = { isPriceDialogVisible = false },
+                title = {
+                    Text(
+                        text = "Price Range",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column {
+                        Text(
+                            text = "Select your budget range",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        
+                        // Current range display
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "$${String.format("%.0f", priceRangeStart)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = "$${String.format("%.0f", priceRangeEnd)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // Range Slider
+                        RangeSlider(
+                            value = priceRangeStart..priceRangeEnd,
+                            onValueChange = { range ->
+                                priceRangeStart = range.start
+                                priceRangeEnd = range.endInclusive
+                            },
+                            valueRange = minPrice.toFloat()..maxPrice.toFloat(),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        
+                        // Min/Max labels
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "$${String.format("%.0f", minPrice)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$${String.format("%.0f", maxPrice)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { isPriceDialogVisible = false }
+                    ) {
+                        Text("Apply")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            // Reset to original range
+                            priceRangeStart = minPrice.toFloat()
+                            priceRangeEnd = maxPrice.toFloat()
+                            isPriceDialogVisible = false
+                        }
+                    ) {
+                        Text("Reset")
+                    }
+                }
+            )
         }
 
         // Trip Cards
