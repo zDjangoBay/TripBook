@@ -23,7 +23,6 @@ import com.android.tripbook.ui.components.ReviewCard
 @Composable
 fun AllReviewsScreen(tripId: Int,
                      onBack: () -> Unit,
-                     onReviewClicked: (reviewId: Int) -> Unit,
                      onLikeClicked: (reviewId: Int) -> Unit,
                      onFlagClicked: (reviewId: Int) -> Unit) {
     val reviews = remember { MockReviewViewModel().getReviewsForTrip(tripId) }
@@ -55,7 +54,6 @@ fun AllReviewsScreen(tripId: Int,
                 items(reviews) { review ->
                     ReviewCard(
                         review = review,
-                        onClick = { onReviewClicked(review.id) },
                         onLikeClicked = { onLikeClicked(review.id) },
                         onFlagClicked = { onFlagClicked(review.id) }
                     )

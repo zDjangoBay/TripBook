@@ -98,10 +98,6 @@ fun MainNavGraph(
             AllReviewsScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
-                onReviewClicked = { reviewId ->
-                    // Navigate to a detail screen or do something on review click
-                    navController.navigate("detailReviewScreen/$reviewId")
-                },
                 onLikeClicked = { reviewId ->
                     println("Liked review ID: $reviewId")
                 },
