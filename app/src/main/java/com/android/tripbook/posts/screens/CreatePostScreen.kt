@@ -143,7 +143,7 @@ fun CreatePostScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
