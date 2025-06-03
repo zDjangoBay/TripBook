@@ -57,7 +57,7 @@ fun PostTitleInput(
             text = "${title.length}/100",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 17.dp, top = 4.dp)
+            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
         )
     }
 }
