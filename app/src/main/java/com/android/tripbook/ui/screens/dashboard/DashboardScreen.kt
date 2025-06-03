@@ -74,19 +74,30 @@ fun DashboardScreen(
             )
         } else {
             currentLocation = "New York, NY" // Mock location
-        }
-    }
+        }    }
+
+    // State for category dropdown visibility and selected category
+    var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("All") }
+
 // search function
-    val filteredTrips = remember(searchQuery, currentLocation) {
-        if (searchQuery.isBlank()) {
-            trips
-        } else {
-            trips.filter {
-                it.title.contains(searchQuery, ignoreCase = true) ||
-                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                it.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
+    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory) {
+        trips.filter { trip ->
+            // Text search filter
+            val matchesSearch = if (searchQuery.isBlank()) {
+                true
+            } else {
+                trip.title.contains(searchQuery, ignoreCase = true) ||
+                trip.fromLocation.contains(searchQuery, ignoreCase = true) ||
+                trip.toLocation.contains(searchQuery, ignoreCase = true) ||
+                (currentLocation.isNotBlank() && trip.fromLocation.contains(currentLocation, ignoreCase = true))
             }
+            
+            // Category filter
+            val matchesCategory = selectedCategory == "All" || 
+                trip.category.name.equals(selectedCategory, ignoreCase = true)
+            
+            matchesSearch && matchesCategory
         }
     }
 
@@ -163,13 +174,8 @@ fun DashboardScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(16.dp)
+                .padding(bottom = 16.dp),            shape = RoundedCornerShape(16.dp)
         )
-
-        // State for category dropdown visibility and selected category
-        var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
-        var selectedCategory by remember { mutableStateOf("All") }
 
         // Filter Section
         Row(
