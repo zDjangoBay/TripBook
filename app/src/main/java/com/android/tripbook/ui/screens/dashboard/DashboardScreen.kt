@@ -43,6 +43,7 @@ fun DashboardScreen(
     var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
+    var showFilterDialog by remember { mutableStateOf(false) }
 
     val trips = remember { DummyTripDataProvider.getTrips() }
 
@@ -140,36 +141,52 @@ fun DashboardScreen(
         }
 
         // Enhanced Search Bar
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search destinations...") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            },
-            trailingIcon = {
-                if (currentLocation.isNotBlank()) {
-                    IconButton(
-                        onClick = {
-                            searchQuery = currentLocation
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Use Current Location",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            },
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(16.dp)
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search destinations...") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search"
+                    )
+                },
+                trailingIcon = {
+                    Row {
+                        if (currentLocation.isNotBlank()) {
+                            IconButton(
+                                onClick = {
+                                    searchQuery = currentLocation
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Use Current Location",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                        IconButton(
+                            onClick = { showFilterDialog = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterAlt,
+                                contentDescription = "Filter Trips",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(16.dp)
+            )
+        }
 
         // Trip Cards
         LazyColumn(
@@ -182,6 +199,16 @@ fun DashboardScreen(
                 )
             }
         }
+    }
+
+    // Filter Dialog
+    if (showFilterDialog) {
+        FilterDialog(
+            onDismiss = { showFilterDialog = false },
+            onFilterApplied = { filterQuery ->
+                searchQuery = filterQuery
+            }
+        )
     }
 }
 
@@ -283,4 +310,39 @@ fun TripCard(
             }
         }
     }
+}
+
+@Composable
+fun FilterDialog(
+    onDismiss: () -> Unit,
+    onFilterApplied: (String) -> Unit
+) {
+    var filterQuery by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Filter Trips") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = filterQuery,
+                    onValueChange = { filterQuery = it },
+                    label = { Text("Filter by keyword") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                onFilterApplied(filterQuery)
+                onDismiss()
+            }) {
+                Text("Apply")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
