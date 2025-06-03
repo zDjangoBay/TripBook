@@ -24,6 +24,9 @@ sealed class PostEvent {
     data class TagAdded(val tag: String) : PostEvent()
     data class TagRemoved(val tag: String) : PostEvent()
 
+    // Privacy and visibility controls
+    data class VisibilityChanged(val visibility: String) : PostEvent()
+
     // Form submission
     object SubmitPost : PostEvent()
 }
