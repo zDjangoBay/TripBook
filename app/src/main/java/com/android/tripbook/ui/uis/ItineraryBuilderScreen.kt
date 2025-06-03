@@ -34,6 +34,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
+import com.android.tripbook.model.Event
 
 
 
@@ -43,6 +44,7 @@ fun ItineraryBuilderScreen(
     trip: Trip,
     onBackClick: () -> Unit,
     onItineraryUpdated: (List<ItineraryItem>) -> Unit,
+    onEventAdded: (Event) -> Unit,
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
     onBrowseAgencies: (String) -> Unit
@@ -53,6 +55,16 @@ fun ItineraryBuilderScreen(
     var location by remember { mutableStateOf("") }
     var selectedType by remember { mutableStateOf<ItineraryType?>(null) }
     var notes by remember { mutableStateOf("") }
+    
+    // Event form state
+    var eventTitle by remember { mutableStateOf("") }
+    var eventDate by remember { mutableStateOf<LocalDate?>(null) }
+    var eventDescription by remember { mutableStateOf("") }
+    
+    // Error states for event form
+    var eventTitleError by remember { mutableStateOf("") }
+    var eventDateError by remember { mutableStateOf("") }
+    
     var locationSuggestions by remember { mutableStateOf<List<Attraction>>(emptyList()) }
     var isLoadingSuggestions by remember { mutableStateOf(false) }
 
@@ -462,6 +474,133 @@ fun ItineraryBuilderScreen(
                     ) {
                         Text(
                             text = "Add Itinerary Item",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(20.dp))
+                    
+                    // Event Form Section
+                    Text(
+                        text = "Create Event",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF374151)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Event Title
+                    OutlinedTextField(
+                        value = eventTitle,
+                        onValueChange = { 
+                            eventTitle = it
+                            eventTitleError = ""
+                        },
+                        label = { Text("Event Title") },
+                        placeholder = { Text("Enter event title") },
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = eventTitleError.isNotEmpty(),
+                        supportingText = {
+                            if (eventTitleError.isNotEmpty()) {
+                                Text(
+                                    text = eventTitleError,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Event Date
+                    OutlinedTextField(
+                        value = eventDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                        onValueChange = { },
+                        label = { Text("Event Date") },
+                        placeholder = { Text("Select date") },
+                        modifier = Modifier.fillMaxWidth(),
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                // Show date picker
+                                // For simplicity, just setting a date here
+                                eventDate = LocalDate.now()
+                                eventDateError = ""
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = "Select Date"
+                                )
+                            }
+                        },
+                        isError = eventDateError.isNotEmpty(),
+                        supportingText = {
+                            if (eventDateError.isNotEmpty()) {
+                                Text(
+                                    text = eventDateError,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Event Description
+                    OutlinedTextField(
+                        value = eventDescription,
+                        onValueChange = { eventDescription = it },
+                        label = { Text("Event Description") },
+                        placeholder = { Text("Enter event description") },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 3
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Create Event Button
+                    Button(
+                        onClick = {
+                            // Validate event form
+                            var isValid = true
+                            
+                            if (eventTitle.trim().isEmpty()) {
+                                eventTitleError = "Event title is required"
+                                isValid = false
+                            }
+                            
+                            if (eventDate == null) {
+                                eventDateError = "Event date is required"
+                                isValid = false
+                            }
+                            
+                            if (isValid) {
+                                val newEvent = Event(
+                                    title = eventTitle.trim(),
+                                    date = eventDate!!,
+                                    description = eventDescription.trim()
+                                )
+                                onEventAdded(newEvent)
+                                
+                                // Reset form
+                                eventTitle = ""
+                                eventDate = null
+                                eventDescription = ""
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFE91E63)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Create Event",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
