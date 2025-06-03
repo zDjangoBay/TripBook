@@ -17,6 +17,9 @@ sealed class PostEvent {
     data class LocationAdded(val latitude: Double, val longitude: Double, val locationName: String?) : PostEvent()
     object ClearLocation : PostEvent()
 
+    // Travel categorization
+    data class CategoryChanged(val category: String) : PostEvent()
+
     // Form submission
     object SubmitPost : PostEvent()
 }
