@@ -104,6 +104,7 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.maps.compose) // Or latest
@@ -117,4 +118,7 @@ dependencies {
 
     // Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
+
 }
+
+

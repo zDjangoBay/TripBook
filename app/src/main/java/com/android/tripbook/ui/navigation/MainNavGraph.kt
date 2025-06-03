@@ -3,17 +3,22 @@ package com.android.tripbook.ui.navigation
 import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.android.tripbook.ui.screens.*
+import com.android.tripbook.ui.screens.booking.BookingScreen
 
 @Composable
 fun MainNavGraph(
@@ -79,6 +84,9 @@ fun MainNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onAllReviewsClick = { id ->
                     navController.navigate("reviews/$id")
+                },
+                onBookTrip = { id ->
+                    navController.navigate("booking/$id")
                 }
             )
         }
@@ -86,7 +94,20 @@ fun MainNavGraph(
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
             AllReviewsScreen(tripId = tripId, onBack = { navController.popBackStack() })
         }
-
-
+        composable("booking/{tripId}") { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
+            BookingScreen(
+                tripId = tripId,
+                onBack = { navController.popBackStack() },
+                onBookingComplete = {
+                    // Navigate back to the catalog after booking is complete
+                    navController.navigate("catalog") {
+                        popUpTo("catalog") {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
     }
 }

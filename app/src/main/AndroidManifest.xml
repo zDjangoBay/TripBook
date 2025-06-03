@@ -36,6 +36,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".TripCatalogActivity" />
+        <activity
+            android:name=".BookingActivity"
+            android:exported="false"
+            android:label="Book Trip"
+            android:theme="@style/Theme.TripBook" />
     </application>
 
 </manifest>
