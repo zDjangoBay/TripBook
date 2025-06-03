@@ -74,14 +74,24 @@ fun DashboardScreen(
             )
         } else {
             currentLocation = "New York, NY" // Mock location
-        }    }
-
-    // State for category dropdown visibility and selected category
+        }    }    // State for category dropdown visibility and selected category
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf("All") }
+    var selectedCategory by remember { mutableStateOf("All") }    // Price range state management
+    val minPrice = remember { trips.minOfOrNull { it.basePrice } ?: 0.0 }
+    val maxPrice = remember { trips.maxOfOrNull { it.basePrice } ?: 5000.0 }
+    var priceRangeStart by remember { mutableFloatStateOf(minPrice.toFloat()) }
+    var priceRangeEnd by remember { mutableFloatStateOf(maxPrice.toFloat()) }
+    var isPriceDialogVisible by remember { mutableStateOf(false) }
+
+    // Duration filter state management
+    var selectedDuration by remember { mutableStateOf("All") }
+    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
+    val availableDurations = remember { 
+        listOf("All") + trips.map { it.duration }.distinct().sorted()
+    }
 
 // search function
-    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory) {
+    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd) {
         trips.filter { trip ->
             // Text search filter
             val matchesSearch = if (searchQuery.isBlank()) {
@@ -97,7 +107,10 @@ fun DashboardScreen(
             val matchesCategory = selectedCategory == "All" || 
                 trip.category.name.equals(selectedCategory, ignoreCase = true)
             
-            matchesSearch && matchesCategory
+            // Price range filter
+            val matchesPrice = trip.basePrice >= priceRangeStart && trip.basePrice <= priceRangeEnd
+            
+            matchesSearch && matchesCategory && matchesPrice
         }
     }
 
