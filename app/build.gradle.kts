@@ -116,7 +116,7 @@ dependencies {
 
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
-
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation(libs.androidx.navigation.runtime.android)
 
 
