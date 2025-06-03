@@ -46,3 +46,31 @@ fun CompanyCatalogScreen(
                 onToggleView = { newMode -> isListView = newMode }
             )
 
+            // Conditional display based on filteredCompanies
+            if (filteredCompanies.isEmpty() && query.isNotBlank()) {
+                // Show specific message if search query is active but no results
+                EmptyState(message = "No company found for \"$query\"")
+            } else if (filteredCompanies.isEmpty()) {
+                // Show generic message if no companies at all (e.g., empty repository)
+                EmptyState(message = "No companies available.")
+            } else {
+                // Display companies if there are results
+                LazyColumn {
+                    items(filteredCompanies, key = { it.id }) { company ->
+                        if (isListView) {
+                            CompanyListCard(company = company, onClick = {
+                                onCompanyClick(company)
+                            })
+                        } else {
+                            CompanyCard(company = company, onClick = {
+                                onCompanyClick(company)
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
