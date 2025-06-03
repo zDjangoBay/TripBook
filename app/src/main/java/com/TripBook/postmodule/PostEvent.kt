@@ -20,6 +20,10 @@ sealed class PostEvent {
     // Travel categorization
     data class CategoryChanged(val category: String) : PostEvent()
 
+    // Tag management for flexible content labeling
+    data class TagAdded(val tag: String) : PostEvent()
+    data class TagRemoved(val tag: String) : PostEvent()
+
     // Form submission
     object SubmitPost : PostEvent()
 }
