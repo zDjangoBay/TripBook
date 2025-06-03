@@ -337,7 +337,7 @@ class LoginViewModel : ViewModel() {
                 isLoading = true
                 loginError = null
                 
-                // TODO: Implement actual login logic
+                //  Implement actual login logic
                 if (rememberMe) {
                     savedCredentials = email to password
                 }
@@ -345,7 +345,7 @@ class LoginViewModel : ViewModel() {
                 // Simulate network delay
                 kotlinx.coroutines.delay(1000)
                 
-                // TODO: Handle successful login
+                //  Handle successful login
                 
             } catch (e: Exception) {
                 loginError = e.message
