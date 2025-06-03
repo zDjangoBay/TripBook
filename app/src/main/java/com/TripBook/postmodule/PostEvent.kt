@@ -31,4 +31,8 @@ sealed class PostEvent {
     object SubmitPost : PostEvent()
     object ClearForm : PostEvent()
     object SaveDraft : PostEvent()
+
+    // Error handling and user feedback
+    data class ShowError(val message: String) : PostEvent()
+    object DismissError : PostEvent()
 }
