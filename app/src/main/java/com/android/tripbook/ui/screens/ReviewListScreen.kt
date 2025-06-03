@@ -1,32 +1,73 @@
 // Create this as a NEW file
 package com.android.tripbook.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.model.Review
-import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.ui.components.ReviewCard // Use the shared component
+import com.android.tripbook.ui.model.ReviewSortState
+import com.android.tripbook.ui.model.SortCriterion
+import com.android.tripbook.ui.model.SortOrder
+import com.android.tripbook.ui.model.displayName
+import com.android.tripbook.ui.components.StarRatingDisplay // For consistent star display
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @Composable
 fun ReviewListScreen(
     tripId: Int,
     reviewViewModel: ReviewViewModel = viewModel()
 ) {
-    // ... (the complete ReviewListScreen code from the artifact)
     val reviews by reviewViewModel.reviews.collectAsState()
     val isLoading by reviewViewModel.isLoading.collectAsState()
+    var sortState by remember { mutableStateOf(ReviewSortState()) }
+    var showSortOptions by remember { mutableStateOf(false) }
 
-    val tripReviews = remember(reviews, tripId) {
-        reviews.filter { it.tripId == tripId }
+    // Define your date formatter. Adjust pattern to match your date string format.
+    // Example: "yyyy-MM-dd" or "yyyy-MM-dd HH:mm:ss"
+    // If using LocalDateTime, parse to LocalDateTime instead of LocalDate.
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
+
+    val tripReviews = remember(reviews, tripId, sortState) {
+        val filteredReviews = reviews.filter { it.tripId == tripId }
+        when (sortState.criterion) {
+            SortCriterion.DATE -> {
+                // Robust date sorting
+                val sorted = filteredReviews.sortedWith(compareBy { review ->
+                    try {
+                        LocalDate.parse(review.date, dateFormatter)
+                    } catch (e: DateTimeParseException) {
+                        // Handle malformed dates, e.g., treat them as oldest or log error
+                        // For simplicity, placing them at the end for ascending, beginning for descending
+                        if (sortState.order == SortOrder.ASCENDING) LocalDate.MAX else LocalDate.MIN
+                    }
+                })
+                if (sortState.order == SortOrder.DESCENDING) sorted.reversed() else sorted
+            }
+            SortCriterion.RATING -> {
+                if (sortState.order == SortOrder.DESCENDING) {
+                    filteredReviews.sortedByDescending { it.rating }
+                } else {
+                    filteredReviews.sortedBy { it.rating }
+                }
+            }
+        }
     }
 
     val averageRating = remember(tripReviews) {
@@ -52,23 +93,15 @@ fun ReviewListScreen(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 if (tripReviews.isNotEmpty()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        repeat(5) { index ->
-                            Icon(
-                                imageVector = if (index < averageRating) Icons.Filled.Star else Icons.Outlined.Star,
-                                contentDescription = null,
-                                tint = if (index < averageRating) Color(0xFFFFD700) else Color.Gray,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        Text(
-                            text = String.format("%.1f", averageRating),
-                            modifier = Modifier.padding(start = 8.dp)
+                    StarRatingDisplay(
+                        rating = averageRating,
+                        starSize = 20, // dp
+                        showRatingText = true,
+                        ratingTextStyle = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 8.dp),
+                        starColor = MaterialTheme.colorScheme.secondary, // Use theme color
+                        emptyStarColor = MaterialTheme.colorScheme.outline // Use theme color
                         )
-                    }
                 }
             }
         }
@@ -76,6 +109,53 @@ fun ReviewListScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Reviews List
+        // Sort options UI
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp), // Add some padding below sort options
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Sort by: ${sortState.criterion.displayName()}",
+                style = MaterialTheme.typography.titleSmall
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { showSortOptions = true }) {
+                    Icon(Icons.Default.Sort, contentDescription = "Sort options")
+                }
+                DropdownMenu(
+                    expanded = showSortOptions,
+                    onDismissRequest = { showSortOptions = false }
+                ) {
+                    SortCriterion.values().forEach { criterion ->
+                        DropdownMenuItem(
+                            text = { Text(criterion.displayName()) },
+                            onClick = {
+                                sortState = sortState.copy(criterion = criterion)
+                                showSortOptions = false
+                            }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                IconButton(onClick = {
+                    sortState = sortState.copy(
+                        order = if (sortState.order == SortOrder.ASCENDING) SortOrder.DESCENDING else SortOrder.ASCENDING
+                    )
+                }) {
+                    Icon(
+                        imageVector = if (sortState.order == SortOrder.ASCENDING) Icons.Default.ArrowUpward else Icons.Default.ArrowDownward,
+                        contentDescription = if (sortState.order == SortOrder.ASCENDING) "Ascending" else "Descending"
+                    )
+                }
+            }
+        }
+
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -84,65 +164,19 @@ fun ReviewListScreen(
                 CircularProgressIndicator()
             }
         } else if (tripReviews.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "No reviews yet. Be the first to review!",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            Text(
+                text = "No reviews yet. Be the first to review!",
+                modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally),
+                style = MaterialTheme.typography.bodyLarge
+            )
         } else {
-            tripReviews.forEach { review ->
-                ReviewCard(review = review)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-}
-
-@Composable
-fun ReviewCard(review: Review) {
-    // ... (the complete ReviewCard code from the artifact)
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = 16.dp) // Add padding at the bottom of the list
             ) {
-                Text(
-                    text = review.userName,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = review.date,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                repeat(5) { index ->
-                    Icon(
-                        imageVector = if (index < review.rating) Icons.Filled.Star else Icons.Outlined.Star,
-                        contentDescription = null,
-                        tint = if (index < review.rating) Color(0xFFFFD700) else Color.Gray,
-                        modifier = Modifier.size(16.dp)
-                    )
+                items(tripReviews, key = { review -> review.id }) { review -> // Assuming Review has a unique 'id'
+                    ReviewCard(review = review)
                 }
             }
-
-            Text(
-                text = review.comment,
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
-    }
-}}
+ }
