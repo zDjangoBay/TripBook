@@ -35,4 +35,7 @@ sealed class PostEvent {
     // Error handling and user feedback
     data class ShowError(val message: String) : PostEvent()
     object DismissError : PostEvent()
+
+    // Success feedback
+    data class PostCreated(val postId: String) : PostEvent()
 }
