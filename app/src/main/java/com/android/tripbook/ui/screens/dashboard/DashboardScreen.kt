@@ -91,7 +91,7 @@ fun DashboardScreen(
     }
 
 // search function
-    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd) {
+    val filteredTrips = remember(searchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration) {
         trips.filter { trip ->
             // Text search filter
             val matchesSearch = if (searchQuery.isBlank()) {
@@ -110,7 +110,11 @@ fun DashboardScreen(
             // Price range filter
             val matchesPrice = trip.basePrice >= priceRangeStart && trip.basePrice <= priceRangeEnd
             
-            matchesSearch && matchesCategory && matchesPrice
+            // Duration filter
+            val matchesDuration = selectedDuration == "All" || 
+                trip.duration.equals(selectedDuration, ignoreCase = true)
+            
+            matchesSearch && matchesCategory && matchesPrice && matchesDuration
         }
     }
 
