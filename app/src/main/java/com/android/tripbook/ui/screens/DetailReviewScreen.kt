@@ -129,7 +129,11 @@ fun DetailReviewScreen(
             // Comments List or Empty State
             item {
                 if (comments.isNotEmpty()) {
-                    CommentsCarousel(comments = comments)
+                    CommentsCarousel(
+                        comments = comments,
+                        commentViewModel = commentViewModel,
+                        reviewId = reviewId
+                    )
                 } else {
                     EmptyCommentsState()
                 }
@@ -349,14 +353,19 @@ private fun CommentsHeader(commentsCount: Int) {
 }
 
 @Composable
-private fun CommentsCarousel(comments: List<Comment>) {
+private fun CommentsCarousel(comments: List<Comment>, commentViewModel: MockCommentViewModel, reviewId: Int) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         items(comments) { comment ->
-            CommentCard(comment = comment)
+            CommentCard(
+                comment = comment,
+                onReactionSelected = { emoji ->
+                    commentViewModel.addReaction(reviewId, comment.id, emoji)
+                }
+            )
         }
     }
 }
