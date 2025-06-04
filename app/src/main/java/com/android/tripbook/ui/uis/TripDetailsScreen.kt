@@ -36,7 +36,7 @@ import com.android.tripbook.ui.components.TripMapView
 import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.NominatimService
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineScope // <--- ADDED THIS IMPORT
 import com.google.android.gms.maps.CameraUpdateFactory
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -418,17 +418,7 @@ private fun OverviewTab(
                                         println("Found ${results.size} nearby restaurants for ${trip.destination}")
                                         results.forEach { println(" - ${it.name} (${it.address})") }
                                     } catch (e: Exception) {
-                                        val userFriendlyMessage = when {
-                                            e.message?.contains("REQUEST_DENIED", ignoreCase = true) == true ->
-                                                "Failed to load restaurants. Please check your internet connection and API key configuration."
-                                            e.message?.contains("INVALID_REQUEST", ignoreCase = true) == true ->
-                                                "Failed to load restaurants due to an invalid request. Please contact support."
-                                            e.message?.contains("ZERO_RESULTS", ignoreCase = true) == true ->
-                                                "No restaurants found nearby. Try a different location or search area."
-                                            else ->
-                                                "Failed to load restaurants: An unexpected error occurred. Please try again."
-                                        }
-                                        setRestaurantError(userFriendlyMessage)
+                                        setRestaurantError("Failed to load restaurants: ${e.message}")
                                         println("Error searching restaurants: ${e.message}")
                                     } finally {
                                         setIsLoadingRestaurants(false)
@@ -462,7 +452,7 @@ private fun OverviewTab(
                             Text("... and ${nearbyRestaurants.size - 5} more.", style = MaterialTheme.typography.bodySmall)
                         }
                     } else {
-                        Text("No restaurants found yet. Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                        Text("Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -484,17 +474,7 @@ private fun OverviewTab(
                                         println("Found ${results.size} nearby gas stations for ${trip.destination}")
                                         results.forEach { println(" - ${it.name} (${it.address})") }
                                     } catch (e: Exception) {
-                                        val userFriendlyMessage = when {
-                                            e.message?.contains("REQUEST_DENIED", ignoreCase = true) == true ->
-                                                "Failed to load gas stations. Please check your internet connection and API key configuration."
-                                            e.message?.contains("INVALID_REQUEST", ignoreCase = true) == true ->
-                                                "Failed to load gas stations due to an invalid request. Please contact support."
-                                            e.message?.contains("ZERO_RESULTS", ignoreCase = true) == true ->
-                                                "No gas stations found nearby. Try a different location or search area."
-                                            else ->
-                                                "Failed to load gas stations: An unexpected error occurred. Please try again."
-                                        }
-                                        setGasStationError(userFriendlyMessage)
+                                        setGasStationError("Failed to load gas stations: ${e.message}")
                                         println("Error searching gas stations: ${e.message}")
                                     } finally {
                                         setIsLoadingGasStations(false)
