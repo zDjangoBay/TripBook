@@ -12,5 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
+@Composable
+fun EmptyState(message: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 64.dp) // Added top padding to push it down from the very top
+            .padding(horizontal = 16.dp), // Maintain horizontal padding
+        contentAlignment = Alignment.TopCenter // Changed alignment to top center
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
 
