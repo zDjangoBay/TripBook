@@ -3,6 +3,14 @@
 
 TripBook is a mobile social network for travelers exploring Africa and beyond. Share stories, photos, and tips, rate travel agencies, and connect with adventurers. This community-driven platform helps discover hidden gems, promote tourism, and ensure safer journeys.
 
+## UI
+<div align="center" style="display: flex; gap: 10px;">
+  <img src="https://github.com/user-attachments/assets/a13f7d63-3c1b-4239-a25c-6b8431e6abf1" alt="img1" width="250"/>
+  <img src="https://github.com/user-attachments/assets/5f1b9933-127d-4563-ad42-360d03cab204" alt="img2" width="250"/>
+  <img src="https://github.com/user-attachments/assets/f90d6cd5-d17f-425e-a0e1-974527edcbc5" alt="img3" width="250"/>
+</div>
+
+
 ## 📱 Overview
 
 TripBook is built with modern Android development technologies, including:
