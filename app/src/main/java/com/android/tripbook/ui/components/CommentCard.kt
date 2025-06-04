@@ -24,7 +24,8 @@ import com.android.tripbook.model.Comment
 @Composable
 fun CommentCard(
     comment: Comment,
-    onReactionSelected: (String) -> Unit = {}
+    onReactionSelected: (String) -> Unit = {},
+    onReplySelected: (Comment) -> Unit = {}
 ) {
     var showReactionPopup by remember { mutableStateOf(false) }
     
@@ -141,6 +142,48 @@ fun CommentCard(
                     }
                 }
             }
+            
+            // Reply button
+            TextButton(
+                onClick = { onReplySelected(comment) },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Text(
+                    text = "Reply",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            
+            // Display replies if any
+            if (comment.replies.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
+                ) {
+                    comment.replies.take(2).forEach { reply ->
+                        ReplyCard(reply = reply)
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    
+                    // Show "View more replies" if there are more than 2
+                    if (comment.replies.size > 2) {
+                        TextButton(
+                            onClick = { /* Handle view more replies */ },
+                            modifier = Modifier.align(Alignment.Start)
+                        ) {
+                            Text(
+                                text = "View ${comment.replies.size - 2} more ${if (comment.replies.size - 2 == 1) "reply" else "replies"}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -150,4 +193,60 @@ fun CommentCard(
         onDismiss = { showReactionPopup = false },
         onReactionSelected = onReactionSelected
     )
+}
+
+@Composable
+fun ReplyCard(reply: Comment) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                RoundedCornerShape(12.dp)
+            )
+            .padding(8.dp)
+    ) {
+        // Reply author
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                        CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = reply.authorName.first().toString(),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = reply.authorName,
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = reply.timestamp,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(4.dp))
+        
+        // Reply text
+        Text(
+            text = reply.text,
+            style = MaterialTheme.typography.bodySmall,
+            lineHeight = 18.sp
+        )
+    }
 }
