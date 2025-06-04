@@ -2,11 +2,13 @@ package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,8 +20,14 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Comment
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CommentCard(comment: Comment) {
+fun CommentCard(
+    comment: Comment,
+    onReactionSelected: (String) -> Unit = {}
+) {
+    var showReactionPopup by remember { mutableStateOf(false) }
+    
     Card(
         modifier = Modifier
             .width(280.dp)
@@ -31,7 +39,12 @@ fun CommentCard(comment: Comment) {
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .combinedClickable(
+                    onClick = { },
+                    onLongClick = { showReactionPopup = true }
+                )
         ) {
             // User info
             Row(
@@ -90,6 +103,51 @@ fun CommentCard(comment: Comment) {
                     contentScale = ContentScale.Crop
                 )
             }
+            
+            // Display reactions if any
+            if (comment.reactions.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    comment.reactions.forEach { (emoji, reactions) ->
+                        if (reactions.isNotEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(
+                                        text = emoji,
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = reactions.size.toString(),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+                        }
+                    }
+                }
+            }
         }
     }
+    
+    // Show reaction popup on long press
+    ReactionPopup(
+        visible = showReactionPopup,
+        onDismiss = { showReactionPopup = false },
+        onReactionSelected = onReactionSelected
+    )
 }
