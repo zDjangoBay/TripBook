@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
                         // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 5.9622, longitude = 10.1587, name = "Bamenda, Cameroon", address = "Bamenda, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 6,
-                        budget = 3200, 
+                        budget = 3200,
                         status = TripStatus.COMPLETED,
                         itinerary = listOf()
                     )

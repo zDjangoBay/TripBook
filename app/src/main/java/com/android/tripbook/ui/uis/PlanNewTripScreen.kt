@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -26,7 +26,6 @@ import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.service.GoogleMapsService // Keep this import
@@ -39,21 +38,16 @@ import java.time.format.DateTimeFormatter
 
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import androidx.compose.ui.platform.LocalContext
 
 
 object TripRepository {
+    @SuppressLint("StaticFieldLeak")
     private val db: FirebaseFirestore = Firebase.firestore
     private const val TRIPS_COLLECTION = "trips"
 
@@ -830,8 +824,6 @@ fun PlanNewTripScreen(
                             }
                         }
                     }
-                    // This OutlinedTextField was duplicated, removing the second one.
-                    // If you intended two separate location inputs, please clarify.
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -904,13 +896,6 @@ fun PlanNewTripScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Add Itinerary Item Button (This was previously here, but it seems
-                    // you want to add an item to the list and then the final "Create Trip" button
-                    // saves the whole trip with its itinerary.)
-                    // If you want a separate "Add Itinerary Item" button to add to `itineraryItems`
-                    // before "Create Trip", you'd add it here and implement its logic.
-                    // For now, I'll assume you'll add logic to the `Create Trip` button
-                    // to also validate/add the current itinerary fields.
 
                     // Create Trip Button
                     Button(
@@ -1129,68 +1114,6 @@ fun PlanNewTripScreen(
                 state = itineraryDatePickerState,
                 modifier = Modifier.wrapContentSize()
             )
-        }
-    }
-}
-
-@Composable
-private fun ItineraryItemCard(item: ItineraryItem) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
-        ) {
-            Text(
-                text = "${item.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${item.time}",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF667EEA)
-            )
-            Text(
-                text = item.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C),
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-            Text(
-                text = item.location,
-                fontSize = 14.sp,
-                color = Color(0xFF64748B)
-            )
-            Text(
-                text = item.type.name,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = when (item.type) {
-                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
-                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
-                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
-                }
-            )
-            if (item.agencyService != null) {
-                Text(
-                    text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
-                    fontSize = 12.sp,
-                    color = Color(0xFF64748B),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-            if (item.notes.isNotEmpty()) {
-                Text(
-                    text = "Notes: ${item.notes}",
-                    fontSize = 12.sp,
-                    color = Color(0xFF64748B),
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
         }
     }
 }
