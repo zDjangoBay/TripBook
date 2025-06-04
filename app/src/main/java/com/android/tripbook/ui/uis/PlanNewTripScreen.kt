@@ -1133,7 +1133,67 @@ fun PlanNewTripScreen(
     }
 }
 
-
+@Composable
+private fun ItineraryItemCard(item: ItineraryItem) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = "${item.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${item.time}",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF667EEA)
+            )
+            Text(
+                text = item.title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A202C),
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+            Text(
+                text = item.location,
+                fontSize = 14.sp,
+                color = Color(0xFF64748B)
+            )
+            Text(
+                text = item.type.name,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = when (item.type) {
+                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
+                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
+                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                }
+            )
+            if (item.agencyService != null) {
+                Text(
+                    text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+            if (item.notes.isNotEmpty()) {
+                Text(
+                    text = "Notes: ${item.notes}",
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun EnhancedSuggestionItem(suggestion: PlaceResult, onClick: () -> Unit) {
