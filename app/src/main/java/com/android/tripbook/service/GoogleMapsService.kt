@@ -19,7 +19,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -508,69 +507,6 @@ class GoogleMapsService(
     // DIRECTIONS API SERVICES
     // ===========================================
 
-    /**
-     * Get route between two points
-     */
-    suspend fun getDirections(origin: LatLng, destination: LatLng): RouteInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val originStr = "${origin.latitude},${origin.longitude}"
-                val destinationStr = "${destination.latitude},${destination.longitude}"
-
-                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=$originStr" +
-                        "&destination=$destinationStr" +
-                        "&key=$apiKey"
-
-                val request = Request.Builder().url(url).build()
-                val response = httpClient.newCall(request).execute()
-                val jsonResponse = response.body?.string()
-
-                if (jsonResponse != null) {
-                    parseDirectionsResponse(jsonResponse)
-                } else null
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    /**
-     * Get directions with multiple waypoints
-     */
-    suspend fun getDirectionsWithWaypoints(
-        origin: LatLng,
-        destination: LatLng,
-        waypoints: List<LatLng>
-    ): RouteInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val originStr = "${origin.latitude},${origin.longitude}"
-                val destinationStr = "${destination.latitude},${destination.longitude}"
-                val waypointsStr = waypoints.joinToString("|") { "${it.latitude},${it.longitude}" }
-
-                var url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=$originStr" +
-                        "&destination=$destinationStr"
-
-                if (waypoints.isNotEmpty()) {
-                    url += "&waypoints=$waypointsStr"
-                }
-                url += "&key=$apiKey"
-
-                val request = Request.Builder().url(url).build()
-                val response = httpClient.newCall(request).execute()
-                val jsonResponse = response.body?.string()
-
-                if (jsonResponse != null) {
-                    parseDirectionsResponse(jsonResponse)
-                } else null
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
     private fun parseDirectionsResponse(jsonResponse: String): RouteInfo? {
         return try {
             val json = JSONObject(jsonResponse)
@@ -599,67 +535,6 @@ class GoogleMapsService(
     // ===========================================
     // DISTANCE MATRIX API SERVICES
     // ===========================================
-
-    /**
-     * Calculate distances and travel times between multiple origins and destinations
-     */
-    suspend fun getDistanceMatrix(
-        origins: List<LatLng>,
-        destinations: List<LatLng>,
-        travelMode: String = "driving"
-    ): DistanceMatrixResult? = withContext(Dispatchers.IO) {
-        try {
-            val originsStr = origins.joinToString("|") { "${it.latitude},${it.longitude}" }
-            val destinationsStr = destinations.joinToString("|") { "${it.latitude},${it.longitude}" }
-
-            val urlString = "$DISTANCE_MATRIX_URL?" +
-                    "origins=${URLEncoder.encode(originsStr, "UTF-8")}" +
-                    "&destinations=${URLEncoder.encode(destinationsStr, "UTF-8")}" +
-                    "&mode=$travelMode" +
-                    "&key=$apiKey"
-
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
-
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
-
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val matrixResponse = json.decodeFromString<DistanceMatrixResponse>(response)
-
-                if (matrixResponse.status == "OK") {
-                    DistanceMatrixResult(
-                        origins = matrixResponse.origin_addresses,
-                        destinations = matrixResponse.destination_addresses,
-                        elements = matrixResponse.rows.map { row ->
-                            row.elements.map { element ->
-                                DistanceElement(
-                                    distance = element.distance?.let {
-                                        DistanceInfo(it.text, it.value)
-                                    },
-                                    duration = element.duration?.let {
-                                        DurationInfo(it.text, it.value)
-                                    },
-                                    status = element.status
-                                )
-                            }
-                        }
-                    )
-                } else {
-                    null
-                }
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
 
     // ===========================================
     // UTILITY FUNCTIONS
