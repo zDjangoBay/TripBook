@@ -1,85 +1,153 @@
-package com.android.tripbook.ui.chat
+package com.yourpackage.tripbook.ui.chat
 
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="#F5F5F5"
-tools:context=".ui.chat.GroupChatActivity">
+import android.os.Bundle
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.yourpackage.tripbook.R
+import com.yourpackage.tripbook.model.Message
 
-<!-- Toolbar -->
-<androidx.appcompat.widget.Toolbar
-android:id="@+id/toolbar"
-android:layout_width="0dp"
-android:layout_height="?attr/actionBarSize"
-android:background="@color/colorPrimary"
-android:elevation="4dp"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toTopOf="parent">
+class GroupChatActivity : AppCompatActivity() {
 
-<TextView
-android:id="@+id/tvChatTitle"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_gravity="center"
-android:text="Trip Group Chat"
-android:textColor="@android:color/white"
-android:textSize="18sp"
-android:textStyle="bold" />
+    private lateinit var rvMessages: RecyclerView
+    private lateinit var etMessage: EditText
+    private lateinit var btnSend: ImageButton
+    private lateinit var tvChatTitle: TextView
 
-</androidx.appcompat.widget.Toolbar>
+    private lateinit var messageAdapter: MessageAdapter
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
-<!-- Messages RecyclerView -->
-<androidx.recyclerview.widget.RecyclerView
-android:id="@+id/rvMessages"
-android:layout_width="0dp"
-android:layout_height="0dp"
-android:layout_marginBottom="8dp"
-android:paddingHorizontal="8dp"
-android:paddingVertical="8dp"
-app:layout_constraintBottom_toTopOf="@+id/messageInputContainer"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent"
-app:layout_constraintTop_toBottomOf="@+id/toolbar"
-tools:listitem="@layout/item_message" />
+    private var tripId: String = ""
+    private var tripName: String = ""
+    private var messagesListener: ListenerRegistration? = null
 
-<!-- Message Input Container -->
-<LinearLayout
-android:id="@+id/messageInputContainer"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:background="@android:color/white"
-android:elevation="8dp"
-android:orientation="horizontal"
-android:padding="12dp"
-app:layout_constraintBottom_toBottomOf="parent"
-app:layout_constraintEnd_toEndOf="parent"
-app:layout_constraintStart_toStartOf="parent">
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.group_chat_activity)
 
-<EditText
-android:id="@+id/etMessage"
-android:layout_width="0dp"
-android:layout_height="wrap_content"
-android:layout_weight="1"
-android:background="@drawable/bg_message_input"
-android:hint="Type a message..."
-android:maxLines="3"
-android:padding="12dp"
-android:textSize="16sp" />
+        // Get trip details from intent
+        tripId = intent.getStringExtra("TRIP_ID") ?: ""
+        tripName = intent.getStringExtra("TRIP_NAME") ?: "Group Chat"
 
-<ImageButton
-android:id="@+id/btnSend"
-android:layout_width="48dp"
-android:layout_height="48dp"
-android:layout_marginStart="8dp"
-android:background="@drawable/bg_send_button"
-android:contentDescription="Send message"
-android:src="@drawable/ic_send"
-android:tint="@android:color/white" />
+        if (tripId.isEmpty()) {
+            Toast.makeText(this, "Invalid trip ID", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
-</LinearLayout>
+        initializeViews()
+        initializeFirebase()
+        setupRecyclerView()
+        setupClickListeners()
+        loadMessages()
+    }
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    private fun initializeViews() {
+        rvMessages = findViewById(R.id.rvMessages)
+        etMessage = findViewById(R.id.etMessage)
+        btnSend = findViewById(R.id.btnSend)
+        tvChatTitle = findViewById(R.id.tvChatTitle)
+
+        tvChatTitle.text = tripName
+    }
+
+    private fun initializeFirebase() {
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+    }
+
+    private fun setupRecyclerView() {
+        val currentUserId = auth.currentUser?.uid ?: ""
+        messageAdapter = MessageAdapter(mutableListOf(), currentUserId)
+
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true // Start from bottom
+
+        rvMessages.layoutManager = layoutManager
+        rvMessages.adapter = messageAdapter
+    }
+
+    private fun setupClickListeners() {
+        btnSend.setOnClickListener {
+            sendMessage()
+        }
+
+        etMessage.setOnEditorActionListener { _, _, _ ->
+            sendMessage()
+            true
+        }
+    }
+
+    private fun sendMessage() {
+        val messageText = etMessage.text.toString().trim()
+        if (messageText.isEmpty()) {
+            return
+        }
+
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(this, "Please log in to send messages", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val message = Message(
+            text = messageText,
+            senderId = currentUser.uid,
+            senderName = currentUser.displayName ?: "Anonymous",
+            tripId = tripId
+        )
+
+        // Add message to Firestore
+        firestore.collection("trips")
+            .document(tripId)
+            .collection("messages")
+            .add(message)
+            .addOnSuccessListener {
+                etMessage.setText("")
+                scrollToBottom()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to send message: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun loadMessages() {
+        messagesListener = firestore.collection("trips")
+            .document(tripId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, "Error loading messages: ${e.message}", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                val messages = snapshots?.documents?.mapNotNull { doc ->
+                    doc.toObject(Message::class.java)?.copy(id = doc.id)
+                } ?: emptyList()
+
+                messageAdapter.updateMessages(messages)
+                scrollToBottom()
+            }
+    }
+
+    private fun scrollToBottom() {
+        if (messageAdapter.itemCount > 0) {
+            rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        messagesListener?.remove()
+    }
+}
