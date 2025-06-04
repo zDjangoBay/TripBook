@@ -38,11 +38,32 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
-// @OptIn(ExperimentalAnimationApi::class) // Already present, if you use it inside
+import com.tripbook.userprofile.fonchrisbright.RegistrationViewModel as FonchrisbrightRegistrationViewModel
+import com.tripbook.userprofile.fonchrisbright.RegistrationRepository
+import com.tripbook.userprofile.fonchrisbright.RegistrationApi
+import com.tripbook.userprofile.fonchrisbright.RegistrationState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+
 @Composable
 fun RegisterScreen(navController: NavController) {
+    // Use the original ViewModel for UI state/steps
     val viewModel: RegistrationViewModel = viewModel()
     val registrationData by viewModel.registrationData.collectAsState()
+    // Use fonchrisbright's ViewModel for Firebase registration only
+    val firebaseViewModel: com.tripbook.userprofile.fonchrisbright.RegistrationViewModel = viewModel(key = "firebaseVM") {
+        com.tripbook.userprofile.fonchrisbright.RegistrationViewModel(
+            com.tripbook.userprofile.fonchrisbright.RegistrationRepository(
+                com.tripbook.userprofile.fonchrisbright.RegistrationApi()
+            )
+        )
+    }
+    val registrationState by firebaseViewModel.registrationState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current
 
@@ -103,13 +124,11 @@ fun RegisterScreen(navController: NavController) {
                 onPrevious = viewModel::goToPreviousStep,
                 onNext = {
                     if (viewModel.currentStep == viewModel.totalSteps - 1) {
-                        viewModel.registerUser(
-                            onSuccess = {
-                                navController.navigate(Screen.Home.route) {
-                                    popUpTo(Screen.Register.route) { inclusive = true }
-                                }
-                            },
-                            onError = { /* Handle error */ }
+                        // Pass actual registration data to Firebase ViewModel
+                        firebaseViewModel.registerUser(
+                            registrationData.email,
+                            registrationData.password,
+                            registrationData.fullName
                         )
                     } else {
                         viewModel.goToNextStep()
@@ -118,8 +137,8 @@ fun RegisterScreen(navController: NavController) {
                 isLastStep = viewModel.currentStep == viewModel.totalSteps - 1,
                 isNextEnabled = viewModel.isCurrentStepValid.value
             )
-        }
-
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding -> // This padding is provided by Scaffold for its content area
         // Content with animation, placed within the Scaffold's content area
         Box(
@@ -227,6 +246,23 @@ fun RegisterScreen(navController: NavController) {
                     }
                 }
             }
+        }
+    }
+
+    // Observe registration state and handle navigation or errors
+    LaunchedEffect(registrationState) {
+        when (registrationState) {
+            is com.tripbook.userprofile.fonchrisbright.RegistrationState.Success -> {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Register.route) { inclusive = true }
+                }
+            }
+            is com.tripbook.userprofile.fonchrisbright.RegistrationState.Error -> {
+                coroutineScope.launch {
+                    snackbarHostState.showSnackbar((registrationState as com.tripbook.userprofile.fonchrisbright.RegistrationState.Error).message)
+                }
+            }
+            else -> {}
         }
     }
 }
