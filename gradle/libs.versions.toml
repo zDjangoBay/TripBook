@@ -1,7 +1,6 @@
 [versions]
 agp = "8.10.0"
 databindingKtx = "8.10.0"
-ismaeldivitaChipNavigationBar = "1.3.4"
 kotlin = "1.9.0"
 coreKtx = "1.10.1"
 ksp = "1.9.0-1.0.13"
@@ -36,7 +35,6 @@ kotlinxCoroutines = "1.7.3"
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-databinding-ktx = { module = "androidx.databinding:databinding-ktx", version.ref = "databindingKtx" }
-chip-navigation-bar = { module = "com.ismaeldivita.chipnavigation:chip-navigation-bar", version.ref = "ismaeldivitaChipNavigationBar" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

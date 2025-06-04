@@ -87,29 +87,21 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
     implementation(libs.androidx.navigation.runtime.android)
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
     implementation("io.coil-kt:coil-compose:2.3.0")
-
-    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
     implementation(libs.androidx.navigation.runtime.android)
 //    implementation(libs.androidx.databinding.ktx)
     implementation ("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil-compose:2.3.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
-    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.github.bumptech.glide:glide:4.16.0")
        // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
     androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
     //implementation(libs.coil.compose)
-
-
-
-
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
 
     implementation(libs.firebase.database)
@@ -120,7 +112,13 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.android)
 
 
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
 
+    // ViewModel Compose (from your original work)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+    // StateFlow support (already included in lifecycle-runtime-ktx, but explicit for clarity)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     // Kotlin coroutines
 
     implementation(libs.kotlinx.coroutines.android)
