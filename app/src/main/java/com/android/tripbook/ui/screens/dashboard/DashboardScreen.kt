@@ -747,9 +747,7 @@ fun DashboardScreen(
                             initialOffsetY = { it / 3 },
                             animationSpec = tween(300, easing = EaseOutCubic)
                         ) + fadeIn(animationSpec = tween(300)),
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = tween(300, easing = EaseOutCubic)
-                        )
+                        modifier = Modifier
                     ) {
                         TripCard(
                             trip = trip,
@@ -773,7 +771,7 @@ fun TripCard(
             .fillMaxWidth()
             .height(280.dp)
             .semantics {
-                contentDescription = "Trip card: ${trip.title} from ${trip.fromLocation} to ${trip.toLocation}, ${trip.duration}, starting at $${String.format("%.0f", trip.basePrice)}, ${trip.category.name} category"
+                contentDescription = "Trip card: ${trip.title} from ${trip.fromLocation} to ${trip.toLocation}, ${trip.duration}, starting at ${String.format("%.0f", trip.basePrice)} FCFA, ${trip.category.name} category"
             },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
