@@ -35,6 +35,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 import com.android.tripbook.model.Event
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 
 
@@ -49,6 +51,8 @@ fun ItineraryBuilderScreen(
     travelAgencyService: TravelAgencyService,
     onBrowseAgencies: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    
     var date by remember { mutableStateOf<LocalDate?>(null) }
     var time by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
@@ -56,21 +60,15 @@ fun ItineraryBuilderScreen(
     var selectedType by remember { mutableStateOf<ItineraryType?>(null) }
     var notes by remember { mutableStateOf("") }
     
-    // Event form state
-    var eventTitle by remember { mutableStateOf("") }
-    var eventDate by remember { mutableStateOf<LocalDate?>(null) }
-    var eventDescription by remember { mutableStateOf("") }
-    
-    // Error states for event form
-    var eventTitleError by remember { mutableStateOf("") }
-    var eventDateError by remember { mutableStateOf("") }
+    // Remove the event form state variables since we'll use the itinerary form data
     
     var locationSuggestions by remember { mutableStateOf<List<Attraction>>(emptyList()) }
     var isLoadingSuggestions by remember { mutableStateOf(false) }
 
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-
+    
+    // Error states
     var dateError by remember { mutableStateOf("") }
     var timeError by remember { mutableStateOf("") }
     var titleError by remember { mutableStateOf("") }
@@ -480,115 +478,42 @@ fun ItineraryBuilderScreen(
                         )
                     }
                     
-                    Spacer(modifier = Modifier.height(20.dp))
-                    
-                    // Event Form Section
-                    Text(
-                        text = "Create Event",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF374151)
-                    )
-                    
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Event Title
-                    OutlinedTextField(
-                        value = eventTitle,
-                        onValueChange = { 
-                            eventTitle = it
-                            eventTitleError = ""
-                        },
-                        label = { Text("Event Title") },
-                        placeholder = { Text("Enter event title") },
-                        modifier = Modifier.fillMaxWidth(),
-                        isError = eventTitleError.isNotEmpty(),
-                        supportingText = {
-                            if (eventTitleError.isNotEmpty()) {
-                                Text(
-                                    text = eventTitleError,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        }
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    // Event Date
-                    OutlinedTextField(
-                        value = eventDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
-                        onValueChange = { },
-                        label = { Text("Event Date") },
-                        placeholder = { Text("Select date") },
-                        modifier = Modifier.fillMaxWidth(),
-                        readOnly = true,
-                        trailingIcon = {
-                            IconButton(onClick = {
-                                // Show date picker
-                                // For simplicity, just setting a date here
-                                eventDate = LocalDate.now()
-                                eventDateError = ""
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.DateRange,
-                                    contentDescription = "Select Date"
-                                )
-                            }
-                        },
-                        isError = eventDateError.isNotEmpty(),
-                        supportingText = {
-                            if (eventDateError.isNotEmpty()) {
-                                Text(
-                                    text = eventDateError,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        }
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    // Event Description
-                    OutlinedTextField(
-                        value = eventDescription,
-                        onValueChange = { eventDescription = it },
-                        label = { Text("Event Description") },
-                        placeholder = { Text("Enter event description") },
-                        modifier = Modifier.fillMaxWidth(),
-                        minLines = 3
-                    )
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    // Create Event Button
+                    // Create Event Button (using itinerary form data)
                     Button(
                         onClick = {
-                            // Validate event form
-                            var isValid = true
-                            
-                            if (eventTitle.trim().isEmpty()) {
-                                eventTitleError = "Event title is required"
-                                isValid = false
-                            }
-                            
-                            if (eventDate == null) {
-                                eventDateError = "Event date is required"
-                                isValid = false
-                            }
-                            
-                            if (isValid) {
+                            if (validateItineraryItem(
+                                    date,
+                                    time,
+                                    title,
+                                    location,
+                                    selectedType,
+                                    setDateError = { dateError = it },
+                                    setTimeError = { timeError = it },
+                                    setTitleError = { titleError = it },
+                                    setLocationError = { locationError = it },
+                                    setTypeError = { typeError = it }
+                                )
+                            ) {
+                                // Create event using the itinerary form data
                                 val newEvent = Event(
-                                    title = eventTitle.trim(),
-                                    date = eventDate!!,
-                                    description = eventDescription.trim()
+                                    title = title.trim(),
+                                    date = date!!,
+                                    description = "Time: ${time.trim()}\nLocation: ${location.trim()}\nType: ${selectedType!!.name}\n${notes.trim()}"
                                 )
                                 onEventAdded(newEvent)
                                 
+                                // Show confirmation
+                                Toast.makeText(context, "Event created successfully", Toast.LENGTH_SHORT).show()
+                                
                                 // Reset form
-                                eventTitle = ""
-                                eventDate = null
-                                eventDescription = ""
+                                date = null
+                                time = ""
+                                title = ""
+                                location = ""
+                                selectedType = null
+                                notes = ""
                             }
                         },
                         modifier = Modifier
