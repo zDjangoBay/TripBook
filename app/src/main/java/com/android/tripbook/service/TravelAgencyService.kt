@@ -99,7 +99,7 @@ data class TravelAgency(
 )
 
 class TravelAgencyService {
-    private val apiKey = "fsq34wFRdgoUG9b3+ThZXU4nl1RX+wYAnZUi8+T49HFNuaw="
+    private val apiKey = "fsq34wFRdgoUG9b3+ThZXU4nl1RX+wYAnZUi8+T49HFNuaw="//free tier api for testing security concerns are acknowledged
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.foursquare.com/v3/")

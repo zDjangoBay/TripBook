@@ -1,10 +1,10 @@
 package com.android.tripbook.ui.uis
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,16 +39,20 @@ fun TravelAgencyScreen(
     var serviceType by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var agencies by remember { mutableStateOf<List<TravelAgency>>(emptyList()) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Load agencies when screen loads or destination changes
     LaunchedEffect(destination) {
         isLoading = true
+        errorMessage = null
         try {
             val allAgencies = travelAgencyService.getAgenciesForDestination(destination)
             agencies = travelAgencyService.filterAgencies(allAgencies, minRating, maxPrice, serviceType)
+            println("Loaded ${agencies.size} agencies for $destination")
         } catch (e: Exception) {
-            // Handle error
+            errorMessage = "Failed to load travel agencies. Please check your connection."
             println("Error loading agencies: ${e.message}")
+            e.printStackTrace()
         } finally {
             isLoading = false
         }
@@ -56,9 +60,13 @@ fun TravelAgencyScreen(
 
     // Update filter results
     LaunchedEffect(minRating, maxPrice, serviceType) {
-        if (agencies.isNotEmpty()) {
-            val allAgencies = travelAgencyService.getAgenciesForDestination(destination)
-            agencies = travelAgencyService.filterAgencies(allAgencies, minRating, maxPrice, serviceType)
+        if (agencies.isNotEmpty() && !isLoading) {
+            try {
+                val allAgencies = travelAgencyService.getAgenciesForDestination(destination)
+                agencies = travelAgencyService.filterAgencies(allAgencies, minRating, maxPrice, serviceType)
+            } catch (e: Exception) {
+                println("Error filtering agencies: ${e.message}")
+            }
         }
     }
 
@@ -96,14 +104,23 @@ fun TravelAgencyScreen(
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Travel Agencies in $destination",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
+                Column {
+                    Text(
+                        text = "Travel Agencies in",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
                     )
-                )
+                    Text(
+                        text = destination,
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                }
             }
 
             // Content Card
@@ -120,102 +137,164 @@ fun TravelAgencyScreen(
                         .padding(20.dp)
                 ) {
                     // Filters
-                    Text(
-                        text = "Filter Services",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Filter Services",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF374151)
+                        )
+                        if (agencies.any { it.isFromApi }) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .background(Color(0xFF10B981), CircleShape)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Live Data Available",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF10B981),
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        FilterChip(
-                            selected = minRating != null,
-                            onClick = {
-                                minRating = if (minRating == null) 4.0f else null
-                            },
-                            label = { Text("Rating 4.0+") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
+                        item {
+                            FilterChip(
+                                selected = minRating != null,
+                                onClick = {
+                                    minRating = if (minRating == null) 4.0f else null
+                                },
+                                label = { Text("Rating 4.0+") },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF667EEA),
+                                    selectedLabelColor = Color.White
+                                )
                             )
-                        )
-                        FilterChip(
-                            selected = maxPrice != null,
-                            onClick = {
-                                maxPrice = if (maxPrice == null) 300 else null
-                            },
-                            label = { Text("Price ≤ $300") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
+                        }
+                        item {
+                            FilterChip(
+                                selected = maxPrice != null,
+                                onClick = {
+                                    maxPrice = if (maxPrice == null) 300 else null
+                                },
+                                label = { Text("Price ≤ $300") },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF667EEA),
+                                    selectedLabelColor = Color.White
+                                )
                             )
-                        )
-                        FilterChip(
-                            selected = serviceType != null,
-                            onClick = {
-                                serviceType = if (serviceType == null) "Tour" else null
-                            },
-                            label = { Text("Tours Only") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
+                        }
+                        item {
+                            FilterChip(
+                                selected = serviceType != null,
+                                onClick = {
+                                    serviceType = if (serviceType == null) "Tour" else null
+                                },
+                                label = { Text("Tours Only") },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Color(0xFF667EEA),
+                                    selectedLabelColor = Color.White
+                                )
                             )
-                        )
+                        }
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Loading indicator
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                color = Color(0xFF667EEA)
-                            )
+                    // Content
+                    when {
+                        isLoading -> {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().padding(32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    CircularProgressIndicator(
+                                        color = Color(0xFF667EEA)
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = "Finding travel agencies...",
+                                        fontSize = 16.sp,
+                                        color = Color(0xFF64748B)
+                                    )
+                                }
+                            }
                         }
-                    }
-                    // Agency List or Empty State
-                    else if (agencies.isEmpty()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "No travel agencies found for $destination",
-                                fontSize = 16.sp,
-                                color = Color(0xFF64748B),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = "Try adjusting filters or selecting a different destination",
-                                fontSize = 14.sp,
-                                color = Color(0xFF64748B)
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(agencies) { agency ->
-                                EnhancedAgencyCard(
-                                    agency = agency,
-                                    onServiceClick = { service ->
-                                        val itineraryType = when (service.type) {
-                                            "Tour" -> ItineraryType.ACTIVITY
-                                            "Accommodation" -> ItineraryType.ACCOMMODATION
-                                            "Transportation" -> ItineraryType.TRANSPORTATION
-                                            else -> ItineraryType.ACTIVITY
-                                        }
-                                        onServiceSelected(service, itineraryType)
-                                    }
+                        errorMessage != null -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = errorMessage!!,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(bottom = 8.dp)
                                 )
+                                Button(onClick = {
+                                    // Retry loading agencies
+                                    isLoading = true
+                                    errorMessage = null
+                                }) {
+                                    Text("Retry")
+                                }
+                            }
+                        }
+                        agencies.isEmpty() -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "No travel agencies found for $destination",
+                                    fontSize = 16.sp,
+                                    color = Color(0xFF64748B),
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+                                Text(
+                                    text = "Try adjusting filters or selecting a different destination",
+                                    fontSize = 14.sp,
+                                    color = Color(0xFF64748B)
+                                )
+                            }
+                        }
+                        else -> {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(agencies) { agency ->
+                                    EnhancedAgencyCard(
+                                        agency = agency,
+                                        onServiceClick = { service ->
+                                            val itineraryType = when (service.type) {
+                                                "Tour" -> ItineraryType.ACTIVITY
+                                                "Accommodation" -> ItineraryType.ACCOMMODATION
+                                                "Transportation" -> ItineraryType.TRANSPORTATION
+                                                else -> ItineraryType.ACTIVITY
+                                            }
+                                            onServiceSelected(service, itineraryType)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -230,8 +309,10 @@ private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyServ
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(
+            containerColor = if (agency.isFromApi) Color(0xFFECFDF5) else Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (agency.isFromApi) 4.dp else 2.dp)
     ) {
         Column(
             modifier = Modifier
@@ -241,9 +322,9 @@ private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyServ
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = agency.name,
                         fontSize = 18.sp,
@@ -255,44 +336,70 @@ private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyServ
                             text = agency.address,
                             fontSize = 12.sp,
                             color = Color(0xFF64748B),
-                            maxLines = 1
+                            maxLines = 2,
+                            modifier = Modifier.padding(top = 2.dp)
                         )
                     }
+                    // Assuming 'category' might be a new field in TravelAgency for display
+                    // if (agency.category != null) {
+                    //    Text(
+                    //        text = agency.category,
+                    //        fontSize = 11.sp,
+                    //        color = Color(0xFF667EEA),
+                    //        fontWeight = FontWeight.Medium,
+                    //        modifier = Modifier.padding(top = 2.dp)
+                    //    )
+                    //}
                 }
 
-                // API indicator
-                if (agency.isFromApi) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF10B981)),
-                        modifier = Modifier.padding(start = 8.dp)
+                Column(horizontalAlignment = Alignment.End) {
+                    // API source indicator
+                    if (agency.isFromApi) {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF10B981)),
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        ) {
+                            Text(
+                                text = "LIVE",
+                                fontSize = 9.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
+
+                    // Rating
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Rating",
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(16.dp)
+                        )
                         Text(
-                            text = "LIVE",
-                            fontSize = 10.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            text = String.format("%.1f", agency.rating),
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B),
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 }
             }
 
-            Row(
-                modifier = Modifier.padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Rating",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = "${agency.rating}/5.0",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Services
+            Text(
+                text = "Available Services:",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF374151),
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
             agency.services.forEach { service ->
                 EnhancedServiceItem(service = service, onClick = { onServiceClick(service) })
                 Spacer(modifier = Modifier.height(8.dp))
@@ -309,8 +416,12 @@ private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (service.isFromApi) Color(0xFFECFDF5) else Color(0xFFF1F5F9)
-        )
+            containerColor = when {
+                service.isFromApi -> Color(0xFFF0FDF4)
+                else -> Color(0xFFF1F5F9)
+            }
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
             modifier = Modifier.padding(12.dp)
@@ -318,50 +429,77 @@ private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    text = service.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF1A202C)
-                )
-                if (service.isFromApi) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = service.name,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF1A202C)
+                        )
+                        if (service.isFromApi) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Card(
+                                colors = CardDefaults.cardColors(containerColor = Color(0xFF10B981)),
+                                modifier = Modifier.height(16.dp)
+                            ) {
+                                Text(
+                                    text = "LIVE",
+                                    fontSize = 8.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                )
+                            }
+                        }
+                    }
+
                     Text(
-                        text = "LIVE DATA",
-                        fontSize = 10.sp,
-                        color = Color(0xFF10B981),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-            Text(
-                text = service.description,
-                fontSize = 14.sp,
-                color = Color(0xFF64748B)
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "$${service.price}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF667EEA)
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Service Rating",
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = "${service.rating}/5.0",
+                        text = service.description,
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B)
+                        color = Color(0xFF64748B),
+                        modifier = Modifier.padding(top = 2.dp)
                     )
+
+                    // Assuming 'distance' might be a new field in AgencyService for display
+                    // if (service.distance != null) {
+                    //    Text(
+                    //        text = service.distance,
+                    //        fontSize = 12.sp,
+                    //        color = Color(0xFF667EEA),
+                    //        fontWeight = FontWeight.Medium,
+                    //        modifier = Modifier.padding(top = 2.dp)
+                    //    )
+                    //}
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "$${service.price}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF667EEA)
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 2.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Service Rating",
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = String.format("%.1f", service.rating),
+                            fontSize = 13.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
                 }
             }
         }
