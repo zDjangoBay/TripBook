@@ -6,130 +6,91 @@ object MockCompanyData {
     val companies = listOf(
         Company(
             id = 1,
-            name = "Company 1",
+            name = "Cameroon Travel and Tours",
             imageResIds = listOf(
-                R.drawable.company11,
-                R.drawable.company12,
-                R.drawable.company13,
+                R.drawable.cameroon_travel_1,
+                R.drawable.cameroon_travel_2,
+                R.drawable.cameroon_travel_3
             ),
-            description = "Company 1 helps you find travel deals and offers great customer support. We are dedicated to making your travel dreams come true with seamless booking and personalized service.",
-            likes = 1250,
+            description = "Cameroon Travel and Tours offers comprehensive and comfortable tours across Cameroon, showcasing the country's diverse cultures and landscapes.",
+            likes = 1520,
             isLiked = false,
             stars = 5,
             services = listOf(
-                CompanyService("Flight Booking", "Book your flights"),
-                CompanyService("Hotel Booking", "Find best hotels"),
-                CompanyService("Travel Insurance", "Stay protected")
+                CompanyService("Cultural Tours", "Experience Cameroon's rich heritage"),
+                CompanyService("Wildlife Safaris", "Explore national parks and reserves"),
+                CompanyService("Mount Cameroon Trekking", "Conquer the highest peak in West Africa")
             ),
             contacts = listOf(
-                CompanyContact("Email", "info@company1.com"),
-                CompanyContact("Phone", "+1234567890")
+                CompanyContact("Email", "info@cameroontravelandtours.com"),
+                CompanyContact("Phone", "+237 677 644 831")
             )
         ),
         Company(
             id = 2,
-            name = "Company 2",
+            name = "Global Bush Travel and Tourism Agency",
             imageResIds = listOf(
-                R.drawable.company21,
-                R.drawable.company22,
-                R.drawable.company23
+                R.drawable.global_bush_1,
+                R.drawable.global_bush_2,
+                R.drawable.global_bush_3
             ),
-            description = "Local tours and guides for an unforgettable experience in the city. Discover hidden gems and local culture with our expert guides and customizable packages.",
-            likes = 870,
+            description = "Global Bush Travel and Tourism Agency offers a wide range of travel services, including safaris, cultural tours, and corporate travel solutions.",
+            likes = 980,
             isLiked = false,
-            stars = 3,
+            stars = 4,
             services = listOf(
-                CompanyService("Guided Tours", "Hire local experts"),
-                CompanyService("Custom Packages", "Get tailored packages")
+                CompanyService("Corporate Travel", "Professional travel management"),
+                CompanyService("Safari Tours", "Experience Cameroon's wildlife"),
+                CompanyService("Event Planning", "Organize memorable events")
             ),
             contacts = listOf(
-                CompanyContact("Email", "contact@company2.com"),
-                CompanyContact("Phone", "+9876543210")
+                CompanyContact("Email", "info@globalbush.com"),
+                CompanyContact("Phone", "+237 677 77 77 77")
             )
         ),
         Company(
             id = 3,
-            name = "Company 3",
+            name = "Luxecam Tours Ltd",
             imageResIds = listOf(
-                R.drawable.company31,
-                R.drawable.company32,
-                R.drawable.company33,
+                R.drawable.luxecam_tours_1,
+                R.drawable.luxecam_tours_2,
+                R.drawable.luxecam_tours_3
             ),
-            description = "Company 3offers adventure trips and outdoor excursions for thrill seekers. Join us for hiking, rafting, and unforgettable experiences.",
-            likes = 430,
+            description = "Luxecam Tours Ltd provides luxury travel experiences, combining comfort with authentic Cameroonian adventures.",
+            likes = 1120,
             isLiked = false,
-            stars = 4,
+            stars = 5,
             services = listOf(
-                CompanyService("Adventure Trips", "Exciting outdoor experiences"),
-                CompanyService("Group Tours", "Explore with like-minded people")
+                CompanyService("Luxury Safaris", "Premium wildlife experiences"),
+                CompanyService("Beach Holidays", "Relax on Cameroon's pristine beaches"),
+                CompanyService("Cultural Tours", "Explore Cameroon's heritage")
             ),
             contacts = listOf(
-                CompanyContact("Email", "hello@company3.com"),
-                CompanyContact("Phone", "+1122334455")
+                CompanyContact("Email", "info@safarideal.com"),
+                CompanyContact("Phone", "++44 (0)7788 194 180")
             )
         ),
         Company(
             id = 4,
-            name = "Company 4",
+            name = "ECOTREK Cameroon Travel Agency",
             imageResIds = listOf(
-                R.drawable.company41,
-                R.drawable.company42,
-                R.drawable.company43,
+                R.drawable.ecotrek_cameroon_1,
+                R.drawable.ecotrek_cameroon_2,
+                R.drawable.ecotrek_cameroon_3
             ),
-            description = "Company 4 specializes in luxury travel experiences including 5-star hotels, premium flights, and exclusive destinations.",
-            likes = 1600,
-            isLiked = false,
-            stars = 5,
-            services = listOf(
-                CompanyService("Luxury Flights", "Top-class air travel"),
-                CompanyService("Premium Hotels", "Best-in-class accommodation")
-            ),
-            contacts = listOf(
-                CompanyContact("Email", "luxury@company4.com"),
-                CompanyContact("Phone", "+5566778899")
-            )
-        ),
-        Company(
-            id = 5,
-            name = "Company 5",
-            imageResIds = listOf(
-                R.drawable.company51,
-                R.drawable.company52,
-                R.drawable.company53,
-            ),
-            description = "Company 5 is your travel tech partner, providing booking platforms and itinerary tools for smarter travel planning.",
-            likes = 690,
+            description = "ECOTREK Cameroon specializes in eco-friendly tours, promoting sustainable tourism and conservation efforts.",
+            likes = 890,
             isLiked = false,
             stars = 4,
             services = listOf(
-                CompanyService("Booking Platform", "Easy trip planning"),
-                CompanyService("Smart Itineraries", "AI-powered suggestions")
+                CompanyService("Eco-Tours", "Sustainable travel experiences"),
+                CompanyService("Wildlife Conservation", "Support local conservation projects"),
+                CompanyService("Community Engagement", "Interact with local communities")
             ),
             contacts = listOf(
-                CompanyContact("Email", "support@company5.com"),
-                CompanyContact("Phone", "+3344556677")
+                CompanyContact("Email", "info@ecotrekcameroon.com"),
+                CompanyContact("Phone", "+237 666 66 66 66")
             )
-        ),
-        Company(
-            id = 6,
-            name = "Company 6",
-            imageResIds = listOf(
-                R.drawable.company61,
-                R.drawable.company62,
-                R.drawable.company63,
-            ),
-            description = "Company 6 offers eco-friendly travel solutions including sustainable lodging and green transportation.",
-            likes = 540,
-            isLiked = false,
-            stars = 4,
-            services = listOf(
-                CompanyService("Eco Lodging", "Stay sustainably"),
-                CompanyService("Green Transport", "Environment-friendly travel")
-            ),
-            contacts = listOf(
-                CompanyContact("Email", "eco@company6.com"),
-                CompanyContact("Phone", "+9988776655")
-            )
-        ),
+        )
     )
 }
