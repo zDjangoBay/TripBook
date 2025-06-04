@@ -9,65 +9,58 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.tripbook.R
 import com.android.tripbook.model.Message
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 
 class GroupChatActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
-    private lateinit var tripId: String
-
+    private lateinit var auth: FirebaseAuth
+    private lateinit var messagesListener: ListenerRegistration
     private lateinit var recyclerView: RecyclerView
-    private lateinit var editTextMessage: EditText
-    private lateinit var buttonSend: Button
-
     private lateinit var messageAdapter: MessageAdapter
+    private lateinit var messageEditText: EditText
+    private lateinit var sendButton: Button
+
     private val messages = mutableListOf<Message>()
-    private var messagesListener: ListenerRegistration? = null
+    private var tripId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.group_chat_activity)
+        setContentView(R.layout.activity_group_chat)
 
-        // Firebase
-        auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
-        // Get tripId from intent
-        tripId = intent.getStringExtra("tripId") ?: return
+        tripId = intent.getStringExtra("TRIP_ID") ?: return
 
-        // View bindings
-        recyclerView = findViewById(R.id.recyclerViewMessages)
-        editTextMessage = findViewById(R.id.editTextMessage)
-        buttonSend = findViewById(R.id.buttonSend)
+        recyclerView = findViewById(R.id.recyclerView)
+        messageEditText = findViewById(R.id.messageEditText)
+        sendButton = findViewById(R.id.sendButton)
 
-        // Setup RecyclerView
         messageAdapter = MessageAdapter(messages)
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@GroupChatActivity).apply {
-                stackFromEnd = true
-            }
-            adapter = messageAdapter
-        }
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = messageAdapter
 
-        buttonSend.setOnClickListener {
-            val messageText = editTextMessage.text.toString().trim()
+        sendButton.setOnClickListener {
+            val messageText = messageEditText.text.toString().trim()
             if (messageText.isNotEmpty()) {
                 sendMessage(messageText)
-                editTextMessage.setText("")
+                messageEditText.text.clear()
             }
         }
 
         listenForMessages()
     }
 
-    private fun sendMessage(text: String) {
+    private fun sendMessage(messageText: String) {
         val currentUser = auth.currentUser ?: return
         val message = Message(
             senderId = currentUser.uid,
-            message = text,
+            content = messageText,
             timestamp = System.currentTimeMillis()
         )
 
@@ -82,26 +75,26 @@ class GroupChatActivity : AppCompatActivity() {
             .document(tripId)
             .collection("messages")
             .orderBy("timestamp")
-            .addSnapshotListener { snapshot, error ->
+            .addSnapshotListener(EventListener<QuerySnapshot> { snapshot, error ->
                 if (error != null) {
                     error.printStackTrace()
-                    return@addSnapshotListener
+                    return@EventListener
                 }
 
-                snapshot?.let {
+                if (snapshot != null) {
                     messages.clear()
-                    for (doc in it.documents) {
+                    for (doc in snapshot.documents) {
                         val msg = doc.toObject(Message::class.java)
                         msg?.let { messages.add(it) }
                     }
                     messageAdapter.notifyDataSetChanged()
                     recyclerView.scrollToPosition(messages.size - 1)
                 }
-            }
+            })
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        messagesListener?.remove()
+        messagesListener.remove()
     }
 }
