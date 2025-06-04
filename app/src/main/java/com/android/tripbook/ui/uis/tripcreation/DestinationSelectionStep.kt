@@ -40,6 +40,22 @@ fun DestinationSelectionStep(
            "Yaoundé",
            "Buea",
            "Waza National Park",
+           "Dja Faunal Reserve",
+           "Limbe Botanical Garden",
+           "Yaounde",
+           "Mefou National Park",
+           "Korup National Park",
+           "Buea",
+           "Limbe Wildlife Center",
+           "Lobe Waterfalls",
+           "Bamenda Ring Road",
+           "Foumban Royal Palace",
+           "Rhumsiki Valley",
+           "Maroua Craft Market",
+           "Ekom Nkam Waterfall",
+           "Kribi",
+           "Nsimalen Reserve",
+           "Mfoundi Market",
            //Add more as needed
         )
     }
