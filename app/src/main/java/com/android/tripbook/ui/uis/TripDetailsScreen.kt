@@ -397,13 +397,13 @@ private fun OverviewTab(trip: Trip) {
 
                     TravelerItem(
                         initials = "JD",
-                        name = "John Doe (Trip Leader)",
+                        name = "Fontcha Steve (Trip Leader)",
                         color = Color(0xFF667EEA)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     TravelerItem(
                         initials = "JS",
-                        name = "Jane Smith",
+                        name = "Chi Rosita",
                         color = Color(0xFF764BA2)
                     )
                 }

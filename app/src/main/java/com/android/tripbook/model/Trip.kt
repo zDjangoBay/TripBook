@@ -29,7 +29,7 @@ data class Location(
 data class RouteInfo(
     val distance: String = "",
     val duration: String = "",
-    val polyline: String = "" // Encoded polyline for route display
+    val polyline: String = "" //polyline for route display
 )
 
 data class ItineraryItem(
