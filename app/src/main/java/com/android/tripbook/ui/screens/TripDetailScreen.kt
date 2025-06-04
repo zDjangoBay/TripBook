@@ -1,6 +1,7 @@
 // ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
 // import com.android.tripbook.viewmodel.MockTripViewModel // REMOVED: Not directly used for trip fetching
 import com.android.tripbook.ui.components.ImageGallery
@@ -25,6 +27,7 @@ import com.android.tripbook.data.SampleTrips // Correctly used for enhanced trip
 fun TripDetailScreen(
     tripId: Int,
     onBack: () -> Unit,
+    navController: NavHostController,
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
@@ -75,6 +78,7 @@ fun TripDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
+
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -168,9 +172,16 @@ fun TripDetailScreen(
                         )
                     } else {
                         reviewsForTrip.take(3).forEach { review ->
-                            ReviewCard(review = review)
+                            ReviewCard(
+                                review = review,
+                                onClick = {
+                                    navController.navigate("detailReview/${review.id}/$tripId")
+                                }
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
+
+
                     }
                 }
             }
