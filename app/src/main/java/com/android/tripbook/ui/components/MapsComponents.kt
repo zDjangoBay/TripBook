@@ -621,8 +621,7 @@ fun TripMapView(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
+                .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -631,7 +630,6 @@ fun TripMapView(
                 textAlign = TextAlign.Center
             )
         }
-    }
 
     GoogleMap(
         modifier = modifier,
@@ -817,4 +815,4 @@ fun PlaceSearchField(
             }
         }
     }
-}
+}}

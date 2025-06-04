@@ -9,12 +9,9 @@ import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.model.Location // Added import for your Location model
-import com.android.tripbook.service.AgencyService
-import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.ui.uis.*
-import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.LocalDate
 
 // Add Firebase import
