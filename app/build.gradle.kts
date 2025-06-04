@@ -61,6 +61,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-analytics")
 
+
     // AndroidX + Compose
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -91,6 +92,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:4.3.3")
     implementation("com.google.android.libraries.places:places:3.3.0")
+
+
 
     // Navigation & ViewModel for Compose
     implementation("androidx.navigation:navigation-compose:2.7.6")
