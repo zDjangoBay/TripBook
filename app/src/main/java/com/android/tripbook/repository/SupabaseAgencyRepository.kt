@@ -3,6 +3,7 @@ package com.android.tripbook.repository
 import android.util.Log
 import com.android.tripbook.data.SupabaseConfig
 import com.android.tripbook.model.Agency
+import com.android.tripbook.model.Bus
 import com.android.tripbook.model.Destination
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.exceptions.RestException
@@ -10,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Serializable
 data class SupabaseAgency(
@@ -40,7 +43,8 @@ data class SupabaseDestination(
     val agencyid: Int,
     val agency_rating: Int,
     val destination_name: String,
-    val destination_tarif: Double
+    val destination_tarif: Double,
+    val bus_id: Int? = null // Added bus_id foreign key
 ) {
     fun toDestination(): Destination {
         return Destination(
@@ -49,6 +53,27 @@ data class SupabaseDestination(
             agencyRating = agency_rating,
             destinationName = destination_name,
             destinationTarif = destination_tarif
+        )
+    }
+}
+
+@Serializable
+data class SupabaseBus(
+    val bus_id: Int,
+    val bus_name: String,
+    val time_of_departure: String, // ISO timestamp string
+    val agency_id: Int,
+    val destination_id: Int
+) {
+    fun toBus(destinationName: String = "", agencyName: String = ""): Bus {
+        return Bus(
+            busId = bus_id,
+            busName = bus_name,
+            timeOfDeparture = LocalDateTime.parse(time_of_departure.replace(" ", "T")),
+            agencyId = agency_id,
+            destinationId = destination_id,
+            destinationName = destinationName,
+            agencyName = agencyName
         )
     }
 }
@@ -177,6 +202,113 @@ class SupabaseAgencyRepository {
         }
     }
 
+    suspend fun loadBusesForAgency(agencyId: Int): List<Bus> {
+        return try {
+            _isLoading.value = true
+            _error.value = null
+
+            Log.d(TAG, "Loading buses for agency $agencyId...")
+
+            // Load buses for the specific agency
+            val allSupabaseBuses = supabase.from(BUS_TABLE)
+                .select()
+                .decodeList<SupabaseBus>()
+
+            Log.d(TAG, "Loaded ${allSupabaseBuses.size} buses from database")
+
+            // Filter buses for the specific agency
+            val agencyBuses = allSupabaseBuses.filter { it.agency_id == agencyId }
+
+            Log.d(TAG, "Found ${agencyBuses.size} buses for agency $agencyId")
+
+            // Load destinations and agencies to get names for display
+            val allDestinations = supabase.from(DESTINATIONS_TABLE)
+                .select()
+                .decodeList<SupabaseDestination>()
+                .map { it.toDestination() }
+
+            val allAgencies = loadAgencies()
+
+            // Convert to Bus objects with destination and agency names
+            val buses = agencyBuses.map { supabaseBus ->
+                val destination = allDestinations.find { it.id == supabaseBus.destination_id }
+                val agency = allAgencies.find { it.agencyId == supabaseBus.agency_id }
+
+                supabaseBus.toBus(
+                    destinationName = destination?.destinationName ?: "Unknown Destination",
+                    agencyName = agency?.agencyName ?: "Unknown Agency"
+                )
+            }.sortedBy { it.timeOfDeparture }
+
+            Log.d(TAG, "Processed ${buses.size} buses for agency $agencyId")
+
+            buses
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading buses for agency: ${e.message}", e)
+            _error.value = "Failed to load buses: ${e.message}"
+            emptyList()
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    suspend fun loadBusesForDestination(destinationQuery: String): List<Bus> {
+        return try {
+            _isLoading.value = true
+            _error.value = null
+
+            Log.d(TAG, "Loading buses for destination: $destinationQuery")
+
+            // Load all buses
+            val allSupabaseBuses = supabase.from(BUS_TABLE)
+                .select()
+                .decodeList<SupabaseBus>()
+
+            // Load destinations to filter by destination name
+            val allDestinations = supabase.from(DESTINATIONS_TABLE)
+                .select()
+                .decodeList<SupabaseDestination>()
+                .map { it.toDestination() }
+
+            // Find destinations that match the query
+            val matchingDestinations = allDestinations.filter { destination ->
+                destination.destinationName.contains(destinationQuery, ignoreCase = true) ||
+                destinationQuery.contains(destination.destinationName, ignoreCase = true)
+            }
+
+            val matchingDestinationIds = matchingDestinations.map { it.id }
+
+            // Filter buses for matching destinations
+            val matchingBuses = allSupabaseBuses.filter { bus ->
+                matchingDestinationIds.contains(bus.destination_id)
+            }
+
+            // Load agencies for display names
+            val allAgencies = loadAgencies()
+
+            // Convert to Bus objects with names
+            val buses = matchingBuses.map { supabaseBus ->
+                val destination = allDestinations.find { it.id == supabaseBus.destination_id }
+                val agency = allAgencies.find { it.agencyId == supabaseBus.agency_id }
+
+                supabaseBus.toBus(
+                    destinationName = destination?.destinationName ?: "Unknown Destination",
+                    agencyName = agency?.agencyName ?: "Unknown Agency"
+                )
+            }.sortedBy { it.timeOfDeparture }
+
+            Log.d(TAG, "Found ${buses.size} buses for destination: $destinationQuery")
+
+            buses
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading buses for destination: ${e.message}", e)
+            _error.value = "Failed to load buses: ${e.message}"
+            emptyList()
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
     fun clearError() {
         _error.value = null
     }
@@ -185,6 +317,7 @@ class SupabaseAgencyRepository {
         private const val TAG = "SupabaseAgencyRepository"
         private const val AGENCIES_TABLE = "agency"
         private const val DESTINATIONS_TABLE = "destination"
+        private const val BUS_TABLE = "bus"
 
         @Volatile
         private var INSTANCE: SupabaseAgencyRepository? = null

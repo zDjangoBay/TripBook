@@ -98,6 +98,24 @@ fun ReviewStep(
                     title = "Travel Agency",
                     content = agencyText
                 )
+
+                // Bus Section
+                if (state.selectedBus != null) {
+                    val busText = buildString {
+                        append("🚌 ${state.selectedBus.busName}")
+                        append("\n📅 ${state.selectedBus.timeOfDeparture.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}")
+                        append("\n🕐 Departure: ${state.selectedBus.timeOfDeparture.format(DateTimeFormatter.ofPattern("HH:mm"))}")
+                        if (state.selectedBus.destinationName.isNotEmpty()) {
+                            append("\n📍 To: ${state.selectedBus.destinationName}")
+                        }
+                    }
+
+                    ReviewSection(
+                        icon = Icons.Default.DirectionsBus,
+                        title = "Selected Bus",
+                        content = busText
+                    )
+                }
                 
                 // Dates Section
                 val dateText = if (state.startDate != null && state.endDate != null) {

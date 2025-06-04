@@ -9,6 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.DirectionsBus
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,9 +24,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Agency
+import com.android.tripbook.model.Bus
 import com.android.tripbook.model.TripCreationState
 import com.android.tripbook.ui.components.StepHeader
 import com.android.tripbook.viewmodel.AgencyViewModel
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun AgencySelectionStep(
@@ -32,13 +38,15 @@ fun AgencySelectionStep(
     modifier: Modifier = Modifier
 ) {
     val filteredAgencies by agencyViewModel.filteredAgencies.collectAsState()
+    val busesByAgency by agencyViewModel.busesByAgency.collectAsState()
     val isLoading by agencyViewModel.isLoading.collectAsState()
     val error by agencyViewModel.error.collectAsState()
 
-    // Load agencies for the selected destination when the step is displayed
+    // Load agencies and buses for the selected destination when the step is displayed
     LaunchedEffect(state.destination) {
         if (state.destination.isNotBlank()) {
             agencyViewModel.loadAgenciesForDestination(state.destination)
+            agencyViewModel.loadBusesForDestination(state.destination)
         }
     }
 
@@ -92,13 +100,13 @@ fun AgencySelectionStep(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp)
                         .clickable {
-                            onStateChange(state.copy(selectedAgency = null))
+                            onStateChange(state.copy(selectedAgency = null, selectedBus = null))
                         },
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (state.selectedAgency == null) Color(0xFFEEF2FF) else Color(0xFFF8FAFC)
+                        containerColor = if (state.selectedAgency == null && state.selectedBus == null) Color(0xFFEEF2FF) else Color(0xFFF8FAFC)
                     ),
-                    border = if (state.selectedAgency == null) {
+                    border = if (state.selectedAgency == null && state.selectedBus == null) {
                         androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF6366F1))
                     } else null
                 ) {
@@ -108,7 +116,7 @@ fun AgencySelectionStep(
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (state.selectedAgency == null) {
+                        if (state.selectedAgency == null && state.selectedBus == null) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
                                 contentDescription = "Selected",
@@ -242,11 +250,12 @@ fun AgencySelectionStep(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(filteredAgencies) { agency ->
-                                AgencySelectionCard(
+                                AgencyWithBusesCard(
                                     agency = agency,
-                                    isSelected = state.selectedAgency?.agencyId == agency.agencyId,
-                                    onClick = {
-                                        onStateChange(state.copy(selectedAgency = agency))
+                                    buses = busesByAgency[agency.agencyId] ?: emptyList(),
+                                    selectedBus = state.selectedBus,
+                                    onBusSelected = { bus: Bus ->
+                                        onStateChange(state.copy(selectedAgency = agency, selectedBus = bus))
                                     }
                                 )
                             }
@@ -259,72 +268,192 @@ fun AgencySelectionStep(
 }
 
 @Composable
-fun AgencySelectionCard(
+fun AgencyWithBusesCard(
     agency: Agency,
-    isSelected: Boolean,
-    onClick: () -> Unit,
+    buses: List<Bus>,
+    selectedBus: Bus?,
+    onBusSelected: (Bus) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .shadow(
-                elevation = if (isSelected) 8.dp else 2.dp,
+                elevation = 4.dp,
                 shape = RoundedCornerShape(12.dp),
                 spotColor = Color.Black.copy(alpha = 0.1f)
-            )
-            .clickable { onClick() },
+            ),
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Agency Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = agency.agencyName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1E293B)
+                    )
+
+                    agency.agencyDescription?.let { description ->
+                        Text(
+                            text = description,
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B),
+                            maxLines = if (isExpanded) Int.MAX_VALUE else 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+
+                    // Bus count indicator
+                    Text(
+                        text = "${buses.size} bus${if (buses.size != 1) "es" else ""} available",
+                        fontSize = 12.sp,
+                        color = Color(0xFF6366F1),
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+
+                Icon(
+                    imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    tint = Color(0xFF6366F1),
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            // Buses List (when expanded)
+            if (isExpanded && buses.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Divider(color = Color(0xFFE2E8F0))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "Available Buses",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1E293B),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                buses.forEach { bus ->
+                    BusSelectionCard(
+                        bus = bus,
+                        isSelected = selectedBus?.busId == bus.busId,
+                        onClick = { onBusSelected(bus) },
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+            } else if (isExpanded && buses.isEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "No buses available for this agency",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BusSelectionCard(
+    bus: Bus,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val dateFormatter = DateTimeFormatter.ofPattern("MMM dd")
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFFEEF2FF) else Color.White
+            containerColor = if (isSelected) Color(0xFFEEF2FF) else Color(0xFFF8FAFC)
         ),
         border = if (isSelected) {
             androidx.compose.foundation.BorderStroke(2.dp, Color(0xFF6366F1))
-        } else null
+        } else androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Icons.Default.DirectionsBus,
+                contentDescription = "Bus",
+                tint = if (isSelected) Color(0xFF6366F1) else Color(0xFF64748B),
+                modifier = Modifier.size(20.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = agency.agencyName,
-                    fontSize = 16.sp,
+                    text = bus.busName,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color(0xFF1E293B)
                 )
-                
-                agency.agencyDescription?.let { description ->
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 2.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = "Time",
+                        tint = Color(0xFF64748B),
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = description,
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 4.dp)
+                        text = "${bus.timeOfDeparture.format(dateFormatter)} at ${bus.timeOfDeparture.format(timeFormatter)}",
+                        fontSize = 12.sp,
+                        color = Color(0xFF64748B)
                     )
                 }
-                
-                agency.agencyAddress?.let { address ->
+
+                if (bus.destinationName.isNotEmpty()) {
                     Text(
-                        text = "📍 $address",
+                        text = "To: ${bus.destinationName}",
                         fontSize = 12.sp,
                         color = Color(0xFF64748B),
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
             }
-            
+
             if (isSelected) {
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Selected",
                     tint = Color(0xFF6366F1),
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

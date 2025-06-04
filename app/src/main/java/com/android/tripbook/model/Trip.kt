@@ -74,6 +74,7 @@ data class TripCreationState(
     val totalSteps: Int = 6, // Increased to 6 to include agency selection
     val destination: String = "",
     val selectedAgency: Agency? = null, // Added agency selection
+    val selectedBus: Bus? = null, // Added bus selection
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
     val tripName: String = "",

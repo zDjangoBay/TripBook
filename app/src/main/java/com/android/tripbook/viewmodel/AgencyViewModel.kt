@@ -3,6 +3,7 @@ package com.android.tripbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Agency
+import com.android.tripbook.model.Bus
 import com.android.tripbook.model.Destination
 import com.android.tripbook.repository.SupabaseAgencyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,14 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
     // State for agencies filtered by destination
     private val _filteredAgencies = MutableStateFlow<List<Agency>>(emptyList())
     val filteredAgencies: StateFlow<List<Agency>> = _filteredAgencies.asStateFlow()
+
+    // State for buses
+    private val _buses = MutableStateFlow<List<Bus>>(emptyList())
+    val buses: StateFlow<List<Bus>> = _buses.asStateFlow()
+
+    // State for buses grouped by agency
+    private val _busesByAgency = MutableStateFlow<Map<Int, List<Bus>>>(emptyMap())
+    val busesByAgency: StateFlow<Map<Int, List<Bus>>> = _busesByAgency.asStateFlow()
 
     init {
         loadAgencies()
@@ -81,7 +90,48 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
         }
     }
 
+    fun loadBusesForAgency(agencyId: Int) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val loadedBuses = agencyRepository.loadBusesForAgency(agencyId)
+                _buses.value = loadedBuses
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun loadBusesForDestination(destinationQuery: String) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val loadedBuses = agencyRepository.loadBusesForDestination(destinationQuery)
+                _buses.value = loadedBuses
+
+                // Group buses by agency for easier display
+                val groupedBuses = loadedBuses.groupBy { it.agencyId }
+                _busesByAgency.value = groupedBuses
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     fun clearFilteredAgencies() {
         _filteredAgencies.value = emptyList()
+    }
+
+    fun clearBuses() {
+        _buses.value = emptyList()
+        _busesByAgency.value = emptyMap()
     }
 }
