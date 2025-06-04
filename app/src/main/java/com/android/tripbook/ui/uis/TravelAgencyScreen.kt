@@ -37,11 +37,28 @@ fun TravelAgencyScreen(
     var minRating by remember { mutableStateOf<Float?>(null) }
     var maxPrice by remember { mutableStateOf<Int?>(null) }
     var serviceType by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+    var agencies by remember { mutableStateOf<List<TravelAgency>>(emptyList()) }
 
-    val agencies by remember(destination, minRating, maxPrice, serviceType) {
-        derivedStateOf {
-            val destinationAgencies = travelAgencyService.getAgenciesForDestination(destination)
-            travelAgencyService.filterAgencies(destinationAgencies, minRating, maxPrice, serviceType)
+    // Load agencies when screen loads or destination changes
+    LaunchedEffect(destination) {
+        isLoading = true
+        try {
+            val allAgencies = travelAgencyService.getAgenciesForDestination(destination)
+            agencies = travelAgencyService.filterAgencies(allAgencies, minRating, maxPrice, serviceType)
+        } catch (e: Exception) {
+            // Handle error
+            println("Error loading agencies: ${e.message}")
+        } finally {
+            isLoading = false
+        }
+    }
+
+    // Update filter results
+    LaunchedEffect(minRating, maxPrice, serviceType) {
+        if (agencies.isNotEmpty()) {
+            val allAgencies = travelAgencyService.getAgenciesForDestination(destination)
+            agencies = travelAgencyService.filterAgencies(allAgencies, minRating, maxPrice, serviceType)
         }
     }
 
@@ -150,8 +167,19 @@ fun TravelAgencyScreen(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Loading indicator
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color(0xFF667EEA)
+                            )
+                        }
+                    }
                     // Agency List or Empty State
-                    if (agencies.isEmpty()) {
+                    else if (agencies.isEmpty()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -176,7 +204,7 @@ fun TravelAgencyScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(agencies) { agency ->
-                                AgencyCard(
+                                EnhancedAgencyCard(
                                     agency = agency,
                                     onServiceClick = { service ->
                                         val itineraryType = when (service.type) {
@@ -198,7 +226,7 @@ fun TravelAgencyScreen(
 }
 
 @Composable
-private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> Unit) {
+private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
@@ -210,12 +238,44 @@ private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> 
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = agency.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = agency.name,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C)
+                    )
+                    if (agency.address != null) {
+                        Text(
+                            text = agency.address,
+                            fontSize = 12.sp,
+                            color = Color(0xFF64748B),
+                            maxLines = 1
+                        )
+                    }
+                }
+
+                // API indicator
+                if (agency.isFromApi) {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF10B981)),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text(
+                            text = "LIVE",
+                            fontSize = 10.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
+
             Row(
                 modifier = Modifier.padding(vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -234,7 +294,7 @@ private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> 
             }
             Spacer(modifier = Modifier.height(8.dp))
             agency.services.forEach { service ->
-                ServiceItem(service = service, onClick = { onServiceClick(service) })
+                EnhancedServiceItem(service = service, onClick = { onServiceClick(service) })
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -242,23 +302,39 @@ private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> 
 }
 
 @Composable
-private fun ServiceItem(service: AgencyService, onClick: () -> Unit) {
+private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F5F9))
+        colors = CardDefaults.cardColors(
+            containerColor = if (service.isFromApi) Color(0xFFECFDF5) else Color(0xFFF1F5F9)
+        )
     ) {
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-            Text(
-                text = service.name,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1A202C)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = service.name,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1A202C)
+                )
+                if (service.isFromApi) {
+                    Text(
+                        text = "LIVE DATA",
+                        fontSize = 10.sp,
+                        color = Color(0xFF10B981),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
             Text(
                 text = service.description,
                 fontSize = 14.sp,
