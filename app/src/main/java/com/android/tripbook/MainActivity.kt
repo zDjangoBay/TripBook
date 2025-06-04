@@ -14,16 +14,19 @@ import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.ui.uis.*
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.google.firebase.FirebaseApp
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // ✅ Initialize Firebase
+        FirebaseApp.initializeApp(this)
+
         val nominatimService = NominatimService()
         val travelAgencyService = TravelAgencyService()
 
-        // ✅ Get API key from manifest
         val apiKey = applicationContext.packageManager
             .getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
             .metaData.getString("com.google.android.geo.API_KEY") ?: ""
