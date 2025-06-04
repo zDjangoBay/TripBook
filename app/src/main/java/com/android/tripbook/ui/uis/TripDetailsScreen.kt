@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,7 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
-    onEditItineraryClick: () -> Unit
+    onEditItineraryClick: () -> Unit,
+    onTripProgressClick: () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
@@ -99,6 +101,36 @@ fun TripDetailsScreen(
                             color = Color.White.copy(alpha = 0.9f)
                         )
                     )
+                }
+            }
+
+            // Add this after the header section with the back button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = onTripProgressClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF667EEA)
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Timeline,
+                            contentDescription = "View Timeline",
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Trip Timeline",
+                            fontSize = 14.sp,
+                            color = Color.White
+                        )
+                    }
                 }
             }
 
@@ -459,7 +491,7 @@ private fun OverviewTab(trip: Trip) {
                     DetailItem(icon = "📅", text = "8 days, 7 nights")
                     DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
                     DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
+                    DetailItem(icon = "🍽", text = "All meals included")
                 }
             }
         }
