@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.model.Location // Added import for your Location model
+import com.android.tripbook.model.Location
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.ui.uis.*

@@ -29,7 +29,7 @@ data class Location(
 data class RouteInfo(
     val distance: String = "",
     val duration: String = "",
-    val polyline: String = "" //polyline for route display
+    val polyline: String = ""
 )
 
 data class ItineraryItem(
@@ -42,7 +42,7 @@ data class ItineraryItem(
     val agencyService: AgencyService? = null,
     // New fields for Maps integration
     val coordinates: Location? = null,
-    val routeToNext: RouteInfo? = null // Route to next itinerary item
+    val routeToNext: RouteInfo? = null
 )
 
 data class Trip(
@@ -62,5 +62,5 @@ data class Trip(
     val itinerary: List<ItineraryItem> = emptyList(),
     // New fields for Maps integration
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null
 )

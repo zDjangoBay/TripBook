@@ -1,5 +1,4 @@
 package com.android.tripbook.service
-//Enhanced managing maps services with comprehensive Google Maps API integration
 
 import android.Manifest
 import android.content.Context
