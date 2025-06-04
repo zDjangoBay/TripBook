@@ -9,5 +9,6 @@ data class Comment(
     val imageUri: String? = null,
     val timestamp: String = SimpleDateFormat("MMM dd, yyyy 'at' hh:mm a", Locale.getDefault()).format(Date()),
     val authorName: String = "You",
-    val authorAvatar: String? = null
+    val authorAvatar: String? = null,
+    val reactions: MutableMap<String, MutableList<CommentReaction>> = mutableMapOf()
 )
