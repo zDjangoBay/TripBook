@@ -152,7 +152,7 @@ fun TripDetailsScreen(
                         }
                     }
 
-                    HorizontalDivider(
+                    Divider(
                         color = Color(0xFFE2E8F0),
                         thickness = 1.dp,
                         modifier = Modifier.padding(top = 8.dp)

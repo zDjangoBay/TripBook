@@ -1,4 +1,4 @@
-package com.yourpackage.tripbook.ui.chat
+package com.android.tripbook.ui.chat
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.yourpackage.tripbook.R
-import com.yourpackage.tripbook.model.Message
+import com.android.tripbook.R
+import com.android.tripbook.model.Message
 
 class MessageAdapter(
     private val messages: MutableList<Message>,

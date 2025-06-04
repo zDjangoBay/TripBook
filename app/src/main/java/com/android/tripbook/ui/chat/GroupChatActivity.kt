@@ -1,4 +1,4 @@
-package com.yourpackage.tripbook.ui.chat
+package com.android.tripbook.ui.chat
 
 import android.os.Bundle
 import android.widget.EditText
@@ -12,8 +12,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
-import com.yourpackage.tripbook.R
-import com.yourpackage.tripbook.model.Message
+import com.android.tripbook.R
+import com.android.tripbook.model.Message
 
 class GroupChatActivity : AppCompatActivity() {
 
