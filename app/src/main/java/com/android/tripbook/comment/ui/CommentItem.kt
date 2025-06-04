@@ -1,12 +1,16 @@
 package com.android.tripbook.comment.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.dp
+import com.android.tripbook.R
 import com.android.tripbook.comment.model.Comment
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,14 +22,15 @@ fun CommentItem(comment: Comment) {
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        AsyncImage(
-            model = comment.avatarUrl,
-            contentDescription = null,
+        Image(
+            painter = painterResource(R.drawable.ic_user),
+            contentDescription = "User avatar",
             modifier = Modifier
                 .size(40.dp)
+                .clip(CircleShape)
                 .padding(end = 8.dp)
         )
-0
+
         Column {
             Text(
                 text = comment.username,
@@ -36,7 +41,8 @@ fun CommentItem(comment: Comment) {
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault()).format(Date(comment.timestamp)),
+                text = SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault())
+                    .format(Date(comment.timestamp)),
                 style = MaterialTheme.typography.labelSmall
             )
         }
@@ -50,7 +56,7 @@ fun PreviewCommentItem() {
         id = "1",
         userId = "u1",
         username = "Jane Doe",
-        avatarUrl = null, // Replace with a real URL if needed
+        avatarUrl = null,
         text = "This is a sample comment!",
         timestamp = System.currentTimeMillis()
     )
