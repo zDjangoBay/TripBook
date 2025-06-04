@@ -30,7 +30,6 @@ class GroupChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.group_chat_activity)
 
-        // Example: tripId passed via Intent
         tripId = intent.getStringExtra("tripId") ?: "default_trip"
 
         recyclerView = findViewById(R.id.recyclerViewMessages)
@@ -53,11 +52,17 @@ class GroupChatActivity : AppCompatActivity() {
             }
         }
 
+        // Real-time updates
         listenForMessages()
     }
 
     private fun sendMessage(text: String) {
-        val message = Message(auth.currentUser!!.uid, text)
+        val message = Message(
+            senderId = auth.currentUser!!.uid,
+            message = text,
+            timestamp = System.currentTimeMillis()
+        )
+
         firestore.collection("trips")
             .document(tripId)
             .collection("messages")
@@ -69,7 +74,12 @@ class GroupChatActivity : AppCompatActivity() {
             .document(tripId)
             .collection("messages")
             .orderBy("timestamp")
-            .addSnapshotListener { snapshot, _ ->
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    error.printStackTrace()
+                    return@addSnapshotListener
+                }
+
                 if (snapshot != null) {
                     messages.clear()
                     for (doc in snapshot.documents) {
