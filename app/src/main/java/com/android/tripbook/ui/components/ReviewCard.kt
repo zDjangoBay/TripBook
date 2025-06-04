@@ -9,15 +9,22 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+<<<<<<< HEAD
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+=======
+>>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -25,14 +32,28 @@ import com.android.tripbook.model.Review
 import com.android.tripbook.ui.components.FullscreenGalleryDialog
 
 @Composable
-fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onLikeClicked: (Int) -> Unit = {},
+    onFlagClicked: (Int) -> Unit = {}
+) {
     var showFullscreenGallery by remember { mutableStateOf(false) }
     var initialImageIndex by remember { mutableStateOf(0) }
 
     Card(
+<<<<<<< HEAD
         modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         shape = RoundedCornerShape(12.dp)
+=======
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+>>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -119,6 +140,35 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
                         }
                     }
                 }
+            }
+
+            // ✅ Reaction Buttons Row (inside the card)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = { onLikeClicked(review.id) }) {
+                    Icon(
+                        imageVector = if (review.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Like",
+                        tint = if (review.isLiked) Color.Red else Color.Gray
+                    )
+                }
+
+                IconButton(onClick = { onFlagClicked(review.id) }) {
+                    Icon(
+                        imageVector = Icons.Default.Flag,
+                        contentDescription = "Flag",
+                        tint = if (review.isFlagged) Color.Red else Color.Gray
+                    )
+                }
+
+                Text(
+                    text = "${review.likeCount}",
+                    color = if (review.isLiked) Color.Red else Color.Gray
+                )
             }
         }
     }

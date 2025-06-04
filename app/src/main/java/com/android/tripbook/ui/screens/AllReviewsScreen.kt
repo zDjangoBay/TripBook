@@ -30,7 +30,9 @@ import com.android.tripbook.viewmodel.ReviewViewModel
 fun AllReviewsScreen(
     tripId: Int,
     onBack: () -> Unit,
-    reviewViewModel: ReviewViewModel = viewModel()
+    reviewViewModel: ReviewViewModel = viewModel(),
+    onLikeClicked: (reviewId: Int) -> Unit = {},
+    onFlagClicked: (reviewId: Int) -> Unit = {}
 ) {
     val reviews by reviewViewModel.reviews.collectAsState()
     val tripReviews = remember(reviews, tripId) {
@@ -71,7 +73,11 @@ fun AllReviewsScreen(
                 }
             } else {
                 items(tripReviews) { review ->
-                    ReviewCard(review = review)
+                    ReviewCard(
+                        review = review,
+                        onLikeClicked = { onLikeClicked(review.id) },
+                        onFlagClicked = { onFlagClicked(review.id) }
+                    )
                 }
             }
         }

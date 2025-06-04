@@ -1,10 +1,8 @@
 package com.android.tripbook.ui.navigation
 
+import com.android.tripbook.ui.screens.DetailReviewScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,6 +46,7 @@ fun MainNavGraph(
                 )
             }
         }
+
         composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -61,6 +60,7 @@ fun MainNavGraph(
                 )
             }
         }
+
         composable("catalog") {
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -69,6 +69,7 @@ fun MainNavGraph(
                 }
             )
         }
+
         composable("profile") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -82,35 +83,59 @@ fun MainNavGraph(
                 )
             }
         }
+
         composable("detail/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
+                navController = navController,
                 onBack = { navController.popBackStack() },
                 onSeeAllReviews = { id ->
                     navController.navigate("reviews/$id")
                 },
-                reviewViewModel = sharedReviewViewModel, // PASS THE SAME INSTANCE
+                reviewViewModel = sharedReviewViewModel,
                 onBookTrip = { id ->
                     navController.navigate("booking/$id")
                 }
             )
         }
+
         composable("reviews/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
             AllReviewsScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
-                reviewViewModel = sharedReviewViewModel // PASS THE SAME INSTANCE
+                reviewViewModel = sharedReviewViewModel,
+                onLikeClicked = { reviewId ->
+                    println("Liked review ID: $reviewId")
+                    // Add your like logic here
+                },
+                onFlagClicked = { reviewId ->
+                    println("Flagged review ID: $reviewId")
+                    // Add your flag logic here
+                }
             )
         }
+
+        composable("detailReview/{reviewId}/{tripId}") { backStackEntry ->
+            val reviewId = backStackEntry.arguments?.getString("reviewId")?.toIntOrNull() ?: return@composable
+            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
+
+            DetailReviewScreen(
+                reviewId = reviewId,
+                tripId = tripId,
+                onLikeClicked = { println("Liked review ID: $it") },
+                onFlagClicked = { println("Flagged review ID: $it") },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
         composable("booking/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
             BookingScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
                 onBookingComplete = {
-                    // Navigate back to the catalog after booking is complete
                     navController.navigate("catalog") {
                         popUpTo("catalog") {
                             inclusive = true

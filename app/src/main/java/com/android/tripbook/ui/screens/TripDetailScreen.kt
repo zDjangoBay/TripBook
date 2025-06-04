@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,8 +18,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+<<<<<<< HEAD
 import androidx.lifecycle.viewmodel.compose.viewModel
 import android.util.Log
+=======
+import androidx.navigation.NavHostController
+import com.android.tripbook.viewmodel.MockReviewViewModel
+>>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
 import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.ui.components.ImageGallery
@@ -32,6 +38,7 @@ import com.android.tripbook.ui.components.RatingSummary
 fun TripDetailScreen(
     tripId: Int,
     onBack: () -> Unit,
+    navController: NavHostController,
     onSeeAllReviews: (Int) -> Unit,
     reviewViewModel: ReviewViewModel = viewModel(),
     onBookTrip: (Int) -> Unit = {}
@@ -160,6 +167,7 @@ fun TripDetailScreen(
             // Rating Display
             if (reviewsForTrip.isNotEmpty()) {
                 Row(
+<<<<<<< HEAD
                     modifier = Modifier.padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -201,6 +209,12 @@ fun TripDetailScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
+=======
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+
+>>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -242,6 +256,7 @@ fun TripDetailScreen(
                 Divider(color = Color.LightGray, thickness = 1.dp)
             }
 
+<<<<<<< HEAD
             // Add Review Form
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
@@ -342,6 +357,26 @@ fun TripDetailScreen(
                         enabled = reviewText.text.isNotBlank() && userName.isNotBlank()
                     ) {
                         Text("Submit Review")
+=======
+                    if (reviewsForTrip.isEmpty()) {
+                        Text(
+                            text = "No reviews yet. Be the first to review!",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    } else {
+                        reviewsForTrip.take(3).forEach { review ->
+                            ReviewCard(
+                                review = review,
+                                onClick = {
+                                    navController.navigate("detailReview/${review.id}/$tripId")
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+
+>>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
                     }
                 }
             }
