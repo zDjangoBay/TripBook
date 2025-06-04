@@ -42,6 +42,7 @@ android {
 
     buildFeatures {
         compose = true
+        viewBinding = true // Added for traditional XML layouts
     }
 
     composeOptions {
@@ -56,13 +57,11 @@ android {
 }
 
 dependencies {
-    // Firebase dependencies
+    // Firebase dependencies (using BOM for version management)
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore-ktx")
-
-
 
     // AndroidX + Compose
     implementation(libs.androidx.core.ktx)
@@ -76,6 +75,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.material3)
+
+    // RecyclerView for traditional XML layouts (needed for chat)
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Retrofit and OkHttp
     implementation(libs.retrofit)
@@ -94,8 +97,6 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:4.3.3")
     implementation("com.google.android.libraries.places:places:3.3.0")
-
-
 
     // Navigation & ViewModel for Compose
     implementation("androidx.navigation:navigation-compose:2.7.6")
