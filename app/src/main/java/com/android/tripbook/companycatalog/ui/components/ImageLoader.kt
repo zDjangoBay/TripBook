@@ -10,3 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+
+@Composable
+fun ImageLoader(@DrawableRes imageRes: Int, modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = imageRes),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    )
+}
