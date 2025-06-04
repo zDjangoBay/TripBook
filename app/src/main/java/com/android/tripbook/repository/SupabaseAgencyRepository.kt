@@ -3,6 +3,7 @@ package com.android.tripbook.repository
 import android.util.Log
 import com.android.tripbook.data.SupabaseConfig
 import com.android.tripbook.model.Agency
+import com.android.tripbook.model.Destination
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.exceptions.RestException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,13 +35,25 @@ data class SupabaseAgency(
 }
 
 @Serializable
-data class Destination(
+data class SupabaseDestination(
     val id: Int,
-    val agencyId: Int,
-    val agencyRating: Int,
-    val destinationName: String,
-    val destinationTarif: Double
-)
+    val agencyid: Int,
+    val agency_rating: Int,
+    val destination_name: String,
+    val destination_tarif: Double
+) {
+    fun toDestination(): Destination {
+        return Destination(
+            id = id,
+            agencyId = agencyid,
+            agencyRating = agency_rating,
+            destinationName = destination_name,
+            destinationTarif = destination_tarif
+        )
+    }
+}
+
+
 
 class SupabaseAgencyRepository {
     private val supabase = SupabaseConfig.client
@@ -91,13 +104,16 @@ class SupabaseAgencyRepository {
             Log.d(TAG, "Loading destinations for agency $agencyId...")
 
             // Load all destinations first, then filter in-memory
-            val allDestinations = supabase.from(DESTINATIONS_TABLE)
+            val allSupabaseDestinations = supabase.from(DESTINATIONS_TABLE)
                 .select()
-                .decodeList<Destination>()
+                .decodeList<SupabaseDestination>()
 
-            Log.d(TAG, "Loaded ${allDestinations.size} destinations from database: $allDestinations")
+            Log.d(TAG, "Loaded ${allSupabaseDestinations.size} destinations from database")
+            Log.d(TAG, "Raw Supabase destinations: $allSupabaseDestinations")
 
-            val filteredDestinations = allDestinations.filter { it.agencyId == agencyId }
+            val filteredDestinations = allSupabaseDestinations
+                .map { it.toDestination() }
+                .filter { it.agencyId == agencyId }
                 .sortedBy { it.destinationName }
 
             Log.d(TAG, "Filtered ${filteredDestinations.size} destinations for agency $agencyId: $filteredDestinations")
@@ -105,6 +121,8 @@ class SupabaseAgencyRepository {
             filteredDestinations
         } catch (e: Exception) {
             Log.e(TAG, "Error loading destinations: ${e.message}", e)
+            Log.e(TAG, "Exception type: ${e.javaClass.simpleName}")
+            e.printStackTrace()
             _error.value = "Failed to load destinations: ${e.message}"
             emptyList()
         } finally {
