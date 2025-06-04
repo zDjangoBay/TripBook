@@ -18,9 +18,13 @@ import androidx.compose.ui.unit.dp
 import com.android.tripbook.ViewModel.MockReviewViewModel
 import com.android.tripbook.ui.components.ReviewCard
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
+fun AllReviewsScreen(tripId: Int,
+                     onBack: () -> Unit,
+                     onLikeClicked: (reviewId: Int) -> Unit,
+                     onFlagClicked: (reviewId: Int) -> Unit) {
     val reviews = remember { MockReviewViewModel().getReviewsForTrip(tripId) }
 
     Scaffold(
@@ -48,7 +52,11 @@ fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
                 }
             } else {
                 items(reviews) { review ->
-                    ReviewCard(review = review)
+                    ReviewCard(
+                        review = review,
+                        onLikeClicked = { onLikeClicked(review.id) },
+                        onFlagClicked = { onFlagClicked(review.id) }
+                    )
                 }
             }
         }
