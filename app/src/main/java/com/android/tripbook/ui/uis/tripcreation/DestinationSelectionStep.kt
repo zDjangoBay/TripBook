@@ -34,26 +34,13 @@ fun DestinationSelectionStep(
     // Sample African destinations for autocomplete
     val africanDestinations = remember {
         listOf(
-            "Cairo, Egypt",
-            "Marrakech, Morocco",
-            "Cape Town, South Africa",
-            "Nairobi, Kenya",
-            "Lagos, Nigeria",
-            "Addis Ababa, Ethiopia",
-            "Casablanca, Morocco",
-            "Johannesburg, South Africa",
-            "Accra, Ghana",
-            "Tunis, Tunisia",
-            "Dar es Salaam, Tanzania",
-            "Kigali, Rwanda",
-            "Kampala, Uganda",
-            "Dakar, Senegal",
-            "Abidjan, Côte d'Ivoire",
-            "Lusaka, Zambia",
-            "Harare, Zimbabwe",
-            "Maputo, Mozambique",
-            "Windhoek, Namibia",
-            "Gaborone, Botswana"
+           "Douala",
+           "Mount Cameroon",
+           "Kribi Beach",
+           "Yaoundé",
+           "Buea",
+           "Waza National Park",
+           //Add more as needed
         )
     }
     

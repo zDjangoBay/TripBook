@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
 
             "CreateTrip" -> TripCreationFlowScreen(
                 tripViewModel = tripViewModel,
+                agencyViewModel = agencyViewModel,
                 onBackClick = { currentScreen = "MyTrips" },
                 onTripCreated = { currentScreen = "MyTrips" }
             )

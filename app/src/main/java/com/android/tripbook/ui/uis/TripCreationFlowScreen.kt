@@ -17,10 +17,12 @@ import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.ui.uis.tripcreation.*
 import com.android.tripbook.viewmodel.TripViewModel
+import com.android.tripbook.viewmodel.AgencyViewModel
 
 @Composable
 fun TripCreationFlowScreen(
     tripViewModel: TripViewModel,
+    agencyViewModel: AgencyViewModel,
     onBackClick: () -> Unit,
     onTripCreated: () -> Unit,
     modifier: Modifier = Modifier
@@ -70,19 +72,24 @@ fun TripCreationFlowScreen(
                             state = tripState,
                             onStateChange = { tripState = it }
                         )
-                        2 -> DateSelectionStep(
+                        2 -> AgencySelectionStep(
+                            state = tripState,
+                            onStateChange = { tripState = it },
+                            agencyViewModel = agencyViewModel
+                        )
+                        3 -> DateSelectionStep(
                             state = tripState,
                             onStateChange = { tripState = it }
                         )
-                        3 -> CompanionsStep(
+                        4 -> CompanionsStep(
                             state = tripState,
                             onStateChange = { tripState = it }
                         )
-                        4 -> TripSettingsStep(
+                        5 -> TripSettingsStep(
                             state = tripState,
                             onStateChange = { tripState = it }
                         )
-                        5 -> ReviewStep(
+                        6 -> ReviewStep(
                             state = tripState
                         )
                     }

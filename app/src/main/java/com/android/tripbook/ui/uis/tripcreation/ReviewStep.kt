@@ -74,6 +74,48 @@ fun ReviewStep(
                     title = "Destination",
                     content = state.destination.ifEmpty { "Not specified" }
                 )
+
+                // Agency Section
+                val agencyText = if (state.selectedAgency != null) {
+                    buildString {
+                        append(state.selectedAgency.agencyName)
+                        state.selectedAgency.agencyDescription?.let { description ->
+                            append("\n$description")
+                        }
+                        state.selectedAgency.agencyAddress?.let { address ->
+                            append("\n📍 $address")
+                        }
+                        state.selectedAgency.contactPhone?.let { phone ->
+                            append("\n📞 $phone")
+                        }
+                    }
+                } else {
+                    "No agency selected"
+                }
+
+                ReviewSection(
+                    icon = Icons.Default.Business,
+                    title = "Travel Agency",
+                    content = agencyText
+                )
+
+                // Bus Section
+                if (state.selectedBus != null) {
+                    val busText = buildString {
+                        append("🚌 ${state.selectedBus.busName}")
+                        append("\n📅 ${state.selectedBus.timeOfDeparture.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}")
+                        append("\n🕐 Departure: ${state.selectedBus.timeOfDeparture.format(DateTimeFormatter.ofPattern("HH:mm"))}")
+                        if (state.selectedBus.destinationName.isNotEmpty()) {
+                            append("\n📍 To: ${state.selectedBus.destinationName}")
+                        }
+                    }
+
+                    ReviewSection(
+                        icon = Icons.Default.DirectionsBus,
+                        title = "Selected Bus",
+                        content = busText
+                    )
+                }
                 
                 // Dates Section
                 val dateText = if (state.startDate != null && state.endDate != null) {
