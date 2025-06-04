@@ -1,62 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/souvenirScrollView"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFF8F8F8"
+    android:padding="16dp">
 
     <LinearLayout
-        android:id="@+id/souvenirLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <!-- Image Preview -->
+        <!-- App Title -->
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TRIP BOOK"
+            android:textAlignment="center"
+            android:textColor="#800080"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp"
+            android:background="#FFF8F8F8" />
 
-        <!-- Button to Select Image -->
+        <!-- Subheading: Souvenir -->
+        <TextView
+            android:id="@+id/souvenirHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Souvenir"
+            android:textColor="#800080"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:paddingBottom="4dp"/>
 
+        <!-- Instruction Text -->
+        <TextView
+            android:id="@+id/souvenirInstruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Capture pictures from your adventures and save them here as souvenirs."
+            android:textColor="#444444"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            android:paddingBottom="16dp"/>
+
+        <!-- Image View -->
         <ImageView
-            android:id="@+id/imagePreview"
+            android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginBottom="16dp"
-            android:background="#DDDDDD"
-            android:contentDescription="Preview"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:background="#E0E0E0"
+            android:contentDescription="Selected image" />
 
+        <!-- Choose Image Button -->
         <Button
-            android:id="@+id/selectImageBtn"
-            android:layout_width="match_parent"
+            android:id="@+id/chooseImageButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select Image from Gallery"
+            android:text="Choose Image"
+            android:backgroundTint="#800080"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#800080"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp" />
 
-        <!-- Description -->
-
-        <!-- Save Button -->
-
+        <!-- Description EditText -->
         <EditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
-            android:background="@android:drawable/edit_text"
-            android:hint="Enter a description..."
-            android:padding="10dp" />
+            android:minHeight="100dp"
+            android:hint="Write a short description"
+            android:textColor="#000000"
+            android:textColorHint="#808080"
+            android:background="@android:drawable/editbox_background"
+            android:padding="12dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Save Button -->
         <Button
-            android:id="@+id/saveBtn"
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#800080"
             android:text="Save Souvenir"
+            android:backgroundTint="#800080"
             android:textColor="#FFFFFF" />
 
-        <!-- Dynamic List of Souvenirs will be added below -->
-
+        <!-- Placeholder for Saved Souvenirs -->
+        <LinearLayout
+            android:id="@+id/savedSouvenirsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp" />
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</ScrollView>

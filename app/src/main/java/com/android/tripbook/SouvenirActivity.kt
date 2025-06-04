@@ -1,10 +1,10 @@
 package com.android.tripbook
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+//import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+//import androidx.core.view.ViewCompat
+//import androidx.core.view.WindowInsetsCompat
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -18,6 +18,9 @@ class SouvenirActivity : AppCompatActivity() {
     private lateinit var descriptionEditText: EditText
     private lateinit var saveBtn: Button
     private lateinit var souvenirLayout: LinearLayout
+    private lateinit var souvenirInstruction: TextView
+    private lateinit var souvenirHeading: TextView
+    private lateinit var appTitle: TextView
 
     private var selectedImageUri: Uri? = null
     private val IMAGE_PICK_CODE = 1001
@@ -26,11 +29,14 @@ class SouvenirActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_souvenir)
 
-        imagePreview = findViewById(R.id.imagePreview)
-        selectImageBtn = findViewById(R.id.selectImageBtn)
+        imagePreview = findViewById(R.id.imageView)
+        selectImageBtn = findViewById(R.id.chooseImageButton)
         descriptionEditText = findViewById(R.id.descriptionEditText)
-        saveBtn = findViewById(R.id.saveBtn)
-        souvenirLayout = findViewById(R.id.souvenirLayout)
+        saveBtn = findViewById(R.id.saveButton)
+        souvenirLayout = findViewById(R.id.savedSouvenirsLayout)
+        souvenirInstruction = findViewById(R.id.souvenirInstruction)
+        souvenirHeading  = findViewById(R.id.souvenirHeading)
+        appTitle = findViewById(R.id.souvenirHeading)
 
         selectImageBtn.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
