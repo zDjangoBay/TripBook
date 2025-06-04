@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                         // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 3.8480, longitude = 11.5021, name = "Yaounde, Cameroon", address = "Yaounde, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 4,
-                        budget = 2400.0, // Ensure budget is Double
+                        budget = 2400,
                         status = TripStatus.PLANNED,
                         type = "Safari",
                         description = "An amazing safari adventure through Yaounde and Cameroon",
@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 4.1481, longitude = 9.2323, name = "Buea, Cameroon", address = "Buea, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 2,
-                        budget = 1800.0, // Ensure budget is Double
+                        budget = 1800,
                         status = TripStatus.ACTIVE,
                         itinerary = listOf()
                     ),
@@ -96,7 +96,7 @@ class MainActivity : ComponentActivity() {
                         // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 5.9622, longitude = 10.1587, name = "Bamenda, Cameroon", address = "Bamenda, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 6,
-                        budget = 3200.0, // Ensure budget is Double
+                        budget = 3200, 
                         status = TripStatus.COMPLETED,
                         itinerary = listOf()
                     )
