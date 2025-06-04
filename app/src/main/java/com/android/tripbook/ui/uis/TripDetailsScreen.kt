@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext // Added import
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,15 +32,17 @@ import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.android.tripbook.ui.components.TripMapView // Import TripMapView
-import com.android.tripbook.service.GoogleMapsService // Import GoogleMapsService
-import com.android.tripbook.service.NominatimService // NEW: Import NominatimService
-import kotlinx.coroutines.launch // Required for coroutine scope
-import com.google.android.gms.maps.CameraUpdateFactory // Required for map camera animation
-import kotlinx.coroutines.async // For parallel route fetching
-import kotlinx.coroutines.awaitAll // For parallel route fetching
+import com.android.tripbook.ui.components.TripMapView
+import com.android.tripbook.service.GoogleMapsService
+import com.android.tripbook.service.NominatimService
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope // <--- ADDED THIS IMPORT
+import com.google.android.gms.maps.CameraUpdateFactory
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import com.android.tripbook.service.PlaceResult
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripDetailsScreen(
     trip: Trip,
@@ -50,8 +52,22 @@ fun TripDetailsScreen(
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
     val context = LocalContext.current
-    val googleMapsService = remember(apiKey) { GoogleMapsService(context, apiKey) } // Initialize GoogleMapsService
+    val googleMapsService = remember(apiKey) { GoogleMapsService(context, apiKey) }
     val nominatimService = remember { NominatimService() }
+
+    // Coroutine scope for launching suspend functions within this Composable
+    val scope = rememberCoroutineScope()
+
+    // States to hold search results for restaurants
+    var nearbyRestaurants by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
+    var isLoadingRestaurants by remember { mutableStateOf(false) }
+    var restaurantError by remember { mutableStateOf<String?>(null) }
+
+    // States to hold search results for gas stations
+    var nearbyGasStations by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
+    var isLoadingGasStations by remember { mutableStateOf(false) }
+    var gasStationError by remember { mutableStateOf<String?>(null) }
+
 
     Box(
         modifier = Modifier
@@ -170,9 +186,25 @@ fun TripDetailsScreen(
                             .padding(20.dp)
                     ) {
                         when (selectedTab) {
-                            "Overview" -> OverviewTab(trip)
+                            "Overview" -> OverviewTab(
+                                trip = trip,
+                                googleMapsService = googleMapsService,
+                                scope = scope,
+                                nearbyRestaurants = nearbyRestaurants,
+                                setNearbyRestaurants = { nearbyRestaurants = it },
+                                isLoadingRestaurants = isLoadingRestaurants,
+                                setIsLoadingRestaurants = { isLoadingRestaurants = it },
+                                restaurantError = restaurantError,
+                                setRestaurantError = { restaurantError = it },
+                                nearbyGasStations = nearbyGasStations,
+                                setNearbyGasStations = { nearbyGasStations = it },
+                                isLoadingGasStations = isLoadingGasStations,
+                                setIsLoadingGasStations = { isLoadingGasStations = it },
+                                gasStationError = gasStationError,
+                                setGasStationError = { gasStationError = it }
+                            )
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
-                            "Map" -> MapTab(trip, googleMapsService, nominatimService) // NEW: Pass nominatimService
+                            "Map" -> MapTab(trip, googleMapsService, nominatimService)
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
@@ -183,7 +215,7 @@ fun TripDetailsScreen(
 }
 
 @Composable
-private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimService: NominatimService) { // NEW: Add nominatimService parameter
+private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimService: NominatimService) {
     var showRoutes by remember { mutableStateOf(true) }
     var mapType by remember { mutableStateOf(MapType.NORMAL) }
 
@@ -263,14 +295,229 @@ private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimSe
 
         if (trip.itinerary.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
-            MapLegend() // MapLegend is now defined in this file
+            MapLegend()
         }
     }
 }
 
-// =======================================================
-// MOVED MapLegend and LegendItem TO TripDetailsScreen.kt
-// =======================================================
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun OverviewTab(
+    trip: Trip,
+    googleMapsService: GoogleMapsService,
+    scope: CoroutineScope, // Pass CoroutineScope
+    nearbyRestaurants: List<PlaceResult>,
+    setNearbyRestaurants: (List<PlaceResult>) -> Unit,
+    isLoadingRestaurants: Boolean,
+    setIsLoadingRestaurants: (Boolean) -> Unit,
+    restaurantError: String?,
+    setRestaurantError: (String?) -> Unit,
+    nearbyGasStations: List<PlaceResult>,
+    setNearbyGasStations: (List<PlaceResult>) -> Unit,
+    isLoadingGasStations: Boolean,
+    setIsLoadingGasStations: (Boolean) -> Unit,
+    gasStationError: String?,
+    setGasStationError: (String?) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Trip Summary",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    DetailItem(icon = "📅", text = "8 days, 7 nights")
+                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
+                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
+                    DetailItem(icon = "🍽️", text = "All meals included")
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Travelers",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    TravelerItem(
+                        initials = "JD",
+                        name = "Fontcha Steve (Trip Leader)",
+                        color = Color(0xFF667EEA)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TravelerItem(
+                        initials = "JS",
+                        name = "Chi Rosita",
+                        color = Color(0xFF764BA2)
+                    )
+                }
+            }
+        }
+
+        // NEW SECTION: Nearby Amenities Search and Display
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Nearby Amenities",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    // Find Nearby Restaurants Button
+                    Button(
+                        onClick = {
+                            trip.destinationCoordinates?.let { coords ->
+                                setIsLoadingRestaurants(true)
+                                setRestaurantError(null)
+                                scope.launch {
+                                    try {
+                                        val results = googleMapsService.searchNearbyRestaurants(
+                                            latitude = coords.latitude,
+                                            longitude = coords.longitude
+                                        )
+                                        setNearbyRestaurants(results)
+                                        // Optional: Print to Logcat for debugging
+                                        println("Found ${results.size} nearby restaurants for ${trip.destination}")
+                                        results.forEach { println(" - ${it.name} (${it.address})") }
+                                    } catch (e: Exception) {
+                                        setRestaurantError("Failed to load restaurants: ${e.message}")
+                                        println("Error searching restaurants: ${e.message}")
+                                    } finally {
+                                        setIsLoadingRestaurants(false)
+                                    }
+                                }
+                            } ?: run {
+                                setRestaurantError("Destination coordinates not available for search.")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isLoadingRestaurants
+                    ) {
+                        if (isLoadingRestaurants) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                        } else {
+                            Text("Find Nearby Restaurants")
+                        }
+                    }
+
+                    // Display Restaurants
+                    if (isLoadingRestaurants) {
+                        Text("Searching for restaurants...", modifier = Modifier.padding(top = 8.dp))
+                    } else if (restaurantError != null) {
+                        Text("Error: $restaurantError", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+                    } else if (nearbyRestaurants.isNotEmpty()) {
+                        Text("Restaurants Found:", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                        nearbyRestaurants.take(5).forEach { // Show top 5 for brevity
+                            Text("- ${it.name} (${it.address})", style = MaterialTheme.typography.bodySmall)
+                        }
+                        if (nearbyRestaurants.size > 5) {
+                            Text("... and ${nearbyRestaurants.size - 5} more.", style = MaterialTheme.typography.bodySmall)
+                        }
+                    } else {
+                        Text("No restaurants found yet. Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Find Nearby Gas Stations Button
+                    Button(
+                        onClick = {
+                            trip.destinationCoordinates?.let { coords ->
+                                setIsLoadingGasStations(true)
+                                setGasStationError(null)
+                                scope.launch {
+                                    try {
+                                        val results = googleMapsService.searchNearbyGasStations(
+                                            latitude = coords.latitude,
+                                            longitude = coords.longitude
+                                        )
+                                        setNearbyGasStations(results)
+                                        // Optional: Print to Logcat for debugging
+                                        println("Found ${results.size} nearby gas stations for ${trip.destination}")
+                                        results.forEach { println(" - ${it.name} (${it.address})") }
+                                    } catch (e: Exception) {
+                                        setGasStationError("Failed to load gas stations: ${e.message}")
+                                        println("Error searching gas stations: ${e.message}")
+                                    } finally {
+                                        setIsLoadingGasStations(false)
+                                    }
+                                }
+                            } ?: run {
+                                setGasStationError("Destination coordinates not available for search.")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = !isLoadingGasStations
+                    ) {
+                        if (isLoadingGasStations) {
+                            CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                        } else {
+                            Text("Find Nearby Gas Stations")
+                        }
+                    }
+
+                    // Display Gas Stations
+                    if (isLoadingGasStations) {
+                        Text("Searching for gas stations...", modifier = Modifier.padding(top = 8.dp))
+                    } else if (gasStationError != null) {
+                        Text("Error: $gasStationError", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
+                    } else if (nearbyGasStations.isNotEmpty()) {
+                        Text("Gas Stations Found:", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                        nearbyGasStations.take(5).forEach { // Show top 5 for brevity
+                            Text("- ${it.name} (${it.address})", style = MaterialTheme.typography.bodySmall)
+                        }
+                        if (nearbyGasStations.size > 5) {
+                            Text("... and ${nearbyGasStations.size - 5} more.", style = MaterialTheme.typography.bodySmall)
+                        }
+                    } else {
+                        Text("No gas stations found yet. Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                    }
+                }
+            }
+        }
+        // End of NEW SECTION
+    }
+}
+
+// Keep all other composables (MapLegend, LegendItem, ItineraryTab, ExpensesTab, DetailItem, TravelerItem, BudgetRow, ExpenseItem) unchanged below this point.
 @Composable
 private fun MapLegend() {
     Card(
@@ -341,74 +588,6 @@ private fun LegendItem(
             fontSize = 12.sp,
             color = Color(0xFF64748B)
         )
-    }
-}
-
-// Keep all other composables (OverviewTab, ItineraryTab, ExpensesTab, DetailItem, TravelerItem, BudgetRow, ExpenseItem) unchanged below this point.
-@Composable
-private fun OverviewTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Trip Summary",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Travelers",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    TravelerItem(
-                        initials = "JD",
-                        name = "Fontcha Steve (Trip Leader)",
-                        color = Color(0xFF667EEA)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Chi Rosita",
-                        color = Color(0xFF764BA2)
-                    )
-                }
-            }
-        }
     }
 }
 
