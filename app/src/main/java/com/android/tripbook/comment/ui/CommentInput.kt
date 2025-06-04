@@ -11,10 +11,11 @@ import androidx.compose.ui.tooling.preview.Preview
 fun CommentInput(onPost: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
 
-    Row(modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth()) {
-
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
         TextField(
             value = text,
             onValueChange = { text = it },
@@ -26,8 +27,11 @@ fun CommentInput(onPost: (String) -> Unit) {
 
         Button(
             onClick = {
-                onPost(text)
-                text = ""
+                val trimmed = text.trim()
+                if (trimmed.isNotEmpty()) {
+                    onPost(trimmed)
+                    text = ""
+                }
             },
             enabled = text.isNotBlank()
         ) {
@@ -39,5 +43,5 @@ fun CommentInput(onPost: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewCommentInput() {
-    CommentInput(onPost = { /* do nothing */ })
+    CommentInput(onPost = { /* Preview only */ })
 }
