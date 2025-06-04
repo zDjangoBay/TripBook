@@ -13,6 +13,7 @@ import com.android.tripbook.ui.screens.booking.BookingScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class BookingActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

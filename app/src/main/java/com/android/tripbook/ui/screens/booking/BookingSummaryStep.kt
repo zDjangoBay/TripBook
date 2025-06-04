@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.model.Agency
 import com.android.tripbook.model.Booking
 import com.android.tripbook.model.Trip
 import java.time.format.DateTimeFormatter
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter
 fun BookingSummaryStep(
     trip: Trip?,
     booking: Booking?,
+    selectedAgency: Agency?,
     totalPrice: Double,
     termsAgreed: Boolean,
     onTermsAgreedChange: (Boolean) -> Unit,

@@ -13,7 +13,9 @@ data class Booking(
     val contactPhone: String = "",
     val specialRequirements: String = "",
     val selectedOptions: List<TripOption> = emptyList(),
-    val agreedToTerms: Boolean = false
+    val agreedToTerms: Boolean = false,
+    val agencyId: Int? = null,
+    val departureTime: String = ""
 )
 
 data class TripOption(
