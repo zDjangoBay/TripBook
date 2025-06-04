@@ -353,17 +353,44 @@ private fun CommentsHeader(commentsCount: Int) {
 }
 
 @Composable
-private fun CommentsCarousel(comments: List<Comment>, commentViewModel: MockCommentViewModel, reviewId: Int) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        items(comments) { comment ->
-            CommentCard(
-                comment = comment,
-                onReactionSelected = { emoji ->
-                    commentViewModel.addReaction(reviewId, comment.id, emoji)
+private fun CommentsCarousel(
+    comments: List<Comment>, 
+    commentViewModel: MockCommentViewModel, 
+    reviewId: Int
+) {
+    var replyingToComment by remember { mutableStateOf<Comment?>(null) }
+    
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Comments list
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(comments) { comment ->
+                CommentCard(
+                    comment = comment,
+                    onReactionSelected = { emoji ->
+                        commentViewModel.addReaction(reviewId, comment.id, emoji)
+                    },
+                    onReplySelected = { selectedComment ->
+                        replyingToComment = selectedComment
+                    }
+                )
+            }
+        }
+        
+        // Reply input if replying to a comment
+        replyingToComment?.let { comment ->
+            Spacer(modifier = Modifier.height(8.dp))
+            com.android.tripbook.ui.components.ReplyInput(
+                parentAuthor = comment.authorName,
+                onSendReply = { replyText: String ->
+                    commentViewModel.addReply(reviewId, comment.id, replyText)
+                    replyingToComment = null
+                },
+                onCancel = {
+                    replyingToComment = null
                 }
             )
         }
