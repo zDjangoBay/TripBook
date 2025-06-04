@@ -1,17 +1,42 @@
 package com.android.tripbook.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application // <-- NEW IMPORT: Required for AndroidViewModel
+import android.location.Geocoder // <-- NEW IMPORT: Required for Geocoder
+import android.location.Location // <-- NEW IMPORT: Required for Location object
+import androidx.lifecycle.AndroidViewModel // <-- CHANGE: Extend AndroidViewModel instead of ViewModel
 import androidx.compose.runtime.*
-import com.android.tripbook.model.Trip
-import com.android.tripbook.model.MapRegion
-import com.android.tripbook.data.SampleTrips // Assuming SampleTrips now includes location data
+import androidx.lifecycle.viewModelScope // <-- NEW IMPORT: For viewModelScope
+import com.android.tripbook.model.Trip // Assuming core:model
+import com.android.tripbook.model.MapRegion // Assuming core:model
+import com.android.tripbook.data.SampleTrips // Assuming data module
+import com.android.tripbook.utils.LocationUtils // Assuming core:utils or your current utils package
+import kotlinx.coroutines.Dispatchers // <-- NEW IMPORT: For Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext // <-- NEW IMPORT: For withContext
+import java.util.Locale // <-- NEW IMPORT: For Locale for Geocoder
 
-class MapViewModel : ViewModel() {
+// CHANGE: MapViewModel now extends AndroidViewModel
+class MapViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _allTrips = mutableStateOf(SampleTrips.get())
-    val allTrips: State<List<Trip>> = _allTrips
+    // NEW: Instance of LocationUtils, initialized with application context
+    private val locationUtils = LocationUtils(application.applicationContext)
+    // NEW: Geocoder instance for reverse geocoding (Lat/Lon to address)
+    private val geocoder = Geocoder(application.applicationContext, Locale.getDefault())
 
-    private val _filteredTrips = mutableStateOf(_allTrips.value)
+    // NEW: State for the user's current raw location
+    private val _userLocation = mutableStateOf<Location?>(null)
+    val userLocation: State<Location?> = _userLocation
+
+    // NEW: State for the user's current user-friendly address
+    private val _userLocationAddress = mutableStateOf<String?>(null)
+    val userLocationAddress: State<String?> = _userLocationAddress
+
+    // _allTrips is now a mutableStateListOf so Compose observes additions/removals
+    private val _allTrips = mutableStateListOf<Trip>().apply { addAll(SampleTrips.get()) }
+    val allTrips: List<Trip> get() = _allTrips // Exposed as immutable List
+
+    // Corrected typo here: _filteredTrips
+    private val _filteredTrips = mutableStateOf(_allTrips.toList()) // .toList() for initial state
     val filteredTrips: State<List<Trip>> = _filteredTrips
 
     private val _mapRegion = mutableStateOf(MapRegion.defaultRegion())
@@ -26,6 +51,39 @@ class MapViewModel : ViewModel() {
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
+    // NEW: Function to update the user's current location and resolve its address
+    fun updateUserLocation(location: Location?) {
+        _userLocation.value = location
+        // Resolve address in a background coroutine
+        viewModelScope.launch {
+            if (location != null) {
+                _userLocationAddress.value = withContext(Dispatchers.IO) { // Perform geocoding on IO dispatcher
+                    try {
+                        // Use getFromLocation (deprecated in API 33+, but still common)
+                        // For API 33+, consider Geocoder.getFromLocation(latitude, longitude, maxResults, Geocoder.GeocodeListener)
+                        // Or reverse geocoding via Places API if more robust results are needed.
+                        @Suppress("DEPRECATION") // Suppress deprecation warning for getFromLocation
+                        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        if (!addresses.isNullOrEmpty()) {
+                            val address = addresses[0]
+                            val city = address.locality ?: address.subAdminArea // Prefer city, fallback to subAdminArea
+                            val country = address.countryName
+                            if (city != null && country != null) "$city, $country" else address.getAddressLine(0) // Combine city, country or full address
+                        } else {
+                            "Unknown Location" // No address found
+                        }
+                    } catch (e: Exception) {
+                        // Log the exception for debugging
+                        // Timber.e(e, "Error resolving address for location: $location")
+                        "Location unavailable" // Handle network/service issues or no geocoding service
+                    }
+                }
+            } else {
+                _userLocationAddress.value = null // Clear address if location is null
+            }
+        }
+    }
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         filterTrips(query)
@@ -33,15 +91,22 @@ class MapViewModel : ViewModel() {
 
     private fun filterTrips(query: String) {
         _filteredTrips.value = if (query.isEmpty()) {
-            _allTrips.value
+            _allTrips.toList() // Use .toList() to ensure a new list instance for state updates
         } else {
             if (query.startsWith("region:")) {
                 val actualRegion = query.substringAfter("region:")
-                _allTrips.value.filter { trip ->
+                _allTrips.filter { trip ->
                     trip.region?.equals(actualRegion, ignoreCase = true) == true
                 }
-            } else {
-                _allTrips.value.filter { trip ->
+            } else if (query == "near_me" && _userLocation.value != null) { // "NEAR ME" FILTER LOGIC
+                val userLat = _userLocation.value!!.latitude
+                val userLon = _userLocation.value!!.longitude
+                // Filter trips within a 50 km radius (adjust this radius as needed)
+                _allTrips.filter { trip ->
+                    locationUtils.calculateDistance(userLat, userLon, trip.latitude, trip.longitude) <= 50 // Distance in kilometers
+                }
+            } else { // GENERAL TEXT SEARCH LOGIC
+                _allTrips.filter { trip ->
                     trip.title.contains(query, ignoreCase = true) ||
                             trip.description.contains(query, ignoreCase = true) ||
                             trip.city.contains(query, ignoreCase = true) ||
@@ -49,14 +114,16 @@ class MapViewModel : ViewModel() {
                 }
             }
         }
-
-        // This is the correct and ONLY call to updateMapRegionForTrips within filterTrips
         updateMapRegionForTrips(_filteredTrips.value)
     }
 
-    // The duplicate section was here. It's now removed.
-
-
+    // Function to add a new trip (used by AddTrip feature)
+    fun addTrip(newTrip: Trip) {
+        if (!_allTrips.contains(newTrip)) { // Avoid adding duplicates if trip ID is not unique
+            _allTrips.add(newTrip)
+            filterTrips(_searchQuery.value) // Re-filter to include the new trip if it matches current query
+        }
+    }
 
     fun selectTrip(trip: Trip?) {
         _selectedTrip.value = trip
@@ -65,9 +132,9 @@ class MapViewModel : ViewModel() {
             _mapRegion.value = MapRegion(
                 centerLatitude = it.latitude,
                 centerLongitude = it.longitude,
-                latitudeDelta = 0.5,
+                latitudeDelta = 0.5, // Smaller delta for closer zoom
                 longitudeDelta = 0.5,
-                zoomLevel = 12f
+                zoomLevel = 12f // Closer zoom
             )
         }
     }
@@ -78,9 +145,9 @@ class MapViewModel : ViewModel() {
 
     fun resetFilters() {
         _searchQuery.value = ""
-        _filteredTrips.value = _allTrips.value
+        _filteredTrips.value = _allTrips.toList() // Reset to all original trips
         _selectedTrip.value = null
-        updateMapRegionForTrips(_allTrips.value)
+        updateMapRegionForTrips(_allTrips.toList()) // Reset map region to all trips
     }
 
     private fun updateMapRegionForTrips(trips: List<Trip>) {
@@ -91,20 +158,18 @@ class MapViewModel : ViewModel() {
         _mapRegion.value = MapRegion(
             centerLatitude = latitude,
             centerLongitude = longitude,
-            latitudeDelta = 1.0,
+            latitudeDelta = 1.0, // Default delta for general region moves
             longitudeDelta = 1.0,
             zoomLevel = zoom
         )
     }
 
-    // Get trips by continent/region for filtering
     fun getTripsByRegion(): Map<String, List<Trip>> {
-        return _allTrips.value.groupBy { it.region ?: "Other" }
+        return _allTrips.groupBy { it.region ?: "Other" }
     }
 
-    // Get popular destinations (cities with multiple trips)
     fun getPopularDestinations(): List<Pair<String, Int>> {
-        return _allTrips.value
+        return _allTrips
             .groupBy { "${it.city}, ${it.country}" }
             .map { (destination, trips) -> destination to trips.size }
             .sortedByDescending { it.second }
@@ -112,9 +177,6 @@ class MapViewModel : ViewModel() {
 
     fun updateMapRegion(newMapRegion: MapRegion) {
         _mapRegion.value = newMapRegion
-        // Optionally, re-filter trips based on the new map bounds if you only want to show
-        // trips that are currently visible on the map. This can be complex if you also
-        // have text-based filtering. For now, we'll keep it simple, but this is a point
-        // for future optimization with large datasets.
+        // No additional filtering based on map bounds here for now, as planned.
     }
 }

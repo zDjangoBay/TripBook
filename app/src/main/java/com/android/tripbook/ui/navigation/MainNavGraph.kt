@@ -61,7 +61,8 @@ fun MainNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onAddTripClick = {}
             )
         }
         composable("profile") {
