@@ -1230,7 +1230,7 @@ private fun validateForm(
     }
 
     if (tripType.isEmpty()) {
-        setDateError("Please select a trip type") // This should probably be setTripTypeError or similar
+        setDateError("Please select a trip type") 
         isValid = false
     }
 
