@@ -4,10 +4,8 @@ package com.android.tripbook.service
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location as AndroidLocation
 import androidx.core.content.ContextCompat
 import com.android.tripbook.model.Location
-import com.android.tripbook.model.RouteInfo
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -20,8 +18,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -31,9 +27,6 @@ import kotlin.coroutines.suspendCoroutine
 import android.annotation.SuppressLint
 
 private const val PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-private const val PLACE_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
-private const val PLACE_PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
-private const val DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json"
 
 // Data classes for Places API responses
 @Serializable
@@ -307,46 +300,6 @@ class GoogleMapsService(
         }
     }
 
-    /**
-     * Request location updates
-     */
-    @SuppressLint("MissingPermission")
-    suspend fun requestLocationUpdates(
-        locationCallback: LocationCallback,
-        intervalMs: Long = 10000,
-        fastestIntervalMs: Long = 5000
-    ): Boolean {
-        return withContext(Dispatchers.IO) {
-            if (!hasLocationPermission()) {
-                return@withContext false
-            }
-
-            try {
-                val locationRequest = LocationRequest.create().apply {
-                    interval = intervalMs
-                    fastestInterval = fastestIntervalMs
-                    priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                }
-
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    null
-                )
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-    }
-
-    /**
-     * Stop location updates
-     */
-    fun stopLocationUpdates(locationCallback: LocationCallback) {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
@@ -357,10 +310,6 @@ class GoogleMapsService(
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
     }
-
-    // ===========================================
-    // PLACES API SERVICES
-    // ===========================================
 
     /**
      * Get autocomplete suggestions for places
@@ -462,254 +411,6 @@ class GoogleMapsService(
     }
 
     /**
-     * Get detailed information about a specific place using Web API
-     */
-    suspend fun getPlaceDetailsWeb(placeId: String): PlaceDetails? = withContext(Dispatchers.IO) {
-        try {
-            val fields = "place_id,name,formatted_address,formatted_phone_number,website," +
-                    "rating,price_level,reviews,photos,opening_hours,geometry,types"
-            val urlString = "$PLACE_DETAILS_URL?place_id=$placeId&fields=$fields&key=$apiKey"
-
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
-
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
-
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val detailsResponse = json.decodeFromString<PlaceDetailsResponse>(response)
-
-                if (detailsResponse.status == "OK" && detailsResponse.result != null) {
-                    return@withContext detailsResponse.result.toPlaceDetails()
-                } else {
-                    throw Exception("Place Details API error: ${detailsResponse.status}")
-                }
-            } else {
-                throw Exception("HTTP error: $responseCode")
-            }
-        } catch (e: Exception) {
-            println("Failed to get place details: ${e.message}")
-            return@withContext null
-        }
-    }
-
-    /**
-     * Get photo URL for a place photo reference
-     */
-    fun getPhotoUrl(photoReference: String, maxWidth: Int = 400): String {
-        return "$PLACE_PHOTO_URL?photoreference=$photoReference&maxwidth=$maxWidth&key=$apiKey"
-    }
-
-    // ===========================================
-    // DIRECTIONS API SERVICES
-    // ===========================================
-
-    /**
-     * Get route between two points
-     */
-    suspend fun getDirections(origin: LatLng, destination: LatLng): RouteInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val originStr = "${origin.latitude},${origin.longitude}"
-                val destinationStr = "${destination.latitude},${destination.longitude}"
-
-                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=$originStr" +
-                        "&destination=$destinationStr" +
-                        "&key=$apiKey"
-
-                val request = Request.Builder().url(url).build()
-                val response = httpClient.newCall(request).execute()
-                val jsonResponse = response.body?.string()
-
-                if (jsonResponse != null) {
-                    parseDirectionsResponse(jsonResponse)
-                } else null
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    /**
-     * Get directions with multiple waypoints
-     */
-    suspend fun getDirectionsWithWaypoints(
-        origin: LatLng,
-        destination: LatLng,
-        waypoints: List<LatLng>
-    ): RouteInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val originStr = "${origin.latitude},${origin.longitude}"
-                val destinationStr = "${destination.latitude},${destination.longitude}"
-                val waypointsStr = waypoints.joinToString("|") { "${it.latitude},${it.longitude}" }
-
-                var url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=$originStr" +
-                        "&destination=$destinationStr"
-
-                if (waypoints.isNotEmpty()) {
-                    url += "&waypoints=$waypointsStr"
-                }
-                url += "&key=$apiKey"
-
-                val request = Request.Builder().url(url).build()
-                val response = httpClient.newCall(request).execute()
-                val jsonResponse = response.body?.string()
-
-                if (jsonResponse != null) {
-                    parseDirectionsResponse(jsonResponse)
-                } else null
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    private fun parseDirectionsResponse(jsonResponse: String): RouteInfo? {
-        return try {
-            val json = JSONObject(jsonResponse)
-            val routes = json.getJSONArray("routes")
-
-            if (routes.length() > 0) {
-                val route = routes.getJSONObject(0)
-                val legs = route.getJSONArray("legs")
-                val leg = legs.getJSONObject(0)
-
-                val distance = leg.getJSONObject("distance").getString("text")
-                val duration = leg.getJSONObject("duration").getString("text")
-                val polyline = route.getJSONObject("overview_polyline").getString("points")
-
-                RouteInfo(
-                    distance = distance,
-                    duration = duration,
-                    polyline = polyline
-                )
-            } else null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // ===========================================
-    // DISTANCE MATRIX API SERVICES
-    // ===========================================
-
-    /**
-     * Calculate distances and travel times between multiple origins and destinations
-     */
-    suspend fun getDistanceMatrix(
-        origins: List<LatLng>,
-        destinations: List<LatLng>,
-        travelMode: String = "driving"
-    ): DistanceMatrixResult? = withContext(Dispatchers.IO) {
-        try {
-            val originsStr = origins.joinToString("|") { "${it.latitude},${it.longitude}" }
-            val destinationsStr = destinations.joinToString("|") { "${it.latitude},${it.longitude}" }
-
-            val urlString = "$DISTANCE_MATRIX_URL?" +
-                    "origins=${URLEncoder.encode(originsStr, "UTF-8")}" +
-                    "&destinations=${URLEncoder.encode(destinationsStr, "UTF-8")}" +
-                    "&mode=$travelMode" +
-                    "&key=$apiKey"
-
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
-
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
-
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val matrixResponse = json.decodeFromString<DistanceMatrixResponse>(response)
-
-                if (matrixResponse.status == "OK") {
-                    DistanceMatrixResult(
-                        origins = matrixResponse.origin_addresses,
-                        destinations = matrixResponse.destination_addresses,
-                        elements = matrixResponse.rows.map { row ->
-                            row.elements.map { element ->
-                                DistanceElement(
-                                    distance = element.distance?.let {
-                                        DistanceInfo(it.text, it.value)
-                                    },
-                                    duration = element.duration?.let {
-                                        DurationInfo(it.text, it.value)
-                                    },
-                                    status = element.status
-                                )
-                            }
-                        }
-                    )
-                } else {
-                    null
-                }
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // ===========================================
-    // UTILITY FUNCTIONS
-    // ===========================================
-
-    /**
-     * Decode polyline for map display
-     */
-    fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = mutableListOf<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lat += dlat
-
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lng += dlng
-
-            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(p)
-        }
-
-        return poly
-    }
-
-    // ===========================================
-    // SPECIALIZED SEARCH FUNCTIONS
-    // ===========================================
-
-    /**
      * Search for nearby attractions around a location
      */
     suspend fun searchNearbyAttractions(
@@ -741,23 +442,6 @@ class GoogleMapsService(
             location = location,
             radius = radius,
             type = "restaurant"
-        )
-    }
-
-    /**
-     * Search for hotels near a location
-     */
-    suspend fun searchNearbyHotels(
-        latitude: Double,
-        longitude: Double,
-        radius: Int = 10000
-    ): List<PlaceResult> {
-        val location = "$latitude,$longitude"
-        return searchPlaces(
-            query = "hotel",
-            location = location,
-            radius = radius,
-            type = "lodging"
         )
     }
 
