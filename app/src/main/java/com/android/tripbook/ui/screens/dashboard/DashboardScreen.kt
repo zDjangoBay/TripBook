@@ -30,6 +30,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.*
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -241,6 +243,9 @@ fun DashboardScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .semantics { 
+                contentDescription = "Trip booking dashboard with search and filter options"
+            }
     ) {        // Header with filter count (using debounced search for consistency)
         val activeFilterCount = listOf(
             selectedCategory != "All",
@@ -252,7 +257,10 @@ fun DashboardScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics { 
+                    contentDescription = "Header section with app title and active filters indicator"
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -260,7 +268,12 @@ fun DashboardScreen(
                 text = "Discover Amazing Trips",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary            )
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.semantics {
+                    heading()
+                    contentDescription = "App title: Discover Amazing Trips"
+                }
+            )
             
             AnimatedVisibility(
                 visible = activeFilterCount > 0,
@@ -278,7 +291,12 @@ fun DashboardScreen(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
-                    modifier = Modifier.padding(start = 8.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .semantics { 
+                            contentDescription = "$activeFilterCount active filters applied"
+                            role = Role.Button
+                        }
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -286,7 +304,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Active filters",
+                            contentDescription = null, // Decorative icon, content description is on the parent
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -322,7 +340,10 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .semantics { 
+                        contentDescription = "Current location is $currentLocation, trips from this location will be prioritized"
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -335,7 +356,7 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Current Location",
+                        contentDescription = null, // Decorative icon
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -356,18 +377,22 @@ fun DashboardScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = null // Decorative icon, screen reader will announce text field role
                 )
-            },            trailingIcon = {
+            },
+            trailingIcon = {
                 if (searchQuery.isNotBlank()) {
                     IconButton(
                         onClick = {
                             searchQuery = ""
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Clear search query"
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear Search",
+                            contentDescription = null, // Content description is on the button
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -375,11 +400,14 @@ fun DashboardScreen(
                     IconButton(
                         onClick = {
                             searchQuery = currentLocation
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Use current location $currentLocation as search query"
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Use Current Location",
+                            contentDescription = null, // Content description is on the button
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -387,7 +415,11 @@ fun DashboardScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),            shape = RoundedCornerShape(16.dp)
+                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Search text field for destination names and locations"
+                },
+            shape = RoundedCornerShape(16.dp)
         )        // Active Filters and Results Count (using debounced search for consistency)
         val hasActiveFilters = selectedCategory != "All" || 
             priceRangeStart != minPrice.toFloat() || 
@@ -409,7 +441,10 @@ fun DashboardScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        contentDescription = "Filter results section showing ${filteredTrips.size} trips found and clear all option"
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -430,9 +465,15 @@ fun DashboardScreen(
                     Text(
                         text = "$count trips found",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Search results: $count trips found matching current filters"
+                            liveRegion = LiveRegionMode.Polite
+                        }
                     )
-                }                TextButton(
+                }
+                
+                TextButton(
                     onClick = {
                         // Clear all filters and preferences
                         searchQuery = ""
@@ -442,11 +483,14 @@ fun DashboardScreen(
                         priceRangeEnd = maxPrice.toFloat()
                         selectedDuration = "All"
                         clearAllFilterPreferences()
+                    },
+                    modifier = Modifier.semantics {
+                        contentDescription = "Clear all active filters and reset search. This will remove all applied filters and show all available trips"
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear filters",
+                        contentDescription = null, // Content description is on the button
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -457,7 +501,10 @@ fun DashboardScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Filter options: category, price range, and duration filters"
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -465,7 +512,8 @@ fun DashboardScreen(
             FilterChip(
                 label = if (selectedCategory == "All") "Category" else selectedCategory,
                 isActive = selectedCategory != "All",
-                onClick = { isCategoryDropdownExpanded = true }
+                onClick = { isCategoryDropdownExpanded = true },
+                contentDescription = "Category filter: ${if (selectedCategory == "All") "no category selected, tap to choose a category" else "selected $selectedCategory, tap to change"}"
             )
 
             // Price Range Filter
@@ -473,14 +521,16 @@ fun DashboardScreen(
             FilterChip(
                 label = if (isPriceActive) "$${String.format("%.0f", priceRangeStart)}-$${String.format("%.0f", priceRangeEnd)}" else "Price Range",
                 isActive = isPriceActive,
-                onClick = { isPriceDialogVisible = true }
+                onClick = { isPriceDialogVisible = true },
+                contentDescription = "Price filter: ${if (isPriceActive) "range from $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}" else "no price filter set"}, tap to adjust"
             )
 
             // Duration Filter
             FilterChip(
                 label = if (selectedDuration == "All") "Duration" else selectedDuration,
                 isActive = selectedDuration != "All",
-                onClick = { isDurationDropdownExpanded = true }
+                onClick = { isDurationDropdownExpanded = true },
+                contentDescription = "Duration filter: ${if (selectedDuration == "All") "no duration selected, tap to choose a duration" else "selected $selectedDuration, tap to change"}"
             )
         }// Category Dropdown
         DropdownMenu(
@@ -489,6 +539,9 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
+                .semantics {
+                    contentDescription = "Category selection menu with ${listOf("All", "Business", "Adventure", "Cultural", "Relaxation", "Family").size} options"
+                }
         ) {
             val categories = listOf("All", "Business", "Adventure", "Cultural", "Relaxation", "Family")
             categories.forEach { category ->
@@ -507,8 +560,13 @@ fun DashboardScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(8.dp)
+                        .semantics {
+                            contentDescription = if (category == "All") "Show all categories" else "Filter by $category trips"
+                            role = Role.Button
+                        }
                 )
-            }        }
+            }
+        }
 
         // Price Range Dialog
         if (isPriceDialogVisible) {
@@ -518,11 +576,19 @@ fun DashboardScreen(
                     Text(
                         text = "Price Range",
                         style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.semantics {
+                            heading()
+                            contentDescription = "Price range selector dialog"
+                        }
                     )
                 },
                 text = {
-                    Column {
+                    Column(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Price range controls from $${String.format("%.0f", minPrice)} to $${String.format("%.0f", maxPrice)}"
+                        }
+                    ) {
                         Text(
                             text = "Select your budget range",
                             style = MaterialTheme.typography.bodyMedium,
@@ -539,13 +605,19 @@ fun DashboardScreen(
                                 text = "$${String.format("%.0f", priceRangeStart)}",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Minimum price: $${String.format("%.0f", priceRangeStart)}"
+                                }
                             )
                             Text(
                                 text = "$${String.format("%.0f", priceRangeEnd)}",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Maximum price: $${String.format("%.0f", priceRangeEnd)}"
+                                }
                             )
                         }
                         
@@ -559,7 +631,11 @@ fun DashboardScreen(
                                 priceRangeEnd = range.endInclusive
                             },
                             valueRange = minPrice.toFloat()..maxPrice.toFloat(),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = "Price range slider. Current range: $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}"
+                                }
                         )
                         
                         // Min/Max labels
@@ -582,11 +658,15 @@ fun DashboardScreen(
                 },
                 confirmButton = {
                     TextButton(
-                        onClick = { isPriceDialogVisible = false }
+                        onClick = { isPriceDialogVisible = false },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Apply price range filter from $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}"
+                        }
                     ) {
                         Text("Apply")
                     }
-                },                dismissButton = {
+                },
+                dismissButton = {
                     TextButton(
                         onClick = {
                             // Reset to original range and clear preferences
@@ -595,11 +675,18 @@ fun DashboardScreen(
                             isPriceDialogVisible = false
                             // Update preferences immediately
                             saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Reset price range to show all trips from $${String.format("%.0f", minPrice)} to $${String.format("%.0f", maxPrice)}"
                         }
                     ) {
                         Text("Reset")
                     }
-                })
+                },
+                modifier = Modifier.semantics {
+                    contentDescription = "Price range selection dialog"
+                }
+            )
         }
 
         // Duration Dropdown
@@ -609,6 +696,9 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
+                .semantics {
+                    contentDescription = "Duration selection menu with ${availableDurations.size} options"
+                }
         ) {
             availableDurations.forEach { duration ->
                 DropdownMenuItem(
@@ -626,6 +716,10 @@ fun DashboardScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .padding(8.dp)
+                        .semantics {
+                            contentDescription = if (duration == "All") "Show all trip durations" else "Filter by $duration trips"
+                            role = Role.Button
+                        }
                 )
             }
         }        // Trip Cards
@@ -638,7 +732,10 @@ fun DashboardScreen(
             label = "trip cards"
         ) { trips ->
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.semantics {
+                    contentDescription = "List of ${trips.size} available trips"
+                }
             ) {
                 items(
                     items = trips,
@@ -650,9 +747,7 @@ fun DashboardScreen(
                             initialOffsetY = { it / 3 },
                             animationSpec = tween(300, easing = EaseOutCubic)
                         ) + fadeIn(animationSpec = tween(300)),
-                        modifier = Modifier.animateItemPlacement(
-                            animationSpec = tween(300, easing = EaseOutCubic)
-                        )
+                        modifier = Modifier
                     ) {
                         TripCard(
                             trip = trip,
@@ -671,11 +766,13 @@ fun TripCard(
     trip: Trip,
     onReserveClick: () -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp),
+            .height(280.dp)
+            .semantics {
+                contentDescription = "Trip card: ${trip.title} from ${trip.fromLocation} to ${trip.toLocation}, ${trip.duration}, starting at ${String.format("%.0f", trip.basePrice)} FCFA, ${trip.category.name} category"
+            },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -693,7 +790,10 @@ fun TripCard(
                                 MaterialTheme.colorScheme.primaryContainer
                             )
                         )
-                    ),
+                    )
+                    .semantics {
+                        contentDescription = "${trip.category.name} category icon for ${trip.title}"
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -705,7 +805,7 @@ fun TripCard(
                         "family" -> Icons.Default.Groups
                         else -> Icons.Default.Flight
                     },
-                    contentDescription = trip.title,
+                    contentDescription = null, // Content description is on the parent Box
                     modifier = Modifier.size(80.dp),
                     tint = Color.White
                 )
@@ -716,12 +816,19 @@ fun TripCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
+                    .semantics {
+                        contentDescription = "Trip details section"
+                    }
             ) {
                 Text(
                     text = trip.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.semantics {
+                        heading()
+                        contentDescription = "Trip name: ${trip.title}"
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -729,7 +836,10 @@ fun TripCard(
                 Text(
                     text = "${trip.fromLocation} → ${trip.toLocation}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.semantics {
+                        contentDescription = "Route: from ${trip.fromLocation} to ${trip.toLocation}"
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -739,23 +849,37 @@ fun TripCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Trip duration and pricing information"
+                        }
+                    ) {
                         Text(
                             text = trip.duration,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.semantics {
+                                contentDescription = "Duration: ${trip.duration}"
+                            }
                         )
                         Text(
                             text = "From $${String.format("%.0f", trip.basePrice)}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.semantics {
+                                contentDescription = "Starting price: $${String.format("%.0f", trip.basePrice)}"
+                            }
                         )
                     }
 
                     Button(
                         onClick = onReserveClick,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.semantics {
+                            contentDescription = "Reserve ${trip.title} trip from ${trip.fromLocation} to ${trip.toLocation}"
+                            role = Role.Button
+                        }
                     ) {
                         Text("Reserve")
                     }
@@ -770,7 +894,8 @@ fun TripCard(
 fun FilterChip(
     label: String,
     isActive: Boolean = false,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    contentDescription: String? = null
 ) {
     val scale by animateFloatAsState(
         targetValue = if (isActive) 1.05f else 1f,
@@ -806,6 +931,11 @@ fun FilterChip(
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
+            }
+            .semantics {
+                this.contentDescription = contentDescription ?: label
+                role = Role.Button
+                stateDescription = if (isActive) "active filter" else "inactive filter"
             }
     ) {
         AnimatedContent(
