@@ -11,9 +11,9 @@ import com.android.tripbook.model.Message
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 
 class GroupChatActivity : AppCompatActivity() {
 
@@ -35,7 +35,7 @@ class GroupChatActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        tripId = intent.getStringExtra("TRIP_ID") ?: return
+        tripId = intent.getStringExtra("TRIP_ID") ?: ""
 
         recyclerView = findViewById(R.id.recyclerView)
         messageEditText = findViewById(R.id.messageEditText)
@@ -53,7 +53,9 @@ class GroupChatActivity : AppCompatActivity() {
             }
         }
 
-        listenForMessages()
+        if (tripId.isNotEmpty()) {
+            listenForMessages()
+        }
     }
 
     private fun sendMessage(messageText: String) {
@@ -95,6 +97,8 @@ class GroupChatActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        messagesListener.remove()
+        if (::messagesListener.isInitialized) {
+            messagesListener.remove()
+        }
     }
 }
