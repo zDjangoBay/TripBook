@@ -62,3 +62,125 @@ fun CompanyDetailScreen(
     // Let's assume `Company` now has `var isLiked: Boolean`
     var isLikedState by remember { mutableStateOf(liveCompany.isLiked) }
     var currentLikesState by remember { mutableStateOf(liveCompany.likes) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = liveCompany.name, // Use liveCompany for title
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        // Toggle the like status in the repository
+                        CompanyRepository.toggleLike(liveCompany.id, !isLikedState)
+                        // Update local state to reflect the change immediately
+                        isLikedState = !isLikedState
+                        currentLikesState = if (isLikedState) currentLikesState + 1 else currentLikesState - 1
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Favorite,
+                            contentDescription = "Like",
+                            tint = if (isLikedState) Color.Red else Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Purple700
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(scrollState)
+        ) {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp)
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(liveCompany.imageResIds) { imageResId -> // Use liveCompany for images
+                    Image(
+                        painter = painterResource(id = imageResId),
+                        contentDescription = "Image of ${liveCompany.name}",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .width(300.dp)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Likes",
+                        tint = Color.Red,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "$currentLikesState", // Display currentLikesState
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    repeat(liveCompany.stars) { // Use liveCompany for stars
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Star",
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CompanyDescription(description = liveCompany.description) // Use liveCompany for description
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CompanyServices(services = liveCompany.services) // Use liveCompany for services
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ContactUs(contacts = liveCompany.contacts) // Use liveCompany for contacts
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+}
