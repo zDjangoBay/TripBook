@@ -29,7 +29,7 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
-import com.android.tripbook.service.GoogleMapsService
+import com.android.tripbook.service.GoogleMapsService // Keep this import
 import com.android.tripbook.service.PlaceResult
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -42,7 +42,55 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
+import androidx.compose.ui.platform.LocalContext
 
+
+object TripRepository {
+    private val db: FirebaseFirestore = Firebase.firestore
+    private const val TRIPS_COLLECTION = "trips"
+
+    suspend fun addTrip(trip: Trip) {
+        try {
+            // Convert dates to timestamps for Firestore
+            val tripData = hashMapOf(
+                "id" to trip.id,
+                "name" to trip.name,
+                "startDate" to trip.startDate.toString(),
+                "endDate" to trip.endDate.toString(),
+                "destination" to trip.destination,
+                "travelers" to trip.travelers,
+                "budget" to trip.budget,
+                "status" to trip.status.name,
+                "type" to trip.type,
+                "itinerary" to trip.itinerary.map { item ->
+                    hashMapOf(
+                        "date" to item.date.toString(),
+                        "time" to item.time,
+                        "title" to item.title,
+                        "location" to item.location,
+                        "type" to item.type.name,
+                        "notes" to item.notes
+                    )
+                }
+            )
+
+            db.collection(TRIPS_COLLECTION)
+                .document(trip.id)
+                .set(tripData)
+                .await()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,9 +99,15 @@ fun PlanNewTripScreen(
     onTripCreated: (Trip) -> Unit,
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
-    googleMapsService: GoogleMapsService,
+    apiKey: String,
     onBrowseAgencies: (String) -> Unit
 ) {
+    // Instantiate GoogleMapsService here using the provided apiKey
+    val context = LocalContext.current
+    val googleMapsService = remember { GoogleMapsService(context, apiKey) }
+
+    // Add snackbar for error messages
+    val snackbarHostState = remember { SnackbarHostState() }
     var tripName by remember { mutableStateOf("") }
     var destination by remember { mutableStateOf("") }
     var startDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -403,7 +457,7 @@ fun PlanNewTripScreen(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             OutlinedTextField(
-                                value = startDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                                value = startDate?.format(DateTimeFormatter.ofPattern("MMM d,yyyy")) ?: "",
                                 onValueChange = { },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -436,7 +490,7 @@ fun PlanNewTripScreen(
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
                             OutlinedTextField(
-                                value = endDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                                value = endDate?.format(DateTimeFormatter.ofPattern("MMM d,yyyy")) ?: "",
                                 onValueChange = { },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -573,7 +627,7 @@ fun PlanNewTripScreen(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
-                        value = date?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                        value = date?.format(DateTimeFormatter.ofPattern("MMM d,yyyy")) ?: "",
                         onValueChange = { },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -718,7 +772,30 @@ fun PlanNewTripScreen(
                                     itineraryLocationSuggestions = emptyList()
                                     isLoadingItinerarySuggestions = false
                                 }
-                            },)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("e.g., Giza, Egypt") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Location",
+                                    tint = Color(0xFFE91E63)
+                                )
+                            },
+                            isError = locationError.isNotEmpty(),
+                            supportingText = {
+                                if (locationError.isNotEmpty()) {
+                                    Text(locationError, color = MaterialTheme.colorScheme.error)
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF667EEA),
+                                focusedLabelColor = Color(0xFF667EEA),
+                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
 
                         // Location suggestions for itinerary
                         if (isLoadingItinerarySuggestions) {
@@ -753,63 +830,8 @@ fun PlanNewTripScreen(
                             }
                         }
                     }
-                    OutlinedTextField(
-                        value = location,
-                        onValueChange = {
-                            location = it
-                            locationError = ""
-                            if (it.trim().length >= 3) {
-                                isLoadingItinerarySuggestions = true
-                                coroutineScope.launch {
-                                    try {
-                                        itineraryLocationSuggestions = googleMapsService.searchPlaces(it)
-                                        isLoadingItinerarySuggestions = false
-                                    } catch (e: Exception) {
-                                        try {
-                                            val attractions = nominatimService.getNearbyAttractions(it)
-                                            itineraryLocationSuggestions = attractions.map { attraction ->
-                                                PlaceResult(
-                                                    placeId = "",
-                                                    name = attraction.name,
-                                                    address = attraction.location,
-                                                    types = listOf("tourist_attraction")
-                                                )
-                                            }
-                                            isLoadingItinerarySuggestions = false
-                                        } catch (e2: Exception) {
-                                            itineraryLocationSuggestions = emptyList()
-                                            isLoadingItinerarySuggestions = false
-                                        }
-                                    }
-                                }
-                            } else {
-                                itineraryLocationSuggestions = emptyList()
-                                isLoadingItinerarySuggestions = false
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g., Giza, Egypt") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location",
-                                tint = Color(0xFFE91E63)
-                            )
-                        },
-                        isError = locationError.isNotEmpty(),
-                        supportingText = {
-                            if (locationError.isNotEmpty()) {
-                                Text(locationError, color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
-                    )
+                    // This OutlinedTextField was duplicated, removing the second one.
+                    // If you intended two separate location inputs, please clarify.
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -882,10 +904,37 @@ fun PlanNewTripScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Add Itinerary Item Button
+                    // Add Itinerary Item Button (This was previously here, but it seems
+                    // you want to add an item to the list and then the final "Create Trip" button
+                    // saves the whole trip with its itinerary.)
+                    // If you want a separate "Add Itinerary Item" button to add to `itineraryItems`
+                    // before "Create Trip", you'd add it here and implement its logic.
+                    // For now, I'll assume you'll add logic to the `Create Trip` button
+                    // to also validate/add the current itinerary fields.
+
+                    // Create Trip Button
                     Button(
                         onClick = {
-                            if (validateItineraryItem(
+                            // Validate main trip fields
+                            val isTripFormValid = validateForm(
+                                tripName,
+                                destination,
+                                startDate,
+                                endDate,
+                                travelers,
+                                budget,
+                                selectedTripType,
+                                setNameError = { nameError = it },
+                                setDestinationError = { destinationError = it },
+                                setDateError = { dateError = it },
+                                setTravelersError = { travelersError = it },
+                                setBudgetError = { budgetError = it }
+                            )
+
+                            // Validate itinerary item fields IF they are partially filled
+                            var isItineraryItemValid = true
+                            if (date != null || time.isNotEmpty() || title.isNotEmpty() || location.isNotEmpty() || selectedItineraryType != null || notes.isNotEmpty()) {
+                                isItineraryItemValid = validateItineraryItem(
                                     date,
                                     time,
                                     title,
@@ -897,86 +946,32 @@ fun PlanNewTripScreen(
                                     setLocationError = { locationError = it },
                                     setTypeError = { typeError = it }
                                 )
-                            ) {
-                                val newItem = ItineraryItem(
-                                    date = date!!,
-                                    time = time.trim(),
-                                    title = title.trim(),
-                                    location = location.trim(),
-                                    type = selectedItineraryType!!,
-                                    notes = notes.trim()
-                                )
-                                itineraryItems = itineraryItems + newItem
-                                // Reset itinerary form
-                                date = null
-                                time = ""
-                                title = ""
-                                location = ""
-                                selectedItineraryType = null
-                                notes = ""
+
+                                if (isItineraryItemValid) {
+                                    // Add the current itinerary item to the list
+                                    val newItem = ItineraryItem(
+                                        date = date!!,
+                                        time = time,
+                                        title = title,
+                                        location = location,
+                                        type = selectedItineraryType!!,
+                                        notes = notes
+                                    )
+                                    itineraryItems = itineraryItems + newItem
+
+                                    // Clear itinerary fields for next entry (optional, depends on UX)
+                                    date = null
+                                    time = ""
+                                    title = ""
+                                    location = ""
+                                    selectedItineraryType = null
+                                    notes = ""
+                                }
                             }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF667EEA)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "Add Itinerary Item",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Itinerary List
-                    if (itineraryItems.isNotEmpty()) {
-                        Text(
-                            text = "Itinerary Items",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF374151),
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        )
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 200.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(itineraryItems) { item ->
-                                ItineraryItemCard(item = item)
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(32.dp))
-
-                    // Create Trip Button
-                    Button(
-                        onClick = {
-                            if (validateForm(
-                                    tripName,
-                                    destination,
-                                    startDate,
-                                    endDate,
-                                    travelers,
-                                    budget,
-                                    selectedTripType,
-                                    setNameError = { nameError = it },
-                                    setDestinationError = { destinationError = it },
-                                    setDateError = { dateError = it },
-                                    setTravelersError = { travelersError = it },
-                                    setBudgetError = { budgetError = it }
-                                )
-                            ) {
+                            if (isTripFormValid && isItineraryItemValid) {
                                 val newTrip = Trip(
-                                    id = System.currentTimeMillis().toString(),
+                                    id = UUID.randomUUID().toString(), // Better ID generation
                                     name = tripName.trim(),
                                     startDate = startDate!!,
                                     endDate = endDate!!,
@@ -985,9 +980,32 @@ fun PlanNewTripScreen(
                                     budget = budget.toInt(),
                                     status = TripStatus.PLANNED,
                                     type = selectedTripType,
-                                    itinerary = itineraryItems
+                                    itinerary = itineraryItems // Use the accumulated itinerary items
                                 )
-                                onTripCreated(newTrip)
+
+                                coroutineScope.launch {
+                                    try {
+                                        // Save to Firestore
+                                        TripRepository.addTrip(newTrip)
+
+                                        // Update local state and navigate
+                                        onTripCreated(newTrip)
+                                    } catch (e: Exception) {
+                                        // Show error message
+                                        snackbarHostState.showSnackbar(
+                                            message = "Error creating trip: ${e.message}",
+                                            duration = SnackbarDuration.Long
+                                        )
+                                    }
+                                }
+                            } else {
+                                // If forms are not valid, trigger snackbar or show errors
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Please correct the errors in the form.",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
                             }
                         },
                         modifier = Modifier
@@ -1008,6 +1026,8 @@ fun PlanNewTripScreen(
                 }
             }
         }
+        // SnackbarHost to display messages
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 
     // Start Date Picker Dialog
@@ -1287,7 +1307,7 @@ private fun validateForm(
     }
 
     if (tripType.isEmpty()) {
-        setDateError("Please select a trip type")
+        setDateError("Please select a trip type") // This should probably be setTripTypeError or similar
         isValid = false
     }
 

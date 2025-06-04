@@ -11,13 +11,20 @@ enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
 }
 
-// Location data classes for Maps integration
 data class Location(
     val latitude: Double,
     val longitude: Double,
+    val name: String,
     val address: String = "",
-    val placeId: String = "" // For Places API
+    val rating: Double = 0.0,
+    val types: List<String> = emptyList(),
+    val placeId: String? = null,
+    val phoneNumber: String? = null,
+    val website: String? = null,
+    val openingHours: List<String>? = null,
+    val priceLevel: Int? = null
 )
+
 
 data class RouteInfo(
     val distance: String = "",

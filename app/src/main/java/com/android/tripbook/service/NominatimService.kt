@@ -37,6 +37,14 @@ class NominatimService {
 
     private val api = retrofit.create(NominatimApi::class.java)
 
+    suspend fun searchLocation(query: String): List<NominatimPlace> {
+        return try {
+            api.searchPlaces(query = query)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     suspend fun getNearbyAttractions(query: String): List<Attraction> {
         return try {
             val places = api.searchPlaces(query = "$query tourist attraction")
