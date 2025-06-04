@@ -71,8 +71,9 @@ data class Trip(
 // Data class for managing trip creation state across multiple steps
 data class TripCreationState(
     val currentStep: Int = 1,
-    val totalSteps: Int = 5,
+    val totalSteps: Int = 6, // Increased to 6 to include agency selection
     val destination: String = "",
+    val selectedAgency: Agency? = null, // Added agency selection
     val startDate: LocalDate? = null,
     val endDate: LocalDate? = null,
     val tripName: String = "",
@@ -84,10 +85,11 @@ data class TripCreationState(
     fun canProceedToNextStep(): Boolean {
         return when (currentStep) {
             1 -> destination.isNotBlank()
-            2 -> startDate != null && endDate != null && startDate.isBefore(endDate)
-            3 -> true // Companions step is optional
-            4 -> tripName.isNotBlank()
-            5 -> true // Review step
+            2 -> true // Agency selection is optional
+            3 -> startDate != null && endDate != null && startDate.isBefore(endDate)
+            4 -> true // Companions step is optional
+            5 -> tripName.isNotBlank()
+            6 -> true // Review step
             else -> false
         }
     }

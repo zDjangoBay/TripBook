@@ -74,6 +74,30 @@ fun ReviewStep(
                     title = "Destination",
                     content = state.destination.ifEmpty { "Not specified" }
                 )
+
+                // Agency Section
+                val agencyText = if (state.selectedAgency != null) {
+                    buildString {
+                        append(state.selectedAgency.agencyName)
+                        state.selectedAgency.agencyDescription?.let { description ->
+                            append("\n$description")
+                        }
+                        state.selectedAgency.agencyAddress?.let { address ->
+                            append("\n📍 $address")
+                        }
+                        state.selectedAgency.contactPhone?.let { phone ->
+                            append("\n📞 $phone")
+                        }
+                    }
+                } else {
+                    "No agency selected"
+                }
+
+                ReviewSection(
+                    icon = Icons.Default.Business,
+                    title = "Travel Agency",
+                    content = agencyText
+                )
                 
                 // Dates Section
                 val dateText = if (state.startDate != null && state.endDate != null) {

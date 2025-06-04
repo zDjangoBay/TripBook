@@ -25,6 +25,10 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
     private val _destinations = MutableStateFlow<List<Destination>>(emptyList())
     val destinations: StateFlow<List<Destination>> = _destinations.asStateFlow()
 
+    // State for agencies filtered by destination
+    private val _filteredAgencies = MutableStateFlow<List<Agency>>(emptyList())
+    val filteredAgencies: StateFlow<List<Agency>> = _filteredAgencies.asStateFlow()
+
     init {
         loadAgencies()
     }
@@ -59,5 +63,25 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
                 _isLoading.value = false
             }
         }
+    }
+
+    fun loadAgenciesForDestination(destinationQuery: String) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val loadedAgencies = agencyRepository.loadAgenciesForDestination(destinationQuery)
+                _filteredAgencies.value = loadedAgencies
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearFilteredAgencies() {
+        _filteredAgencies.value = emptyList()
     }
 }

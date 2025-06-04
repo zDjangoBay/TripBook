@@ -130,6 +130,53 @@ class SupabaseAgencyRepository {
         }
     }
 
+    suspend fun loadAgenciesForDestination(destinationQuery: String): List<Agency> {
+        return try {
+            _isLoading.value = true
+            _error.value = null
+
+            Log.d(TAG, "Loading agencies for destination: $destinationQuery")
+
+            // Load all destinations first
+            val allSupabaseDestinations = supabase.from(DESTINATIONS_TABLE)
+                .select()
+                .decodeList<SupabaseDestination>()
+
+            Log.d(TAG, "Loaded ${allSupabaseDestinations.size} destinations from database")
+
+            // Filter destinations that match the query (case-insensitive partial match)
+            val matchingDestinations = allSupabaseDestinations
+                .map { it.toDestination() }
+                .filter { destination ->
+                    destination.destinationName.contains(destinationQuery, ignoreCase = true) ||
+                    destinationQuery.contains(destination.destinationName, ignoreCase = true)
+                }
+
+            Log.d(TAG, "Found ${matchingDestinations.size} matching destinations for query: $destinationQuery")
+
+            // Get unique agency IDs from matching destinations
+            val agencyIds = matchingDestinations.map { it.agencyId }.distinct()
+
+            Log.d(TAG, "Found agency IDs: $agencyIds")
+
+            // Load all agencies and filter by the matching agency IDs
+            val allAgencies = loadAgencies()
+            val filteredAgencies = allAgencies.filter { agency ->
+                agencyIds.contains(agency.agencyId)
+            }.sortedBy { it.agencyName }
+
+            Log.d(TAG, "Filtered ${filteredAgencies.size} agencies for destination: $destinationQuery")
+
+            filteredAgencies
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading agencies for destination: ${e.message}", e)
+            _error.value = "Failed to load agencies for destination: ${e.message}"
+            emptyList()
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
     fun clearError() {
         _error.value = null
     }
