@@ -34,5 +34,6 @@
     <string name="To">To</string>
     <string name="zero">0</string>
     <string name="titile">titile</string>
+    <string name="submit_post">Publish Post</string>
 
 </resources>
