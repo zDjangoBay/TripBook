@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.android.tripbook.model.Location
-import com.android.tripbook.model.RouteInfo
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
@@ -19,7 +18,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -305,46 +303,6 @@ class GoogleMapsService(
         }
     }
 
-    /**
-     * Request location updates
-     */
-    @SuppressLint("MissingPermission")
-    suspend fun requestLocationUpdates(
-        locationCallback: LocationCallback,
-        intervalMs: Long = 10000,
-        fastestIntervalMs: Long = 5000
-    ): Boolean {
-        return withContext(Dispatchers.IO) {
-            if (!hasLocationPermission()) {
-                return@withContext false
-            }
-
-            try {
-                val locationRequest = LocationRequest.create().apply {
-                    interval = intervalMs
-                    fastestInterval = fastestIntervalMs
-                    priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                }
-
-                fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    null
-                )
-                true
-            } catch (e: Exception) {
-                false
-            }
-        }
-    }
-
-    /**
-     * Stop location updates
-     */
-    fun stopLocationUpdates(locationCallback: LocationCallback) {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
     private fun hasLocationPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
@@ -355,10 +313,6 @@ class GoogleMapsService(
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
     }
-
-    // ===========================================
-    // PLACES API SERVICES
-    // ===========================================
 
     /**
      * Get autocomplete suggestions for places
@@ -458,91 +412,6 @@ class GoogleMapsService(
             throw Exception("Failed to search places: ${e.message}", e)
         }
     }
-
-    /**
-     * Get detailed information about a specific place using Web API
-     */
-    suspend fun getPlaceDetailsWeb(placeId: String): PlaceDetails? = withContext(Dispatchers.IO) {
-        try {
-            val fields = "place_id,name,formatted_address,formatted_phone_number,website," +
-                    "rating,price_level,reviews,photos,opening_hours,geometry,types"
-            val urlString = "$PLACE_DETAILS_URL?place_id=$placeId&fields=$fields&key=$apiKey"
-
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
-
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
-
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val detailsResponse = json.decodeFromString<PlaceDetailsResponse>(response)
-
-                if (detailsResponse.status == "OK" && detailsResponse.result != null) {
-                    return@withContext detailsResponse.result.toPlaceDetails()
-                } else {
-                    throw Exception("Place Details API error: ${detailsResponse.status}")
-                }
-            } else {
-                throw Exception("HTTP error: $responseCode")
-            }
-        } catch (e: Exception) {
-            println("Failed to get place details: ${e.message}")
-            return@withContext null
-        }
-    }
-
-    /**
-     * Get photo URL for a place photo reference
-     */
-    fun getPhotoUrl(photoReference: String, maxWidth: Int = 400): String {
-        return "$PLACE_PHOTO_URL?photoreference=$photoReference&maxwidth=$maxWidth&key=$apiKey"
-    }
-
-    // ===========================================
-    // DIRECTIONS API SERVICES
-    // ===========================================
-
-    private fun parseDirectionsResponse(jsonResponse: String): RouteInfo? {
-        return try {
-            val json = JSONObject(jsonResponse)
-            val routes = json.getJSONArray("routes")
-
-            if (routes.length() > 0) {
-                val route = routes.getJSONObject(0)
-                val legs = route.getJSONArray("legs")
-                val leg = legs.getJSONObject(0)
-
-                val distance = leg.getJSONObject("distance").getString("text")
-                val duration = leg.getJSONObject("duration").getString("text")
-                val polyline = route.getJSONObject("overview_polyline").getString("points")
-
-                RouteInfo(
-                    distance = distance,
-                    duration = duration,
-                    polyline = polyline
-                )
-            } else null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // ===========================================
-    // DISTANCE MATRIX API SERVICES
-    // ===========================================
-
-    // ===========================================
-    // UTILITY FUNCTIONS
-    // ===========================================
-
-    // ===========================================
-    // SPECIALIZED SEARCH FUNCTIONS
-    // ===========================================
 
     /**
      * Search for nearby attractions around a location
