@@ -27,9 +27,6 @@ import kotlin.coroutines.suspendCoroutine
 import android.annotation.SuppressLint
 
 private const val PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
-private const val PLACE_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
-private const val PLACE_PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo"
-private const val DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json"
 
 // Data classes for Places API responses
 @Serializable
