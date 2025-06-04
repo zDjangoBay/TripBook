@@ -2,7 +2,6 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
 }
 
 android {
@@ -44,7 +43,6 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
-//        dataBinding= true
     }
 
     composeOptions {
@@ -59,12 +57,8 @@ android {
 }
 
 dependencies {
-    //------------------------------------------------------
-    //           Default dependencies for the project
-    //                  Do not touch them !!!!
-    //-----------------------------------------------------
+    // Default implementations
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -78,6 +72,10 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database)
+    implementation(libs.androidx.navigation.runtime)
+    implementation(libs.androidx.navigation.compose)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -86,18 +84,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //---------------------------------------------------------
-    //        Custom dependencies
-    //---------------------------------------------------------
-
+    // Custom implementations
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
-
-
     implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
-
-
-
-
+    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
 }
