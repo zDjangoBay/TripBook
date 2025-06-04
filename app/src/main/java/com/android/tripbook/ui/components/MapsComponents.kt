@@ -49,7 +49,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import com.android.tripbook.service.NominatimService
 
-
 // Extension function to convert GeoLocation to LatLng
 fun GeoLocation.toLatLng(): LatLng {
     return LatLng(this.lat, this.lng)
