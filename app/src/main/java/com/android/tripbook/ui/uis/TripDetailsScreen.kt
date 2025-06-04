@@ -305,7 +305,7 @@ private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimSe
 private fun OverviewTab(
     trip: Trip,
     googleMapsService: GoogleMapsService,
-    scope: CoroutineScope, // Pass CoroutineScope
+    scope: CoroutineScope,
     nearbyRestaurants: List<PlaceResult>,
     setNearbyRestaurants: (List<PlaceResult>) -> Unit,
     isLoadingRestaurants: Boolean,
@@ -382,7 +382,6 @@ private fun OverviewTab(
             }
         }
 
-        // NEW SECTION: Nearby Amenities Search and Display
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -533,11 +532,9 @@ private fun OverviewTab(
                 }
             }
         }
-        // End of NEW SECTION
     }
 }
 
-// Keep all other composables (MapLegend, LegendItem, ItineraryTab, ExpensesTab, DetailItem, TravelerItem, BudgetRow, ExpenseItem) unchanged below this point.
 @Composable
 private fun MapLegend() {
     Card(

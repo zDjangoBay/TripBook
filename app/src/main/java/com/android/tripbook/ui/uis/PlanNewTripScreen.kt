@@ -28,7 +28,7 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
-import com.android.tripbook.service.GoogleMapsService // Keep this import
+import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.PlaceResult
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -956,7 +956,7 @@ fun PlanNewTripScreen(
 
                             if (isTripFormValid && isItineraryItemValid) {
                                 val newTrip = Trip(
-                                    id = UUID.randomUUID().toString(), // Better ID generation
+                                    id = UUID.randomUUID().toString(),
                                     name = tripName.trim(),
                                     startDate = startDate!!,
                                     endDate = endDate!!,
@@ -965,7 +965,7 @@ fun PlanNewTripScreen(
                                     budget = budget.toInt(),
                                     status = TripStatus.PLANNED,
                                     type = selectedTripType,
-                                    itinerary = itineraryItems // Use the accumulated itinerary items
+                                    itinerary = itineraryItems
                                 )
 
                                 coroutineScope.launch {
@@ -1230,7 +1230,7 @@ private fun validateForm(
     }
 
     if (tripType.isEmpty()) {
-        setDateError("Please select a trip type") 
+        setDateError("Please select a trip type")
         isValid = false
     }
 

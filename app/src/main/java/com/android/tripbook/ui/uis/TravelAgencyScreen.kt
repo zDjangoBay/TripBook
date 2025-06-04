@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -304,6 +305,7 @@ fun TravelAgencyScreen(
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> Unit) {
     Card(
@@ -340,16 +342,7 @@ private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyServ
                             modifier = Modifier.padding(top = 2.dp)
                         )
                     }
-                    // Assuming 'category' might be a new field in TravelAgency for display
-                    // if (agency.category != null) {
-                    //    Text(
-                    //        text = agency.category,
-                    //        fontSize = 11.sp,
-                    //        color = Color(0xFF667EEA),
-                    //        fontWeight = FontWeight.Medium,
-                    //        modifier = Modifier.padding(top = 2.dp)
-                    //    )
-                    //}
+
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
@@ -408,6 +401,7 @@ private fun EnhancedAgencyCard(agency: TravelAgency, onServiceClick: (AgencyServ
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
     Card(
@@ -465,16 +459,6 @@ private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
                         modifier = Modifier.padding(top = 2.dp)
                     )
 
-                    // Assuming 'distance' might be a new field in AgencyService for display
-                    // if (service.distance != null) {
-                    //    Text(
-                    //        text = service.distance,
-                    //        fontSize = 12.sp,
-                    //        color = Color(0xFF667EEA),
-                    //        fontWeight = FontWeight.Medium,
-                    //        modifier = Modifier.padding(top = 2.dp)
-                    //    )
-                    //}
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
