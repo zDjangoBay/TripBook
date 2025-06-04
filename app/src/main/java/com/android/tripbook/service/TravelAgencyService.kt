@@ -95,11 +95,12 @@ data class TravelAgency(
     val rating: Float,
     val address: String? = null,
     val isFromApi: Boolean = false,
-    val category: String? = null
+    val category: String? = null,
+    val url: String? = null // Added URL field
 )
 
 class TravelAgencyService {
-    private val apiKey = "fsq34wFRdgoUG9b3+ThZXU4nl1RX+wYAnZUi8+T49HFNuaw="//free tier api for testing security concerns are acknowledged
+    private val apiKey = "fsq34wFRdgoUG9b3+ThZXU4nl1RX+wYAnZUi8+T49HFNuaw=" //free tier api for testing security concerns are acknowledged
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://api.foursquare.com/v3/")
@@ -133,7 +134,8 @@ class TravelAgencyService {
                     location = "Douala, Cameroon"
                 )
             ),
-            rating = 4.3f
+            rating = 4.3f,
+            url = "https://example.com/cameroon-adventure-tours" // Example mock URL
         ),
         TravelAgency(
             id = "agency2",
@@ -158,7 +160,8 @@ class TravelAgencyService {
                     location = "Yaoundé, Cameroon"
                 )
             ),
-            rating = 4.5f
+            rating = 4.5f,
+            url = "https://example.com/yaounde-travel-services" // Example mock URL
         ),
         TravelAgency(
             id = "agency3",
@@ -183,7 +186,8 @@ class TravelAgencyService {
                     location = "Yaoundé, Cameroon"
                 )
             ),
-            rating = 4.3f
+            rating = 4.3f,
+            url = "https://example.com/limbe-beach-resort-tours" // Example mock URL
         )
     )
 
@@ -315,6 +319,7 @@ class TravelAgencyService {
                 val photoUrl = place.photos?.firstOrNull()?.let { photo ->
                     "${photo.prefix}300x300${photo.suffix}"
                 }
+                val foursquareUrl = "https://foursquare.com/v/${place.fsq_id}" // Construct Foursquare URL
 
                 val services = generateServicesForPlace(place, destination, photoUrl)
 
@@ -325,7 +330,8 @@ class TravelAgencyService {
                     rating = (place.rating?.toFloat() ?: (3.5f + (0..10).random() * 0.1f)),
                     address = place.location.formatted_address ?: place.location.address,
                     isFromApi = true,
-                    category = category
+                    category = category,
+                    url = foursquareUrl // Assign the constructed URL
                 )
             } catch (e: Exception) {
                 println("Error converting place ${place.name}: ${e.message}")
