@@ -80,31 +80,14 @@ dependencies {
     implementation(libs.maps.compose) // Or latest
 
 
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
-
-// Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
-
-// Compose + lifecycle
-//    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.play.services.maps)
-    implementation(libs.maps.utils.ktx)
-    implementation(libs.kotlinx.coroutines.play.services)
-
-
-
-
 
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.material3)
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.maps.compose) // Or latest
@@ -120,6 +103,21 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.material.icons.extended)
+
+    // Google Maps Compose
+    implementation(libs.maps.compose.v430)
+
+// Accompanist for sticky headers (optional if using custom pinned behavior)
+    implementation(libs.accompanist.placeholder)
+
+// Compose + lifecycle
+//    implementation(libs.androidx.lifecycle.runtime.compose)
+
+// Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.play.services.maps)
+    implementation(libs.maps.utils.ktx)
+    implementation(libs.kotlinx.coroutines.play.services)
 
 }
 
