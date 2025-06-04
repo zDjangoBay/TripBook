@@ -12,8 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.model.Location
+import com.android.tripbook.R
 import com.android.tripbook.posts.model.Location
 import com.android.tripbook.posts.viewmodel.PostEvent
 import com.android.tripbook.posts.viewmodel.PostUIState
@@ -35,7 +36,7 @@ fun LocationPicker(
 
     Column(modifier = modifier) {
         Text(
-            text = "Location",
+            text = stringResource(id = R.string.location_picker_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -69,7 +70,7 @@ fun LocationPicker(
             ) {
                 Icon(
                     imageVector = Icons.Default.LocationOn,
-                    contentDescription = "Location Icon",
+                    contentDescription = stringResource(id = R.string.location_picker_icon_desc),
                     // Tint the icon based on the same error condition
                     tint = if (error != null && selectedLocation == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                 )
@@ -90,7 +91,7 @@ fun LocationPicker(
                     }
                 } else {
                     Text(
-                        text = "Select location",
+                        text = stringResource(id = R.string.location_picker_select_location_prompt),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -139,7 +140,7 @@ private fun LocationSelectionDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Location") },
+        title = { Text(stringResource(id = R.string.location_dialog_title)) },
         text = {
             Column(modifier = Modifier.heightIn(min = 200.dp, max = 450.dp)) {
                 OutlinedTextField(
@@ -153,12 +154,13 @@ private fun LocationSelectionDialog(
                                 onLocationSearch(newQuery)
                             }
                         } else {
-                            onLocationSearch("")
+                            // Clear results if query is too short
+                            viewModel.handleEvent(PostEvent.ClearLocationSearch)
                         }
                     },
-                    label = { Text("Search city or place name") },
+                    label = { Text(stringResource(id = R.string.location_dialog_search_label)) },
                     modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Search Icon")},
+                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = stringResource(id = R.string.location_dialog_search_icon_desc))},
                     singleLine = true
                 )
 
@@ -180,7 +182,7 @@ private fun LocationSelectionDialog(
                     }
                     uiState.locationSearchResults.isEmpty() && searchQuery.length > 1 && !uiState.isSearchingLocation -> {
                         Text(
-                            "No locations found for \"$searchQuery\".",
+                            text = stringResource(id = R.string.location_dialog_no_locations_found, searchQuery),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(vertical = 20.dp).align(Alignment.CenterHorizontally)
@@ -221,7 +223,7 @@ private fun LocationSelectionDialog(
                                 }                            }                        }                    }
                     else -> {
                         Text(
-                            "Start typing to search for a location.",
+                            text = stringResource(id = R.string.location_dialog_start_typing_prompt),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(vertical = 20.dp).align(Alignment.CenterHorizontally)
@@ -233,7 +235,7 @@ private fun LocationSelectionDialog(
         confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.dialog_cancel_button))
             }
         }    )
 }
