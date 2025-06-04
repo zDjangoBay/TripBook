@@ -1,8 +1,11 @@
 package com.android.tripbook
 
 import android.app.Application
-import com.android.tripbook.data.database.TripBookDatabase
 import com.android.tripbook.data.database.DatabaseInitializer
+import com.android.tripbook.data.database.TripBookDatabase
+import com.android.tripbook.data.services.ServiceProvider
+import com.android.tripbook.data.services.transport.TransportService
+import com.android.tripbook.data.services.trip.TripService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,13 +19,13 @@ import kotlinx.coroutines.launch
  * Key Features:
  * - Database initialization on first launch
  * - Application-wide resource management
- * - Dependency injection setup (future)
+ * - Service provider initialization
  * - Global configuration
  * 
  * Used by:
  * - Android system for app initialization
  * - Database access throughout the app
- * - Future dependency injection framework
+ * - Service access throughout the app
  */
 class TripBookApplication : Application() {
     
