@@ -18,6 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,12 +31,14 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.android.tripbook.R
 
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
-    onTripClick: ((Trip) -> Unit)? = null
+    onTripClick: ((Trip) -> Unit)? = null,
+    onAgenciesClick: () -> Unit
 ) {
     val trips by tripViewModel.trips.collectAsState()
     val isLoading by tripViewModel.isLoading.collectAsState()
@@ -59,16 +63,36 @@ fun MyTripsScreen(
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            // Header
-            Text(
-                text = "My Trips",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                modifier = Modifier.padding(top = 16.dp)
-            )
+            // Header with Agencies Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "My Trips",
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                )
+                IconButton(
+                    onClick = onAgenciesClick,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Business,
+                        contentDescription = "Travel Agencies",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
             Text(
                 text = "Plan your African adventure",
                 style = TextStyle(

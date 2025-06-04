@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.retrofit)
+    implementation(libs.coil.compose)
+    implementation(libs.supabase.postgrest.kt)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.androidx.appcompat)

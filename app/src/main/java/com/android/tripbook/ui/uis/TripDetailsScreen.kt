@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import com.android.tripbook.ui.components.*
-import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,7 +32,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
-
 @Composable
 fun TripDetailsScreen(
     trip: Trip,
@@ -57,11 +54,18 @@ fun TripDetailsScreen(
             )
 
             // Content card
-            TripBookContentCard {
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Tabs - Updated to include Map tab
+                    // Tabs
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -112,7 +116,7 @@ fun TripDetailsScreen(
                         when (selectedTab) {
                             "Overview" -> OverviewTab(trip)
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
-                            "Map" -> MapTab(trip) // New Map tab
+                            "Map" -> MapTab(trip)
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
@@ -122,6 +126,50 @@ fun TripDetailsScreen(
     }
 }
 
+@Composable
+private fun TripBookHeader(
+    title: String,
+    subtitle: String,
+    onBackClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, start = 20.dp, end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            )
+            Text(
+                text = subtitle,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            )
+        }
+    }
+}
+
+// Rest of the file remains unchanged
 @Composable
 private fun MapTab(trip: Trip) {
     var showRoutes by remember { mutableStateOf(true) }
@@ -142,6 +190,7 @@ private fun MapTab(trip: Trip) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                ;
                 Switch(
                     checked = showRoutes,
                     onCheckedChange = { showRoutes = it },
@@ -244,8 +293,7 @@ private fun TripMapView(
             mapType = mapType,
             isMyLocationEnabled = false
         )
-    )
-    {
+    ) {
         // Add destination marker if available
         trip.destinationCoordinates?.let { destination ->
             Marker(
@@ -281,8 +329,6 @@ private fun TripMapView(
             trip.itinerary.forEachIndexed { index, item ->
                 item.routeToNext?.let { route ->
                     if (route.polyline.isNotEmpty()) {
-                        // Here you would decode the polyline and create a Polyline composable
-                        // For now showing a basic line between consecutive points
                         if (index < trip.itinerary.size - 1) {
                             val currentCoords = item.coordinates
                             val nextCoords = trip.itinerary[index + 1].coordinates
@@ -378,7 +424,6 @@ private fun LegendItem(
     }
 }
 
-// Keep all existing composables unchanged
 @Composable
 private fun OverviewTab(trip: Trip) {
     LazyColumn(
@@ -386,7 +431,6 @@ private fun OverviewTab(trip: Trip) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            // Trip Summary Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -413,7 +457,6 @@ private fun OverviewTab(trip: Trip) {
         }
 
         item {
-            // Travelers Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -495,7 +538,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Timeline indicator
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.width(30.dp)
@@ -527,7 +569,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                             }
                         }
 
-                        // Itinerary item card
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -595,7 +636,6 @@ private fun ExpensesTab(trip: Trip) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            // Budget Overview Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -615,11 +655,10 @@ private fun ExpensesTab(trip: Trip) {
 
                     BudgetRow("Total Budget:", "FCFA ${trip.budget}", Color(0xFF667EEA))
                     BudgetRow("Spent:", "FCFA 68000", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "FCfA 72000", Color(0xFF059669))
+                    BudgetRow("Remaining:", "FCFA 72000", Color(0xFF059669))
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Progress bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -758,3 +797,21 @@ private data class ExpenseItem(
     val description: String,
     val amount: String
 )
+
+@Composable
+private fun TripBookGradientBackground(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
+                    )
+                )
+            )
+    ) {
+        content()
+    }
+}
