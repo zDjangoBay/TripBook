@@ -3,7 +3,7 @@ package com.android.tripbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Agency
-import com.android.tripbook.repository.Destination
+import com.android.tripbook.model.Destination
 import com.android.tripbook.repository.SupabaseAgencyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
