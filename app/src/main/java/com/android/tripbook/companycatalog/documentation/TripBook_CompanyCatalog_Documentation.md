@@ -75,7 +75,7 @@ companycatalog/
 │   │   ├── CompanyListCard.kt
 │   │   └── SearchBar.kt
 │   │
-│   ├── components/                       // Reusable UI components
+│   ├── components/                       // Reusable UI components 
 │   │   ├── EmptyState.kt
 │   │   ├── ImageLoader.kt
 │   │   ├── SectionTitle.kt
