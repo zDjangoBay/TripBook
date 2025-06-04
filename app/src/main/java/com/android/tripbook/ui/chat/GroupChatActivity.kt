@@ -1,11 +1,16 @@
 package com.android.tripbook.ui.chat
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tripbook.R
 import com.android.tripbook.model.Message
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class GroupChatActivity : AppCompatActivity() {
 
@@ -13,18 +18,74 @@ class GroupChatActivity : AppCompatActivity() {
     private lateinit var messageAdapter: MessageAdapter
     private val messages = mutableListOf<Message>()
 
+    private lateinit var editTextMessage: EditText
+    private lateinit var buttonSend: Button
+
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var tripId: String
+    private var messagesListener: ListenerRegistration? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.group_chat_activity)
 
-        recyclerView = findViewById(R.id.recyclerViewMessages)
-        messageAdapter = MessageAdapter(messages)
+        // Example: tripId passed via Intent
+        tripId = intent.getStringExtra("tripId") ?: "default_trip"
 
+        recyclerView = findViewById(R.id.recyclerViewMessages)
+        editTextMessage = findViewById(R.id.editTextMessage)
+        buttonSend = findViewById(R.id.buttonSend)
+
+        messageAdapter = MessageAdapter(messages)
         recyclerView.apply {
             layoutManager = LinearLayoutManager(this@GroupChatActivity).apply {
-                stackFromEnd = true // Scroll to latest
+                stackFromEnd = true
             }
             adapter = messageAdapter
         }
+
+        buttonSend.setOnClickListener {
+            val text = editTextMessage.text.toString().trim()
+            if (text.isNotEmpty()) {
+                sendMessage(text)
+                editTextMessage.setText("")
+            }
+        }
+
+        listenForMessages()
+    }
+
+    private fun sendMessage(text: String) {
+        val message = Message(auth.currentUser!!.uid, text)
+        firestore.collection("trips")
+            .document(tripId)
+            .collection("messages")
+            .add(message)
+    }
+
+    private fun listenForMessages() {
+        messagesListener = firestore.collection("trips")
+            .document(tripId)
+            .collection("messages")
+            .orderBy("timestamp")
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
+                    messages.clear()
+                    for (doc in snapshot.documents) {
+                        val message = doc.toObject(Message::class.java)
+                        if (message != null) {
+                            messages.add(message)
+                        }
+                    }
+                    messageAdapter.notifyDataSetChanged()
+                    recyclerView.scrollToPosition(messages.size - 1)
+                }
+            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        messagesListener?.remove()
     }
 }
