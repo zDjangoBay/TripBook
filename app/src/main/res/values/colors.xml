@@ -7,4 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <?xml version="1.0" encoding="utf-8"?>
+
+        <!-- Add these colors to your existing colors.xml -->
+        <color name="colorPrimary">#2196F3</color>
+        <color name="colorPrimaryDark">#1976D2</color>
+        <color name="colorAccent">#FF4081</color>
+
+        <!-- Chat specific colors -->
+        <color name="chat_background">#F5F5F5</color>
+        <color name="message_sender">#2196F3</color>
+        <color name="message_receiver">#FFFFFF</color>
+        <color name="message_border">#E0E0E0</color>
+        <color name="text_secondary">#666666</color>
+        <color name="text_timestamp">#999999</color>
+
 </resources>
