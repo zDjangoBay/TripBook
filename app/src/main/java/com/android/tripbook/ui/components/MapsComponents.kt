@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.android.tripbook.model.ItineraryType
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import com.android.tripbook.service.PlaceResult
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
@@ -69,6 +70,8 @@ fun MapScreen(
     var searchResults by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var showSearchResults by remember { mutableStateOf(false) }
+    var searchError by remember { mutableStateOf<String?>(null) } // New state for search errors
+
 
     val mapsService = remember { GoogleMapsService(context, apiKey) }
     val fusedLocationClient: FusedLocationProviderClient = remember { LocationServices.getFusedLocationProviderClient(context) }
@@ -130,6 +133,7 @@ fun MapScreen(
                     fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
                 } catch (e: SecurityException) {
                     // Handle permission not actually granted or other security issues
+                    searchError = "Location permission not granted. Cannot get current location."
                 }
             }
         }
@@ -175,49 +179,74 @@ fun MapScreen(
                 .padding(16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            Row(
+            Column( // Use Column to stack text field and error message
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    placeholder = { Text("Search places...") },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                    modifier = Modifier.weight(1f),
-                    singleLine = true
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = { Text("Search places...") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
+                    )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Button(
-                    onClick = {
-                        if (searchQuery.isNotBlank()) {
-                            scope.launch {
-                                isLoading = true
-                                try {
-                                    searchResults = mapsService.searchPlaces(searchQuery)
-                                    showSearchResults = true
-                                } catch (e: Exception) {
-                                    searchResults = emptyList()
-                                } finally {
-                                    isLoading = false
+                    Button(
+                        onClick = {
+                            if (searchQuery.isNotBlank()) {
+                                scope.launch {
+                                    isLoading = true
+                                    searchError = null // Clear previous errors
+                                    try {
+                                        searchResults = mapsService.searchPlaces(searchQuery)
+                                        showSearchResults = true
+                                    } catch (e: Exception) {
+                                        searchResults = emptyList()
+                                        val userFriendlyMessage = when {
+                                            e.message?.contains("REQUEST_DENIED", ignoreCase = true) == true ->
+                                                "Failed to search places. Please check your internet connection and API key configuration."
+                                            e.message?.contains("INVALID_REQUEST", ignoreCase = true) == true ->
+                                                "Invalid search request. Please refine your query."
+                                            e.message?.contains("ZERO_RESULTS", ignoreCase = true) == true ->
+                                                "No results found for your search. Try a different query."
+                                            else ->
+                                                "An unexpected error occurred during search. Please try again."
+                                        }
+                                        searchError = userFriendlyMessage
+                                        println("Error searching places on map: ${e.message}")
+                                    } finally {
+                                        isLoading = false
+                                    }
                                 }
                             }
+                        },
+                        enabled = !isLoading && searchQuery.isNotBlank()
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text("Search")
                         }
-                    },
-                    enabled = !isLoading && searchQuery.isNotBlank()
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text("Search")
                     }
+                }
+                if (searchError != null) {
+                    Text(
+                        text = searchError!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
                 }
             }
         }
@@ -348,6 +377,7 @@ fun MapScreen(
                     FloatingActionButton(
                         onClick = {
                             scope.launch {
+                                searchError = null // Clear previous errors
                                 val location = mapsService.getCurrentLocation()
                                 location?.let {
                                     val newLatLng = LatLng(it.latitude, it.longitude)
@@ -363,6 +393,8 @@ fun MapScreen(
                                     cameraPositionState.animate(
                                         CameraUpdateFactory.newLatLngZoom(newLatLng, 15f)
                                     )
+                                } ?: run {
+                                    searchError = "Could not get current location."
                                 }
                             }
                         }
@@ -375,7 +407,8 @@ fun MapScreen(
                     onClick = {
                         currentLocation?.let { location ->
                             scope.launch {
-                                isLoading = true
+                                isLoading = true // Assuming isLoading can be reused for attractions too
+                                searchError = null // Clear previous errors
                                 try {
                                     searchResults = mapsService.searchNearbyAttractions(
                                         location.latitude,
@@ -383,11 +416,22 @@ fun MapScreen(
                                     )
                                     showSearchResults = true
                                 } catch (e: Exception) {
-                                    // Handle error
+                                    val userFriendlyMessage = when {
+                                        e.message?.contains("REQUEST_DENIED", ignoreCase = true) == true ->
+                                            "Failed to find nearby attractions. Check API key and network connection."
+                                        e.message?.contains("ZERO_RESULTS", ignoreCase = true) == true ->
+                                            "No attractions found around your current location."
+                                        else ->
+                                            "An unexpected error occurred while searching for attractions. Try again."
+                                    }
+                                    searchError = userFriendlyMessage
+                                    println("Error searching attractions: ${e.message}")
                                 } finally {
                                     isLoading = false
                                 }
                             }
+                        } ?: run {
+                            searchError = "Cannot find attractions without current location. Please enable location services."
                         }
                     }
                 ) {
@@ -509,7 +553,7 @@ fun TripMapView(
                     }
                 } catch (e: Exception) {
                     println("TripMapView: Google search failed: ${e.message}")
-                    resolutionError = "Google search failed: ${e.message}"
+                    // Don't set resolutionError for Google failure if Nominatim is fallback
                 }
 
                 // Try Nominatim as fallback
@@ -527,18 +571,21 @@ fun TripMapView(
                     }
                 } catch (e: Exception) {
                     println("TripMapView: Nominatim search failed: ${e.message}")
-                    resolutionError = "${resolutionError ?: ""}\nNominatim search failed: ${e.message}"
+                    resolutionError = "Failed to resolve destination. Check internet or try a different destination." // Generic error message
                 }
             }
 
             // Fallback to default location
             resolvedMapCenter = fallbackDefaultLatLng
+            if (resolutionError == null) { // Only set this if no specific API error occurred
+                resolutionError = "Could not find a specific location for '${trip.destination}'. Displaying default area."
+            }
             println("TripMapView: Using fallback location: ${resolvedMapCenter}")
 
         } catch (e: Exception) {
             println("TripMapView: Unexpected error during resolution: ${e.message}")
             resolvedMapCenter = fallbackDefaultLatLng
-            resolutionError = "Unexpected error: ${e.message}"
+            resolutionError = "An unexpected error occurred while resolving destination: ${e.message}"
         } finally {
             isResolving = false
         }
@@ -571,7 +618,19 @@ fun TripMapView(
 
     // Show error message if resolution failed (optional)
     resolutionError?.let { error ->
-        println("TripMapView: Resolution errors: $error")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 
     GoogleMap(
@@ -709,6 +768,9 @@ fun PlaceSearchField(
                             suggestions = googleMapsService.getPlaceSuggestions(newText)
                         } catch (e: Exception) {
                             suggestions = emptyList()
+                            // For simplicity, not displaying error for suggestions directly in UI
+                            // A Toast message or log could be added here for debugging.
+                            println("Error fetching place suggestions: ${e.message}")
                         }
                     }
                 } else {
