@@ -39,3 +39,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import com.android.tripbook.ui.theme.Purple700
 import com.android.tripbook.companycatalog.model.CompanyRepository
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CompanyDetailScreen(
+    company: Company, // This company object is now from the NavGraph, which might be a copy
+    onBackClick: () -> Unit
+) {
+    val scrollState = rememberScrollState()
+
+    // Fetch the actual company object from the repository to ensure it's observable
+    // This is crucial for the like count to update across screens.
+    val liveCompany = CompanyRepository.getCompanyById(company.id) ?: company
+
+    // State for the like button. Its value will now reflect the liveCompany's likes.
+    // We'll assume a company is 'liked' if its like count is odd, or you can add a separate 'isLiked' boolean to Company.
+    // For simplicity, let's just use the `likes` count to determine the tint.
+    // If you need a proper `isLiked` state, add `var isLiked: Boolean` to your `Company` data class.
+    // For this example, I'll add `var isLiked: Boolean` to Company model for clarity.
+
+    // Let's assume `Company` now has `var isLiked: Boolean`
+    var isLikedState by remember { mutableStateOf(liveCompany.isLiked) }
+    var currentLikesState by remember { mutableStateOf(liveCompany.likes) }
