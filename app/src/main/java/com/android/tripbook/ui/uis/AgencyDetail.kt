@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Agency
-import com.android.tripbook.model.Destination
+import com.android.tripbook.repository.Destination
 import com.android.tripbook.viewmodel.AgencyViewModel
 import java.text.NumberFormat
 import java.util.*
