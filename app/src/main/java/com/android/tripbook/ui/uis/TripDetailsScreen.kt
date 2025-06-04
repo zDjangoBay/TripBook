@@ -31,6 +31,10 @@ import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import com.android.tripbook.ui.activities.GroupChatActivity  // adjust path if necessary
+
 
 
 @Composable
