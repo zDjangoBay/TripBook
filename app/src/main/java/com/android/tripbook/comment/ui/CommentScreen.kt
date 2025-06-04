@@ -8,7 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.layout.consumeWindowInsets
 import com.android.tripbook.comment.model.Comment
 import java.util.*
@@ -23,6 +24,9 @@ fun CommentScreen(
     currentUsername: String = "You",
     currentAvatar: String? = null
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -41,12 +45,12 @@ fun CommentScreen(
                 )
             )
         },
-        contentWindowInsets = WindowInsets.ime // ✅ Adjusts for keyboard properly
+        contentWindowInsets = WindowInsets.ime
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding) // ✅ Prevents duplicate spacing
+                .consumeWindowInsets(innerPadding) // Optional: remove if not supported
                 .fillMaxSize()
         ) {
             CommentList(
@@ -66,6 +70,10 @@ fun CommentScreen(
                     timestamp = System.currentTimeMillis()
                 )
                 onPost(comment)
+
+                // ✅ Hide keyboard & clear focus
+                keyboardController?.hide()
+                focusManager.clearFocus()
             }
         }
     }
