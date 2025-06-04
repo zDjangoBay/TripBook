@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.comment.model.Comment
-import java.util.*
+
 
 @Composable
 fun CommentList(comments: List<Comment>, modifier: Modifier = Modifier) {
