@@ -80,6 +80,7 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
     //---------------------------------------------------------
     //      Google Maps and Places API dependencies
     //---------------------------------------------------------
