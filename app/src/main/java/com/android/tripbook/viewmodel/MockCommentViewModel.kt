@@ -79,4 +79,32 @@ class MockCommentViewModel : ViewModel() {
         val comment = _comments.value.find { it.id == commentId } ?: return false
         return comment.reactions[emoji]?.any { it.username == username } == true
     }
+
+    fun addReply(reviewId: Int, parentCommentId: String, replyText: String, username: String = "You") {
+        val commentsList = commentsMap[reviewId] ?: return
+        val parentCommentIndex = commentsList.indexOfFirst { it.id == parentCommentId }
+        if (parentCommentIndex == -1) return
+        
+        val parentComment = commentsList[parentCommentIndex]
+        
+        // Create a new reply comment
+        val reply = Comment(
+            text = replyText,
+            authorName = username,
+            parentId = parentCommentId
+        )
+        
+        // Add the reply to the parent comment
+        val updatedComment = parentComment.copy()
+        updatedComment.replies.add(0, reply) // Add to beginning of replies
+        
+        // Update the comment in the list
+        commentsList[parentCommentIndex] = updatedComment
+        _comments.value = commentsList.toList()
+    }
+
+    fun getRepliesForComment(commentId: String): List<Comment> {
+        val comment = _comments.value.find { it.id == commentId } ?: return emptyList()
+        return comment.replies
+    }
 }
