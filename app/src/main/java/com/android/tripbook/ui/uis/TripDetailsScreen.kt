@@ -496,6 +496,31 @@ private fun OverviewTab(trip: Trip) {
                     )
                 }
             }
+            item {
+                // Group Chat Button
+                Button(
+                    onClick = {
+                        val context = LocalContext.current
+                        val intent = Intent(context, GroupChatActivity::class.java)
+                        intent.putExtra("tripId", trip.id)
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .height(48.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA))
+                ) {
+                    Text(
+                        text = "Open Group Chat",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
         }
     }
 }
