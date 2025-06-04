@@ -1,104 +1,83 @@
-package com.android.tripbook.ui.chat
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#F5F5F5"
+tools:context=".ui.chat.GroupChatActivity">
 
-import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.android.tripbook.R
-import com.android.tripbook.model.Message
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.FirebaseFirestoreException
+<!-- Toolbar -->
+<androidx.appcompat.widget.Toolbar
+android:id="@+id/toolbar"
+android:layout_width="0dp"
+android:layout_height="?attr/actionBarSize"
+android:background="@color/colorPrimary"
+android:elevation="4dp"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toTopOf="parent">
 
-class GroupChatActivity : AppCompatActivity() {
+<TextView
+android:id="@+id/tvChatTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_gravity="center"
+android:text="Trip Group Chat"
+android:textColor="@android:color/white"
+android:textSize="18sp"
+android:textStyle="bold" />
 
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
-    private lateinit var messagesListener: ListenerRegistration
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var messageAdapter: MessageAdapter
-    private lateinit var messageEditText: EditText
-    private lateinit var sendButton: Button
+</androidx.appcompat.widget.Toolbar>
 
-    private val messages = mutableListOf<Message>()
-    private var tripId: String = ""
+<!-- Messages RecyclerView -->
+<androidx.recyclerview.widget.RecyclerView
+android:id="@+id/rvMessages"
+android:layout_width="0dp"
+android:layout_height="0dp"
+android:layout_marginBottom="8dp"
+android:paddingHorizontal="8dp"
+android:paddingVertical="8dp"
+app:layout_constraintBottom_toTopOf="@+id/messageInputContainer"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintTop_toBottomOf="@+id/toolbar"
+tools:listitem="@layout/item_message" />
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_chat)
+<!-- Message Input Container -->
+<LinearLayout
+android:id="@+id/messageInputContainer"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:background="@android:color/white"
+android:elevation="8dp"
+android:orientation="horizontal"
+android:padding="12dp"
+app:layout_constraintBottom_toBottomOf="parent"
+app:layout_constraintEnd_toEndOf="parent"
+app:layout_constraintStart_toStartOf="parent">
 
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
+<EditText
+android:id="@+id/etMessage"
+android:layout_width="0dp"
+android:layout_height="wrap_content"
+android:layout_weight="1"
+android:background="@drawable/bg_message_input"
+android:hint="Type a message..."
+android:maxLines="3"
+android:padding="12dp"
+android:textSize="16sp" />
 
-        tripId = intent.getStringExtra("TRIP_ID") ?: ""
+<ImageButton
+android:id="@+id/btnSend"
+android:layout_width="48dp"
+android:layout_height="48dp"
+android:layout_marginStart="8dp"
+android:background="@drawable/bg_send_button"
+android:contentDescription="Send message"
+android:src="@drawable/ic_send"
+android:tint="@android:color/white" />
 
-        recyclerView = findViewById(R.id.recyclerView)
-        messageEditText = findViewById(R.id.messageEditText)
-        sendButton = findViewById(R.id.sendButton)
+</LinearLayout>
 
-        messageAdapter = MessageAdapter(messages)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = messageAdapter
-
-        sendButton.setOnClickListener {
-            val messageText = messageEditText.text.toString().trim()
-            if (messageText.isNotEmpty()) {
-                sendMessage(messageText)
-                messageEditText.text.clear()
-            }
-        }
-
-        if (tripId.isNotEmpty()) {
-            listenForMessages()
-        }
-    }
-
-    private fun sendMessage(messageText: String) {
-        val currentUser = auth.currentUser ?: return
-        val message = Message(
-            senderId = currentUser.uid,
-            content = messageText,
-            timestamp = System.currentTimeMillis()
-        )
-
-        firestore.collection("trips")
-            .document(tripId)
-            .collection("messages")
-            .add(message)
-    }
-
-    private fun listenForMessages() {
-        messagesListener = firestore.collection("trips")
-            .document(tripId)
-            .collection("messages")
-            .orderBy("timestamp")
-            .addSnapshotListener(EventListener<QuerySnapshot> { snapshot, error ->
-                if (error != null) {
-                    error.printStackTrace()
-                    return@EventListener
-                }
-
-                if (snapshot != null) {
-                    messages.clear()
-                    for (doc in snapshot.documents) {
-                        val msg = doc.toObject(Message::class.java)
-                        msg?.let { messages.add(it) }
-                    }
-                    messageAdapter.notifyDataSetChanged()
-                    recyclerView.scrollToPosition(messages.size - 1)
-                }
-            })
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::messagesListener.isInitialized) {
-            messagesListener.remove()
-        }
-    }
-}
+</androidx.constraintlayout.widget.ConstraintLayout>

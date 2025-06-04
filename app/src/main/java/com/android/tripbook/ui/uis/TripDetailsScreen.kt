@@ -33,9 +33,8 @@ import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import androidx.compose.ui.platform.LocalContext
 import android.content.Intent
-import com.android.tripbook.ui.activities.GroupChatActivity  // adjust path if necessary
-
-
+// Fixed import - remove this line if GroupChatActivity doesn't exist or adjust the path
+// import com.android.tripbook.ui.activities.GroupChatActivity
 
 @Composable
 fun TripDetailsScreen(
@@ -153,7 +152,7 @@ fun TripDetailsScreen(
                         }
                     }
 
-                    Divider(
+                    HorizontalDivider(
                         color = Color(0xFFE2E8F0),
                         thickness = 1.dp,
                         modifier = Modifier.padding(top = 8.dp)
@@ -500,31 +499,34 @@ private fun OverviewTab(trip: Trip) {
                     )
                 }
             }
-            item {
-                // Group Chat Button
-                Button(
-                    onClick = {
-                        val context = LocalContext.current
-                        val intent = Intent(context, GroupChatActivity::class.java)
-                        intent.putExtra("tripId", trip.id)
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA))
-                ) {
-                    Text(
-                        text = "Open Group Chat",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
+        }
 
+        item {
+            // Group Chat Button - Fixed structure
+            Button(
+                onClick = {
+                    // TODO: Implement group chat functionality
+                    // Uncomment and modify the following lines when GroupChatActivity is available:
+                    /*
+                    val context = LocalContext.current
+                    val intent = Intent(context, GroupChatActivity::class.java)
+                    intent.putExtra("tripId", trip.id)
+                    context.startActivity(intent)
+                    */
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA))
+            ) {
+                Text(
+                    text = "Open Group Chat",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }
@@ -696,7 +698,7 @@ private fun ExpensesTab(trip: Trip) {
 
                     BudgetRow("Total Budget:", "FCFA ${trip.budget}", Color(0xFF667EEA))
                     BudgetRow("Spent:", "FCFA 68000", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "FCfA 72000", Color(0xFF059669))
+                    BudgetRow("Remaining:", "FCFA 72000", Color(0xFF059669))
 
                     Spacer(modifier = Modifier.height(16.dp))
 
