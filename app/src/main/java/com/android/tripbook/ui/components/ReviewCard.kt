@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.model.Review
+import com.android.tripbook.Model.Review
 @Composable
 fun ReviewCard(review: Review, modifier: Modifier = Modifier) {
     Card(

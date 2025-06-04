@@ -1,4 +1,4 @@
-package com.android.tripbook.model
+package com.android.tripbook.Model
 import java.io.Serializable
 
 
@@ -12,11 +12,20 @@ import java.io.Serializable
  */
 
 data class Trip(
-    val id: Int,
-    val title: String,
-    val caption: String,
-    val description: String,
-    val imageUrl: List<String>
+    val id: Int = 0,
+    val title: String = "",
+    val caption: String = "",
+    val description: String = "",
+    val imageUrl: List<String> = emptyList(),
+    val companyLogo: String = "",
+    val companyName: String = "",
+    val from: String = "",
+    val fromshort: String = "",
+    val to: String = "",
+    val toshort: String = "",
+    val arriveTime: String = "",
+    val score: Double = 0.0,
+    val price: Double = 0.0
 ) : Serializable
 
 
