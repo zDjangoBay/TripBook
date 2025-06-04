@@ -452,7 +452,7 @@ private fun OverviewTab(
                             Text("... and ${nearbyRestaurants.size - 5} more.", style = MaterialTheme.typography.bodySmall)
                         }
                     } else {
-                        Text("No restaurants found yet. Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
+                        Text("Click 'Find' to search.", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
