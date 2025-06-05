@@ -27,10 +27,6 @@ data class Location(
     val openingHours: List<String>? = null,
     val priceLevel: Int? = null
 ) {
-    // Validation helper
-    fun isValid(): Boolean {
-        return latitude in -90.0..90.0 && longitude in -180.0..180.0
-    }
 }
 
 data class RouteInfo(
@@ -82,21 +78,86 @@ data class Trip(
     val isActive: Boolean get() = status == TripStatus.ACTIVE
     val isCompleted: Boolean get() = status == TripStatus.COMPLETED
 
-    // Helper methods
-    fun getTodayItinerary(): List<ItineraryItem> {
-        return itinerary.filter { it.isToday() }
-    }
-
-    fun getItineraryForDate(date: LocalDate): List<ItineraryItem> {
-        return itinerary.filter { it.date == date }
-    }
-
-    // Validation
-    fun isValid(): Boolean {
-        return name.isNotBlank() &&
-                startDate.isBefore(endDate) || startDate.isEqual(endDate) &&
-                travelers > 0 &&
-                budget >= 0
-    }
 }
 
+// Type converters for Room database
+class Converters {
+    private val gson = Gson()
+
+    @TypeConverter
+    fun toLocalDate(dateString: String?): LocalDate? {
+        return dateString?.let { LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE) }
+    }
+
+    @TypeConverter
+    fun fromTripStatus(status: TripStatus): String {
+        return status.name
+    }
+
+    @TypeConverter
+    fun toTripStatus(status: String): TripStatus {
+        return TripStatus.valueOf(status)
+    }
+
+    @TypeConverter
+    fun fromItineraryType(type: ItineraryType): String {
+        return type.name
+    }
+
+    @TypeConverter
+    fun toItineraryType(type: String): ItineraryType {
+        return ItineraryType.valueOf(type)
+    }
+
+    @TypeConverter
+    fun fromStringList(list: List<String>): String {
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun toStringList(json: String): List<String> {
+        val type = object : TypeToken<List<String>>() {}.type
+        return gson.fromJson(json, type) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun fromLocation(location: Location?): String? {
+        return location?.let { gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toLocation(json: String?): Location? {
+        return json?.let { gson.fromJson(it, Location::class.java) }
+    }
+
+    @TypeConverter
+    fun fromRouteInfo(routeInfo: RouteInfo?): String? {
+        return routeInfo?.let { gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toRouteInfo(json: String?): RouteInfo? {
+        return json?.let { gson.fromJson(it, RouteInfo::class.java) }
+    }
+
+    @TypeConverter
+    fun fromItineraryList(list: List<ItineraryItem>): String {
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun toItineraryList(json: String): List<ItineraryItem> {
+        val type = object : TypeToken<List<ItineraryItem>>() {}.type
+        return gson.fromJson(json, type) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun fromAgencyService(service: AgencyService?): String? {
+        return service?.let { gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toAgencyService(json: String?): AgencyService? {
+        return json?.let { gson.fromJson(it, AgencyService::class.java) }
+    }
+}
