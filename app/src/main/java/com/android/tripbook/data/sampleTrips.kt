@@ -1,6 +1,6 @@
 package com.android.tripbook.data
 
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.model.Trip
 
 object SampleTrips {
     fun get(): List<Trip> = listOf(

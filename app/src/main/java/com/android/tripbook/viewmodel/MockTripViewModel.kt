@@ -3,7 +3,7 @@ package com.android.tripbook.ViewModel
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.Model.Review
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.model.Trip
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,4 +19,3 @@ class MockTripViewModel : ViewModel() {
         // Add to a mutable list or API call
     }
 }
-

@@ -3,7 +3,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.tripbook.Model.Trip
+import com.android.tripbook.model.Trip
 import com.android.tripbook.databinding.ViewholderTripBinding
 import com.bumptech.glide.Glide
 
@@ -30,19 +30,24 @@ class TripsAdapter (private val trips: List<Trip>) : RecyclerView.Adapter<TripsA
     }
 
     override fun onBindViewHolder(holder: TripsAdapter.Viewholder, position: Int) {
-        val trip=trips[position]
-        Glide.with(context)
-            .load(trip.companyLogo)
-            .into(holder.binding.logo)
+        val trip = trips[position]
 
-        holder.binding.companyTxt.text=trip.companyName
-        holder.binding.fromTxt.text=trip.from
-        holder.binding.fromshortTxt.text=trip.fromshort
-        holder.binding.toTxt.text=trip.to
-        holder.binding.toShortTxt.text=trip.toshort
-        holder.binding.arrivalTxt.text=trip.arriveTime
-        holder.binding.scoreTxt.text=trip.score.toString()
-        holder.binding.priceTxt.text="\$${trip.price}/per"
+        // Use the first image from imageUrl list for the logo/main image
+        if (trip.imageUrl.isNotEmpty()) {
+            Glide.with(context)
+                .load(trip.imageUrl[0])
+                .into(holder.binding.logo)
+        }
+
+        // Map existing Trip properties to the UI elements
+        holder.binding.companyTxt.text = trip.title
+        holder.binding.fromTxt.text = trip.caption
+        holder.binding.fromshortTxt.text = trip.title.take(3).uppercase() // First 3 chars as short code
+        holder.binding.toTxt.text = "Destination"
+        holder.binding.toShortTxt.text = "DEST"
+        holder.binding.arrivalTxt.text = "Available"
+        holder.binding.scoreTxt.text = "4.5" // Default score
+        holder.binding.priceTxt.text = "Contact for pricing"
     }
 
     override fun getItemCount(): Int =trips.size

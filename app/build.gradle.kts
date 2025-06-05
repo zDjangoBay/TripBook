@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -89,7 +90,7 @@ dependencies {
 //    implementation(libs.androidx.lifecycle.runtime.compose)
 
 // Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.an   droid)
 
 
 
@@ -108,10 +109,13 @@ dependencies {
     // Google Maps Compose
     implementation(libs.maps.compose.v430)
 
-    // Accompanist for sticky headers (optional if using custom pinned behavior)
+// Accompanist for sticky headers (optional if using custom pinned behavior)
     implementation(libs.accompanist.placeholder)
 
-    // Kotlin coroutines
+// Compose + lifecycle
+//    implementation(libs.androidx.lifecycle.runtime.compose)
+
+// Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
 
     // Chip Navigation Bar
@@ -120,10 +124,44 @@ dependencies {
     // Glide for image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-auth-ktx")
+//   ------------------------------------------------------------
+//              Added some Essential Dependencies
+//   ------------------------------------------------------------
+
+    //  DEPENDENCIES - ADDED FOR BASIC FUNCTIONALITY
+    implementation(libs.androidx.constraintlayout)  // For ConstraintLayout
+    implementation(libs.androidx.recyclerview)  // For RecyclerView
+
+    // ESSENTIAL ANDROID DEPENDENCIES
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // COMPOSE NAVIGATION
+    implementation(libs.androidx.navigation.runtime.ktx)
+
+    // COMPOSE FOUNDATION
+    implementation("androidx.compose.foundation:foundation:1.5.4")
+    implementation("androidx.compose.foundation:foundation-layout:1.5.4")
+    implementation("androidx.compose.ui:ui-util:1.5.4")
+
+    // IMAGE LOADING (Missing)
+    implementation(libs.glide)
+
+    // FIREBASE (If using - currently referenced in code)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.auth.ktx)
+
+//   ------------------------------------------------------------
+
+    // Room Database - NEW ADDITION FOR LOCAL DATABASE
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Gson for Room type converters - NEW ADDITION
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }
 
