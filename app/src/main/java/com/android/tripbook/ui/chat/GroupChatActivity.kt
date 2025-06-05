@@ -1,6 +1,117 @@
+// First, create the Message data class
+// File: app/src/main/java/com/android/tripbook/model/Message.kt
+package com.android.tripbook.model
+
+import com.google.firebase.Timestamp
+import java.util.Date
+
+data class Message(
+    var id: String = "",
+    val text: String = "",
+    val senderId: String = "",
+    val senderName: String = "",
+    val tripId: String = "",
+    val timestamp: Timestamp = Timestamp(Date())
+)
+
+// Second, create the MessageAdapter
+// File: app/src/main/java/com/android/tripbook/ui/chat/MessageAdapter.kt
+package com.android.tripbook.ui.chat
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.android.tripbook.R
+import com.android.tripbook.model.Message
+import java.text.SimpleDateFormat
+import java.util.*
+
+class MessageAdapter(
+    private var messages: MutableList<Message>,
+    private val currentUserId: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+        private const val TYPE_SENT = 1
+        private const val TYPE_RECEIVED = 2
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (messages[position].senderId == currentUserId) {
+            TYPE_SENT
+        } else {
+            TYPE_RECEIVED
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_SENT -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_message_sent, parent, false)
+                SentMessageViewHolder(view)
+            }
+            TYPE_RECEIVED -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_message_received, parent, false)
+                ReceivedMessageViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val message = messages[position]
+        when (holder) {
+            is SentMessageViewHolder -> holder.bind(message)
+            is ReceivedMessageViewHolder -> holder.bind(message)
+        }
+    }
+
+    override fun getItemCount(): Int = messages.size
+
+    fun updateMessages(newMessages: List<Message>) {
+        messages.clear()
+        messages.addAll(newMessages)
+        notifyDataSetChanged()
+    }
+
+    class SentMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
+        private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+
+        fun bind(message: Message) {
+            tvMessage.text = message.text
+            tvTime.text = formatTime(message.timestamp.toDate())
+        }
+    }
+
+    class ReceivedMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
+        private val tvSenderName: TextView = itemView.findViewById(R.id.tvSenderName)
+        private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+
+        fun bind(message: Message) {
+            tvMessage.text = message.text
+            tvSenderName.text = message.senderName
+            tvTime.text = formatTime(message.timestamp.toDate())
+        }
+    }
+
+    private fun formatTime(date: Date): String {
+        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return format.format(date)
+    }
+}
+
+// Third, the complete GroupChatActivity
+// File: app/src/main/java/com/android/tripbook/ui/chat/GroupChatActivity.kt
 package com.android.tripbook.ui.chat
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -32,7 +143,10 @@ class GroupChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.group_chat_activity)
+        setContentView(R.layout.activity_group_chat)
+
+        // Enable back button in action bar
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Get trip details from intent
         tripId = intent.getStringExtra("TRIP_ID") ?: ""
@@ -132,7 +246,11 @@ class GroupChatActivity : AppCompatActivity() {
                 }
 
                 val messages = snapshots?.documents?.mapNotNull { doc ->
-                    doc.toObject(Message::class.java)?.copy(id = doc.id)
+                    try {
+                        doc.toObject(Message::class.java)?.copy(id = doc.id)
+                    } catch (e: Exception) {
+                        null
+                    }
                 } ?: emptyList()
 
                 messageAdapter.updateMessages(messages)
@@ -143,6 +261,16 @@ class GroupChatActivity : AppCompatActivity() {
     private fun scrollToBottom() {
         if (messageAdapter.itemCount > 0) {
             rvMessages.smoothScrollToPosition(messageAdapter.itemCount - 1)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
