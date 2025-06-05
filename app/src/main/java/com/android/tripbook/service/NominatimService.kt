@@ -10,7 +10,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import android.util.Log // ADDED: Import Log for logging exceptions (This was requested requested by teacher)
 
-// Data class for a simplified Attraction, as before.
 data class Attraction(
     val name: String,
     val location: String
