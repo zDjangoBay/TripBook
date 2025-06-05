@@ -19,6 +19,7 @@ import com.android.tripbook.data.SampleTrips
  * - Search bar (sticky)
  * - Scrollable, paginated trip list
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun TripCatalogScreen(
