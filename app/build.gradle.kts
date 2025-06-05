@@ -1,19 +1,21 @@
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.tripbook.userprofilendedilan"
+    namespace = "com.android.tripbook"
     compileSdk = 35
 
     defaultConfig {
-
+        applicationId = "com.android.tripbook"
         minSdk = 28
         targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -29,13 +31,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
-
     buildFeatures {
         compose = true
     }
@@ -50,9 +51,8 @@ android {
 }
 
 dependencies {
-
     //------------------------------------------------------
-    //           default dependencies on the project
+   //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -101,10 +101,9 @@ dependencies {
     implementation(libs.androidx.compose.material3.material3)
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(project(":userprofile"))
 
-    // Firebase Authentication and Kotlin coroutines
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
-

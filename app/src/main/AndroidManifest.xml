@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
+        android:name=".TripBookApplication"
         android:allowBackup="true"
         android:label="TripBook"
         android:supportsRtl="true"
