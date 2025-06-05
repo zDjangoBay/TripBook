@@ -8,6 +8,8 @@ data class JournalEntry(
     val title: String,
     val content: String,
     val tags: List<String> = emptyList(),
+    val images: List<String> = emptyList(),
     val location: String = "",
-    val photos: List<String> = emptyList()
+    val mood: String = "",
+    val weather: String = ""
 )
