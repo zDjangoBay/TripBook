@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -150,21 +151,59 @@ fun MyTripsScreen(
                 }
             }
 
-            // Trip List
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(trips.filter { trip ->
-                    (selectedTab == "All" ||
-                            (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
-                            (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
-                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
-                            (searchText.isEmpty() ||
-                                    trip.name.contains(searchText, ignoreCase = true) ||
-                                    trip.destination.contains(searchText, ignoreCase = true))
-                }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick(trip) })
+            // Trip List or Empty State
+            val filteredTrips = trips.filter { trip ->
+                (selectedTab == "All" ||
+                        (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
+                        (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
+                        (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
+                        (searchText.isEmpty() ||
+                                trip.name.contains(searchText, ignoreCase = true) ||
+                                trip.destination.contains(searchText, ignoreCase = true))
+            }
+
+            if (filteredTrips.isEmpty()) {
+                // Empty State
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = if (trips.isEmpty()) Icons.Default.Add else Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = if (trips.isEmpty()) "No trips yet" else "No trips found",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = if (trips.isEmpty())
+                            "Start planning your African adventure!"
+                        else
+                            "Try adjusting your search or filters",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredTrips) { trip ->
+                        TripCard(trip = trip, onClick = { onTripClick(trip) })
+                    }
                 }
             }
         }
@@ -207,7 +246,11 @@ fun TripCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                indication = rememberRipple(color = Color(0xFF667EEA)),
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -234,14 +277,24 @@ fun TripCard(
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1A202C)
                     )
-                    Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
-                        fontSize = 14.sp,
-                        color = Color(0xFF667EEA),
-                        fontWeight = FontWeight.Medium
-                    )
+                    // Safe date formatting with null checks
+                    try {
+                        Text(
+                            text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
+                                trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
+                            }",
+                            fontSize = 14.sp,
+                            color = Color(0xFF667EEA),
+                            fontWeight = FontWeight.Medium
+                        )
+                    } catch (e: Exception) {
+                        Text(
+                            text = "Date not available",
+                            fontSize = 14.sp,
+                            color = Color(0xFF667EEA),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
 
                 Box(
@@ -261,7 +314,7 @@ fun TripCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Details row
+            // Details row with vector icons instead of emojis
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -269,9 +322,10 @@ fun TripCard(
             ) {
                 // Location
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "📍",
-                        fontSize = 14.sp,
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -284,9 +338,10 @@ fun TripCard(
 
                 // Travelers
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "👥",
-                        fontSize = 14.sp,
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Travelers",
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -299,9 +354,10 @@ fun TripCard(
 
                 // Budget
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "💰",
-                        fontSize = 14.sp,
+                    Icon(
+                        imageVector = Icons.Default.AttachMoney,
+                        contentDescription = "Budget",
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
