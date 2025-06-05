@@ -1,5 +1,4 @@
 package com.android.tripbook.service
-//managing maps services
 
 import android.content.Context
 import com.android.tripbook.model.Location
@@ -196,7 +195,6 @@ class GoogleMapsService(
         placesClient = Places.createClient(context)
     }
 
-    // Places API - Get autocomplete suggestions
     suspend fun getPlaceSuggestions(query: String): List<AutocompletePrediction> {
         return withContext(Dispatchers.IO) {
             val token = AutocompleteSessionToken.newInstance()
@@ -204,7 +202,6 @@ class GoogleMapsService(
                 .setQuery(query)
                 .setSessionToken(token)
                 .build()
-
             try {
                 val response = placesClient.findAutocompletePredictions(request).await()
                 response.autocompletePredictions
@@ -214,7 +211,6 @@ class GoogleMapsService(
         }
     }
 
-    // Places API - Get place details from place ID
     suspend fun getPlaceDetails(placeId: String): Location? {
         return withContext(Dispatchers.IO) {
             val placeFields = listOf(
@@ -223,9 +219,7 @@ class GoogleMapsService(
                 Place.Field.LAT_LNG,
                 Place.Field.ADDRESS
             )
-
             val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-
             try {
                 val response = placesClient.fetchPlace(request).await()
                 val place = response.place
@@ -235,7 +229,7 @@ class GoogleMapsService(
                         latitude = latLng.latitude,
                         longitude = latLng.longitude,
                         address = place.address ?: "",
-                        placeId = place.id ?: ""
+
                     )
                 } else {
                     null
@@ -246,22 +240,18 @@ class GoogleMapsService(
         }
     }
 
-    // Directions API - Get route between two points
     suspend fun getDirections(origin: LatLng, destination: LatLng): RouteInfo? {
         return withContext(Dispatchers.IO) {
             try {
                 val originStr = "${origin.latitude},${origin.longitude}"
                 val destinationStr = "${destination.latitude},${destination.longitude}"
-
                 val url = "https://maps.googleapis.com/maps/api/directions/json?" +
                         "origin=$originStr" +
                         "&destination=$destinationStr" +
                         "&key=$apiKey"
-
                 val request = Request.Builder().url(url).build()
                 val response = httpClient.newCall(request).execute()
                 val jsonResponse = response.body?.string()
-
                 if (jsonResponse != null) {
                     parseDirectionsResponse(jsonResponse)
                 } else null
@@ -275,16 +265,13 @@ class GoogleMapsService(
         return try {
             val json = JSONObject(jsonResponse)
             val routes = json.getJSONArray("routes")
-
             if (routes.length() > 0) {
                 val route = routes.getJSONObject(0)
                 val legs = route.getJSONArray("legs")
                 val leg = legs.getJSONObject(0)
-
                 val distance = leg.getJSONObject("distance").getString("text")
                 val duration = leg.getJSONObject("duration").getString("text")
                 val polyline = route.getJSONObject("overview_polyline").getString("points")
-
                 RouteInfo(
                     distance = distance,
                     duration = duration,
@@ -296,14 +283,12 @@ class GoogleMapsService(
         }
     }
 
-    // Utility function to decode polyline for map display
     fun decodePolyline(encoded: String): List<LatLng> {
         val poly = mutableListOf<LatLng>()
         var index = 0
         val len = encoded.length
         var lat = 0
         var lng = 0
-
         while (index < len) {
             var b: Int
             var shift = 0
@@ -315,7 +300,6 @@ class GoogleMapsService(
             } while (b >= 0x20)
             val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
             lat += dlat
-
             shift = 0
             result = 0
             do {
@@ -325,17 +309,12 @@ class GoogleMapsService(
             } while (b >= 0x20)
             val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
             lng += dlng
-
             val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
             poly.add(p)
         }
-
         return poly
     }
 
-    /**
-     * Search for places using text query
-     */
     suspend fun searchPlaces(
         query: String,
         type: String? = null,
@@ -345,25 +324,19 @@ class GoogleMapsService(
         try {
             val encodedQuery = URLEncoder.encode(query, "UTF-8")
             var urlString = "$PLACES_SEARCH_URL?query=$encodedQuery&key=$apiKey"
-
-            // Add optional parameters
             type?.let { urlString += "&type=${URLEncoder.encode(it, "UTF-8")}" }
             location?.let { urlString += "&location=${URLEncoder.encode(it, "UTF-8")}&radius=$radius" }
-
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
-
             connection.apply {
                 requestMethod = "GET"
                 connectTimeout = 10000
                 readTimeout = 10000
             }
-
             val responseCode = connection.responseCode
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 val placesResponse = json.decodeFromString<PlacesSearchResponse>(response)
-
                 if (placesResponse.status == "OK") {
                     return@withContext placesResponse.results.map { it.toPlaceResult() }
                 } else {
@@ -377,29 +350,22 @@ class GoogleMapsService(
         }
     }
 
-    /**
-     * Get detailed information about a specific place using Web API
-     */
     suspend fun getPlaceDetailsWeb(placeId: String): PlaceDetails? = withContext(Dispatchers.IO) {
         try {
             val fields = "place_id,name,formatted_address,formatted_phone_number,website," +
                     "rating,price_level,reviews,photos,opening_hours,geometry,types"
             val urlString = "$PLACE_DETAILS_URL?place_id=$placeId&fields=$fields&key=$apiKey"
-
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
-
             connection.apply {
                 requestMethod = "GET"
                 connectTimeout = 10000
                 readTimeout = 10000
             }
-
             val responseCode = connection.responseCode
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 val detailsResponse = json.decodeFromString<PlaceDetailsResponse>(response)
-
                 if (detailsResponse.status == "OK" && detailsResponse.result != null) {
                     return@withContext detailsResponse.result.toPlaceDetails()
                 } else {
@@ -414,16 +380,10 @@ class GoogleMapsService(
         }
     }
 
-    /**
-     * Get photo URL for a place photo reference
-     */
     fun getPhotoUrl(photoReference: String, maxWidth: Int = 400): String {
         return "$PLACE_PHOTO_URL?photoreference=$photoReference&maxwidth=$maxWidth&key=$apiKey"
     }
 
-    /**
-     * Search for nearby attractions around a location
-     */
     suspend fun searchNearbyAttractions(
         latitude: Double,
         longitude: Double,
@@ -432,16 +392,13 @@ class GoogleMapsService(
     ): List<PlaceResult> {
         val location = "$latitude,$longitude"
         return searchPlaces(
-            query = type,
+            query = "",
+            type = type,
             location = location,
-            radius = radius,
-            type = type
+            radius = radius
         )
     }
 
-    /**
-     * Search for restaurants near a location
-     */
     suspend fun searchNearbyRestaurants(
         latitude: Double,
         longitude: Double,
@@ -449,16 +406,13 @@ class GoogleMapsService(
     ): List<PlaceResult> {
         val location = "$latitude,$longitude"
         return searchPlaces(
-            query = "restaurant",
+            query = "",
+            type = "restaurant",
             location = location,
-            radius = radius,
-            type = "restaurant"
+            radius = radius
         )
     }
 
-    /**
-     * Search for hotels near a location
-     */
     suspend fun searchNearbyHotels(
         latitude: Double,
         longitude: Double,
@@ -466,14 +420,13 @@ class GoogleMapsService(
     ): List<PlaceResult> {
         val location = "$latitude,$longitude"
         return searchPlaces(
-            query = "hotel",
+            query = "",
+            type = "lodging",
             location = location,
-            radius = radius,
-            type = "lodging"
+            radius = radius
         )
     }
 
-    // Extension functions to convert API models to public models
     private fun PlaceResultApi.toPlaceResult(): PlaceResult {
         return PlaceResult(
             placeId = place_id,
@@ -541,7 +494,6 @@ class GoogleMapsService(
     }
 }
 
-// Extension for await() function
 private suspend fun <T> com.google.android.gms.tasks.Task<T>.await(): T {
     return suspendCoroutine { continuation ->
         addOnCompleteListener { task ->
