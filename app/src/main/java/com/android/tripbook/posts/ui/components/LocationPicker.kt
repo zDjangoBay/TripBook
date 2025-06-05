@@ -1,6 +1,5 @@
 package com.android.tripbook.posts.ui.components
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,25 +12,38 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color // Import Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.posts.model.Location
-import com.android.tripbook.posts.model.Coordinates
+import com.android.tripbook.posts.model.Location 
+import com.android.tripbook.posts.model.Coordinates 
 import com.android.tripbook.posts.viewmodel.PostEvent
 import com.android.tripbook.posts.viewmodel.PostUIState
 import com.android.tripbook.posts.viewmodel.PostViewModel
-import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.theme.TripBookTheme // Import du thème pour les Previews
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+data class Location(
+    val id: String,
+    val name: String,
+    val city: String,
+    val country: String,
+    val coordinates: Coordinates?
+)
+
+data class Coordinates(
+    val latitude: Double,
+    val longitude: Double
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPicker(
     selectedLocation: Location?,
     onLocationSelected: (Location) -> Unit,
-    error: String?,
+    error: String?, // Validation error for the location field itself
     modifier: Modifier = Modifier,
     viewModel: PostViewModel
 ) {
@@ -44,6 +56,7 @@ fun LocationPicker(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
+        // Determine the border color conditionally
         val borderColor = if (error != null && selectedLocation == null) {
             MaterialTheme.colorScheme.error
         } else {
@@ -61,6 +74,7 @@ fun LocationPicker(
                 containerColor = if (error != null && selectedLocation == null) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
                 else MaterialTheme.colorScheme.surface
             ),
+            // Apply the conditional border directly
             border = BorderStroke(width = 1.dp, color = borderColor)
         ) {
             Row(
@@ -70,8 +84,9 @@ fun LocationPicker(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
+                    imageVector = Icons.Filled.LocationOn,
                     contentDescription = "Location Icon",
+                    // Tint the icon based on the same error condition
                     tint = if (error != null && selectedLocation == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                 )
 
@@ -151,10 +166,10 @@ private fun LocationSelectionDialog(
                         searchJob?.cancel()
                         if (newQuery.length > 1) {
                             searchJob = coroutineScope.launch {
-                                delay(350)
+                                delay(350) // Debounce search
                                 onLocationSearch(newQuery)
                             }
-                        } else if (newQuery.isEmpty()) {
+                        } else if (newQuery.isEmpty()) { 
                             onLocationSearch("")
                         }
                     },
