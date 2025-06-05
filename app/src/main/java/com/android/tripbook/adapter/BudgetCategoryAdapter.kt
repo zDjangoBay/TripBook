@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tripbook.R
 import com.android.tripbook.model.BudgetCategory
@@ -50,6 +51,8 @@ class BudgetCategoryAdapter(
         private val deleteCategoryImageView: ImageView = itemView.findViewById(R.id.imageViewDeleteCategory) // Get delete icon
         private val expensesRecyclerView: RecyclerView = itemView.findViewById(R.id.recyclerViewCategoryExpenses)
         private val currencyFormatter = NumberFormat.getCurrencyInstance() // Consider locale
+        private lateinit var expenseAdapter: ExpenseAdapter // For the nested list
+
         private var currentCategory: BudgetCategory? = null
 
         init {
@@ -66,9 +69,30 @@ class BudgetCategoryAdapter(
             categoryNameTextView.text = budgetCategory.name
             plannedAmountTextView.text = currencyFormatter.format(budgetCategory.plannedAmount)
 
-            // TODO: Calculate and display actual spent amount for this category in a later commit.
-            // For now, let's show 0 or a placeholder.
-            actualAmountTextView.text = currencyFormatter.format(0.0) // Placeholder
+            // Setup nested RecyclerView for expenses
+            expenseAdapter = ExpenseAdapter { expense ->
+                // This is where clicks on individual expenses within the category are handled
+                onExpenseClicked(expense)
+            }
+            expensesRecyclerView.apply {
+                layoutManager = LinearLayoutManager(itemView.context)
+                adapter = expenseAdapter
+                // Optional: Add item decoration if needed for spacing
+            }
+
+            // Observe expenses for this specific category
+            // and update the expense list and the actual amount spent
+            budgetViewModel.getExpensesForTripAndCategory(budgetCategory.tripId, budgetCategory.id)
+                .observe(lifecycleOwner) { expenses ->
+                    expenses?.let {
+                        expenseAdapter.submitList(it)
+                        val totalSpent = it.sumOf { expense -> expense.amount }
+                        actualAmountTextView.text = currencyFormatter.format(totalSpent)
+                    } ?: run {
+                        expenseAdapter.submitList(emptyList())
+                        actualAmountTextView.text = currencyFormatter.format(0.0)
+                    }
+                }
         }
     }
 }
