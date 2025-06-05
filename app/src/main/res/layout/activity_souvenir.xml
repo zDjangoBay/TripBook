@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8F8F8"
+    android:background="#FAF3EB"
     android:padding="16dp">
 
     <LinearLayout
@@ -16,36 +15,36 @@
             android:id="@+id/appTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TRIP BOOK"
-            android:textAlignment="center"
-            android:textColor="#800080"
+            android:text="TRIPBOOK"
             android:textSize="26sp"
+            android:textColor="#800080"
             android:textStyle="bold"
-            android:paddingBottom="12dp"
-            android:background="#FFF8F8F8" />
+            android:textAlignment="center"
+            android:background="#FAF3EB"
+            android:paddingBottom="12dp" />
 
-        <!-- Subheading: Souvenir -->
+        <!-- Souvenir Subheading -->
         <TextView
             android:id="@+id/souvenirHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Souvenir"
-            android:textColor="#800080"
             android:textSize="20sp"
+            android:textColor="#800080"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:paddingBottom="4dp"/>
+            android:paddingBottom="4dp" />
 
-        <!-- Instruction Text -->
+        <!-- Instruction -->
         <TextView
             android:id="@+id/souvenirInstruction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Capture pictures from your adventures and save them here as souvenirs."
-            android:textColor="#444444"
             android:textSize="14sp"
+            android:textColor="#444444"
             android:textAlignment="center"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="16dp" />
 
         <!-- Image View -->
         <ImageView
@@ -54,8 +53,7 @@
             android:layout_height="200dp"
             android:layout_marginBottom="16dp"
             android:scaleType="centerCrop"
-            android:background="#E0E0E0"
-            android:contentDescription="Selected image" />
+            android:background="#E0E0E0" />
 
         <!-- Choose Image Button -->
         <Button
@@ -63,27 +61,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choose Image"
+            android:layout_gravity="center_horizontal"
             android:backgroundTint="#800080"
             android:textColor="#FFFFFF"
-            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp" />
 
-        <!-- Description EditText -->
+        <!-- Description Input -->
+
+        <!-- Save Button -->
         <EditText
             android:id="@+id/descriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="100dp"
-            android:hint="Write a short description"
-            android:textColor="#000000"
-            android:textColorHint="#808080"
+            android:layout_marginBottom="16dp"
             android:background="@android:drawable/editbox_background"
-            android:padding="12dp"
             android:gravity="top"
+            android:hint="Write a short description"
             android:inputType="textMultiLine"
-            android:layout_marginBottom="16dp" />
+            android:minHeight="100dp"
+            android:padding="12dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
 
-        <!-- Save Button -->
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
@@ -92,7 +91,7 @@
             android:backgroundTint="#800080"
             android:textColor="#FFFFFF" />
 
-        <!-- Placeholder for Saved Souvenirs -->
+        <!-- Display Saved Entries -->
         <LinearLayout
             android:id="@+id/savedSouvenirsLayout"
             android:layout_width="match_parent"
