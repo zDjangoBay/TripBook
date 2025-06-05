@@ -1,5 +1,6 @@
 package com.android.tripbook.notifications
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -33,6 +34,7 @@ object NotificationHelper {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun showNotification(context: Context, notificationId: Int, title: String, message: String) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info) // A generic icon, replace with your app icon

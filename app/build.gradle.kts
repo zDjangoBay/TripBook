@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.work.runtime.ktx)
     // Removed implementation(libs.androidx.work.runtime.ktx) from here as it seems to be problematic
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
