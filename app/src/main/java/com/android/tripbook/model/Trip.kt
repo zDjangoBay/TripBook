@@ -84,24 +84,8 @@ class Converters {
     private val gson = Gson()
 
     @TypeConverter
-    fun fromItineraryType(type: ItineraryType): String {
-        return type.name
-    }
-
-    @TypeConverter
-    fun toItineraryType(type: String): ItineraryType {
-        return ItineraryType.valueOf(type)
-    }
-
-    @TypeConverter
     fun fromStringList(list: List<String>): String {
         return gson.toJson(list)
-    }
-
-    @TypeConverter
-    fun toStringList(json: String): List<String> {
-        val type = object : TypeToken<List<String>>() {}.type
-        return gson.fromJson(json, type) ?: emptyList()
     }
 
     @TypeConverter
