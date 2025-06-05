@@ -48,7 +48,7 @@ fun AddPlaceScreen(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-            selectedImages = uris.take(2) // Limit to 2 images
+            selectedImages = uris.take(2)
         }
     )
 
@@ -115,7 +115,7 @@ fun AddPlaceScreen(
 
                 Column {
                     Text(
-                        text = "Add Photos (required, max 2)",
+                        text = "Add Photos (required)",
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )

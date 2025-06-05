@@ -1,6 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -38,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -45,6 +47,18 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    // Force SDK 34 compatible versions
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.navigation:navigation-compose:2.8.4")
+            force("androidx.activity:activity-ktx:1.9.3")
+            force("androidx.activity:activity-compose:1.9.3")
+            force("androidx.activity:activity:1.9.3")
+            force("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+            force("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
         }
     }
 }
@@ -72,44 +86,41 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
-
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
-
-// Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
-
-// Compose + lifecycle
-//    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
-
-
-
-
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.runtime.android)    // Navigation - SDK 34 compatible version
+    implementation("androidx.navigation:navigation-compose:2.8.4")
 
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation(libs.firebase.database)
+
+    // Compose dependencies
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // Maps
+    implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
 
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
+    // Layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
-    // Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
+    // ViewModel and Lifecycle - SDK 34 compatible versions
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
 
-    // Kotlin coroutines
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.compose.foundation)
