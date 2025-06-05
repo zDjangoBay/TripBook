@@ -98,32 +98,38 @@ dependencies {
     //---------------------------------------------------------
 
     // Navigation - SDK 34 compatible version
-    implementation("androidx.navigation:navigation-compose:2.8.4")
+    implementation(libs.androidx.navigation.compose)
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
 
+    implementation(libs.compose.material3)
+
+
     // Compose dependencies
-    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation(libs.compose.runtime.livedata)
+    implementation(libs.androidx.material3)
+    implementation(libs.compose.material.icons.extended)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     // Image loading
-    implementation("io.coil-kt:coil-compose:2.3.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.coil.compose)
+
+
+
+
+
 
     // Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
 
     // Layout
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-
+    implementation(libs.constraintlayout.compose)
     // ViewModel and Lifecycle - SDK 34 compatible versions
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
