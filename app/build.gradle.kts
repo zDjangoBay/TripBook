@@ -40,7 +40,8 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        // La version du compilateur Kotlin pour Compose, tirée du libs.versions.toml
+        kotlinCompilerExtensionVersion = libs.versions.kotlinCompilerExtensionVersion.get()
     }
     packaging {
         resources {
@@ -51,20 +52,27 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
+    //             default dependencies on the project
+    //                    do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.ui.tooling.preview.android)
-    implementation(libs.material)
+    implementation(libs.material) 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+
+    // Compose BOM: Indique à Gradle d'utiliser les versions de Compose spécifiées dans le BOM
     implementation(platform(libs.androidx.compose.bom))
+
+    // Dépendances Compose (SANS VERSION, car le BOM les gère)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,6 +82,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //---------------------------------------------------------
-    //      You can add your own dependencies down here
+    //       You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Compose Navigation (avec version spécifiée dans libs.versions.toml)
+    implementation(libs.androidx.navigation.compose)
+
+    // Coil for image loading (avec version spécifiée dans libs.versions.toml)
+    implementation(libs.coil.compose)
+
+    // ViewModel utilities for Compose (avec version spécifiée dans libs.versions.toml)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Coroutines core (avec version spécifiée dans libs.versions.toml)
+    implementation(libs.kotlinx.coroutines.android)
+
 }
