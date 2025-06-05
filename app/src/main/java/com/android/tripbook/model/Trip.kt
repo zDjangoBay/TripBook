@@ -89,21 +89,6 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromLocation(location: Location?): String? {
-        return location?.let { gson.toJson(it) }
-    }
-
-    @TypeConverter
-    fun toLocation(json: String?): Location? {
-        return json?.let { gson.fromJson(it, Location::class.java) }
-    }
-
-    @TypeConverter
-    fun fromRouteInfo(routeInfo: RouteInfo?): String? {
-        return routeInfo?.let { gson.toJson(it) }
-    }
-
-    @TypeConverter
     fun toRouteInfo(json: String?): RouteInfo? {
         return json?.let { gson.fromJson(it, RouteInfo::class.java) }
     }
