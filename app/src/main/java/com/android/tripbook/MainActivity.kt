@@ -4,45 +4,198 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.android.tripbook.ui.theme.TripBookTheme
+import androidx.compose.runtime.*
+import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripStatus
+import com.android.tripbook.model.Location
+import com.android.tripbook.service.NominatimService
+import com.android.tripbook.service.TravelAgencyService
+import com.android.tripbook.ui.uis.*
+import java.time.LocalDate
+
+// Add Firebase import
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Firebase FIRST
+        FirebaseApp.initializeApp(this)
+
+        val nominatimService = NominatimService()
+        val travelAgencyService = TravelAgencyService()
+
+        //api hardcoded by me for testing purposes use wisely
+        val apiKey = "AIzaSyDub6cdRg9_19vQn_qV4oQurf9L67LKPPA"
+
         enableEdgeToEdge()
+
         setContent {
-            TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            TripBookApp(
+                nominatimService = nominatimService,
+                travelAgencyService = travelAgencyService,
+                apiKey = apiKey // Pass the API key to TripBookApp
+            )
         }
     }
-}
 
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    @Composable
+    fun TripBookApp(
+        nominatimService: NominatimService,
+        travelAgencyService: TravelAgencyService,
+        apiKey: String // Accept API key here
+    ) {
+        var currentScreen by remember { mutableStateOf("MyTrips") }
+        var selectedTrip by remember { mutableStateOf<Trip?>(null) }
+        var selectedDestination by remember { mutableStateOf<String?>(null) }
 
-@Preview
-@Composable
-fun GreetingPreview() {
-    TripBookTheme {
-        Greeting("Android")
+
+        var trips by remember {
+            mutableStateOf(
+                listOf(
+                    Trip(
+                        id = "1",
+                        name = "Safari Adventure",
+                        startDate = LocalDate.of(2024, 12, 15),
+                        endDate = LocalDate.of(2024, 12, 22),
+                        destination = "Yaounde, Cameroon",
+                        // *** IMPORTANT CHANGE HERE ***
+                        destinationCoordinates = Location(latitude = 3.8480, longitude = 11.5021, name = "Yaounde, Cameroon", address = "Yaounde, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
+                        travelers = 4,
+                        budget = 2400,
+                        status = TripStatus.PLANNED,
+                        type = "Safari",
+                        description = "An amazing safari adventure through Yaounde and Cameroon",
+                        itinerary = listOf()
+                    ),
+                    Trip(
+                        id = "2",
+                        name = "Buea Tchop et Yamo ",
+                        startDate = LocalDate.of(2025, 1, 10),
+                        endDate = LocalDate.of(2025, 1, 18),
+                        destination = "Buea, Cameroon",
+                        // *** IMPORTANT CHANGE HERE ***
+                        destinationCoordinates = Location(latitude = 4.1481, longitude = 9.2323, name = "Buea, Cameroon", address = "Buea, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
+                        travelers = 2,
+                        budget = 1800,
+                        status = TripStatus.ACTIVE,
+                        itinerary = listOf()
+                    ),
+                    Trip(
+                        id = "3",
+                        name = "Bamenda Rocky Slope Explore",
+                        startDate = LocalDate.of(2024, 9, 5),
+                        endDate = LocalDate.of(2024, 9, 12),
+                        destination = "Bamenda, Cameroon",
+                        // *** IMPORTANT CHANGE HERE ***
+                        destinationCoordinates = Location(latitude = 5.9622, longitude = 10.1587, name = "Bamenda, Cameroon", address = "Bamenda, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
+                        travelers = 6,
+                        budget = 3200,
+                        status = TripStatus.COMPLETED,
+                        itinerary = listOf()
+                    )
+                )
+            )
+        }
+
+        when (currentScreen) {
+            "MyTrips" -> MyTripsScreen(
+                trips = trips,
+                onPlanNewTripClick = {
+                    currentScreen = "PlanNewTrip"
+                },
+                onTripClick = { trip ->
+                    selectedTrip = trip
+                    currentScreen = "TripDetails"
+                }
+            )
+
+            "PlanNewTrip" -> PlanNewTripScreen(
+                onBackClick = {
+                    currentScreen = "MyTrips"
+                },
+                onTripCreated = { newTrip ->
+                    trips = trips + newTrip
+                    currentScreen = "MyTrips"
+                },
+                nominatimService = nominatimService,
+                travelAgencyService = travelAgencyService,
+                apiKey = apiKey, // Pass apiKey to PlanNewTripScreen
+                onBrowseAgencies = { destination ->
+                    selectedDestination = destination
+                    currentScreen = "TravelAgency"
+                }
+            )
+
+            "TripDetails" -> TripDetailsScreen(
+                // Use selectedTrip or default to the first trip if selectedTrip is null
+                // Note: The first trip's coordinates are now explicitly set above.
+                trip = selectedTrip ?: trips.first(),
+                onBackClick = {
+                    currentScreen = "MyTrips"
+                },
+                onEditItineraryClick = {
+                    currentScreen = "ItineraryBuilder"
+                },
+                apiKey = apiKey
+            )
+
+            "ItineraryBuilder" -> ItineraryBuilderScreen(
+                trip = selectedTrip ?: trips.first(),
+                onBackClick = {
+                    currentScreen = "TripDetails"
+                },
+                onItineraryUpdated = { updatedItinerary ->
+                    selectedTrip?.let { trip ->
+                        trips = trips.map {
+                            if (it.id == trip.id)
+                                it.copy(itinerary = updatedItinerary)
+                            else
+                                it
+                        }
+                        selectedTrip = selectedTrip?.copy(itinerary = updatedItinerary)
+                    }
+                },
+                nominatimService = nominatimService,
+                travelAgencyService = travelAgencyService,
+                onBrowseAgencies = { destination ->
+                    selectedDestination = destination
+                    currentScreen = "TravelAgency"
+                }
+            )
+
+            "TravelAgency" -> TravelAgencyScreen(
+                destination = selectedDestination ?: "",
+                travelAgencyService = travelAgencyService,
+                onBackClick = {
+                    currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
+                },
+                onServiceSelected = { service, type ->
+                    selectedTrip?.let { trip ->
+                        val newItem = ItineraryItem(
+                            date = trip.startDate,
+                            time = "10:00 AM",
+                            title = service.name,
+                            location = service.location,
+                            type = type,
+                            agencyService = service
+                        )
+
+                        selectedTrip = trip.copy(
+                            itinerary = trip.itinerary + newItem
+                        )
+
+                        trips = trips.map {
+                            if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
+                            else it
+                        }
+                    }
+                    currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
+                }
+            )
+        }
     }
 }
