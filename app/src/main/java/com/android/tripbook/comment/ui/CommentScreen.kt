@@ -89,20 +89,25 @@ fun CommentScreen(
                     },
                     onCancel = {
                         replyingToComment = null
-                    }
+                    },
+                    currentAvatar = currentAvatar // 👈 ADD THIS LINE
                 )
+
             } else {
-                CommentInput(onPost = { text ->
-                    val comment = Comment(
-                        id = UUID.randomUUID().toString(),
-                        userId = currentUserId,
-                        username = currentUsername,
-                        avatarUrl = currentAvatar,
-                        text = text,
-                        timestamp = System.currentTimeMillis()
-                    )
-                    onPost(comment)
-                })
+                CommentInput(
+                    onPost = { text ->
+                        val comment = Comment(
+                            id = UUID.randomUUID().toString(),
+                            userId = currentUserId,
+                            username = currentUsername,
+                            avatarUrl = currentAvatar,
+                            text = text,
+                            timestamp = System.currentTimeMillis()
+                        )
+                        onPost(comment)
+                    },
+                    currentAvatar = currentAvatar // 👈 ADD THIS LINE
+                )
             }
         }
     }

@@ -6,18 +6,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tripbook.comment.ui.common.UserAvatar
 
 @Composable
 fun CommentInput(
     onPost: (String) -> Unit,
     isReply: Boolean = false,
-    onCancel: (() -> Unit)? = null
+    onCancel: (() -> Unit)? = null,
+    currentAvatar: String? = null
 ) {
     var text by remember { mutableStateOf("") }
 
-    Row(modifier = Modifier
-        .padding(8.dp)
-        .fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        UserAvatar(imageUrl = currentAvatar)
+
+        Spacer(modifier = Modifier.width(8.dp))
 
         TextField(
             value = text,
@@ -55,5 +62,5 @@ fun CommentInput(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCommentInput() {
-    CommentInput(onPost = { /* Preview only */ })
+    CommentInput(onPost = {}, currentAvatar = null)
 }

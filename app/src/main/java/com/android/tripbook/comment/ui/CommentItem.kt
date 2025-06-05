@@ -42,12 +42,11 @@ fun CommentItem(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.Top
-        ) {
+        Row(verticalAlignment = Alignment.Top) {
+            // 👤 Avatar
             AsyncImage(
                 model = comment.avatarUrl,
-                contentDescription = null,
+                contentDescription = "User Avatar",
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -60,12 +59,10 @@ fun CommentItem(
                     text = comment.username,
                     style = MaterialTheme.typography.titleMedium
                 )
-
                 Text(
                     text = comment.text,
                     style = MaterialTheme.typography.bodyMedium
                 )
-
                 Text(
                     text = TimeUtils.getRelativeTimeSpan(comment.timestamp),
                     style = MaterialTheme.typography.labelSmall
@@ -76,10 +73,7 @@ fun CommentItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { onLike(comment) }) {
-                        Icon(
-                            imageVector = Icons.Default.ThumbUp,
-                            contentDescription = "Like"
-                        )
+                        Icon(Icons.Default.ThumbUp, contentDescription = "Like")
                     }
 
                     Text(text = comment.likes.toString())
@@ -87,16 +81,14 @@ fun CommentItem(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     IconButton(onClick = { onReply(comment) }) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Reply"
-                        )
+                        Icon(Icons.Default.Refresh, contentDescription = "Reply")
                     }
 
                     if (comment.replies.isNotEmpty()) {
                         TextButton(onClick = { showReplies = !showReplies }) {
                             Text(
-                                text = if (showReplies) "Hide replies" else "Show ${comment.replies.size} replies"
+                                text = if (showReplies) "Hide replies"
+                                else "Show ${comment.replies.size} replies"
                             )
                         }
                     }
@@ -106,10 +98,7 @@ fun CommentItem(
             if (comment.userId == currentUserId) {
                 Box {
                     IconButton(onClick = { showMenu = true }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options"
-                        )
+                        Icon(Icons.Default.MoreVert, contentDescription = "More options")
                     }
 
                     DropdownMenu(
@@ -119,10 +108,7 @@ fun CommentItem(
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = null
-                                )
+                                Icon(Icons.Default.Delete, contentDescription = null)
                             },
                             onClick = {
                                 onDelete(comment)
@@ -134,14 +120,13 @@ fun CommentItem(
             }
         }
 
+        // Replies section
         AnimatedVisibility(
             visible = showReplies,
             enter = expandVertically(),
             exit = shrinkVertically()
         ) {
-            Column(
-                modifier = Modifier.padding(start = 48.dp)
-            ) {
+            Column(modifier = Modifier.padding(start = 48.dp)) {
                 comment.replies.forEach { reply ->
                     ReplyItem(
                         reply = reply,
@@ -168,9 +153,10 @@ fun ReplyItem(
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.Top
     ) {
+        // 👤 Avatar for replies
         AsyncImage(
             model = reply.avatarUrl,
-            contentDescription = null,
+            contentDescription = "User Avatar",
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
@@ -204,10 +190,7 @@ fun ReplyItem(
                     onClick = { onLike(reply) },
                     modifier = Modifier.size(24.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ThumbUp,
-                        contentDescription = "Like"
-                    )
+                    Icon(Icons.Default.ThumbUp, contentDescription = "Like")
                 }
 
                 Text(
@@ -219,12 +202,10 @@ fun ReplyItem(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun DeletedCommentItem() {
     Row(
         modifier = Modifier
-
             .fillMaxWidth()
             .padding(8.dp)
     ) {
