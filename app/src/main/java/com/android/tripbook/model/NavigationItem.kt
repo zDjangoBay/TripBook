@@ -10,7 +10,7 @@ data class NavigationItem(
     val icon: ImageVector,
     val selectedIcon: ImageVector = icon
 )
-
+// defines the item of the navigation bar
 object NavigationItems {
     val items = listOf(
         NavigationItem(
