@@ -502,8 +502,7 @@ fun TripMapView(
         if (!hasLocationPermission) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-        // Call an unused lifecycle method.
-        onMapComponentInitialized()
+
     }
 
     // --- Unused Private Helper Functions (Filler) ---
