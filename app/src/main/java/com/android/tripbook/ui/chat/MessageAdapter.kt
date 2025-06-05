@@ -3,81 +3,110 @@ package com.android.tripbook.ui.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tripbook.R
 import com.android.tripbook.model.Message
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MessageAdapter(
-    private val messages: MutableList<Message>,
+    private var messages: MutableList<Message>,
     private val currentUserId: String
-) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val layoutSender: LinearLayout = itemView.findViewById(R.id.layoutSender)
-        val layoutReceiver: LinearLayout = itemView.findViewById(R.id.layoutReceiver)
-
-        // Sender views
-        val tvSenderMessage: TextView = itemView.findViewById(R.id.tvSenderMessage)
-        val tvSenderTime: TextView = itemView.findViewById(R.id.tvSenderTime)
-
-        // Receiver views
-        val tvSenderName: TextView = itemView.findViewById(R.id.tvSenderName)
-        val tvReceiverMessage: TextView = itemView.findViewById(R.id.tvReceiverMessage)
-        val tvReceiverTime: TextView = itemView.findViewById(R.id.tvReceiverTime)
+    companion object {
+        private const val TYPE_SENT = 1
+        private const val TYPE_RECEIVED = 2
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_message, parent, false)
-        return MessageViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        val message = messages[position]
-        val isCurrentUser = message.senderId == currentUserId
-
-        if (isCurrentUser) {
-            // Show as sender (right side)
-            holder.layoutSender.visibility = View.VISIBLE
-            holder.layoutReceiver.visibility = View.GONE
-
-            holder.tvSenderMessage.text = message.text
-            holder.tvSenderTime.text = message.getFormattedTime()
+    override fun getItemViewType(position: Int): Int {
+        return if (messages[position].senderId == currentUserId) {
+            TYPE_SENT
         } else {
-            // Show as receiver (left side)
-            holder.layoutSender.visibility = View.GONE
-            holder.layoutReceiver.visibility = View.VISIBLE
+            TYPE_RECEIVED
+        }
+    }
 
-            holder.tvSenderName.text = message.senderName
-            holder.tvReceiverMessage.text = message.text
-            holder.tvReceiverTime.text = message.getFormattedTime()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_SENT -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_message_sent, parent, false)
+                SentMessageViewHolder(view)
+            }
+            TYPE_RECEIVED -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_message_received, parent, false)
+                ReceivedMessageViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val message = messages[position]
+        when (holder) {
+            is SentMessageViewHolder -> holder.bind(message)
+            is ReceivedMessageViewHolder -> holder.bind(message)
         }
     }
 
     override fun getItemCount(): Int = messages.size
 
-    fun addMessage(message: Message) {
-        messages.add(message)
-        notifyItemInserted(messages.size - 1)
-    }
-
     fun updateMessages(newMessages: List<Message>) {
+        val diffCallback = MessageDiffCallback(messages, newMessages)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         messages.clear()
         messages.addAll(newMessages)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
-    fun clearMessages() {
-        messages.clear()
-        notifyDataSetChanged()
+    inner class SentMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
+        private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+
+        fun bind(message: Message) {
+            tvMessage.text = message.text
+            tvTime.text = formatTime(message.timestamp?.toDate())
+        }
     }
 
-    fun removeMessage(position: Int) {
-        if (position >= 0 && position < messages.size) {
-            messages.removeAt(position)
-            notifyItemRemoved(position)
+    inner class ReceivedMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val tvMessage: TextView = itemView.findViewById(R.id.tvMessage)
+        private val tvSenderName: TextView = itemView.findViewById(R.id.tvSenderName)
+        private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+
+        fun bind(message: Message) {
+            tvMessage.text = message.text
+            tvSenderName.text = message.senderName
+            tvTime.text = formatTime(message.timestamp?.toDate())
+        }
+    }
+
+    private fun formatTime(date: Date?): String {
+        if (date == null) return ""
+        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
+        return format.format(date)
+    }
+
+    class MessageDiffCallback(
+        private val oldList: List<Message>,
+        private val newList: List<Message>
+    ) : DiffUtil.Callback() {
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
         }
     }
 }

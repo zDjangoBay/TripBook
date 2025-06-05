@@ -1,33 +1,30 @@
-package com.yourpackage.tripbook.model
+package com.android.tripbook.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.PropertyName
+import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
 data class Message(
-    val id: String = "",
-    val text: String = "",
-    val senderId: String = "",
-    val senderName: String = "",
-    val timestamp: Timestamp = Timestamp.now(),
-    val tripId: String = ""
+    @get:PropertyName("id") @set:PropertyName("id")
+    var id: String = "",
+
+    @get:PropertyName("text") @set:PropertyName("text")
+    var text: String = "",
+
+    @get:PropertyName("senderId") @set:PropertyName("senderId")
+    var senderId: String = "",
+
+    @get:PropertyName("senderName") @set:PropertyName("senderName")
+    var senderName: String = "",
+
+    @get:PropertyName("tripId") @set:PropertyName("tripId")
+    var tripId: String = "",
+
+    @get:PropertyName("timestamp") @set:PropertyName("timestamp")
+    @ServerTimestamp
+    var timestamp: Timestamp? = null
 ) {
-    // No-argument constructor for Firebase
-    constructor() : this("", "", "", "", Timestamp.now(), "")
-
-    // Helper function to get formatted time
-    fun getFormattedTime(): String {
-        val date = timestamp.toDate()
-        val now = Date()
-        val diffInMillis = now.time - date.time
-        val diffInHours = diffInMillis / (1000 * 60 * 60)
-
-        return when {
-            diffInHours < 1 -> "Just now"
-            diffInHours < 24 -> "${diffInHours}h ago"
-            else -> {
-                val diffInDays = diffInHours / 24
-                "${diffInDays}d ago"
-            }
-        }
-    }
+    // No-argument constructor required by Firestore
+    constructor() : this("", "", "", "", "", null)
 }

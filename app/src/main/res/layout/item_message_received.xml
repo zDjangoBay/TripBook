@@ -1,46 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="4dp"
-    android:gravity="start">
+    android:padding="8dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:background="@drawable/bg_message_received"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:background="@drawable/bg_message_input"
+        android:padding="12dp"
+        android:layout_marginEnd="64dp">
 
         <TextView
             android:id="@+id/tvSenderName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sender Name"
-            android:textColor="@color/purple_500"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:layout_marginBottom="2dp" />
+            android:textColor="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/tvMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Message text"
             android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:layout_marginTop="2dp" />
 
         <TextView
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="4dp"
-            android:text="12:30"
-            android:textColor="@android:color/black"
             android:textSize="12sp"
-            android:alpha="0.6" />
+            android:alpha="0.7"
+            android:layout_marginTop="4dp" />
 
     </LinearLayout>
 
