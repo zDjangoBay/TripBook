@@ -2,6 +2,11 @@ package com.android.Tripbook.Datamining.modules.data.comments.model;
 
 
 
+/*
+*
+* This right here i am defining the methods of interactions with my comment objects and how the interaction with the database is going to be done
+* rather than harcoding it for every route concerned
+* */
 
 interface CommentService {
     suspend fun createComment(request: CreateCommentRequest): Comment?
