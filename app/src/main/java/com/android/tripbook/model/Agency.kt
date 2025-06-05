@@ -1,5 +1,5 @@
 package com.android.tripbook.model
-
+// attributes for the agencies
 data class Agency(
     val agencyId: Int = 0,
     val agencyName: String = "",
