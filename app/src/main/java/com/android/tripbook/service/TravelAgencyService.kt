@@ -107,7 +107,103 @@ class TravelAgencyService {
 
     private val foursquareApi = retrofit.create(FoursquareApi::class.java)
 
-    
+    // Mock data for Cameroon specifically
+    private val mockAgencies = listOf(
+        TravelAgency(
+            id = "agency1",
+            name = "Cameroon Adventure Tours",
+            services = listOf(
+                AgencyService(
+                    id = "service1",
+                    name = "Mount Cameroon Hiking Tour",
+                    type = "Tour",
+                    description = "3-day guided hiking expedition to Mount Cameroon peak",
+                    price = 250,
+                    rating = 4.5f,
+                    location = "Buea, Cameroon"
+                ),
+                AgencyService(
+                    id = "service2",
+                    name = "Douala City Tour",
+                    type = "Tour",
+                    description = "Full day guided tour of Douala's main attractions",
+                    price = 80,
+                    rating = 4.2f,
+                    location = "Douala, Cameroon"
+                )
+            ),
+            rating = 4.3f,
+            url = "https://example.com/cameroon-adventure-tours" // Example mock URL
+        ),
+        TravelAgency(
+            id = "agency2",
+            name = "Yaoundé Travel Services",
+            services = listOf(
+                AgencyService(
+                    id = "service3",
+                    name = "Safari to Waza National Park",
+                    type = "Tour",
+                    description = "2-day wildlife safari in Waza National Park",
+                    price = 320,
+                    rating = 4.7f,
+                    location = "Yaoundé, Cameroon"
+                ),
+                AgencyService(
+                    id = "service4",
+                    name = "Hotel Booking Service",
+                    type = "Accommodation",
+                    description = "Premium hotel reservations in Yaoundé",
+                    price = 150,
+                    rating = 4.4f,
+                    location = "Yaoundé, Cameroon"
+                )
+            ),
+            rating = 4.5f,
+            url = "https://example.com/yaounde-travel-services" // Example mock URL
+        ),
+        TravelAgency(
+            id = "agency3",
+            name = "Limbe Beach Resort Tours",
+            services = listOf(
+                AgencyService(
+                    id = "service5",
+                    name = "Limbe Beach Experience",
+                    type = "Tour",
+                    description = "Beach resort tour with cultural activities",
+                    price = 120,
+                    rating = 4.6f,
+                    location = "Limbe, Cameroon"
+                ),
+                AgencyService(
+                    id = "service6",
+                    name = "Transportation Service",
+                    type = "Transportation",
+                    description = "Airport transfers and city transportation",
+                    price = 50,
+                    rating = 4.1f,
+                    location = "Yaoundé, Cameroon"
+                )
+            ),
+            rating = 4.3f,
+            url = "https://example.com/limbe-beach-resort-tours" // Example mock URL
+        )
+    )
+
+    // Cameroon cities coordinates
+    private val cameroonCities = mapOf(
+        "yaoundé" to "3.8480,11.5021",
+        "yaounde" to "3.8480,11.5021",
+        "douala" to "4.0511,9.7679",
+        "bamenda" to "5.9597,10.1494",
+        "bafoussam" to "5.4737,10.4158",
+        "garoua" to "9.3265,13.3958",
+        "maroua" to "10.5913,14.3159",
+        "ngaoundéré" to "7.3167,13.5833",
+        "bertoua" to "4.5777,13.6848",
+        "buea" to "4.1549,9.2920",
+        "limbe" to "4.0186,9.2065",
+        "kribi" to "2.9373,9.9073"
+    )
 
     suspend fun getAgenciesForDestination(destination: String): List<TravelAgency> {
         return withContext(Dispatchers.IO) {
