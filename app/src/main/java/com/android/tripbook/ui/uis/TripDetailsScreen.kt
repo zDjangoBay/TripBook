@@ -46,7 +46,7 @@ fun TripDetailsScreen(
     val viewModel: TripDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    // Initialize with the provided trip//
+    // Initialize with the provided trip
     LaunchedEffect(trip.id) {
         if (trip.id.isNotEmpty()) {
             viewModel.loadTripDetails(trip.id)
