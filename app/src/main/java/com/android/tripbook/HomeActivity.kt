@@ -34,7 +34,7 @@ class HomeActivity : ComponentActivity() {
         }
     }
 }
-
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun TripBookApp(mainViewModel: MainViewModel) {
     val navController = rememberNavController()
