@@ -20,7 +20,7 @@ fun MainContainerScreen(
     googleMapsService: GoogleMapsService,
     agencyRepository: SupabaseAgencyRepository
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) } // Start with Home (index 0)
+    var selectedTab by remember { mutableIntStateOf(0) } // Start with Home (index 0)//
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember { mutableStateOf<Trip?>(null) }
     var selectedDestination by remember { mutableStateOf<String?>(null) }

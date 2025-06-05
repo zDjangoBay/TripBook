@@ -39,7 +39,7 @@ fun AgencyDetailScreen(
     val isLoading by agencyViewModel.isLoading.collectAsState()
     val error by agencyViewModel.error.collectAsState()
 
-    // Log the agency ID for debugging
+    // Log the agency ID for debugging//
     LaunchedEffect(Unit) {
         Log.d("AgencyDetailScreen", "Agency ID: ${agency.agencyId}")
     }
