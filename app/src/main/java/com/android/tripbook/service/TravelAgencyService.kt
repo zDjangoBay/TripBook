@@ -98,6 +98,4 @@ class TravelAgencyService {
             )
         }.filter { it.services.isNotEmpty() }
     }
-
-    fun searchAttractions(locationInput: String): Unit = Unit
 }
