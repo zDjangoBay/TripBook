@@ -115,7 +115,6 @@ fun TripDetailsScreen(
                                 uiState = uiState,
                                 viewModel = viewModel
                             )
-                            "Expenses" -> ExpensesTab(currentTrip)
                         }
                     }
                 }
@@ -156,7 +155,7 @@ fun EnhancedTabRow(
             .padding(top = 20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        listOf("Overview", "Itinerary", "Map", "Expenses").forEach { tab ->
+        listOf("Overview", "Itinerary", "Map").forEach { tab ->
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -888,98 +887,7 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun ExpensesTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Budget Overview",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
 
-                    BudgetRow("Total Budget:", "FCFA ${trip.budget}", Color(0xFF667EEA))
-                    BudgetRow("Spent:", "FCFA 68000", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "FCFA 72000", Color(0xFF059669))
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(8.dp)
-                            .background(Color(0xFFF1F5F9), RoundedCornerShape(4.dp))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .height(8.dp)
-                                .background(Color(0xFF667EEA), RoundedCornerShape(4.dp))
-                        )
-                    }
-                }
-            }
-        }
-
-        items(listOf(
-            ExpenseItem("Accommodation", "Safari Lodge (4 nights)", "FCFA 9600"),
-            ExpenseItem("Transportation", "4x4 Vehicle rental", "FCFA 4800"),
-            ExpenseItem("Activities", "Game drives & balloon safari", "FCFA 3200")
-        )) { expense ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = expense.category,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = expense.description,
-                            fontSize = 14.sp,
-                            color = Color(0xFF64748B)
-                        )
-                        Text(
-                            text = expense.amount,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1A202C)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun DetailItem(icon: String, text: String) {
@@ -1029,33 +937,7 @@ private fun TravelerItem(initials: String, name: String, color: Color) {
     }
 }
 
-@Composable
-private fun BudgetRow(label: String, amount: String, color: Color) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            color = Color(0xFF1A202C)
-        )
-        Text(
-            text = amount,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = color
-        )
-    }
-}
 
-private data class ExpenseItem(
-    val category: String,
-    val description: String,
-    val amount: String
-)
 
 @Composable
 private fun TripBookGradientBackground(content: @Composable () -> Unit) {
