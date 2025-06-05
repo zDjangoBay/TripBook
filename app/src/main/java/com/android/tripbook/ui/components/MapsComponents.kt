@@ -21,7 +21,6 @@ import com.android.tripbook.model.ItineraryType
 import androidx.compose.ui.graphics.Color
 import com.android.tripbook.service.GeoLocation
 import com.android.tripbook.service.NominatimService
-import com.google.android.gms.maps.model.CameraPosition
 import kotlinx.coroutines.launch
 
 // Extension function to convert GeoLocation to LatLng
@@ -271,88 +270,6 @@ fun TripMapView(
     }
 
     // Request location permission if not granted and user tries to use location features
-    LaunchedEffect(Unit) {
-        if (!hasLocationPermission) {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-}
-
-@Composable
-fun LocationPicker(
-    onLocationSelected: (com.android.tripbook.model.Location) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
-    var hasLocationPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 10f)
-    }
-
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasLocationPermission = isGranted
-    }
-
-    Column(modifier = modifier) {
-        GoogleMap(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp),
-            cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled = true,
-                myLocationButtonEnabled = hasLocationPermission
-            ),
-            properties = MapProperties(
-                isMyLocationEnabled = hasLocationPermission
-            ),
-            onMapClick = { latLng ->
-                selectedLocation = latLng
-            }
-        ) {
-            selectedLocation?.let { location ->
-                Marker(
-                    state = MarkerState(position = location),
-                    title = "Selected Location",
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                selectedLocation?.let { location ->
-                    onLocationSelected(
-                        com.android.tripbook.model.Location(
-                            latitude = location.latitude,
-                            longitude = location.longitude,
-                            name = "Selected Location",
-                            address = "Lat: ${location.latitude}, Lng: ${location.longitude}" // TODO: Implement reverse geocoding
-                        )
-                    )
-                }
-            },
-            enabled = selectedLocation != null,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Confirm Location")
-        }
-    }
-
-    // Request permission on first load
     LaunchedEffect(Unit) {
         if (!hasLocationPermission) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
