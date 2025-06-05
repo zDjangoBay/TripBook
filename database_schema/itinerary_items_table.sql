@@ -9,18 +9,18 @@ CREATE TABLE IF NOT EXISTS itinerary_items (
     title VARCHAR(255) NOT NULL,
     location VARCHAR(500) NOT NULL,
     type VARCHAR(50) NOT NULL CHECK (type IN ('ACTIVITY', 'ACCOMMODATION', 'TRANSPORTATION')),
-    notes TEXT DEFAULT '',
-    description TEXT DEFAULT '',
-    duration VARCHAR(100) DEFAULT '', -- e.g., "2 hours", "All day"
-    cost DECIMAL(10,2) DEFAULT 0.0,
-    is_completed BOOLEAN DEFAULT FALSE,
-    
+    notes TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    duration VARCHAR(100) NOT NULL DEFAULT '', -- e.g., "2 hours", "All day"
+    cost DECIMAL(10,2) NOT NULL DEFAULT 0.0,
+    is_completed BOOLEAN NOT NULL DEFAULT FALSE,
+
     -- Location coordinates for map integration
     latitude DECIMAL(10,8) NULL,
     longitude DECIMAL(11,8) NULL,
-    address VARCHAR(500) DEFAULT '',
-    place_id VARCHAR(255) DEFAULT '', -- For Google Places API
-    
+    address VARCHAR(500) NOT NULL DEFAULT '',
+    place_id VARCHAR(255) NOT NULL DEFAULT '', -- For Google Places API
+
     -- Timestamps
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
