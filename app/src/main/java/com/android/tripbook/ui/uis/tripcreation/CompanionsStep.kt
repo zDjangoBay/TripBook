@@ -1,11 +1,9 @@
 package com.android.tripbook.ui.uis.tripcreation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -14,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,14 +28,14 @@ fun CompanionsStep(
     modifier: Modifier = Modifier
 ) {
     var showAddCompanionDialog by remember { mutableStateOf(false) }
-    
+
     Column(modifier = modifier.fillMaxSize()) {
         StepHeader(
             title = "Travel Companions",
             subtitle = "Who's joining your adventure? (Optional)",
             modifier = Modifier.padding(bottom = 24.dp)
         )
-        
+
         Card(
             modifier = Modifier.fillMaxSize(),
             shape = RoundedCornerShape(16.dp),
@@ -49,33 +46,21 @@ fun CompanionsStep(
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
-                // Add Companion Button
                 OutlinedButton(
                     onClick = { showAddCompanionDialog = true },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFF6B73FF)
-                    ),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF6B73FF)),
                     border = ButtonDefaults.outlinedButtonBorder.copy(
                         brush = androidx.compose.ui.graphics.SolidColor(Color(0xFF6B73FF))
                     )
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Companion",
-                        modifier = Modifier.size(20.dp)
-                    )
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Add Travel Companion",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Text("Add Travel Companion", fontSize = 16.sp)
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
-                // Companions List
+
                 if (state.companions.isNotEmpty()) {
                     Text(
                         text = "Travel Companions (${state.companions.size})",
@@ -84,51 +69,27 @@ fun CompanionsStep(
                         color = Color.Black,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    
-                    LazyColumn {
+
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         itemsIndexed(state.companions) { index, companion ->
                             CompanionCard(
                                 companion = companion,
                                 onRemove = {
-                                    val updatedCompanions = state.companions.toMutableList()
-                                    updatedCompanions.removeAt(index)
-                                    onStateChange(state.copy(companions = updatedCompanions))
-                                },
-                                modifier = Modifier.padding(bottom = 12.dp)
+                                    onStateChange(state.copy(
+                                        companions = state.companions.toMutableList().apply {
+                                            removeAt(index)
+                                        }
+                                    ))
+                                }
                             )
                         }
                     }
                 } else {
-                    // Empty State
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "No Companions",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(64.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No companions added yet",
-                            fontSize = 16.sp,
-                            color = Color.Gray,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "You can travel solo or add companions to share the adventure",
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(horizontal = 32.dp)
-                        )
-                    }
+                    EmptyCompanionState()
                 }
-                
-                // Trip Summary
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
@@ -141,8 +102,8 @@ fun CompanionsStep(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Travelers",
+                            Icons.Default.Person,
+                            contentDescription = null,
                             tint = Color(0xFF6B73FF),
                             modifier = Modifier.size(24.dp)
                         )
@@ -150,24 +111,52 @@ fun CompanionsStep(
                         Text(
                             text = "Total Travelers: ${state.companions.size + 1}",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 }
             }
         }
     }
-    
-    // Add Companion Dialog
+
     if (showAddCompanionDialog) {
         AddCompanionDialog(
             onDismiss = { showAddCompanionDialog = false },
             onAddCompanion = { companion ->
-                val updatedCompanions = state.companions + companion
-                onStateChange(state.copy(companions = updatedCompanions))
+                onStateChange(state.copy(companions = state.companions + companion))
                 showAddCompanionDialog = false
             }
+        )
+    }
+}
+
+@Composable
+private fun EmptyCompanionState() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            Icons.Default.Person,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No companions added yet",
+            fontSize = 16.sp,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "You can travel solo or add companions to share the adventure",
+            fontSize = 14.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(horizontal = 32.dp),
+            lineHeight = 18.sp
         )
     }
 }
@@ -190,42 +179,23 @@ private fun CompanionCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Companion",
+                Icons.Default.Person,
+                contentDescription = null,
                 tint = Color(0xFF6B73FF),
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
-            
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = companion.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black
-                )
-                if (companion.email.isNotEmpty()) {
-                    Text(
-                        text = companion.email,
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
+                Text(companion.name, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                companion.email.takeIf { it.isNotEmpty() }?.let {
+                    Text(it, fontSize = 14.sp, color = Color.Gray)
                 }
-                if (companion.phone.isNotEmpty()) {
-                    Text(
-                        text = companion.phone,
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
+                companion.phone.takeIf { it.isNotEmpty() }?.let {
+                    Text(it, fontSize = 14.sp, color = Color.Gray)
                 }
             }
-            
             IconButton(onClick = onRemove) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Remove Companion",
-                    tint = Color.Red
-                )
+                Icon(Icons.Default.Delete, contentDescription = "Remove", tint = Color.Red)
             }
         }
     }
@@ -239,16 +209,10 @@ private fun AddCompanionDialog(
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
-    
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = "Add Travel Companion",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        },
+        title = { Text("Add Travel Companion", fontSize = 20.sp, fontWeight = FontWeight.Bold) },
         text = {
             Column {
                 TripCreationTextField(
@@ -258,7 +222,6 @@ private fun AddCompanionDialog(
                     placeholder = "Enter companion's name",
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                
                 TripCreationTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -266,7 +229,6 @@ private fun AddCompanionDialog(
                     placeholder = "Enter email address",
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                
                 TripCreationTextField(
                     value = phone,
                     onValueChange = { phone = it },
@@ -278,20 +240,16 @@ private fun AddCompanionDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (name.isNotBlank()) {
-                        onAddCompanion(
-                            TravelCompanion(
-                                name = name.trim(),
-                                email = email.trim(),
-                                phone = phone.trim()
-                            )
+                    onAddCompanion(
+                        TravelCompanion(
+                            name = name.trim(),
+                            email = email.trim(),
+                            phone = phone.trim()
                         )
-                    }
+                    )
                 },
                 enabled = name.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6B73FF)
-                )
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B73FF))
             ) {
                 Text("Add")
             }

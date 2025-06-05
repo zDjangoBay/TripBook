@@ -45,37 +45,25 @@ class TripViewModel(
         }
     }
 
-    fun updateTrip(trip: Trip) {
-        viewModelScope.launch {
-            val result = repository.updateTrip(trip)
-
-            if (result.isFailure) {
-                // Error is already handled in repository
-                result.exceptionOrNull()?.let { exception ->
-                    // Additional error handling if needed
-                }
-            }
-        }
-    }
-
-    fun deleteTrip(tripId: String) {
-        viewModelScope.launch {
-            val result = repository.deleteTrip(tripId)
-
-            if (result.isFailure) {
-                // Error is already handled in repository
-                result.exceptionOrNull()?.let { exception ->
-                    // Additional error handling if needed
-                }
-            }
-        }
-    }
-
     fun getTripById(tripId: String): Trip? {
         return repository.getTripById(tripId)
     }
 
     fun clearError() {
         repository.clearError()
+    }
+
+    fun deleteTrip(tripId: String) {
+        viewModelScope.launch {
+            repository.deleteTrip(tripId)
+            refreshTrips()
+        }
+    }
+
+    fun updateTrip(trip: Trip) {
+        viewModelScope.launch {
+            repository.updateTrip(trip)
+            refreshTrips()
+        }
     }
 }
