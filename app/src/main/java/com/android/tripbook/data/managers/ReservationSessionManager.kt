@@ -145,3 +145,25 @@ class ReservationSessionManager {
         }
     }
 }
+// In your reservation creation logic
+class ReservationManager {
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+    
+    suspend fun createReservation(reservation: ReservationEntity) {
+        // Existing logic...
+        reservationDao.insertReservation(reservation)
+        
+        // NEW: Add notifications
+        notificationRepository.sendBookingConfirmation(reservation)
+        notificationRepository.scheduleNotificationsForReservation(reservation)
+    }
+    
+    suspend fun updateReservationStatus(reservationId: String, newStatus: String) {
+        // Existing logic...
+        reservationDao.updateStatus(reservationId, newStatus)
+        
+        // NEW: Send status update
+        notificationRepository.sendStatusUpdateNotification(reservationId, newStatus)
+    }
+}

@@ -101,3 +101,12 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
+dependencies {
+    // WorkManager for background tasks
+    implementation "androidx.work:work-runtime-ktx:2.8.1"
+    
+    // If not already included
+    implementation "androidx.hilt:hilt-work:1.0.0"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+}

@@ -237,3 +237,28 @@ fun SimpleDashboardTest() {
 
     Log.d("TripBook", "SimpleDashboardTest: Completed")
 }
+// Add notifications screen to navigation
+composable("notifications/{userId}") { backStackEntry ->
+    val userId = backStackEntry.arguments?.getString("userId") ?: ""
+    NotificationsScreen(
+        userId = userId,
+        onNavigateBack = { navController.popBackStack() }
+    )
+}
+
+// In your bottom navigation
+BottomNavigationItem(
+    icon = { 
+        BadgedBox(
+            badge = {
+                if (unreadCount > 0) {
+                    Badge { Text(unreadCount.toString()) }
+                }
+            }
+        ) {
+            Icon(Icons.Default.Notifications, contentDescription = "Notifications")
+        }
+    },
+    selected = currentRoute == "notifications",
+    onClick = { navController.navigate("notifications/$userId") }
+)
