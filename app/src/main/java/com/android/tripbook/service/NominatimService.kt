@@ -29,13 +29,10 @@ interface NominatimApi {
     ): List<NominatimPlace>
 }
 
-// ADDED: Interceptor to add User-Agent header to all Nominatim requests (as required by teacher).
-// This prevents HTTP 403 errors that Nominatim can throw when no User-Agent is provided.
 class UserAgentInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
         val requestWithUserAgent = originalRequest.newBuilder()
-            .header("User-Agent", "TripBookAndroidApp/1.0 (contact@example.com)")
             .build()
         return chain.proceed(requestWithUserAgent)
     }
