@@ -140,3 +140,4 @@ configurations.all {
         force("androidx.work:work-runtime-ktx:2.9.0") // <--- ADDED PARENTHESES
     }
 }
+
