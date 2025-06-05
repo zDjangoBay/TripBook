@@ -24,7 +24,7 @@
     <string name="Upcoming_Schedules">Upcoming Schedules</string>
     <string name="Home">Home</string>
     <string name="Explorer">Explorer</string>
-    <string name="Bookmark">Bookmark</string>
+    <string name="Catalog">Catalog</string>
     <string name="Profile">Profile</string>
     <string name="Recommendation_Places">Recommendation places\n</string>
     <string name="title">title</string>
@@ -34,5 +34,6 @@
     <string name="To">To</string>
     <string name="zero">0</string>
     <string name="titile">titile</string>
+    <string name="Bookmark">Bookmark\n</string>
 
 </resources>
