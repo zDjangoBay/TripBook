@@ -112,6 +112,7 @@ dependencies {
     // Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")

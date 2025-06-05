@@ -34,6 +34,7 @@ navigationRuntimeAndroid = "2.9.0"
 repo = "1.0.0"
 databindingKtx = "8.3.0"
 ksp = "1.9.22-1.0.18"
+playServicesLocation = "21.3.0"
 
 [libraries]
 accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder", version.ref = "accompanistPlaceholder" }
@@ -76,6 +77,7 @@ repo = { module = "com.github.User:Repo", version.ref = "repo" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

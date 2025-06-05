@@ -18,12 +18,14 @@ import com.android.tripbook.ui.screens.booking.BookingScreen
 
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.android.tripbook.viewmodel.MainViewModel
 
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    mainViewModel: MainViewModel,
+    modifier: Modifier
 ) {
     NavHost(
         navController = navController,
@@ -31,18 +33,13 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable("home") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Home Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+            HomeScreenWrapper(
+               navController=navController,
+                mainViewModel = mainViewModel
+            )
+
             }
-        }
+
         composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),

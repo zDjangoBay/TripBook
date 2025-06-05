@@ -19,7 +19,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -218,7 +217,7 @@ fun AddPlaceScreen(
                                         Log.d("AddPlaceScreen", "Attempting to geocode: $addressString")
                                         geocoder.getFromLocationName(addressString, 1)
                                     }
-                                    if (addresses != null && addresses.isNotEmpty()) {
+                                    if (!addresses.isNullOrEmpty()) {
                                         fetchedLatitude = addresses[0].latitude
                                         fetchedLongitude = addresses[0].longitude
                                         geocodingSuccess = true
@@ -253,9 +252,6 @@ fun AddPlaceScreen(
                             caption = caption.trim().ifEmpty { "Explore ${title.trim()}" },
                             description = description.trim(),
                             imageUrl = selectedImageUris.map { it.toString() },
-                            rating = 0f, // default
-                            reviewCount = 0, // default
-                            duration = "N/A", // optional fallback
                             latitude = fetchedLatitude, // Use fetched or default 0.0
                             longitude = fetchedLongitude, // Use fetched or default 0.0
                             city = city.trim(),

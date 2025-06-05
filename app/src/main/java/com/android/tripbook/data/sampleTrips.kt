@@ -25,9 +25,7 @@ object SampleTrips {
                     "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48=",
                     "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k="
                 ),
-                rating = 4.5f,                      // Placeholder
-                reviewCount = 123,                  // Placeholder
-                duration = "3 days",                  // Placeholder
+                                  // Placeholder
                 latitude = 3.8480,                  // Yaoundé
                 longitude = 11.5021,                 // Yaoundé
                 city = "Yaoundé",
@@ -46,9 +44,7 @@ object SampleTrips {
                     "https://media.gettyimages.com/id/953837336/photo/cameroon-politics-unrest-police.jpg?s=2048x2048&w=gi&k=20&c=FB3Qus6FKDhoijiBjUfBNKEoBNmmdjaDntYX2ZxRSlA=",
                     "https://source.unsplash.com/800x600/?mountains"
                 ),
-                rating = 4.8f,
-                reviewCount = 98,
-                duration = "1-2 days trek",
+
                 latitude = 4.1651,                  // Buea
                 longitude = 9.2921,                 // Buea
                 city = "Buea",
@@ -66,9 +62,6 @@ object SampleTrips {
                     "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48=",
                     "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k="
                 ),
-                rating = 4.6f,
-                reviewCount = 150,
-                duration = "Weekend getaway",
                 latitude = 2.9407,                  // Kribi
                 longitude = 9.9098,                 // Kribi
                 city = "Kribi",
@@ -88,9 +81,6 @@ object SampleTrips {
                     "https://source.unsplash.com/800x600/?mountains"
                 ),
 
-                rating = 4.2f,
-                reviewCount = 77,
-                duration = "2-4 days",
                 latitude = 5.9639,                  // Bamenda
                 longitude = 10.1591,                 // Bamenda
                 city = "Bamenda",

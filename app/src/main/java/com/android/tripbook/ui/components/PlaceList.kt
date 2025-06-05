@@ -4,7 +4,7 @@ package com.android.tripbook.ui.components
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import com.android.tripbook.Model.Place
+import com.android.tripbook.model.Place
 
 @Composable
 fun PlaceList(places: List<Place>, onPlaceClick: (Place) -> Unit) {

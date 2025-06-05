@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Triphome
 
 @Composable
 fun TripList(
