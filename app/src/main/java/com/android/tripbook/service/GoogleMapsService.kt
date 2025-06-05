@@ -44,19 +44,9 @@ data class GeoLocation(
     fun toLatLng() = LatLng(lat, lng)
 }
 
-@Serializable
-data class Viewport(
-    val northeast: GeoLocation,
-    val southwest: GeoLocation
-)
 
-@Serializable
-data class Review(
-    val authorName: String,
-    val rating: Int,
-    val text: String,
-    val time: Long
-)
+
+
 
 @Serializable
 data class Photo(
