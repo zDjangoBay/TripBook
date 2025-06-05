@@ -72,11 +72,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.coil.compose)
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    implementation("androidx.activity:activity-compose:1.8.0")
+
+
 
 
 
