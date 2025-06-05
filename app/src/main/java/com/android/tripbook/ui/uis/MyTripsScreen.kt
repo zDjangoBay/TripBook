@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.uis
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -227,6 +229,7 @@ fun MyTripsScreen(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun TripCard(
     trip: Trip,
