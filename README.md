@@ -126,11 +126,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [x] User authentication system
 - [x] SQLite database integration
 - [x] Material Design UI
-- [ ] Social networking features
-- [ ] Photo sharing functionality
-- [ ] Travel agency rating system
-- [ ] Geolocation integration
-- [ ] Real-time chat functionality
+
 
 ## 📄 License
 
