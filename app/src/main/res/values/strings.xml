@@ -36,3 +36,24 @@
     <string name="titile">titile</string>
 
 </resources>
+
+    <!-- Strings for Fake Newsletter Feature -->
+    <string name="action_generate_newsletter">Generate Newsletter Draft</string>
+    <string name="newsletter_subject">Your TripBook Travel Inspiration!</string>
+    <string name="newsletter_greeting_generic">Hi there,\n\nHere are some travel ideas from TripBook:</string>
+    <!-- Add user name placeholder if profile data is accessible: <string name="newsletter_greeting_user">Hi %1$s,\n\nHere are some travel ideas from TripBook:</string> -->
+    <string name="newsletter_location_title_placeholder">**Discover [Placeholder Location]:**</string>
+    <string name="newsletter_location_desc_placeholder">Explore the [adjective] [feature] and [adjective] [feature] of this [region type] destination.</string>
+    <string name="newsletter_tip_title">**Travel Tip:**</string>
+    <string name="newsletter_tip_placeholder">Pack light layers! Temperatures can vary significantly depending on the region and time of day.</string>
+    <string name="newsletter_closing">\nHappy travels!\nThe TripBook Team</string>
+    <string name="newsletter_chooser_title">Send Newsletter via:</string>
+    <string name="newsletter_no_email_client">No email application found.</string>
+
+    <!-- Example Location/Tip Data (can be expanded) -->
+    <string name="location_zanzibar_title">**Discover Zanzibar:**</string>
+    <string name="location_zanzibar_desc">Explore the spice farms and stunning beaches of this Tanzanian archipelago.</string>
+    <string name="location_marrakech_title">**Discover Marrakech:**</string>
+    <string name="location_marrakech_desc">Immerse yourself in the vibrant souks and historic medina of this Moroccan city.</string>
+    <string name="tip_hydration">Stay hydrated! Carry a reusable water bottle and drink plenty of fluids, especially in hot climates.</string>
+    <string name="tip_currency">Inform your bank about your travel dates to avoid issues with card usage abroad.</string>
