@@ -147,8 +147,9 @@ class MainActivity : ComponentActivity() {
                 onServiceSelected = { service, type ->
                     selectedTrip?.let { trip ->
                         val newItem = ItineraryItem(
+                            tripId = trip.id,
                             date = trip.startDate,
-                            time = "10:00 AM",
+                            time = "10:00",
                             title = service.name,
                             location = service.location,
                             type = type,
