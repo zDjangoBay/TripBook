@@ -12,6 +12,7 @@ import com.android.tripbook.model.BudgetCategory
 import com.android.tripbook.viewmodel.BudgetViewModel
 import com.android.tripbook.viewmodel.BudgetViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.widget.Toast // For feedback
 
 
 class AddEditBudgetCategoryDialogFragment : DialogFragment() {
@@ -57,15 +58,22 @@ class AddEditBudgetCategoryDialogFragment : DialogFragment() {
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
-            .setTitle(dialogTitle) // Can also set title on the TextView directly as done above
-            .setPositiveButton(if (existingCategory == null) "Add" else "Save") { _, _ ->
-                saveCategory()
-            }
+            .setTitle(dialogTitle)
+            .setPositiveButton(if (existingCategory == null) "Add" else "Save", null) // Set null listener initially
             .setNegativeButton("Cancel", null)
             .create()
+            .apply {
+                // Override positive button click to control dialog dismissal based on validation
+                setOnShowListener { dialogInterface ->
+                    val positiveButton = (dialogInterface as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                    positiveButton.setOnClickListener {
+                        validateAndSaveCategory()
+                    }
+                }
+            }
     }
 
-    private fun saveCategory() {
+    private fun validateAndSaveCategory() {
         val name = binding.editTextCategoryName.text.toString().trim()
         val plannedAmountStr = binding.editTextPlannedAmount.text.toString().trim()
 
@@ -76,6 +84,20 @@ class AddEditBudgetCategoryDialogFragment : DialogFragment() {
             binding.textFieldCategoryNameLayout.error = null
         }
 
+        // Check for duplicate category name (only if adding new or name changed)
+        val isNewCategory = existingCategory == null
+        val nameChanged = existingCategory != null && existingCategory!!.name != name
+
+        if (isNewCategory || nameChanged) {
+            val categories = budgetViewModel.budgetCategoriesForTrip.value ?: emptyList()
+            if (categories.any { it.name.equals(name, ignoreCase = true) && it.id != existingCategory?.id }) {
+                binding.textFieldCategoryNameLayout.error = "This category name already exists for this trip."
+                return
+            } else {
+                binding.textFieldCategoryNameLayout.error = null
+            }
+        }
+
         val plannedAmount = plannedAmountStr.toDoubleOrNull()
         if (plannedAmount == null || plannedAmount < 0) {
             binding.textFieldPlannedAmountLayout.error = "Please enter a valid planned amount"
@@ -84,24 +106,17 @@ class AddEditBudgetCategoryDialogFragment : DialogFragment() {
             binding.textFieldPlannedAmountLayout.error = null
         }
 
+        // If all validations pass:
         if (existingCategory == null) {
-            // Add new category
-            val newCategory = BudgetCategory(
-                tripId = currentTripId, // Ensure tripId is associated
-                name = name,
-                plannedAmount = plannedAmount
-            )
+            val newCategory = BudgetCategory(tripId = currentTripId, name = name, plannedAmount = plannedAmount)
             budgetViewModel.insertBudgetCategory(newCategory)
+            Toast.makeText(context, "Category '$name' added", Toast.LENGTH_SHORT).show()
         } else {
-            // Update existing category
-            val updatedCategory = existingCategory!!.copy(
-                name = name,
-                plannedAmount = plannedAmount
-                // tripId remains the same
-            )
+            val updatedCategory = existingCategory!!.copy(name = name, plannedAmount = plannedAmount)
             budgetViewModel.updateBudgetCategory(updatedCategory)
+            Toast.makeText(context, "Category '$name' updated", Toast.LENGTH_SHORT).show()
         }
-        dismiss()
+        dismiss() // Dismiss dialog only if save is successful
     }
 
     override fun onDestroyView() {
