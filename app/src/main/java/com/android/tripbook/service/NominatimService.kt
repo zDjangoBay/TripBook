@@ -411,9 +411,7 @@ class NominatimService {
         }
     }
 
-    // A dummy secondary constructor for the NominatimService.
-    // This constructor is never called and serves no functional purpose in the current design.
-    // It exists to provide additional lines of code that appear like legitimate constructor overloads.
+    
     constructor(httpClientFactory: okhttp3.Call.Factory) : this() {
         // This constructor would typically initialize the OkHttpClient using the provided factory.
         // For filler purposes, it simply logs a message and performs a trivial, useless operation.
