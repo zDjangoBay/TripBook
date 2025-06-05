@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "android-webview",
+            "request": "launch",
+            "name": "Launch TripBook on Android",
+            "preLaunchTask": "Build Android Debug",
+            "appSrcRoot": "${workspaceRoot}/app/src/main",
+            "appPackage": "com.android.tripbook",
+            "activityName": "com.android.tripbook.MainActivity"
+        }
+    ]
+}
