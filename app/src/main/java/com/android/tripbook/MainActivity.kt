@@ -10,7 +10,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Immediately launch TripCatalogActivity
+        // Immediately launch HomeActivity
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
 
