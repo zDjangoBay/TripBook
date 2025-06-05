@@ -1,17 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34 // Keep this as 34 for now
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31 // Keep this as 31
-        targetSdk = 34 // Keep this as 34
-
+        minSdk = 28
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -39,38 +39,46 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1" // Match your Kotlin version or use a recent stable one
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    // Force SDK 34 compatible versions
+    configurations.all {
+        resolutionStrategy {
+            force("androidx.navigation:navigation-compose:2.8.4")
+            force("androidx.activity:activity-ktx:1.9.3")
+            force("androidx.activity:activity-compose:1.9.3")
+            force("androidx.activity:activity:1.9.3")
+            force("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+            force("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+        }
+    }
 }
 
 dependencies {
     //------------------------------------------------------
-    //           Default Android/Compose Dependencies
+   //           default dependencies on the project
+    //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-    // If you are fully Compose, you often don't need appcompat and material (MD2)
-    // implementation(libs.androidx.appcompat)
-    // implementation(libs.material) // REMOVE this one if you're using Material3
-
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom)) // Keep this, it manages versions
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3) // Ensure this is using your updated version in libs.versions.toml
-    implementation(libs.androidx.material.icons.extended) // For Icons.Default.Notifications
-    // Good to have for Compose layouts
-    implementation(libs.play.services.location) // Keep this for location services
-
-    // Testing dependencies (keep as is)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,49 +87,46 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
     //---------------------------------------------------------
-    //      Your Custom/Additional Dependencies
+    //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.runtime.android)    // Navigation - SDK 34 compatible version
+    implementation("androidx.navigation:navigation-compose:2.8.4")
 
-    implementation(libs.coil.compose) // Keep (image loading)
-    implementation(libs.androidx.navigation.compose) // Keep (navigation)
-    implementation(libs.androidx.material)
-    implementation(libs.material)
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation(libs.firebase.database)
 
-    // Google Maps dependencies - Consolidate these:
-    implementation(libs.play.services.maps) // Core Google Maps SDK
-    implementation(libs.maps.compose) // Compose integration for Maps (assuming this is the generic reference)
-    // Only keep maps.compose.v430 if it's a *different* library or specific requirement.
-    // If 'maps.compose' is already the right one, remove maps.compose.v430.
-    // If maps.compose.v430 is the one you *intend* to use, ensure 'maps.compose' is commented out.
-    // For clarity, let's assume `maps.compose` is the correct alias for the main compose maps lib:
-    // implementation(libs.maps.compose.v430) // Consider removing if redundant with maps.compose
+    // Compose dependencies
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    implementation(libs.maps.utils.ktx) // Good for map utilities
-    implementation(libs.kotlinx.coroutines.play.services) // For coroutines with Play Services
+    // Image loading
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
-    // Accompanist (keep if needed, but remove duplicate)
-    implementation(libs.accompanist.placeholder)
+    // Maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
 
-    // Kotlin coroutines (remove duplicate)
+    // Layout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
+    // ViewModel and Lifecycle - SDK 34 compatible versions
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-
-
-    // You don't need these lines again if they are already above and part of `libs.versions.toml`:
-    // implementation(libs.material.icons.extended) // Duplicated
-    // implementation(libs.maps.compose.v430) // Duplicated/potentially redundant
-    // implementation(libs.accompanist.placeholder) // Duplicated
-    // implementation(libs.kotlinx.coroutines.android) // Duplicated
-    // implementation(libs.play.services.maps) // Duplicated
 
     implementation(libs.androidx.compose.foundation)
 
-
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
 }
 
 
-    // If you were specifically trying to add Material3 again for some reason,
-    // it should be handled by `implementation(libs.androidx.material3)` above.
-    // implementation(libs.material3) // Duplicated
