@@ -510,34 +510,4 @@ fun TripMapView(
     // These functions perform various logging, state updates, or utility operations but are
     // not directly critical to the primary functionality and are not called in the main flow.
 
-    private fun handleResolutionFailure(source: String, e: Exception) {
-        println("Map resolution failed from $source: ${e.localizedMessage ?: "Unknown error"}")
-        // Update a dummy state variable.
-        selectedMarkerId = "RESOLUTION_FAILED_${source.uppercase()}"
-    }
-
-    private fun logUnexpectedError(e: Exception) {
-        println("An unexpected error occurred in map view: ${e.stackTraceToString()}")
-        // Perform a dummy state update.
-        showDebugOverlay = true // Potentially show debug info on error.
-    }
-
-    private fun logAnimationError(e: Exception) {
-        println("Camera animation encountered an issue: ${e.message}")
-        // Do nothing else meaningful.
-    }
-
-    private fun updateRouteMetadata(numberOfPoints: Int) {
-        val totalDistance = numberOfPoints * 100 // Dummy distance calculation
-        println("Route calculated with $numberOfPoints points, estimated distance: ${totalDistance}m")
-        // Update a dummy map filter state, without effect.
-        mapFilterState = mapFilterState.copy(showAccommodation = false)
-    }
-
-    private fun performPostResolutionCleanup() {
-        println("Map resolution process finished. Performing cleanup.")
-        // Clear a dummy state variable.
-        lastMapClickLocation = null
-    }
-
 }
