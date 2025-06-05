@@ -5,60 +5,76 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-// Assuming CommentService and DTOs are in scope
+
 
 fun Route.CommentRoutes(commentService: CommentService) {
 
     route("/comments") {
 
-        // --- Create a new comment ---
+
+        /*
+        * The algorithm of this request is :
+        *  First it will create a comment object
+        * After creating the object , if there is a parent_comment_id , it will go increase by 1 the number of repliesCount on the said parent_comment
+        * Then the newly created comment object is then write in the cache -- So that the reading might be really fast
+        * After beeing written in the cache the created comment will be stored in the Mongodb database
+        * Then it update the Cached List -- all of this implementation has been done in the CommentServiceImpl
+        * */
         post {
             try {
                 val request = call.receive<CreateCommentRequest>()
-                // In a real app, User_id might come from authenticated principal
                 val newComment = commentService.createComment(request)
                 if (newComment != null) {
-                    // Logic:
-                    // 1. Create Comment object (generate ID, set PostedAt).
-                    // 2. If Parent_Comment_id exists, increment repliesCount on parent comment in DB & cache.
-                    // 3. Write newComment to Redis (e.g., "comment:{Comment_Id}" -> JSON).
-                    // 4. Write newComment to MongoDB.
-                    // 5. Potentially update cached lists (e.g., comments for Post_id).
+
                     call.respond(HttpStatusCode.Created, newComment)
+
                 } else {
+
                     call.respond(HttpStatusCode.InternalServerError, "Failed to create comment")
+
                 }
             } catch (e: Exception) {
+
                 call.respond(HttpStatusCode.BadRequest, "Invalid comment data: ${e.message}")
             }
         }
 
-        // --- Retrieve a specific comment by its ID ---
+
+        /*
+        *
+        * This route helps find a comment using its comment_id, its algorithm is as follow  :
+        *   It will first go check the cache , and if found in the cache ensure that the isDeleted field of the comment is false meaning it is not considered deleted , it will be sent back
+        *   If the comment is not the cache , then go and check the database and fetch the comment if isDeleted is false otherwise a not found is returned
+        * */
         get("/{comment_id}") {
             val commentId = call.parameters["comment_id"]
             if (commentId == null) {
                 call.respond(HttpStatusCode.BadRequest, "Missing comment_id")
                 return@get
             }
+
             val comment = commentService.getCommentById(commentId)
-            // Logic:
-            // 1. Check Redis for "comment:{comment_id}".
-            // 2. If found and not soft-deleted, return.
-            // 3. If not in Redis, fetch from MongoDB.
-            // 4. If found in MongoDB and not soft-deleted, store in Redis and return.
-            // 5. If soft-deleted, might return a specific status or a "deleted" representation.
             if (comment != null && !comment.isDeleted) { //
+
                 call.respond(HttpStatusCode.OK, comment)
             } else {
-                call.respond(HttpStatusCode.NotFound, "Comment not found or has been deleted")
+
+                    call.respond(HttpStatusCode.NotFound, "Comment not found or has been deleted")
             }
         }
 
-        // --- Retrieve comments for a specific Post ---
-        // Example: GET /comments/post/some_post_id?page=1&size=10
+        /*
+        *This route is for retrieving the differents comments under a particuliar post , its algorithm goes as follow :
+        *   First construct the cache key , then check redis for this particular key , if there , we will next use these id later
+        *   Then if found it will fetch all the comments using the comments ids from redis , if it was not found it will go find the comments directly in the db ,
+        *   Then store the list of id in the cache
+        * */
         get("/post/{post_id}") {
+
             val postId = call.parameters["post_id"]
+
             val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+
             val pageSize = call.request.queryParameters["size"]?.toIntOrNull() ?: 20
 
             if (postId == null) {
@@ -66,116 +82,129 @@ fun Route.CommentRoutes(commentService: CommentService) {
                 return@get
             }
             val comments = commentService.getCommentsByPostId(postId, page, pageSize)
-            // Logic:
-            // 1. Construct a cache key (e.g., "post:{post_id}:comments:page:{page}:size:{pageSize}").
-            // 2. Check Redis for this key (could store list of IDs or full objects).
-            // 3. If found, fetch full comments from Redis/DB if only IDs are stored, then return.
-            // 4. If not in Redis, fetch paginated list from MongoDB (filtering out comment.isDeleted = true).
-            // 5. Store the list (or IDs) in Redis with an appropriate TTL.
-            // 6. Return the list.
+
+
             call.respond(HttpStatusCode.OK, comments.filter { !it.isDeleted }) //
         }
 
-        // --- Retrieve (non-deleted) comments by a specific User ---
-        // Example: GET /comments/user/some_user_id?page=1&size=10
+        /*
+        *By now you must have understood the whole mechanism of fetching from the cache then from the database ,
+        * This route helps find all the comments of a particular user
+        * */
         get("/user/{user_id}") {
             val userId = call.parameters["user_id"]
-            val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
-            val pageSize = call.request.queryParameters["size"]?.toIntOrNull() ?: 20
 
-            if (userId == null) {
+             val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+
+                val pageSize = call.request.queryParameters["size"]?.toIntOrNull() ?: 20
+
+            if (userId == null) {//propre n'est ce pas ?  😂
+
                 call.respond(HttpStatusCode.BadRequest, "Missing user_id")
+
                 return@get
             }
+
             val comments = commentService.getCommentsByUserId(userId, page, pageSize)
-            // Caching logic similar to /post/{post_id}, key like "user:{user_id}:comments:page..."
+
             call.respond(HttpStatusCode.OK, comments.filter { !it.isDeleted }) //
         }
 
-        // --- Retrieve (non-deleted) replies to a specific Parent Comment ---
-        // Example: GET /comments/parent_comment_123/replies?page=1&size=5
+        /*
+        * This route is to find all the replies under a parent comment , to be displayed in the application , as done by every social media
+        * */
         get("/{parent_comment_id}/replies") {
             val parentCommentId = call.parameters["parent_comment_id"]
+
             val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
-            val pageSize = call.request.queryParameters["size"]?.toIntOrNull() ?: 5
+
+                val pageSize = call.request.queryParameters["size"]?.toIntOrNull() ?: 5
 
             if (parentCommentId == null) {
                 call.respond(HttpStatusCode.BadRequest, "Missing parent_comment_id")
+
+
                 return@get
             }
             val replies = commentService.getRepliesForComment(parentCommentId, page, pageSize)
-            // Caching logic similar, key like "comment:{parent_comment_id}:replies:page..."
+
             call.respond(HttpStatusCode.OK, replies.filter { !it.isDeleted }) //
         }
 
-        // --- Update an existing comment (e.g., its text value) ---
+        /*
+        * Since all of the moderns social media kind of platforms allows people to modify their comment , it could be nice having it in the TripBook application , the algorithm is as  follow
+        *   First it check if the the specified user is the proprietary of that comment ,
+        *   Then it willl update the  comment in Mongodb
+        *   After that it also update the coment in redis and invalidate the cachedLIst that contains that comment
+        * */
         put("/{comment_id}") {
             val commentId = call.parameters["comment_id"]
-            // val currentUserId = ... // Get from authenticated principal
-            if (commentId == null /*|| currentUserId == null*/) {
-                call.respond(HttpStatusCode.BadRequest, "Missing comment_id or authentication")
+
+            val currentUserId = call.parameters["User_id"]
+            if (commentId == null || currentUserId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Missing comment_id or Missing User_id")
                 return@put
             }
             try {
                 val request = call.receive<UpdateCommentRequest>()
-                // Pass currentUserId to service to verify ownership before update
-                val updatedComment = commentService.updateComment(commentId, "TODO_Authenticated_User_Id", request)
+
+                val updatedComment = commentService.updateComment(commentId,currentUserId, request)
                 if (updatedComment != null) {
-                    // Logic:
-                    // 1. Service verifies user owns the comment.
-                    // 2. Update comment in MongoDB.
-                    // 3. Update/invalidate "comment:{comment_id}" in Redis.
-                    // 4. Potentially invalidate cached lists containing this comment.
+
                     call.respond(HttpStatusCode.OK, updatedComment)
                 } else {
-                    call.respond(HttpStatusCode.NotFound, "Comment not found or update failed (e.g. permission denied)")
+                    call.respond(HttpStatusCode.NotFound, "Comment not found or update failed ")
                 }
             } catch (e: Exception) {
                 call.respond(HttpStatusCode.BadRequest, "Invalid update data: ${e.message}")
             }
         }
 
-        // --- Soft delete a comment ---
+
         delete("/{comment_id}") {
+
             val commentId = call.parameters["comment_id"]
-            // val currentUserId = ... // Get from authenticated principal
-            if (commentId == null /*|| currentUserId == null*/) {
+
+            val currentUserId = call.parameter["User_id"]
+            if (commentId == null || currentUserId == null) {
                 call.respond(HttpStatusCode.BadRequest, "Missing comment_id or authentication")
                 return@delete
             }
-            // Pass currentUserId to service to verify ownership
-            val success = commentService.deleteComment(commentId, "TODO_Authenticated_User_Id")
+
+            val success = commentService.deleteComment(commentId, currentUserId)
+
             if (success) {
-                // Logic:
-                // 1. Service verifies user owns the comment.
-                // 2. Set isDeleted = true in MongoDB.
-                // 3. Update "comment:{comment_id}" in Redis (reflecting isDeleted=true) or remove it.
-                // 4. Potentially invalidate/update cached lists.
+
                 call.respond(HttpStatusCode.NoContent)
             } else {
                 call.respond(HttpStatusCode.NotFound, "Comment not found or delete failed (e.g. permission denied)")
             }
         }
 
-        // --- Like a comment ---
+        /*
+        *   This route is for the increaseing of likes number of a comment , we will of course do the same for posts
+        *
+        * */
         post("/{comment_id}/like") {
             val commentId = call.parameters["comment_id"]
-            // val likingUserId = ... // Get from authenticated principal
-            if (commentId == null /*|| likingUserId == null*/) {
-                call.respond(HttpStatusCode.BadRequest, "Missing comment_id or authentication")
-                return@post
+
+                    val likingUserId = call.parameters["User_id"]
+
+            if (commentId == null || likingUserId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Missing comment_id or User_id")
+                  return@post
             }
 
-            val likedComment = commentService.likeComment(commentId, "TODO_Authenticated_Liking_User_Id")
+            val likedComment = commentService.likeComment(commentId,likingUserId )
+
             if (likedComment != null) {
-                // Logic:
-                // 1. Increment likesCount in MongoDB for the comment.
-                // 2. Update "comment:{comment_id}" in Redis with new likesCount.
-                // Optional: Store user's like to prevent double-liking.
+
                 call.respond(HttpStatusCode.OK, likedComment)
             } else {
+
                 call.respond(HttpStatusCode.NotFound, "Comment not found or like failed")
             }
+
         }
     }
 }
