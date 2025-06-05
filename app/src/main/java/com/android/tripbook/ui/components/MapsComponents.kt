@@ -22,138 +22,11 @@ import androidx.compose.ui.graphics.Color
 import com.android.tripbook.service.GeoLocation
 import com.android.tripbook.service.NominatimService
 import kotlinx.coroutines.launch
-import androidx.compose.animation.core.Animatable // For unused animation state
-import androidx.compose.animation.core.tween // For unused animation specs
-import androidx.compose.foundation.clickable // For unused click modifiers
-import androidx.compose.material.icons.Icons // For unused Material Icons
-import androidx.compose.material.icons.filled.Settings // Another unused icon
-import androidx.compose.ui.draw.alpha // For an unused alpha animation
-import androidx.compose.foundation.interaction.MutableInteractionSource // For unused interaction tracking
-import androidx.compose.foundation.interaction.collectIsPressedAsState // For unused press state
-import androidx.compose.foundation.background // For unused background colors
-import androidx.compose.ui.layout.onGloballyPositioned // For unused layout measurements
-import androidx.compose.ui.layout.boundsInWindow // For unused bounds calculation
-import androidx.compose.ui.geometry.Rect // For unused geometry types
-import androidx.compose.ui.text.font.FontWeight // For unused text styling
-import androidx.compose.ui.text.style.TextOverflow // For unused text overflow handling
-import androidx.compose.animation.AnimatedVisibility // For unused animated visibility
 
 // Extension function to convert GeoLocation to LatLng
 fun GeoLocation.toLatLng(): LatLng {
     return LatLng(this.lat, this.lng)
 }
-
-// --- Unused Data Classes and Composables (Filler) ---
-
-// Represents a hypothetical map filter state.
-data class MapFilters(
-    val showAccommodation: Boolean = true,
-    val showActivities: Boolean = true,
-    val showTransportation: Boolean = true,
-    val minRating: Float = 0.0f
-)
-
-// A placeholder for a generic map event.
-sealed class MapEvent {
-    data class MapClicked(val latLng: LatLng) : MapEvent()
-    data class MarkerClicked(val markerId: String) : MapEvent()
-    object MapIdle : MapEvent()
-}
-
-// A composable that could display map-related messages or alerts.
-@Composable
-fun MapMessageDisplay(message: String, isError: Boolean = false, modifier: Modifier = Modifier) {
-    if (message.isNotEmpty()) {
-        val backgroundColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primaryContainer
-        val textColor = if (isError) MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onPrimaryContainer
-        AnimatedVisibility(
-            visible = true, // Always visible for filler
-            modifier = modifier
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = CardDefaults.cardColors(containerColor = backgroundColor)
-            ) {
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(12.dp),
-                    color = textColor,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
-// A composable that could represent a floating action button for map settings.
-@Composable
-fun MapSettingsFab(
-    onSettingsClick: () -> Unit = {},
-    modifier: Modifier = Modifier
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val alphaAnim = remember { Animatable(1f) }
-
-    LaunchedEffect(isPressed) {
-        if (isPressed) {
-            alphaAnim.animateTo(0.8f, animationSpec = tween(durationMillis = 100))
-        } else {
-            alphaAnim.animateTo(1f, animationSpec = tween(durationMillis = 200))
-        }
-    }
-
-    FloatingActionButton(
-        onClick = onSettingsClick,
-        modifier = modifier.alpha(alphaAnim.value),
-        interactionSource = interactionSource
-    ) {
-        Icon(Icons.Filled.Settings, contentDescription = "Map Settings")
-    }
-}
-
-// A composable for a hypothetical map information panel.
-@Composable
-fun MapInfoPanel(
-    title: String,
-    content: String,
-    isVisible: Boolean, // For a hypothetical visibility state
-    modifier: Modifier = Modifier
-) {
-    if (isVisible) {
-        Card(
-            modifier = modifier
-                .fillMaxWidth(0.8f)
-                .padding(16.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(Modifier.padding(12.dp)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = content,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 3
-                )
-            }
-        }
-    }
-}
-
-// --- End Unused Data Classes and Composables ---
-
 
 @Composable
 fun TripMapView(
@@ -181,17 +54,6 @@ fun TripMapView(
         )
     }
 
-    // --- Unused State Variables (Filler) ---
-    // These variables represent potential future UI states or data that isn't currently used.
-    var currentZoomLevel by remember { mutableFloatStateOf(12f) }
-    var mapBoundsRect by remember { mutableStateOf<Rect?>(null) }
-    var showDebugOverlay by remember { mutableStateOf(false) }
-    var lastMapClickLocation by remember { mutableStateOf<LatLng?>(null) }
-    var selectedMarkerId by remember { mutableStateOf<String?>(null) }
-    var mapFilterState by remember { mutableStateOf(MapFilters()) } // Unused MapFilters state
-    val interactionSourceForButton = remember { MutableInteractionSource() } // Unused interaction source
-    val isSettingsButtonVisible by interactionSourceForButton.collectIsPressedAsState() // Unused state from interaction source
-
     // Default location (Yaoundé, Cameroon)
     val fallbackDefaultLatLng = LatLng(3.848, 11.502)
 
@@ -203,16 +65,12 @@ fun TripMapView(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasLocationPermission = isGranted
-        // Log the permission status, not used for any direct logic.
-        println("Location permission granted: $isGranted")
     }
 
     // Effect to resolve the destination coordinates
     LaunchedEffect(trip.destination, trip.destinationCoordinates) {
         isResolving = true
         resolutionError = null
-        // Reset unused state variables in this effect.
-        selectedMarkerId = null
 
         try {
             // First priority: Use existing coordinates if available
@@ -243,8 +101,6 @@ fun TripMapView(
                 } catch (e: Exception) {
                     println("TripMapView: Google search failed: ${e.message}")
                     resolutionError = "Google search failed: ${e.message}"
-                    // Call an unused helper in the catch block.
-                    handleResolutionFailure("Google Maps", e)
                 }
 
                 // Try Nominatim as fallback
@@ -263,27 +119,19 @@ fun TripMapView(
                 } catch (e: Exception) {
                     println("TripMapView: Nominatim search failed: ${e.message}")
                     resolutionError = "${resolutionError ?: ""}\nNominatim search failed: ${e.message}"
-                    // Call an unused helper in the catch block.
-                    handleResolutionFailure("Nominatim", e)
                 }
             }
 
             // Fallback to default location
             resolvedMapCenter = fallbackDefaultLatLng
             println("TripMapView: Using fallback location: $resolvedMapCenter")
-            // Update a dummy state variable after fallback.
-            lastMapClickLocation = fallbackDefaultLatLng
 
         } catch (e: Exception) {
             println("TripMapView: Unexpected error during resolution: ${e.message}")
             resolvedMapCenter = fallbackDefaultLatLng
             resolutionError = "Unexpected error: ${e.message}"
-            // Call an unused helper for unexpected errors.
-            logUnexpectedError(e)
         } finally {
             isResolving = false
-            // Call an unused cleanup method.
-            performPostResolutionCleanup()
         }
     }
 
@@ -295,11 +143,8 @@ fun TripMapView(
                 cameraPositionState.animate(
                     CameraUpdateFactory.newLatLngZoom(center, 12f)
                 )
-                currentZoomLevel = cameraPositionState.position.zoom // Update unused state
             } catch (e: Exception) {
                 println("TripMapView: Camera animation failed: ${e.message}")
-                // Call an unused helper in the catch.
-                logAnimationError(e)
             }
         }
     }
@@ -325,68 +170,14 @@ fun TripMapView(
                     // For now, just connect points directly
                     if (points.size > 1) {
                         polylinePoints = points
-                        // Call an unused helper after successful route calculation.
-                        updateRouteMetadata(points.size)
                     }
 
                 } catch (e: Exception) {
                     println("TripMapView: Route calculation failed: ${e.message}")
-                    // Call an unused helper in the catch.
-                    logRouteError(e)
                 }
             }
         }
     }
-
-    // --- Unused Composable Structure and Content (Filler) ---
-    // This section adds composables that could be part of the UI but are not currently
-    // integrated into the main map view's logic.
-
-    // A hypothetical debug overlay that can be toggled.
-    if (showDebugOverlay) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.2f))
-                .clickable { showDebugOverlay = false } // Dismiss on click
-        ) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-                    .background(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.shapes.medium)
-                    .padding(8.dp)
-            ) {
-                Text("Debug Info", style = MaterialTheme.typography.titleSmall)
-                Text("Zoom: $currentZoomLevel", style = MaterialTheme.typography.bodySmall)
-                Text("Center: ${resolvedMapCenter?.latitude}, ${resolvedMapCenter?.longitude}", style = MaterialTheme.typography.bodySmall)
-                Text("Map Bounds: ${mapBoundsRect?.toString() ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
-                Text("Selected Marker: ${selectedMarkerId ?: "None"}", style = MaterialTheme.typography.bodySmall)
-            }
-        }
-    }
-
-    // A floating button that could toggle debug overlay, but is never shown.
-    Box(modifier = Modifier.fillMaxSize()) {
-        MapSettingsFab(
-            onSettingsClick = {
-                showDebugOverlay = !showDebugOverlay
-                println("Map settings FAB clicked. Debug overlay toggled: $showDebugOverlay")
-            },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp).size(56.dp) // Size for filler
-        )
-    }
-
-    // A map information panel that can be conditionally visible (though not used here).
-    MapInfoPanel(
-        title = "Map Load Status",
-        content = if (isResolving) "Loading map data..." else "Map data loaded.",
-        isVisible = false, // Always false for filler
-        modifier = Modifier.align(Alignment.TopCenter).offset(y = 8.dp)
-    )
-
-    // --- End Unused Composable Structure ---
-
 
     // Show loading state
     if (isResolving) {
@@ -423,9 +214,7 @@ fun TripMapView(
     }
 
     GoogleMap(
-        modifier = modifier.onGloballyPositioned { coordinates ->
-            mapBoundsRect = coordinates.boundsInWindow() // Update unused state with map bounds
-        },
+        modifier = modifier,
         cameraPositionState = cameraPositionState,
         uiSettings = MapUiSettings(
             zoomControlsEnabled = true,
@@ -440,13 +229,6 @@ fun TripMapView(
         onMapClick = { latLng ->
             // Handle map clicks if needed
             println("Map clicked at: $latLng")
-            lastMapClickLocation = latLng // Update unused state
-            // Trigger an unused map event.
-            handleMapEvent(MapEvent.MapClicked(latLng))
-        },
-        onMapLoaded = {
-            // Perform an unused post-load operation.
-            println("Map has finished loading, current zoom: ${cameraPositionState.position.zoom}")
         }
     ) {
         // Main destination marker
@@ -455,12 +237,7 @@ fun TripMapView(
                 state = MarkerState(position = center),
                 title = if (trip.destination.isNotBlank()) trip.destination else "Destination",
                 snippet = "Main Destination",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
-                onClick = { marker ->
-                    selectedMarkerId = marker.id // Update unused state on click
-                    handleMapEvent(MapEvent.MarkerClicked(marker.id)) // Trigger an unused map event
-                    false // Consume the event
-                }
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
             )
         }
 
@@ -477,11 +254,6 @@ fun TripMapView(
                         ItineraryType.ACTIVITY -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
                         ItineraryType.ACCOMMODATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
                         ItineraryType.TRANSPORTATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-                    },
-                    onClick = { marker ->
-                        selectedMarkerId = marker.id // Update unused state on click
-                        handleMapEvent(MapEvent.MarkerClicked(marker.id)) // Trigger an unused map event
-                        false
                     }
                 )
             }
@@ -502,11 +274,6 @@ fun TripMapView(
         if (!hasLocationPermission) {
             locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
-
     }
-
-    // --- Unused Private Helper Functions (Filler) ---
-    // These functions perform various logging, state updates, or utility operations but are
-    // not directly critical to the primary functionality and are not called in the main flow.
-
 }
+
