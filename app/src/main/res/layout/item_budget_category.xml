@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/textViewCategoryName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textViewPlannedAmountLabel"
+        tools:text="Accommodation" />
+
+    <TextView
+        android:id="@+id/textViewPlannedAmountLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Planned:"
+        app:layout_constraintEnd_toStartOf="@+id/textViewCategoryPlannedAmount"
+        app:layout_constraintTop_toTopOf="@id/textViewCategoryName"
+        app:layout_constraintBottom_toBottomOf="@id/textViewCategoryName"
+        android:layout_marginEnd="4dp"/>
+
+    <TextView
+        android:id="@+id/textViewCategoryPlannedAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewCategoryName"
+        app:layout_constraintBottom_toBottomOf="@id/textViewCategoryName"
+        tools:text="$500.00" />
+
+    <TextView
+        android:id="@+id/textViewActualAmountLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Spent:"
+        app:layout_constraintStart_toStartOf="@id/textViewPlannedAmountLabel"
+        app:layout_constraintTop_toBottomOf="@id/textViewPlannedAmountLabel"
+        app:layout_constraintEnd_toStartOf="@+id/textViewCategoryActualAmount"
+        android:layout_marginEnd="4dp"/>
+
+    <TextView
+        android:id="@+id/textViewCategoryActualAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewActualAmountLabel"
+        app:layout_constraintBottom_toBottomOf="@id/textViewActualAmountLabel"
+        tools:text="$350.00" />
+
+    <!-- You might want to add a ProgressBar here later to show budget usage -->
+    <!-- Or a RecyclerView for expenses within this category if not showing separately -->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
