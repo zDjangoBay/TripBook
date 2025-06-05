@@ -766,11 +766,7 @@ class TravelAgencyService {
         const val DEFAULT_SEARCH_RADIUS = 50000 // In meters
         const val MAX_RETRIES_ON_FAILURE = 3
 
-        // A dummy factory method.
-        fun createTestingService(): TravelAgencyService {
-            println("Creating a TravelAgencyService for testing purposes.")
-            return TravelAgencyService()
-        }
+      
     }
 
     // A secondary constructor for different initialization paths, not used.
