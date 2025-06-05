@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.ui.components.PopularDestinations
+import com.android.tripbook.ui.components.SmartRecommendations
 
 /**
  * Main Trip Catalog Screen combining:
@@ -34,6 +35,8 @@ fun TripCatalogScreen(
 
     val pageSize = 5
     var currentPage by remember { mutableStateOf(1) }
+    // Track if user has interacted for smart recommendations
+    var hasInteracted by remember { mutableStateOf(true) }
 
     // Filtered and paginated list of trips
     val displayedTrips = remember(searchQuery.text, currentPage) {
@@ -68,6 +71,15 @@ fun TripCatalogScreen(
                 .padding(16.dp),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
+
+                item {
+                    SmartRecommendations(
+                        trips = allTrips,
+                        onTripClick = onTripClick,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                    Divider(modifier = Modifier.padding(vertical = 16.dp))
+                }
 
              item {
                  PopularDestinations(
