@@ -29,21 +29,6 @@ private const val PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/plac
 
 
 
-@Serializable
-data class PlaceDetails(
-    val placeId: String,
-    val name: String,
-    val address: String,
-    val formattedPhoneNumber: String? = null,
-    val website: String? = null,
-    val rating: Double? = null,
-    val priceLevel: Int? = null,
-    val reviews: List<Review> = emptyList(),
-    val photos: List<Photo> = emptyList(),
-    val openingHours: OpeningHours? = null,
-    val geometry: Geometry? = null,
-    val types: List<String> = emptyList()
-)
 
 @Serializable
 data class Geometry(
