@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CommentInput(
@@ -14,16 +15,15 @@ fun CommentInput(
 ) {
     var text by remember { mutableStateOf("") }
 
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
+    Row(modifier = Modifier
+        .padding(8.dp)
+        .fillMaxWidth()) {
+
         TextField(
             value = text,
             onValueChange = { text = it },
-            placeholder = { 
-                Text(if (isReply) "Write a reply..." else "Write a comment...") 
+            placeholder = {
+                Text(if (isReply) "Write a reply..." else "Write a comment...")
             },
             modifier = Modifier.weight(1f)
         )
@@ -42,7 +42,7 @@ fun CommentInput(
             ) {
                 Text("Post")
             }
-            
+
             if (isReply && onCancel != null) {
                 TextButton(onClick = onCancel) {
                     Text("Cancel")
@@ -52,4 +52,8 @@ fun CommentInput(
     }
 }
 
-
+@Preview(showBackground = true)
+@Composable
+fun PreviewCommentInput() {
+    CommentInput(onPost = { /* Preview only */ })
+}

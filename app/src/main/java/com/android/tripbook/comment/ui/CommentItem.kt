@@ -3,21 +3,19 @@ package com.android.tripbook.comment.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.android.tripbook.comment.model.Comment
 import com.android.tripbook.comment.model.Reply
 import com.android.tripbook.comment.util.TimeUtils
@@ -32,12 +30,12 @@ fun CommentItem(
 ) {
     var showReplies by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
-    
+
     if (comment.isDeleted) {
         DeletedCommentItem()
         return
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,25 +51,25 @@ fun CommentItem(
                     .size(40.dp)
                     .clip(CircleShape)
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = comment.username,
                     style = MaterialTheme.typography.titleMedium
                 )
-                
+
                 Text(
                     text = comment.text,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                
+
                 Text(
                     text = TimeUtils.getRelativeTimeSpan(comment.timestamp),
                     style = MaterialTheme.typography.labelSmall
                 )
-                
+
                 Row(
                     modifier = Modifier.padding(top = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -82,18 +80,18 @@ fun CommentItem(
                             contentDescription = "Like"
                         )
                     }
-                    
+
                     Text(text = comment.likes.toString())
-                    
+
                     Spacer(modifier = Modifier.width(16.dp))
-                    
+
                     IconButton(onClick = { onReply(comment) }) {
                         Icon(
                             imageVector = Icons.Default.Reply,
                             contentDescription = "Reply"
                         )
                     }
-                    
+
                     if (comment.replies.isNotEmpty()) {
                         TextButton(onClick = { showReplies = !showReplies }) {
                             Text(
@@ -103,7 +101,7 @@ fun CommentItem(
                     }
                 }
             }
-            
+
             if (comment.userId == currentUserId) {
                 Box {
                     IconButton(onClick = { showMenu = true }) {
@@ -112,7 +110,7 @@ fun CommentItem(
                             contentDescription = "More options"
                         )
                     }
-                    
+
                     DropdownMenu(
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
@@ -134,7 +132,7 @@ fun CommentItem(
                 }
             }
         }
-        
+
         AnimatedVisibility(
             visible = showReplies,
             enter = expandVertically(),
@@ -152,7 +150,7 @@ fun CommentItem(
                 }
             }
         }
-        
+
         Divider(modifier = Modifier.padding(top = 8.dp))
     }
 }
@@ -176,20 +174,20 @@ fun ReplyItem(
                 .size(32.dp)
                 .clip(CircleShape)
         )
-        
+
         Spacer(modifier = Modifier.width(8.dp))
-        
+
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = reply.username,
                 style = MaterialTheme.typography.titleSmall
             )
-            
+
             Text(
                 text = reply.text,
                 style = MaterialTheme.typography.bodyMedium
             )
-            
+
             Row(
                 modifier = Modifier.padding(top = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -198,9 +196,9 @@ fun ReplyItem(
                     text = TimeUtils.getRelativeTimeSpan(reply.timestamp),
                     style = MaterialTheme.typography.labelSmall
                 )
-                
+
                 Spacer(modifier = Modifier.width(16.dp))
-                
+
                 IconButton(
                     onClick = { onLike(reply) },
                     modifier = Modifier.size(24.dp)
@@ -210,7 +208,7 @@ fun ReplyItem(
                         contentDescription = "Like"
                     )
                 }
-                
+
                 Text(
                     text = reply.likes.toString(),
                     style = MaterialTheme.typography.labelSmall
@@ -220,10 +218,12 @@ fun ReplyItem(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun DeletedCommentItem() {
     Row(
         modifier = Modifier
+
             .fillMaxWidth()
             .padding(8.dp)
     ) {
