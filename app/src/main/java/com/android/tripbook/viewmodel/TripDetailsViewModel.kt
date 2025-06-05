@@ -205,6 +205,34 @@ class TripDetailsViewModel(
         
         return dates
     }
+
+    fun getWeatherForecast(location: String): WeatherData? {
+        // In a real app, you would fetch this data from a weather API
+        // For now, we'll return mock data
+        return WeatherData(
+            current = CurrentWeather(
+                temperature = 27,
+                condition = "Partly Cloudy",
+                highTemp = 28,
+                lowTemp = 20,
+                feelsLike = 29,
+                alert = "Showers ending early. Low 20C."
+            ),
+            hourly = listOf(
+                HourlyForecast("5 PM", 26, "Partly Cloudy", 11),
+                HourlyForecast("6 PM", 25, "Partly Cloudy", 9),
+                HourlyForecast("6:23 PM", 25, "Sunset", 0),
+                HourlyForecast("7 PM", 24, "Cloudy", 7),
+                HourlyForecast("8 PM", 23, "Cloudy", 9),
+                HourlyForecast("9 PM", 23, "Cloudy", 14)
+            ),
+            daily = listOf(
+                DailyForecast("Yesterday", 28, 20, "Sunny", 0),
+                DailyForecast("Today", 28, 20, "Partly Cloudy", 11),
+                DailyForecast("Tomorrow", 27, 19, "Rainy", 40)
+            )
+        )
+    }
 }
 
 data class TripStatistics(
@@ -213,4 +241,35 @@ data class TripStatistics(
     val completedActivities: Int = 0,
     val totalCost: Double = 0.0,
     val remainingBudget: Double = 0.0
+)
+
+// Weather data classes
+data class WeatherData(
+    val current: CurrentWeather,
+    val hourly: List<HourlyForecast>,
+    val daily: List<DailyForecast>
+)
+
+data class CurrentWeather(
+    val temperature: Int,
+    val condition: String,
+    val highTemp: Int,
+    val lowTemp: Int,
+    val feelsLike: Int,
+    val alert: String = ""
+)
+
+data class HourlyForecast(
+    val time: String,
+    val temperature: Int,
+    val condition: String,
+    val precipitation: Int
+)
+
+data class DailyForecast(
+    val day: String,
+    val highTemp: Int,
+    val lowTemp: Int,
+    val condition: String,
+    val precipitation: Int
 )
