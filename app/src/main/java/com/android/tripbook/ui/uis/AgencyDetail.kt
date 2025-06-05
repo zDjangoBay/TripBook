@@ -44,7 +44,7 @@ fun AgencyDetailScreen(
     val error by agencyViewModel.error.collectAsState()
     val context = LocalContext.current
 
-    // Log the agency ID for debugging
+    // Log the agency ID for debugging//
     LaunchedEffect(Unit) {
         Log.d("AgencyDetailScreen", "Agency ID: ${agency.agencyId}")
     }

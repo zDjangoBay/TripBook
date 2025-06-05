@@ -78,7 +78,7 @@ fun ItineraryBuilderScreen(
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
-            // Header with back button
+            // Header with back button//
             TripBookHeader(
                 title = "Build Itinerary: ${trip.name}",
                 onBackClick = onBackClick

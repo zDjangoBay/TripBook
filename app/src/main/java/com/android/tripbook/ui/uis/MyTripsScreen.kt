@@ -204,7 +204,7 @@ fun MyTripsScreen(
                 }
             }
 
-            // Error State with Retry Button
+            // Error State with Retry Button//
             if (!error.isNullOrEmpty()) {
                 Card(
                     modifier = Modifier
