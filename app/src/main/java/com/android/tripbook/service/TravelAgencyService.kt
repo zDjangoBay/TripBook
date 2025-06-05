@@ -229,17 +229,7 @@ class TravelAgencyService {
         }
     }
 
-    private fun getMockAgenciesForDestination(destination: String): List<TravelAgency> {
-        val normalizedDestination = destination.lowercase()
-        return mockAgencies.filter { agency ->
-            agency.services.any { service ->
-                service.location.lowercase().contains(normalizedDestination) ||
-                        normalizedDestination.contains("cameroon") ||
-                        normalizedDestination.contains("yaoundé") ||
-                        normalizedDestination.contains("yaounde")
-            }
-        }
-    }
+
 
     private suspend fun fetchAgenciesFromFoursquare(destination: String): List<TravelAgency> {
         val authHeader = apiKey
