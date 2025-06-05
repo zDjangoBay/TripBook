@@ -79,13 +79,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -99,6 +97,7 @@ dependencies {
 
     // Navigation - SDK 34 compatible version
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.runtime.android)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -106,12 +105,15 @@ dependencies {
 
     implementation(libs.compose.material3)
 
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+
 
     // Compose dependencies
     implementation(libs.compose.runtime.livedata)
     implementation(libs.androidx.material3)
     implementation(libs.compose.material.icons.extended)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+
 
     // Image loading
     implementation(libs.coil.compose)
