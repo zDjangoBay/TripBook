@@ -104,6 +104,6 @@ dependencies {
     implementation(project(":userprofile"))
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+   implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
 }
