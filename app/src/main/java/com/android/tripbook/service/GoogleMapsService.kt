@@ -29,6 +29,21 @@ private const val PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/plac
 
 
 
+@Serializable
+data class PlaceDetails(
+    val placeId: String,
+    val name: String,
+    val address: String,
+    val formattedPhoneNumber: String? = null,
+    val website: String? = null,
+    val rating: Double? = null,
+    val priceLevel: Int? = null,
+    val reviews: List<Review> = emptyList(),
+    val photos: List<Photo> = emptyList(),
+    val openingHours: OpeningHours? = null,
+    val geometry: Geometry? = null,
+    val types: List<String> = emptyList()
+)
 
 @Serializable
 data class Geometry(
@@ -44,9 +59,19 @@ data class GeoLocation(
     fun toLatLng() = LatLng(lat, lng)
 }
 
+@Serializable
+data class Viewport(
+    val northeast: GeoLocation,
+    val southwest: GeoLocation
+)
 
-
-
+@Serializable
+data class Review(
+    val authorName: String,
+    val rating: Int,
+    val text: String,
+    val time: Long
+)
 
 @Serializable
 data class Photo(
@@ -109,6 +134,92 @@ private data class PlaceDetailsResponse(
     val result: PlaceDetailsApi? = null,
     val status: String,
     val errorMessage: String? = null
+)
+
+@Serializable
+private data class DistanceMatrixResponse(
+    val destination_addresses: List<String> = emptyList(),
+    val origin_addresses: List<String> = emptyList(),
+    val rows: List<DistanceMatrixRow> = emptyList(),
+    val status: String
+)
+
+@Serializable
+private data class DistanceMatrixRow(
+    val elements: List<DistanceElementApi> = emptyList()
+)
+
+@Serializable
+private data class DistanceElementApi(
+    val distance: DistanceInfoApi? = null,
+    val duration: DurationInfoApi? = null,
+    val status: String = ""
+)
+
+@Serializable
+private data class DistanceInfoApi(
+    val text: String = "",
+    val value: Int = 0
+)
+
+@Serializable
+private data class DurationInfoApi(
+    val text: String = "",
+    val value: Int = 0
+)
+
+@Serializable
+private data class PlaceResultApi(
+    val place_id: String = "",
+    val name: String = "",
+    val formatted_address: String = "",
+    val types: List<String> = emptyList(),
+    val rating: Double? = null,
+    val price_level: Int? = null,
+    val photos: List<PhotoApi> = emptyList(),
+    val geometry: GeometryApi? = null
+)
+
+@Serializable
+private data class PlaceDetailsApi(
+    val place_id: String = "",
+    val name: String = "",
+    val formatted_address: String = "",
+    val formatted_phone_number: String? = null,
+    val website: String? = null,
+    val rating: Double? = null,
+    val price_level: Int? = null,
+    val reviews: List<ReviewApi> = emptyList(),
+    val photos: List<PhotoApi> = emptyList(),
+    val opening_hours: OpeningHoursApi? = null,
+    val geometry: GeometryApi? = null,
+    val types: List<String> = emptyList()
+)
+
+@Serializable
+private data class GeometryApi(
+    val location: GeoLocationApi,
+    val viewport: ViewportApi? = null
+)
+
+@Serializable
+private data class GeoLocationApi(
+    val lat: Double,
+    val lng: Double
+)
+
+@Serializable
+private data class ViewportApi(
+    val northeast: GeoLocationApi,
+    val southwest: GeoLocationApi
+)
+
+@Serializable
+private data class ReviewApi(
+    val author_name: String = "",
+    val rating: Int = 0,
+    val text: String = "",
+    val time: Long = 0
 )
 
 @Serializable
