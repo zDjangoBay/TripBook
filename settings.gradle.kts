@@ -19,5 +19,11 @@ dependencyResolutionManagement {
     }
 }
 
+<<<<<<< HEAD
 rootProject.name = "TripBook"
 include(":app")
+=======
+rootProject.name = "TripBookTest"
+include(":app")
+ 
+>>>>>>> 51a58f2 (My integration testing implementation)

@@ -1,5 +1,9 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+=======
+    <string name="app_name">TripBookTest</string>
+>>>>>>> 51a58f2 (My integration testing implementation)
 </resources>
