@@ -8,26 +8,34 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
 import com.android.tripbook.ui.components.FullscreenGalleryDialog
 
 @Composable
-fun ReviewCard(review: Review, modifier: Modifier = Modifier, onVote: ((Boolean) -> Unit)? = null) {
+fun ReviewCard(
+    review: Review,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onLikeClicked: (Int) -> Unit = {},
+    onFlagClicked: (Int) -> Unit = {}
+) {
     var showFullscreenGallery by remember { mutableStateOf(false) }
     var initialImageIndex by remember { mutableStateOf(0) }
-    var votes by remember { mutableStateOf(review.votes) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
@@ -67,22 +75,33 @@ fun ReviewCard(review: Review, modifier: Modifier = Modifier, onVote: ((Boolean)
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            // ✅ Reaction Buttons Row (inside the card)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(onClick = { onLikeClicked(review.id) }) {
+                    Icon(
+                        imageVector = if (review.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Like",
+                        tint = if (review.isLiked) Color.Red else Color.Gray
+                    )
+                }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = {
-                    votes++
-                    onVote?.invoke(true)
-                }) {
-                    Icon(Icons.Filled.ArrowUpward, contentDescription = "Upvote")
+                IconButton(onClick = { onFlagClicked(review.id) }) {
+                    Icon(
+                        imageVector = Icons.Default.Flag,
+                        contentDescription = "Flag",
+                        tint = if (review.isFlagged) Color.Red else Color.Gray
+                    )
                 }
-                Text(text = votes.toString(), style = MaterialTheme.typography.bodyMedium)
-                IconButton(onClick = {
-                    votes--
-                    onVote?.invoke(false)
-                }) {
-                    Icon(Icons.Filled.ArrowDownward, contentDescription = "Downvote")
-                }
+
+                Text(
+                    text = "${review.likeCount}",
+                    color = if (review.isLiked) Color.Red else Color.Gray
+                )
             }
         }
     }
