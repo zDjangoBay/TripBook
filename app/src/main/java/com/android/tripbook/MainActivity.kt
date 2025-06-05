@@ -281,3 +281,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+//conatains all the classes of the project
