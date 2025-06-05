@@ -8,8 +8,9 @@ data class Comment(
     val text: String,
     val timestamp: Long,
     val likes: Int = 0,
+    val isDeleted: Boolean = false,
     val replies: List<Reply> = emptyList(),
-    val isDeleted: Boolean = false
+    val imageUri: String? = null  // <-- Added image URI here
 )
 
 data class Reply(
