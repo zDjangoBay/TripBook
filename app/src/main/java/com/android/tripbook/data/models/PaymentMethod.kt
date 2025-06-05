@@ -1,6 +1,6 @@
 package com.android.tripbook.data.models
 
-import com.android.tripbook.data.services.MockPaymentProcessor
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.android.tripbook.ui.theme.AppIcons
 
 data class PaymentMethod(
@@ -36,7 +36,7 @@ data class PaymentMethod(
                 type = PaymentType.CREDIT_CARD,
                 cardBrand = CardBrand.VISA,
                 lastFourDigits = "4532",
-                icon = AppIcons.VISA
+                icon = AppIcons.CreditCard
             ),
             PaymentMethod(
                 id = "card_2",
@@ -44,21 +44,27 @@ data class PaymentMethod(
                 type = PaymentType.DEBIT_CARD,
                 cardBrand = CardBrand.MASTERCARD,
                 lastFourDigits = "8901",
-                icon = AppIcons.MASTERCARD
+                icon = AppIcons.CreditCard
             ),
             PaymentMethod(
                 id = "orange_1",
                 name = "Orange Money",
                 type = PaymentType.ORANGE_MONEY,
                 phoneCountryCode = "+225",
-                icon = AppIcons.ORANGE_MONEY
+                icon = AppIcons.Phone
             ),
             PaymentMethod(
                 id = "mtn_1",
                 name = "MTN Mobile Money",
                 type = PaymentType.MTN_MOBILE_MONEY,
                 phoneCountryCode = "+225",
-                icon = AppIcons.MTN_MOBILE_MONEY
+                icon = AppIcons.Phone
+            ),
+            PaymentMethod(
+                id = "bank_1",
+                name = "Bank Transfer",
+                type = PaymentType.BANK_TRANSFER,
+                icon = AppIcons.AccountBalance
             )
         )
 

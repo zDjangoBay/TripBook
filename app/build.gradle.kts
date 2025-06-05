@@ -10,7 +10,16 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDirs("src/main/java")
+            java.srcDirs("src/main/java", "src/main/kotlin")
+            kotlin.srcDirs("src/main/java", "src/main/kotlin")
+        }
+        getByName("test") {
+            java.srcDirs("src/test/java", "src/test/kotlin")
+            kotlin.srcDirs("src/test/java", "src/test/kotlin")
+        }
+        getByName("androidTest") {
+            java.srcDirs("src/androidTest/java", "src/androidTest/kotlin")
+            kotlin.srcDirs("src/androidTest/java", "src/androidTest/kotlin")
         }
     }
 
@@ -42,39 +51,34 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-        freeCompilerArgs = freeCompilerArgs + listOf(
+        freeCompilerArgs += listOf(
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
             "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
             "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
         )
     }
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+    
     kapt {
         correctErrorTypes = true
         arguments {
             arg("room.schemaLocation", "$projectDir/schemas")
             arg("room.incremental", "true")
-        }
-        useBuildCache = true
-        // Disable KAPT daemon to avoid issues
-        useBuildCache = false
-        // Disable incremental annotation processing
-        // This is a workaround for KAPT issues
-        // Remove this if the issue is resolved in future versions
-        arguments {
+            arg("room.expandProjection", "true")
             arg("kapt.incremental.apt", "false")
+        }
+        useBuildCache = false
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
@@ -122,18 +126,18 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    
+
     // Optional - Guava support for Room, including Optional and ListenableFuture
     implementation("androidx.room:room-guava:$roomVersion")
-    
+
     // Optional - Test helpers
     testImplementation("androidx.room:room-testing:$roomVersion")
-    
+
     // Optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$roomVersion")
 
     // Extended Icons
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.4.0")
@@ -147,10 +151,10 @@ dependencies {
     // Calendar
     implementation("com.kizitonwose.calendar:compose:2.4.0")
 
-    // Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    // Room Database (already included above, removing duplicate)
+    // implementation("androidx.room:room-runtime:2.6.1")
+    // implementation("androidx.room:room-ktx:2.6.1")
+    // kapt("androidx.room:room-compiler:2.6.1")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")

@@ -25,87 +25,16 @@ fun ProfileScreen() {
     ) {
         Text(
             text = "Profile",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 24.dp)
+            style = MaterialTheme.typography.headlineMedium
         )
         
-        // Profile Header
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                // Profile Picture
-                AsyncImage(
-                    model = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(
-                    text = "John Traveler",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                Text(
-                    text = "john.traveler@email.com",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    ProfileStat(
-                        value = "12",
-                        label = "Trips"
-                    )
-                    ProfileStat(
-                        value = "8",
-                        label = "Countries"
-                    )
-                    ProfileStat(
-                        value = "4.8",
-                        label = "Rating"
-                    )
-                }
-            }
-        }
+        Spacer(modifier = Modifier.height(16.dp))
         
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Profile Options
-        val profileOptions = listOf(
-            ProfileOption("Edit Profile", Icons.Default.Edit),
-            ProfileOption("Travel Preferences", Icons.Default.Settings),
-            ProfileOption("Payment Methods", Icons.Default.CreditCard),
-            ProfileOption("Notifications", Icons.Default.Notifications),
-            ProfileOption("Help & Support", Icons.Default.Help),
-            ProfileOption("About", Icons.Default.Info),
-            ProfileOption("Sign Out", Icons.Default.ExitToApp)
+        // Placeholder for profile information
+        Text(
+            text = "Profile information coming soon",
+            style = MaterialTheme.typography.bodyLarge
         )
-        
-        profileOptions.forEach { option ->
-            ProfileOptionCard(
-                option = option,
-                onClick = { /* Handle option click */ }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
     }
 }
 

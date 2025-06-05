@@ -33,6 +33,7 @@ import com.android.tripbook.data.database.dao.*
  * - reservation_activities: Many-to-many reservation-activity junction
  * - notifications: User notifications
  * - user_favorites: User favorite items
+ * - payment_transactions: Payment processing and transaction records
  *
  * Used by:
  * - All managers and repositories
@@ -49,7 +50,8 @@ import com.android.tripbook.data.database.dao.*
         ActivityEntity::class,
         ReservationActivityEntity::class,
         NotificationEntity::class,
-        UserFavoriteEntity::class
+        UserFavoriteEntity::class,
+        PaymentTransactionEntity::class
     ],
     version = 1,
     exportSchema = true
@@ -67,6 +69,7 @@ abstract class TripBookDatabase : RoomDatabase() {
     abstract fun reservationActivityDao(): ReservationActivityDao
     abstract fun notificationDao(): NotificationDao
     abstract fun userFavoriteDao(): UserFavoriteDao
+    abstract fun paymentDao(): PaymentDao
 
     companion object {
         /**

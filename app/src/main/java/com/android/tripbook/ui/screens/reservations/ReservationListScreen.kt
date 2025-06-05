@@ -27,98 +27,29 @@ import java.time.format.DateTimeFormatter
 fun ReservationListScreen(
     onReservationClick: (String) -> Unit
 ) {
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
-    val reservations by sessionManager.reservations.collectAsState()
-
-    var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Pending", "Upcoming", "Completed")
-    val statuses = listOf(
-        ReservationStatus.PENDING,
-        ReservationStatus.UPCOMING,
-        ReservationStatus.COMPLETED
-    )
-
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        // Header
         Text(
-            text = "My Reservations",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(16.dp)
+            text = "Your Reservations",
+            style = MaterialTheme.typography.headlineMedium
         )
-
-        // Tab Row
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Placeholder for reservations list
+        Text(
+            text = "No reservations yet",
+            style = MaterialTheme.typography.bodyLarge
+        )
+        
+        Button(
+            onClick = { onReservationClick("sample-reservation-1") },
+            modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = {
-                        Text(
-                            text = title,
-                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
-                        )
-                    }
-                )
-            }
-        }
-
-        // Reservations list
-        val filteredReservations = reservations.filter { it.status == statuses[selectedTab] }
-
-        if (filteredReservations.isEmpty()) {
-            // Empty state
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.BookmarkBorder,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "No ${tabs[selectedTab].lowercase()} reservations",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredReservations) { reservation ->
-                    ReservationCard(
-                        reservation = reservation,
-                        onClick = { onReservationClick(reservation.id) },
-                        onCancel = if (reservation.status == ReservationStatus.PENDING ||
-                                      reservation.status == ReservationStatus.UPCOMING) {
-                            {
-                                sessionManager.updateReservationStatus(
-                                    reservation.id,
-                                    ReservationStatus.CANCELLED
-                                )
-                            }
-                        } else null
-                    )
-                }
-            }
+            Text("View Sample Reservation")
         }
     }
 }

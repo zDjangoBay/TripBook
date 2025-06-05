@@ -3,7 +3,7 @@ package com.android.tripbook.ui.screens.reservation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.data.database.AppDatabase
+import com.android.tripbook.data.database.TripBookDatabase
 import com.android.tripbook.data.database.dao.PaymentDao
 import com.android.tripbook.data.database.entities.PaymentTransactionEntity
 import com.android.tripbook.data.models.PaymentMethod
@@ -17,11 +17,11 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class PaymentViewModel(application: Application) : AndroidViewModel(application) {
-    private val paymentDao: PaymentDao = AppDatabase.getDatabase(application).paymentDao()
+    private val paymentDao: PaymentDao = TripBookDatabase.getDatabase(application).paymentDao()
     private val _uiState = MutableStateFlow(PaymentUiState())
     val uiState: StateFlow<PaymentUiState> = _uiState
 
-    private val paymentProcessor = MockPaymentProcessor.getInstance()
+    private val paymentProcessor = MockPaymentProcessor()
 
     init {
         loadPaymentMethods()

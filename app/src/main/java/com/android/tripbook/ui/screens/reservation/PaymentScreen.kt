@@ -1,24 +1,40 @@
 package com.android.tripbook.ui.screens.reservation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.data.models.PaymentMethod
-import com.android.tripbook.data.models.PaymentStatus
+import com.android.tripbook.data.models.PaymentTransaction
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentScreen(
     reservationId: String,
-    onBack: () -> Unit,
-    viewModel: PaymentViewModel = hiltViewModel()
+    onBack: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    // Simple state management for demo
+    var selectedMethod by remember { mutableStateOf<PaymentMethod?>(null) }
+    var amount by remember { mutableStateOf(0.0) }
+    var cardNumber by remember { mutableStateOf("") }
+    var mobileNumber by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var showSuccess by remember { mutableStateOf(false) }
+    var transaction by remember { mutableStateOf<PaymentTransaction?>(null) }
+
+    val paymentMethods = remember { PaymentMethod.createDefaultMethods() }
 
     TripBookTheme {
         Scaffold(
@@ -40,40 +56,44 @@ fun PaymentScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (uiState.showSuccess) {
+                if (showSuccess && transaction != null) {
                     PaymentSuccessScreen(
-                        transaction = uiState.transaction!!,
+                        transaction = transaction!!,
                         onBack = onBack
                     )
                 } else {
                     PaymentForm(
-                        paymentMethods = uiState.paymentMethods,
-                        selectedMethod = uiState.selectedMethod,
-                        amount = uiState.amount,
-                        cardNumber = uiState.cardNumber,
-                        mobileNumber = uiState.mobileNumber,
-                        isLoading = uiState.isLoading,
-                        errorMessage = uiState.errorMessage,
-                        onMethodSelected = { method ->
-                            viewModel._uiState.update { it.copy(selectedMethod = method) }
-                        },
-                        onAmountChanged = { amount ->
-                            viewModel._uiState.update { it.copy(amount = amount) }
-                        },
-                        onCardNumberChanged = { number ->
-                            viewModel._uiState.update { it.copy(cardNumber = number) }
-                        },
-                        onMobileNumberChanged = { number ->
-                            viewModel._uiState.update { it.copy(mobileNumber = number) }
-                        },
+                        paymentMethods = paymentMethods,
+                        selectedMethod = selectedMethod,
+                        amount = amount,
+                        cardNumber = cardNumber,
+                        mobileNumber = mobileNumber,
+                        isLoading = isLoading,
+                        errorMessage = errorMessage,
+                        onMethodSelected = { method -> selectedMethod = method },
+                        onAmountChanged = { newAmount -> amount = newAmount },
+                        onCardNumberChanged = { number -> cardNumber = number },
+                        onMobileNumberChanged = { number -> mobileNumber = number },
                         onPay = {
-                            viewModel.processPayment(
-                                amount = uiState.amount,
-                                selectedMethod = uiState.selectedMethod!!,
+                            // Simulate payment processing
+                            isLoading = true
+                            errorMessage = null
+
+                            // Create mock transaction
+                            transaction = PaymentTransaction(
+                                id = "TXN_${System.currentTimeMillis()}",
+                                amount = amount,
+                                currency = "XOF",
+                                paymentMethod = selectedMethod!!,
+                                status = com.android.tripbook.data.models.PaymentStatus.SUCCESS,
                                 reservationId = reservationId,
-                                cardNumber = uiState.cardNumber,
-                                mobileNumber = uiState.mobileNumber
+                                transactionDate = System.currentTimeMillis(),
+                                referenceNumber = "REF_${System.currentTimeMillis()}"
                             )
+
+                            // Simulate delay and show success
+                            isLoading = false
+                            showSuccess = true
                         }
                     )
                 }

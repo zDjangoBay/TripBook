@@ -18,82 +18,23 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun NotificationScreen() {
-    val notificationDispatcher = remember { FakeNotificationDispatcher.getInstance() }
-    val notifications by notificationDispatcher.notifications.collectAsState()
-    
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Notifications",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            
-            if (notifications.any { !it.isRead }) {
-                TextButton(
-                    onClick = { notificationDispatcher.markAllAsRead() }
-                ) {
-                    Text("Mark all as read")
-                }
-            }
-        }
+        Text(
+            text = "Notifications",
+            style = MaterialTheme.typography.headlineMedium
+        )
         
-        if (notifications.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Text(
-                    text = "No notifications",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                Text(
-                    text = "You're all caught up!",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(notifications) { notification ->
-                    NotificationCard(
-                        notification = notification,
-                        onMarkAsRead = {
-                            if (!notification.isRead) {
-                                notificationDispatcher.markAsRead(notification.id)
-                            }
-                        }
-                    )
-                }
-            }
-        }
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Placeholder for notifications list
+        Text(
+            text = "No new notifications",
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 

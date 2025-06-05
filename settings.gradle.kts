@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -8,7 +9,8 @@ pluginManagement {
             }
         }
         mavenCentral()
-        gradlePluginPortal()
+        mavenLocal()
+        maven { url = uri("https://jcenter.bintray.com") }
     }
 }
 dependencyResolutionManagement {
@@ -16,6 +18,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
+        maven { url = uri("https://jcenter.bintray.com") }
     }
 }
 

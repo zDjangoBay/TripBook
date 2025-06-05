@@ -39,144 +39,29 @@ import com.android.tripbook.data.models.Trip
 fun DashboardScreen(
     onTripClick: (String) -> Unit
 ) {
-    val context = LocalContext.current
-    var searchQuery by remember { mutableStateOf("") }
-    var currentLocation by remember { mutableStateOf("") }
-    var hasLocationPermission by remember { mutableStateOf(false) }
-
-    val trips = remember { DummyTripDataProvider.getTrips() }
-
-    // Location permission launcher
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        hasLocationPermission = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
-
-        if (hasLocationPermission) {
-            // Simulate getting current location (in real app, use LocationManager)
-            currentLocation = "New York, NY" // Mock location
-        }
-    }
-
-    // Check location permission on first load
-    LaunchedEffect(Unit) {
-        hasLocationPermission = ContextCompat.checkSelfPermission(
-            context, Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        if (!hasLocationPermission) {
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        } else {
-            currentLocation = "New York, NY" // Mock location
-        }
-    }
-
-    val filteredTrips = remember(searchQuery, currentLocation) {
-        if (searchQuery.isBlank()) {
-            trips
-        } else {
-            trips.filter {
-                it.title.contains(searchQuery, ignoreCase = true) ||
-                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                it.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
-            }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header
         Text(
             text = "Discover Amazing Trips",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
+            style = MaterialTheme.typography.headlineMedium
         )
-
-        // Current Location Display
-        if (currentLocation.isNotBlank()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Current Location",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Current location: $currentLocation",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-        }
-
-        // Enhanced Search Bar
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search destinations...") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
-                )
-            },
-            trailingIcon = {
-                if (currentLocation.isNotBlank()) {
-                    IconButton(
-                        onClick = {
-                            searchQuery = currentLocation
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Use Current Location",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            shape = RoundedCornerShape(16.dp)
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Placeholder for trips list
+        Text(
+            text = "Coming soon: List of available trips",
+            style = MaterialTheme.typography.bodyLarge
         )
-
-        // Trip Cards
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        
+        Button(
+            onClick = { onTripClick("sample-trip-1") },
+            modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            items(filteredTrips) { trip ->
-                TripCard(
-                    trip = trip,
-                    onReserveClick = { onTripClick(trip.id) }
-                )
-            }
+            Text("View Sample Trip")
         }
     }
 }
