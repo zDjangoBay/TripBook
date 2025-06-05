@@ -38,10 +38,8 @@ class GroupChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.group_chat_activity)
 
-        // Enable back button in action bar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Get trip details from intent
         tripId = intent.getStringExtra("TRIP_ID") ?: ""
         tripName = intent.getStringExtra("TRIP_NAME") ?: "Group Chat"
 
@@ -77,7 +75,7 @@ class GroupChatActivity : AppCompatActivity() {
         messageAdapter = MessageAdapter(mutableListOf(), currentUserId)
 
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.stackFromEnd = true // Start from bottom
+        layoutManager.stackFromEnd = true
 
         rvMessages.layoutManager = layoutManager
         rvMessages.adapter = messageAdapter
@@ -100,12 +98,9 @@ class GroupChatActivity : AppCompatActivity() {
 
     private fun sendMessage() {
         val messageText = etMessage.text.toString().trim()
-        if (TextUtils.isEmpty(messageText)) {
-            return
-        }
+        if (TextUtils.isEmpty(messageText)) return
 
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
+        val currentUser = auth.currentUser ?: run {
             Toast.makeText(this, "Please log in to send messages", Toast.LENGTH_SHORT).show()
             return
         }
@@ -115,14 +110,12 @@ class GroupChatActivity : AppCompatActivity() {
             senderId = currentUser.uid,
             senderName = currentUser.displayName ?: "Anonymous",
             tripId = tripId,
-            timestamp = null // Let Firestore set the timestamp
+            timestamp = null
         )
 
-        // Disable send button to prevent double-sending
         btnSend.isEnabled = false
         etMessage.isEnabled = false
 
-        // Add message to Firestore
         firestore.collection("trips")
             .document(tripId)
             .collection("messages")
@@ -131,11 +124,10 @@ class GroupChatActivity : AppCompatActivity() {
                 etMessage.setText("")
                 scrollToBottomDelayed()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to send message: ${e.message}", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to send message: ${it.message}", Toast.LENGTH_SHORT).show()
             }
             .addOnCompleteListener {
-                // Re-enable UI elements
                 btnSend.isEnabled = true
                 etMessage.isEnabled = true
                 etMessage.requestFocus()
@@ -153,19 +145,16 @@ class GroupChatActivity : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-                if (snapshots != null && !snapshots.isEmpty) {
-                    val messages = snapshots.documents.mapNotNull { doc ->
-                        try {
-                            val message = doc.toObject(Message::class.java)
-                            message?.copy(id = doc.id)
-                        } catch (e: Exception) {
-                            null
-                        }
+                val messages = snapshots?.documents?.mapNotNull { doc ->
+                    try {
+                        doc.toObject(Message::class.java)?.copy(id = doc.id)
+                    } catch (ex: Exception) {
+                        null
                     }
+                } ?: emptyList()
 
-                    messageAdapter.updateMessages(messages)
-                    scrollToBottomDelayed()
-                }
+                messageAdapter.updateMessages(messages)
+                scrollToBottomDelayed()
             }
     }
 

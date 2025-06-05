@@ -106,6 +106,30 @@ fun TripDetailsScreen(
                     )
                 }
             }
+@Composable
+            fun OverviewTab(trip: Trip, onGroupChatClick: () -> Unit) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        text = trip.description ?: "No description available.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color(0xFF334155)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = onGroupChatClick,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA)),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Icon(Icons.Default.Chat, contentDescription = null, tint = Color.White)
+                        Spacer(Modifier.width(8.dp))
+                        Text("Group Chat", color = Color.White)
+                    }
+                }
+            }
 
             // Content card
             Card(
