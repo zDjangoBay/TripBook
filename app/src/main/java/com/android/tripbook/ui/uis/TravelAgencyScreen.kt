@@ -214,7 +214,7 @@ private fun ServiceItem(service: AgencyService, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "$${service.price}",
+                    text = "XAF ${service.price}",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF667EEA)

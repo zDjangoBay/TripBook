@@ -353,7 +353,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$${trip.budget}",
+                        text = "XAF ${trip.budget}",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B),
                         maxLines = 1,

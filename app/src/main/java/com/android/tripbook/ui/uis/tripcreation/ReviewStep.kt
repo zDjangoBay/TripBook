@@ -161,7 +161,7 @@ fun ReviewStep(
                     ReviewSection(
                         icon = Icons.Default.AttachMoney,
                         title = "Budget",
-                        content = "$${state.budget} USD"
+                        content = "XAF ${state.budget} USD"
                     )
                 }
                 
