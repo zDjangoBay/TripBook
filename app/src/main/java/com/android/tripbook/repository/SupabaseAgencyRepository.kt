@@ -91,6 +91,29 @@ class SupabaseAgencyRepository {
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
+    @Serializable
+    data class SupabaseReview(
+        val id: String,
+        val agency_id: Int,
+        val user_id: String,
+        val user_name: String,
+        val rating: Int,
+        val comment: String,
+        val created_at: String
+    ) {
+        fun toReview(): com.android.tripbook.model.Review {
+            return com.android.tripbook.model.Review(
+                id = id,
+                agencyId = agency_id.toString(),
+                userId = user_id,
+                userName = user_name,
+                rating = rating,
+                comment = comment,
+                createdAt = java.time.LocalDateTime.parse(created_at)
+            )
+        }
+    }
+
     suspend fun loadAgencies(): List<Agency> {
         return try {
             _isLoading.value = true
@@ -116,6 +139,60 @@ class SupabaseAgencyRepository {
             Log.e(TAG, "Error loading agencies: ${e.message}", e)
             _error.value = "Failed to load agencies: ${e.message}"
             emptyList()
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    suspend fun loadReviewsForAgency(agencyId: Int): List<com.android.tripbook.model.Review> {
+        return try {
+            _isLoading.value = true
+            _error.value = null
+
+            Log.d(TAG, "Loading reviews for agency $agencyId...")
+
+            val reviewsResponse = supabase.from(REVIEWS_TABLE)
+                .select()
+                .eq("agency_id", agencyId)
+                .order("created_at", ascending = false)
+                .decodeList<SupabaseReview>()
+
+            Log.d(TAG, "Loaded ${reviewsResponse.size} reviews from database")
+
+            reviewsResponse.map { it.toReview() }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error loading reviews: ${e.message}", e)
+            _error.value = "Failed to load reviews: ${e.message}"
+            emptyList()
+        } finally {
+            _isLoading.value = false
+        }
+    }
+
+    suspend fun addReview(review: com.android.tripbook.model.Review): Boolean {
+        return try {
+            _isLoading.value = true
+            _error.value = null
+
+            val reviewMap = mapOf(
+                "agency_id" to review.agencyId.toInt(),
+                "user_id" to review.userId,
+                "user_name" to review.userName,
+                "rating" to review.rating,
+                "comment" to review.comment,
+                "created_at" to review.createdAt.toString()
+            )
+
+            val response = supabase.from(REVIEWS_TABLE)
+                .insert(reviewMap)
+
+            Log.d(TAG, "Inserted review: $response")
+
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "Error adding review: ${e.message}", e)
+            _error.value = "Failed to add review: ${e.message}"
+            false
         } finally {
             _isLoading.value = false
         }

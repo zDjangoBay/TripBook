@@ -38,6 +38,10 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
     private val _busesByAgency = MutableStateFlow<Map<Int, List<Bus>>>(emptyMap())
     val busesByAgency: StateFlow<Map<Int, List<Bus>>> = _busesByAgency.asStateFlow()
 
+    // State for reviews of a specific agency
+    private val _reviews = MutableStateFlow<List<com.android.tripbook.model.Review>>(emptyList())
+    val reviews: StateFlow<List<com.android.tripbook.model.Review>> = _reviews.asStateFlow()
+
     init {
         loadAgencies()
     }
@@ -52,6 +56,39 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
                 _agencies.value = loadedAgencies
             } catch (e: Exception) {
                 _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun loadReviewsForAgency(agencyId: Int) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val loadedReviews = agencyRepository.loadReviewsForAgency(agencyId)
+                _reviews.value = loadedReviews
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun submitReview(review: com.android.tripbook.model.Review, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _error.value = null
+
+                val success = agencyRepository.addReview(review)
+                onResult(success)
+            } catch (e: Exception) {
+                _error.value = e.message
+                onResult(false)
             } finally {
                 _isLoading.value = false
             }
