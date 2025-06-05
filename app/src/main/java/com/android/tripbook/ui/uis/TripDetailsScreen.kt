@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,6 +37,8 @@ import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import androidx.compose.ui.res.painterResource
+import com.android.tripbook.R
 
 @Composable
 fun TripDetailsScreen(
@@ -115,6 +118,10 @@ fun TripDetailsScreen(
                                 uiState = uiState,
                                 viewModel = viewModel
                             )
+                            "Weather" -> WeatherForecastTab(
+                                trip = currentTrip,
+                                viewModel = viewModel
+                            )
                         }
                     }
                 }
@@ -144,6 +151,312 @@ fun TripDetailsScreen(
 }
 
 @Composable
+fun WeatherForecastTab(trip: Trip, viewModel: TripDetailsViewModel) {
+    val weatherData = remember { viewModel.getWeatherForecast(trip.destination) }
+    val currentWeather = weatherData?.current
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Location and current weather
+        currentWeather?.let { weather ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(TripBookColors.Primary.copy(alpha = 0.2f), CircleShape)
+                        .padding(4.dp)
+                )
+                Text(
+                    text = trip.destination,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = TripBookColors.TextPrimary,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+            
+            // Current temperature and condition
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "${weather.temperature}°",
+                        fontSize = 64.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TripBookColors.TextPrimary
+                    )
+                    Text(
+                        text = weather.condition,
+                        fontSize = 20.sp,
+                        color = TripBookColors.TextSecondary
+                    )
+                    
+                    Row(
+                        modifier = Modifier.padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowUpward,
+                            contentDescription = "High",
+                            tint = TripBookColors.TextSecondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "${weather.highTemp}° /",
+                            fontSize = 16.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowDownward,
+                            contentDescription = "Low",
+                            tint = TripBookColors.TextSecondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = " ${weather.lowTemp}°",
+                            fontSize = 16.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                    }
+                    Text(
+                        text = "Feels like ${weather.feelsLike}°",
+                        fontSize = 14.sp,
+                        color = TripBookColors.TextSecondary,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+                
+                // Weather icon
+                Image(
+                    painter = painterResource(id = getWeatherIconResource(weather.condition)),
+                    contentDescription = weather.condition,
+                    modifier = Modifier.size(100.dp)
+                )
+            }
+            
+            // Weather alert
+            if (weather.alert.isNotEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+                ) {
+                    Text(
+                        text = weather.alert,
+                        fontSize = 14.sp,
+                        color = TripBookColors.TextPrimary,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+            
+            // Hourly forecast
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Hourly forecast
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        weatherData.hourly.take(6).forEach { hourly ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = hourly.time,
+                                    fontSize = 14.sp,
+                                    color = TripBookColors.TextSecondary
+                                )
+                                if (hourly.time == "6:23 PM") {
+                                    Text(
+                                        text = "Sunset",
+                                        fontSize = 12.sp,
+                                        color = Color(0xFFFF9800)
+                                    )
+                                } else {
+                                    Image(
+                                        painter = painterResource(id = getWeatherIconResource(hourly.condition)),
+                                        contentDescription = hourly.condition,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                Text(
+                                    text = "${hourly.temperature}°",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TripBookColors.TextPrimary
+                                )
+                                Text(
+                                    text = "${hourly.precipitation}%",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF4FC3F7)
+                                )
+                            }
+                        }
+                    }
+                    
+                    // Temperature line
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp)
+                            .background(Color.White)
+                    )
+                }
+            }
+            
+            // Rain forecast
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.WaterDrop,
+                            contentDescription = "Rain",
+                            tint = Color(0xFF4FC3F7),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text(
+                                text = "Rain Coming",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TripBookColors.TextPrimary
+                            )
+                            Text(
+                                text = "Rain possible this evening",
+                                fontSize = 14.sp,
+                                color = TripBookColors.TextSecondary
+                            )
+                        }
+                    }
+                    Text(
+                        text = "34%",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TripBookColors.TextPrimary
+                    )
+                }
+            }
+            
+            // Daily forecast
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Yesterday",
+                            fontSize = 16.sp,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "28° 20°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = TripBookColors.TextPrimary
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Today",
+                            fontSize = 16.sp,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.WaterDrop,
+                                contentDescription = "Rain",
+                                tint = Color(0xFF4FC3F7),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "11%",
+                                fontSize = 14.sp,
+                                color = Color(0xFF4FC3F7),
+                                modifier = Modifier.padding(horizontal = 4.dp)
+                            )
+                            Image(
+                                painter = painterResource(id = getWeatherIconResource("Partly Cloudy")),
+                                contentDescription = "Partly Cloudy",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "28° 20°",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = TripBookColors.TextPrimary,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        } ?: run {
+            // Loading or error state
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Weather data not available",
+                    fontSize = 16.sp,
+                    color = TripBookColors.TextSecondary
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun EnhancedTabRow(
     selectedTab: String,
     onTabSelected: (String) -> Unit,
@@ -155,7 +468,7 @@ fun EnhancedTabRow(
             .padding(top = 20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        listOf("Overview", "Itinerary", "Map").forEach { tab ->
+        listOf("Overview", "Itinerary", "Map", "Weather").forEach { tab ->
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -887,8 +1200,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     }
 }
 
-
-
 @Composable
 private fun DetailItem(icon: String, text: String) {
     Row(
@@ -937,8 +1248,6 @@ private fun TravelerItem(initials: String, name: String, color: Color) {
     }
 }
 
-
-
 @Composable
 private fun TripBookGradientBackground(content: @Composable () -> Unit) {
     Box(
@@ -954,5 +1263,18 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
             )
     ) {
         content()
+    }
+}
+
+// Helper function to get weather icon resource
+private fun getWeatherIconResource(condition: String): Int {
+    // You would need to add these drawable resources to your project
+    return when (condition.lowercase()) {
+        "partly cloudy" -> R.drawable.ic_partly_cloudy
+        "cloudy" -> R.drawable.ic_cloudy
+        "sunny" -> R.drawable.ic_sunny
+        "rainy" -> R.drawable.ic_rainy
+        "sunset" -> R.drawable.ic_sunset
+        else -> R.drawable.ic_partly_cloudy
     }
 }
