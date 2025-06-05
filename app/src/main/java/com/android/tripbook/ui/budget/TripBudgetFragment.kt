@@ -13,6 +13,8 @@ import com.android.tripbook.adapter.ExpenseAdapter // If you have a separate gen
 import com.android.tripbook.databinding.FragmentTripBudgetBinding // ViewBinding
 import com.android.tripbook.viewmodel.BudgetViewModel
 import com.android.tripbook.viewmodel.BudgetViewModelFactory
+import com.android.tripbook.ui.budget.AddEditBudgetCategoryDialogFragment
+import com.android.tripbook.ui.budget.AddEditExpenseDialogFragment
 
 class TripBudgetFragment : Fragment() {
 
@@ -21,7 +23,7 @@ class TripBudgetFragment : Fragment() {
 
     private lateinit var budgetViewModel: BudgetViewModel
     private lateinit var budgetCategoryAdapter: BudgetCategoryAdapter
-    // private lateinit var expenseAdapter: ExpenseAdapter // Uncomment if you have a general expense RecyclerView
+    private lateinit var expenseAdapter: ExpenseAdapter // Make this a class-level property if used
 
     // If using Navigation Component to receive tripId:
     // private val args: TripBudgetFragmentArgs by navArgs() // Assumes you have defined an argument named 'tripId'
@@ -50,7 +52,10 @@ class TripBudgetFragment : Fragment() {
         budgetViewModel = ViewModelProvider(this, viewModelFactory).get(BudgetViewModel::class.java)
 
         // --- BudgetCategory RecyclerView Setup ---
-        budgetCategoryAdapter = BudgetCategoryAdapter()
+        budgetCategoryAdapter = BudgetCategoryAdapter { selectedCategory ->
+            val dialog = AddEditBudgetCategoryDialogFragment.newInstance(currentTripId, selectedCategory)
+            dialog.show(childFragmentManager, AddEditBudgetCategoryDialogFragment.TAG)
+        }
         binding.recyclerViewBudgetCategories.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = budgetCategoryAdapter
@@ -64,29 +69,41 @@ class TripBudgetFragment : Fragment() {
             }
         }
 
-        // --- (Optional) General Expense RecyclerView Setup ---
-        // If you have a RecyclerView for all expenses of the trip (not nested per category)
-        /*
-        expenseAdapter = ExpenseAdapter()
-        binding.recyclerViewExpenses.apply { // Assuming you have a recyclerViewExpenses in your layout
-            layoutManager = LinearLayoutManager(context)
-            adapter = expenseAdapter
+        // --- General Expense RecyclerView Setup (IF YOU USE IT) ---
+        // If you have a separate RecyclerView in fragment_trip_budget.xml for all expenses:
+        // 1. Make sure you have a <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerViewExpenses" ... />
+        //    in fragment_trip_budget.xml
+        // 2. Uncomment and adapt the following:
+
+        /* // UNCOMMENT IF USING A SEPARATE EXPENSE LIST
+        expenseAdapter = ExpenseAdapter { selectedExpense ->
+            // Handle expense item click -> Show edit dialog
+            val dialog = AddEditExpenseDialogFragment.newInstance(currentTripId, selectedExpense)
+            dialog.show(childFragmentManager, AddEditExpenseDialogFragment.TAG)
         }
-        budgetViewModel.expensesForTrip.observe(viewLifecycleOwner) { expenses ->
-            expenses?.let {
-                expenseAdapter.submitList(it)
-                // TODO: Update overall spending summary
-            }
-        }
+        // Assuming your main layout (fragment_trip_budget.xml) has a second RecyclerView:
+        // binding.recyclerViewExpenses.apply { // Make sure this ID exists in your XML
+        //     layoutManager = LinearLayoutManager(context)
+        //     adapter = expenseAdapter
+        // }
+        // budgetViewModel.expensesForTrip.observe(viewLifecycleOwner) { expenses ->
+        //     expenses?.let {
+        //         expenseAdapter.submitList(it)
+        //         // TODO: Update overall spending summary
+        //     }
+        // }
         */
 
-        // --- Button Click Listeners (TODO for later commits) ---
+        // --- Button Click Listeners ---
         binding.buttonAddBudgetCategory.setOnClickListener {
-            // TODO: Implement dialog/navigation to add new budget category (Commit 27)
+            val dialog = AddEditBudgetCategoryDialogFragment.newInstance(currentTripId, null)
+            dialog.show(childFragmentManager, AddEditBudgetCategoryDialogFragment.TAG)
         }
 
         binding.buttonAddExpense.setOnClickListener {
-            // TODO: Implement dialog/navigation to add new expense (Commit 28)
+            // Show dialog to add new expense (pass null for expense)
+            val dialog = AddEditExpenseDialogFragment.newInstance(currentTripId, null)
+            dialog.show(childFragmentManager, AddEditExpenseDialogFragment.TAG)
         }
 
         // TODO: Populate trip name (e.g., from TripViewModel or passed argument)
