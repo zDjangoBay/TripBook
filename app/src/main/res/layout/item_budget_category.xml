@@ -59,6 +59,25 @@
         app:layout_constraintBottom_toBottomOf="@id/textViewActualAmountLabel"
         tools:text="$350.00" />
 
+    <!-- Add Delete Icon -->
+    <ImageView
+        android:id="@+id/imageViewDeleteCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_delete"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewCategoryName"
+        app:layout_constraintBottom_toBottomOf="@id/textViewCategoryName"
+        app:tint="?android:attr/textColorSecondary"
+        android:contentDescription="Delete Category"
+        android:padding="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCategoryExpenses"
+    <!-- ... (rest of the RecyclerView setup) ... -->
+
     <!-- You might want to add a ProgressBar here later to show budget usage -->
     <!-- Or a RecyclerView for expenses within this category if not showing separately -->
 
