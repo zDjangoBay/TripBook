@@ -1,41 +1,17 @@
-services:
-  tripbook-datamining:
-    build:
-      context: .
-    container_name: TripBook-Server
-    ports:
-      - "6000:6000"
-    restart: unless-stopped
-    environment:
-      - KTOR_HOST=0.0.0.0
-      - KTOR_PORT=6000
-      - MONGODB_URI=mongodb://mongodb:mongodb@TripBook-MongoDb:27017/TripBook
-      - REDIS_HOST=TripBook-Cache
-      - REDIS_PORT=6379
-      - MINIO_ENDPOINT=localhost:9000
-      - MINIO_ACCESS_KEY=MiltonJ23
-      - MINIO_SECRET_KEY=SpGJx*i6*4vXfwsL
-      - MINIO_BUCKET_NAME=tripbook-bucket
-    depends_on:
-      TripBook-MongoDb:
-        condition: service_started
-      TripBook-Cache:
-        condition: service_started
-      TripBook-MinIO:
-        condition: service_healthy
+version: '3.8'
 
+services:
   TripBook-MongoDb:
     image: bitnami/mongodb:latest
     container_name: TripBook-MongoDb-Container
     restart: unless-stopped
     environment:
-        MONGODB_ROOT_PASSWORD: SpGJx*i6*4vXfwsL
-        MONGODB_USERNAME: MiltonJ23
-        MONGODB_PASSWORD: SpGJx*i6*4vXfwsL
-        MONGODB_DATABASE: tripbook
+      MONGODB_ROOT_PASSWORD: SpGJx*i6*4vXfwsL
+      MONGODB_USERNAME: MiltonJ23
+      MONGODB_PASSWORD: SpGJx*i6*4vXfwsL
+      MONGODB_DATABASE: tripbook
     volumes:
       - ./src/main/resources/Mongodb:/bitnami/mongodb
-
     ports:
       - "27017:27017"
 
@@ -48,7 +24,6 @@ services:
     volumes:
       - ./src/main/resources/Redis:/data
 
-
   TripBook-MinIO:
     image: minio/minio
     container_name: TripBook-MinIO-Container
@@ -58,20 +33,15 @@ services:
       - MINIO_ROOT_PASSWORD=SpGJx*i6*4vXfwsL
       - MINIO_DEFAULT_BUCKETS=tripbook
     ports:
-      - "9000:9000"
+      - "7000:7000"
       - "9090:9090"
     volumes:
       - ./src/main/resources/Minio:/data
-    command: server /data --console-address ":9001"
+    command: server /data --console-address ":7000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:7000/minio/health/live" ]
       interval: 30s
       timeout: 10s
       retries: 5
       start_period: 10s
 
-
-volumes:
-  mongodb_data_tripbook: {}
-  redis_data_tripbook: {}
-  minio_data_tripbook: {}
