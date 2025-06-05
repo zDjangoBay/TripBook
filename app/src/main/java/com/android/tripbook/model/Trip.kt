@@ -15,7 +15,6 @@ enum class ItineraryType {
 }
 
 // Location data classes for Maps integration
-// Marked with @Ignore if used directly in Trip, or handle with TypeConverters/Embedded later
 data class Location(
     val latitude: Double,
     val longitude: Double,
@@ -31,20 +30,20 @@ data class RouteInfo(
 
 // ItineraryItem will likely become its own @Entity later
 data class ItineraryItem(
-    @Ignore // Temporarily ignore if not an entity itself yet for Trip conversion
+    @Ignore
     val date: LocalDate,
     val time: String,
     val title: String,
     val location: String,
-    @Ignore // Temporarily ignore if not an entity itself yet for Trip conversion
+    @Ignore
     val type: ItineraryType,
     val notes: String = "",
-    @Ignore // Temporarily ignore if not an entity itself yet for Trip conversion
+    @Ignore
     val agencyService: AgencyService? = null,
-    @Ignore // Location is a complex type
+    @Ignore
     val coordinates: Location? = null,
-    @Ignore // RouteInfo is a complex type
-    val routeToNext: RouteInfo? = null // Route to next itinerary item
+    @Ignore
+    val routeToNext: RouteInfo? = null
 )
 
 @Entity(tableName = "trips")
@@ -52,16 +51,16 @@ data class Trip(
     @PrimaryKey
     val id: String,
     val name: String,
-    @Ignore // Room needs a TypeConverter for LocalDate
+    // @Ignore removed for TypeConverter
     val startDate: LocalDate,
-    @Ignore // Room needs a TypeConverter for LocalDate
+    // @Ignore removed for TypeConverter
     val endDate: LocalDate,
     val destination: String,
     val travelers: Int,
-    val budget: Int, // Assuming this is the planned budget amount as a simple Int
-    @Ignore // Room needs a TypeConverter for Enums
+    val budget: Int,
+    // @Ignore removed for TypeConverter
     val status: TripStatus = TripStatus.PLANNED,
-    val type: String = "", // Assuming this 'type' is a simple String
+    val type: String = "",
     val description: String = "",
     @Ignore // To be handled with TypeConverter or separate entity later
     val activities: List<String> = emptyList(),
@@ -74,5 +73,5 @@ data class Trip(
     @Ignore // Location is a complex type, handle later or with @Embedded + TypeConverters
     val destinationCoordinates: Location? = null,
     @Ignore // Location is a complex type, handle later or with @Embedded + TypeConverters
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null
 )
