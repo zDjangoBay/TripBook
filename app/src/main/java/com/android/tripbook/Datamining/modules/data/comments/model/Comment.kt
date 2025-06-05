@@ -3,6 +3,11 @@ package com.android.Tripbook.Datamining.modules.data.comments.model
 import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
+
+/*
+*
+* This class represent the skeleton of a comment in our database
+* */
 @kotlinx.serialization.Serializable
 data class Comment(
     val Comment_Id:String=UUID.randomUUID().toString(),
