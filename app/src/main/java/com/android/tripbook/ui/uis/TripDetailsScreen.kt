@@ -1,4 +1,3 @@
-
 package com.android.tripbook.ui.uis
 
 import androidx.compose.foundation.*
@@ -9,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,15 +30,13 @@ import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripDetailsViewModel
 import com.android.tripbook.viewmodel.MapViewMode
+import com.android.tripbook.utils.CalendarUtils
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import android.content.Intent
-import androidx.compose.material.LocalContext
-import android.provider.CalendarContract
 
 @Composable
 fun TripDetailsScreen(
@@ -50,7 +46,11 @@ fun TripDetailsScreen(
 ) {
     val viewModel: TripDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
+
+    // Calendar export dialog state
+    var showCalendarExportDialog by remember { mutableStateOf(false) }
+    var showCalendarSuccessMessage by remember { mutableStateOf(false) }
+    var showCalendarErrorMessage by remember { mutableStateOf(false) }
 
     // Initialize with the provided trip
     LaunchedEffect(trip.id) {
@@ -68,68 +68,18 @@ fun TripDetailsScreen(
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
-            // Header with back button, calendar button, and share button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                
-                Text(
-                    text = currentTrip.name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                
-                Row {
-                    IconButton(
-                        onClick = {
-                            addTripToCalendar(context, currentTrip)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Add to Calendar",
-                            tint = Color.White
-                        )
-                    }
-                    
-                    IconButton(
-                        onClick = {
-                            shareTrip(context, currentTrip)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share Trip",
-                            tint = Color.White
-                        )
-                    }
-                }
-            }
-            
-            Text(
-                text = "${currentTrip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${currentTrip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
-                fontSize = 14.sp,
-                color = Color.White.copy(alpha = 0.8f),
-                modifier = Modifier.padding(horizontal = 20.dp)
+            // Header with back button
+            TripBookHeader(
+                title = currentTrip.name,
+                subtitle = "${currentTrip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${currentTrip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                onBackClick = onBackClick
             )
 
             // Content card
             Card(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                    .padding(horizontal = 20.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -158,7 +108,8 @@ fun TripDetailsScreen(
                         when (uiState.selectedTab) {
                             "Overview" -> EnhancedOverviewTab(
                                 trip = currentTrip,
-                                statistics = viewModel.getTripStatistics()
+                                statistics = viewModel.getTripStatistics(),
+                                onSaveToCalendarClick = { showCalendarExportDialog = true }
                             )
                             "Itinerary" -> EnhancedItineraryTab(
                                 trip = currentTrip,
@@ -187,6 +138,38 @@ fun TripDetailsScreen(
                 onDismiss = viewModel::hideAddActivityDialog,
                 onActivityAdded = viewModel::addItineraryItem
             )
+        }
+    }
+
+    // Calendar export dialog
+    if (showCalendarExportDialog) {
+        CalendarExportDialog(
+            trip = currentTrip,
+            onDismiss = { showCalendarExportDialog = false },
+            onExportComplete = { success ->
+                showCalendarExportDialog = false
+                if (success) {
+                    showCalendarSuccessMessage = true
+                } else {
+                    showCalendarErrorMessage = true
+                }
+            }
+        )
+    }
+
+    // Success message
+    if (showCalendarSuccessMessage) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(3000)
+            showCalendarSuccessMessage = false
+        }
+    }
+
+    // Error message
+    if (showCalendarErrorMessage) {
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(3000)
+            showCalendarErrorMessage = false
         }
     }
 
@@ -245,6 +228,7 @@ fun EnhancedTabRow(
 fun EnhancedOverviewTab(
     trip: Trip,
     statistics: com.android.tripbook.viewmodel.TripStatistics,
+    onSaveToCalendarClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -261,6 +245,10 @@ fun EnhancedOverviewTab(
 
         item {
             TravelersCard(trip = trip)
+        }
+
+        item {
+            CalendarExportCard(onSaveToCalendarClick = onSaveToCalendarClick)
         }
     }
 }
@@ -996,6 +984,80 @@ private fun TravelerItem(initials: String, name: String, color: Color) {
 
 
 @Composable
+fun CalendarExportCard(
+    onSaveToCalendarClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Event,
+                    contentDescription = "Calendar",
+                    tint = TripBookColors.Primary,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = "Save to Calendar",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TripBookColors.TextPrimary
+                    )
+
+                    Text(
+                        text = "Export your trip to your device calendar",
+                        fontSize = 14.sp,
+                        color = TripBookColors.TextSecondary
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onSaveToCalendarClick,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = TripBookColors.Primary
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Event,
+                    contentDescription = "Calendar",
+                    modifier = Modifier.size(18.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "Save to Calendar",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun TripBookGradientBackground(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
@@ -1011,43 +1073,4 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
     ) {
         content()
     }
-}
-
-private fun shareTrip(context: Context, trip: Trip) {
-    val dateFormat = DateTimeFormatter.ofPattern("MMM d, yyyy")
-    val shareText = """
-        Check out my trip to ${trip.destination}!
-        
-        Trip: ${trip.name}
-        Dates: ${trip.startDate.format(dateFormat)} - ${trip.endDate.format(dateFormat)}
-        Destination: ${trip.destination}
-        
-        I'm planning this trip with TripBook - the best app for exploring Africa!
-    """.trimIndent()
-    
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, shareText)
-        type = "text/plain"
-    }
-    
-    val shareIntent = Intent.createChooser(sendIntent, "Share Trip")
-    context.startActivity(shareIntent)
-}
-
-private fun addTripToCalendar(context: Context, trip: Trip) {
-    val startMillis = trip.startDate.atStartOfDay().toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
-    val endMillis = trip.endDate.plusDays(1).atStartOfDay().toInstant(java.time.ZoneOffset.UTC).toEpochMilli()
-    
-    val intent = Intent(Intent.ACTION_INSERT).apply {
-        data = CalendarContract.Events.CONTENT_URI
-        putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startMillis)
-        putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endMillis)
-        putExtra(CalendarContract.Events.TITLE, trip.name)
-        putExtra(CalendarContract.Events.DESCRIPTION, "Trip to ${trip.destination}")
-        putExtra(CalendarContract.Events.EVENT_LOCATION, trip.destination)
-        putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)
-    }
-    
-    context.startActivity(intent)
 }
