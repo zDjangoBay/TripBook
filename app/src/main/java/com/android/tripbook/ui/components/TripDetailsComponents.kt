@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow // Import TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.ItineraryItem
@@ -343,7 +344,9 @@ fun ActivityTimelineCard(
                     text = activity.title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TripBookColors.TextPrimary
+                    color = TripBookColors.TextPrimary,
+                    maxLines = 1, // Limit to one line
+                    overflow = TextOverflow.Ellipsis // Add ellipsis for overflow
                 )
                 if (activity.location.isNotEmpty()) {
                     Text(
