@@ -8,34 +8,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun CommentInput(onPost: (String) -> Unit) {
+fun CommentInput(
+    onPost: (String) -> Unit,
+    isReply: Boolean = false,
+    onCancel: (() -> Unit)? = null
+) {
     var text by remember { mutableStateOf("") }
 
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
+    Row(modifier = Modifier
+        .padding(8.dp)
+        .fillMaxWidth()) {
+
         TextField(
             value = text,
             onValueChange = { text = it },
-            placeholder = { Text("Write a comment...") },
+            placeholder = {
+                Text(if (isReply) "Write a reply..." else "Write a comment...")
+            },
             modifier = Modifier.weight(1f)
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Button(
-            onClick = {
-                val trimmed = text.trim()
-                if (trimmed.isNotEmpty()) {
-                    onPost(trimmed)
-                    text = ""
+        Column {
+            Button(
+                onClick = {
+                    if (text.isNotBlank()) {
+                        onPost(text)
+                        text = ""
+                    }
+                },
+                enabled = text.isNotBlank()
+            ) {
+                Text("Post")
+            }
+
+            if (isReply && onCancel != null) {
+                TextButton(onClick = onCancel) {
+                    Text("Cancel")
                 }
-            },
-            enabled = text.isNotBlank()
-        ) {
-            Text("Post")
+            }
         }
     }
 }
