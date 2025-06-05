@@ -2,6 +2,7 @@ package com.android.tripbook.ui.uis
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.tripbook.model.Activity
 
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
@@ -36,7 +38,6 @@ fun MyTripsScreen(
     onPlanNewTripClick: () -> Unit,
     onTripClick: (Trip) -> Unit
 ) {
-    var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("All") }
 
     Box(
@@ -75,49 +76,6 @@ fun MyTripsScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Search Bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .background(Color.White, RoundedCornerShape(25.dp))
-                    .padding(horizontal = 16.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = Color(0xFF9CA3AF),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    BasicTextField(
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            color = Color.Black
-                        ),
-                        decorationBox = { innerTextField ->
-                            if (searchText.isEmpty()) {
-                                Text(
-                                    text = "Search trips...",
-                                    color = Color(0xFF9CA3AF),
-                                    fontSize = 16.sp
-                                )
-                            }
-                            innerTextField()
-                        }
-                    )
-                }
-            }
-
             Spacer(modifier = Modifier.height(20.dp))
 
             // Filter Chips
@@ -153,21 +111,19 @@ fun MyTripsScreen(
                 }
             }
 
+            val info = viewModel.tripInfo
             // Trip List
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(viewModel.tripList.filter { trip ->
+                items(viewModel.List.filter { trip ->
                     (selectedTab == "All" ||
                             (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
                             (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
-                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
-                            (searchText.isEmpty() ||
-                                    trip.name.contains(searchText, ignoreCase = true) ||
-                                    trip.destination.contains(searchText, ignoreCase = true))
+                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED))
                 }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick(trip) })
+                    TripCard(trip = trip,info = info ,onClick = { onTripClick(info) })
                 }
             }
         }
@@ -188,12 +144,15 @@ fun MyTripsScreen(
                 modifier = Modifier.size(24.dp)
             )
         }
+
+
     }
 }
 
 @Composable
 fun TripCard(
-    trip: Trip,
+    trip: Activity,
+    info: Trip,
     onClick: () -> Unit
 ) {
     val statusColor = when (trip.status) {
@@ -232,15 +191,13 @@ fun TripCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = trip.name,
+                        text = info.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1A202C)
                     )
                     Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
+                        text = info.startDate.format(DateTimeFormatter.ofPattern("MMM d")),
                         fontSize = 14.sp,
                         color = Color(0xFF667EEA),
                         fontWeight = FontWeight.Medium
@@ -279,7 +236,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = trip.destination,
+                        text = info.destination,
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
@@ -294,7 +251,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${trip.travelers} travelers",
+                        text = "${info.travelers} travelers",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
@@ -309,7 +266,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$${trip.budget}",
+                        text = "$${info.budget}",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )

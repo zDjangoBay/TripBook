@@ -82,9 +82,7 @@ fun TripDetailsScreen(
                         )
                     )
                     Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
+                        text = trip.startDate.format(DateTimeFormatter.ofPattern("MMM d")),
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = Color.White.copy(alpha = 0.9f)
