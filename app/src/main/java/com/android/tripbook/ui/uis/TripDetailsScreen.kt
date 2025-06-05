@@ -33,17 +33,14 @@ import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import androidx.compose.ui.platform.LocalContext
 import android.content.Intent
-// Fixed import - remove this line if GroupChatActivity doesn't exist or adjust the path
-// import com.android.tripbook.ui.activities.GroupChatActivity
 
 @Composable
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
     onEditItineraryClick: () -> Unit,
-    onGroupChatClick: () -> Unit // ← ✅ Add this line
-)
- {
+    onGroupChatClick: () -> Unit
+) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
     Box(
@@ -106,30 +103,6 @@ fun TripDetailsScreen(
                     )
                 }
             }
-@Composable
-            fun OverviewTab(trip: Trip, onGroupChatClick: () -> Unit) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = trip.description ?: "No description available.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFF334155)
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = onGroupChatClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA)),
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    ) {
-                        Icon(Icons.Default.Chat, contentDescription = null, tint = Color.White)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Group Chat", color = Color.White)
-                    }
-                }
-            }
 
             // Content card
             Card(
@@ -142,7 +115,7 @@ fun TripDetailsScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Tabs - Updated to include Map tab
+                    // Tabs
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -191,13 +164,113 @@ fun TripDetailsScreen(
                             .padding(20.dp)
                     ) {
                         when (selectedTab) {
-                            "Overview" -> OverviewTab(trip)
+                            "Overview" -> OverviewTab(trip, onGroupChatClick)
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
-                            "Map" -> MapTab(trip) // New Map tab
+                            "Map" -> MapTab(trip)
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OverviewTab(trip: Trip, onGroupChatClick: () -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            // Trip Summary Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Trip Summary",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    // Display trip description if available
+                    trip.description?.let { description ->
+                        Text(
+                            text = description,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color(0xFF334155),
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+
+                    DetailItem(icon = "📅", text = "8 days, 7 nights")
+                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
+                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
+                    DetailItem(icon = "🍽️", text = "All meals included")
+                }
+            }
+        }
+
+        item {
+            // Travelers Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Travelers",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    TravelerItem(
+                        initials = "JD",
+                        name = "John Doe (Trip Leader)",
+                        color = Color(0xFF667EEA)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TravelerItem(
+                        initials = "JS",
+                        name = "Jane Smith",
+                        color = Color(0xFF764BA2)
+                    )
+                }
+            }
+        }
+
+        item {
+            // Group Chat Button
+            Button(
+                onClick = onGroupChatClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA))
+            ) {
+                Icon(Icons.Default.Chat, contentDescription = null, tint = Color.White)
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "Open Group Chat",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
@@ -325,8 +398,7 @@ private fun TripMapView(
             mapType = mapType,
             isMyLocationEnabled = false
         )
-    )
-    {
+    ) {
         // Add destination marker if available
         trip.destinationCoordinates?.let { destination ->
             Marker(
@@ -456,104 +528,6 @@ private fun LegendItem(
             fontSize = 12.sp,
             color = Color(0xFF64748B)
         )
-    }
-}
-
-// Keep all existing composables unchanged
-@Composable
-private fun OverviewTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            // Trip Summary Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Trip Summary",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
-                }
-            }
-        }
-
-        item {
-            // Travelers Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Travelers",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    TravelerItem(
-                        initials = "JD",
-                        name = "John Doe (Trip Leader)",
-                        color = Color(0xFF667EEA)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Jane Smith",
-                        color = Color(0xFF764BA2)
-                    )
-                }
-            }
-        }
-
-        item {
-            // Group Chat Button - Fixed structure
-            Button(
-                onClick = {
-                    // TODO: Implement group chat functionality
-                    // Uncomment and modify the following lines when GroupChatActivity is available:
-                    /*
-                    val context = LocalContext.current
-                    val intent = Intent(context, GroupChatActivity::class.java)
-                    intent.putExtra("tripId", trip.id)
-                    context.startActivity(intent)
-                    */
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF667EEA))
-            ) {
-                Text(
-                    text = "Open Group Chat",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
     }
 }
 
