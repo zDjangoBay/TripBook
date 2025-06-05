@@ -175,5 +175,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
+    // Google Maps Compose
+    implementation("com.google.maps.android:maps-compose:4.3.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+    // Google Maps Utils (for Polyline decoding)
+    implementation("com.google.maps.android:maps-utils-ktx:3.0.0")
 
 }
