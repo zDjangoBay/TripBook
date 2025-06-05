@@ -1,9 +1,18 @@
-<fragment
-    android:id="@+id/tripBudgetFragment"
-    android:name="com.android.tripbook.ui.budget.TripBudgetFragment"
-    android:label="Trip Budget"
-    tools:layout="@layout/fragment_trip_budget">
-    <argument
-        android:name="tripId"
-        app:argType="string" />
-</fragment>
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/some_start_destination">
+
+    <fragment
+        android:id="@+id/tripBudgetFragment"
+        android:name="com.android.tripbook.ui.budget.TripBudgetFragment"
+        android:label="Trip Budget"
+        tools:layout="@layout/fragment_trip_budget">
+        <argument
+            android:name="tripId"
+            app:argType="string" />
+    </fragment>
+
+</navigation>
