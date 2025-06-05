@@ -445,7 +445,7 @@ fun TripCard(
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Edit Button
+                    // This is the button that is used to edit the trip
                     IconButton(
                         onClick = { onEditClick(trip) },
                         modifier = Modifier.size(24.dp)
