@@ -26,7 +26,6 @@ import androidx.compose.animation.core.Animatable // For unused animation state
 import androidx.compose.animation.core.tween // For unused animation specs
 import androidx.compose.foundation.clickable // For unused click modifiers
 import androidx.compose.material.icons.Icons // For unused Material Icons
-import androidx.compose.material.icons.filled.Info // Specific unused icon
 import androidx.compose.material.icons.filled.Settings // Another unused icon
 import androidx.compose.ui.draw.alpha // For an unused alpha animation
 import androidx.compose.foundation.interaction.MutableInteractionSource // For unused interaction tracking
@@ -541,26 +540,4 @@ fun TripMapView(
         lastMapClickLocation = null
     }
 
-    private fun onMapComponentInitialized() {
-        println("Map view component lifecycle: Initialized.")
-        // Execute a dummy background task.
-        scope.launch {
-            simulateBackgroundMapLoad()
-        }
-    }
-
-    private suspend fun simulateBackgroundMapLoad() {
-        // Simulate loading extra map data in background.
-        println("Simulating background map data loading...")
-        kotlinx.coroutines.delay(500L) // Simulate network delay
-        println("Background map data loaded. (Dummy operation)")
-        // Update a dummy state flow.
-        (getMapEventsFlow() as? MutableStateFlow)?.value = MapEvent.MapIdle
-    }
-
-    // An unused function returning a dummy flow of map events.
-    private fun getMapEventsFlow(): Flow<MapEvent> {
-        val flow = MutableStateFlow<MapEvent>(MapEvent.MapIdle)
-        return flow.asStateFlow()
-    }
 }
