@@ -115,7 +115,7 @@ fun ReviewCard(review: Review) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = review.userName,
+                    text = review.username,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(

@@ -64,8 +64,8 @@ class ReviewViewModel : ViewModel() {
                 val newReview = Review(
                     id = nextId++,
                     tripId = tripId,
-                    userName = userName,
-                    userAvatar = userAvatar ?: generateAvatarUrl(userName),
+                    username  = userName,
+                   // userAvatar = userAvatar ?: generateAvatarUrl(userName),
                     comment = comment,
                     rating = rating,
                     date = getCurrentDate(),
@@ -77,7 +77,7 @@ class ReviewViewModel : ViewModel() {
                 _reviews.value = currentReviews
 
                 Log.d("ReviewViewModel", "Added review. Total reviews: ${_reviews.value.size}")
-                Log.d("ReviewViewModel", "Review details: ID=${newReview.id}, TripID=${newReview.tripId}, User=${newReview.userName}")
+                Log.d("ReviewViewModel", "Review details: ID=${newReview.id}, TripID=${newReview.tripId}, User=${newReview.username}")
 
                 _error.value = null
             } catch (e: Exception) {

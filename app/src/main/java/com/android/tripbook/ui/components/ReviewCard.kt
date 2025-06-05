@@ -1,4 +1,3 @@
-// ReviewCard.kt
 package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.Image
@@ -7,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -15,18 +13,10 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-<<<<<<< HEAD
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-=======
->>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
 import com.android.tripbook.ui.components.FullscreenGalleryDialog
@@ -43,75 +33,19 @@ fun ReviewCard(
     var initialImageIndex by remember { mutableStateOf(0) }
 
     Card(
-<<<<<<< HEAD
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
-=======
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
->>>>>>> d90952d8704d10f2091d5b680619905aba83bd29
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // User Info Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // User Avatar
-                AsyncImage(
-                    model = review.userAvatar.ifEmpty { "https://via.placeholder.com/40" },
-                    contentDescription = "User Avatar",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = review.userName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = review.date.ifEmpty { "Recent" },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Rating Display
-            StarRatingDisplay(
-                rating = review.rating.toFloat(),
-                starSize = 18,
-                showRatingText = false
-            )
-
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = review.username, style = MaterialTheme.typography.titleSmall)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = review.comment, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Review Text
-            Text(
-                text = review.comment,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.DarkGray
-            )
-
-            // Review Images (if any)
             if (review.images.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -134,8 +68,7 @@ fun ReviewCard(
                             Image(
                                 painter = rememberAsyncImagePainter(imageUrl),
                                 contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
                     }

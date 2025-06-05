@@ -1,6 +1,6 @@
 package com.android.tripbook.ui.navigation
-
 import com.android.tripbook.ui.screens.DetailReviewScreen
+import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -10,14 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.android.tripbook.ui.screens.*
-import com.android.tripbook.ui.screens.AllReviewsScreen
-import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.ui.screens.booking.BookingScreen
 
 @Composable
@@ -25,9 +21,6 @@ fun MainNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    // CREATE SINGLE INSTANCE HERE
-    val sharedReviewViewModel: ReviewViewModel = viewModel()
-
     NavHost(
         navController = navController,
         startDestination = "home",
@@ -46,7 +39,6 @@ fun MainNavGraph(
                 )
             }
         }
-
         composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -60,7 +52,6 @@ fun MainNavGraph(
                 )
             }
         }
-
         composable("catalog") {
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -69,7 +60,6 @@ fun MainNavGraph(
                 }
             )
         }
-
         composable("profile") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -83,9 +73,8 @@ fun MainNavGraph(
                 )
             }
         }
-
-        composable("detail/{tripId}") { backStackEntry ->
-            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
+        composable("detail/{tripId}") {
+            val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
                 navController = navController,
@@ -93,7 +82,6 @@ fun MainNavGraph(
                 onSeeAllReviews = { id ->
                     navController.navigate("reviews/$id")
                 },
-                reviewViewModel = sharedReviewViewModel,
                 onBookTrip = { id ->
                     navController.navigate("booking/$id")
                 }
@@ -105,18 +93,16 @@ fun MainNavGraph(
             AllReviewsScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
-                reviewViewModel = sharedReviewViewModel,
                 onLikeClicked = { reviewId ->
                     println("Liked review ID: $reviewId")
-                    // Add your like logic here
                 },
                 onFlagClicked = { reviewId ->
                     println("Flagged review ID: $reviewId")
-                    // Add your flag logic here
                 }
             )
-        }
 
+
+    }
         composable("detailReview/{reviewId}/{tripId}") { backStackEntry ->
             val reviewId = backStackEntry.arguments?.getString("reviewId")?.toIntOrNull() ?: return@composable
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
@@ -130,12 +116,14 @@ fun MainNavGraph(
             )
         }
 
+
         composable("booking/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
             BookingScreen(
                 tripId = tripId,
                 onBack = { navController.popBackStack() },
                 onBookingComplete = {
+                    // Navigate back to the catalog after booking is complete
                     navController.navigate("catalog") {
                         popUpTo("catalog") {
                             inclusive = true
