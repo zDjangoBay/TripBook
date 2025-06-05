@@ -16,7 +16,7 @@ import com.android.tripbook.ui.screens.reservations.ReservationListScreen
 import com.android.tripbook.ui.screens.notifications.NotificationScreen
 import com.android.tripbook.ui.screens.profile.ProfileScreen
 import com.android.tripbook.ui.screens.reservation.ReservationFlowActivity
-import com.android.tripbook.ui.screens.PaymentScreen
+import com.android.tripbook.ui.screens.reservation.PaymentScreen
 
 /**
  * Main Dashboard Activity with bottom navigation

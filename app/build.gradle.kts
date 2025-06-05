@@ -1,12 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
+    id("kotlin-kapt")
 }
 
 android {
     namespace = "com.android.tripbook"
     compileSdk = 34
+
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("src/main/java")
+        }
+    }
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -31,21 +37,54 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+        freeCompilerArgs = freeCompilerArgs + listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+        )
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    kapt {
+        correctErrorTypes = true
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
+        }
+        useBuildCache = true
+        // Disable KAPT daemon to avoid issues
+        useBuildCache = false
+        // Disable incremental annotation processing
+        // This is a workaround for KAPT issues
+        // Remove this if the issue is resolved in future versions
+        arguments {
+            arg("kapt.incremental.apt", "false")
+        }
+    }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class).configureEach {
+        kotlinOptions {
+            jvmTarget = "17"
+            freeCompilerArgs += listOf(
+                "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+                "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+                "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+            )
         }
     }
 }
@@ -77,6 +116,21 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Room components
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    
+    // Optional - Guava support for Room, including Optional and ListenableFuture
+    implementation("androidx.room:room-guava:$roomVersion")
+    
+    // Optional - Test helpers
+    testImplementation("androidx.room:room-testing:$roomVersion")
+    
+    // Optional - Paging 3 Integration
+    implementation("androidx.room:room-paging:$roomVersion")
 
     // Extended Icons
     implementation("androidx.compose.material:material-icons-extended")
