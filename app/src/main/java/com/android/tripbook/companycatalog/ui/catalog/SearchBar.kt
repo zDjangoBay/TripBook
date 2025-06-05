@@ -1,3 +1,5 @@
+package com.android.tripbook.companycatalog.ui.catalog
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.* //import all material3 components
