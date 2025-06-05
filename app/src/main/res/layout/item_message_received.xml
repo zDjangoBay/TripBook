@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/bg_message_input"
+        android:background="@android:color/background_light"
         android:padding="12dp"
         android:layout_marginEnd="64dp">
 
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@android:color/holo_blue_dark" />
 
         <TextView
             android:id="@+id/tvMessage"
@@ -35,7 +35,8 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:alpha="0.7"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/darker_gray" />
 
     </LinearLayout>
 

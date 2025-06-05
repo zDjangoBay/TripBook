@@ -18,11 +18,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook">
 
-        <!-- Replace with your actual Google Maps API Key -->
+        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_API_KEY_HERE" />
 
+        <!-- Main launcher activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -34,8 +35,9 @@
             </intent-filter>
         </activity>
 
+        <!-- Group Chat Activity -->
         <activity
-            android:name=".ui.chat.GroupChatActivity.kt"
+            android:name=".ui.chat.GroupChatActivity"
             android:theme="@style/Theme.TripBook"
             android:windowSoftInputMode="adjustResize" />
 
