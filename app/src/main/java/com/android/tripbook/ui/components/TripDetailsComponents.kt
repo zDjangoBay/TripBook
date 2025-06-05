@@ -356,12 +356,15 @@ fun ActivityTimelineCard(
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
+                // Apply maxLines and overflow to description
                 if (activity.description.isNotEmpty()) {
                     Text(
                         text = activity.description,
                         fontSize = 14.sp,
                         color = TripBookColors.TextSecondary,
-                        modifier = Modifier.padding(top = 4.dp)
+                        modifier = Modifier.padding(top = 4.dp),
+                        maxLines = 2, // Limit to two lines for description
+                        overflow = TextOverflow.Ellipsis // Add ellipsis for overflow
                     )
                 }
                 if (activity.duration.isNotEmpty()) {
