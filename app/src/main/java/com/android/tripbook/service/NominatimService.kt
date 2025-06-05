@@ -394,7 +394,7 @@ class NominatimService {
             emptyList()
         }
     }
-    
+
 
 
 
