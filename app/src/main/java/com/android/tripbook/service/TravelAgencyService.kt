@@ -424,5 +424,20 @@ class TravelAgencyService {
         return (basePrice * (0.8 + popularity * 0.4)).toInt()
     }
 
-    
+    fun filterAgencies(
+        agencies: List<TravelAgency>,
+        minRating: Float? = null,
+        maxPrice: Int? = null,
+        serviceType: String? = null
+    ): List<TravelAgency> {
+        return agencies.map { agency ->
+            agency.copy(
+                services = agency.services.filter { service ->
+                    (minRating == null || service.rating >= minRating) &&
+                            (maxPrice == null || service.price <= maxPrice) &&
+                            (serviceType == null || service.type == serviceType)
+                }
+            )
+        }.filter { it.services.isNotEmpty() }
+    }
 }
