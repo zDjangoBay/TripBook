@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.ui.components.BaseScaffold
 import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.data.SampleTrips
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,17 +24,21 @@ class MainActivity : ComponentActivity() {
                 var isLoading by remember { mutableStateOf(false) }
 
                 BaseScaffold(
-                    navController = navController,
-                    isLoading = isLoading
-                ) { padding ->
-                    MainNavGraph(
-                        navController = navController,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                            .padding(2.dp)
-                    )
-                }
+    navController = navController,
+    isLoading = isLoading,
+    trips = SampleTrips.get(), // Or your actual trips data
+    onTripSelected = { trip ->
+        // Handle trip selection, e.g., navigate to detail
+        navController.navigate("detail/${trip.id}")
+    }
+) { padding ->
+    MainNavGraph(
+        navController = navController,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    )
+}
             }
         }
     }

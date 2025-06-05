@@ -2,6 +2,7 @@ package com.android.tripbook.ui.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,7 +17,18 @@ import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import kotlinx.coroutines.delay
 
-// Compact version for app bar
+/**
+ * A button that randomly selects a trip when clicked, with visual feedback:
+ * - Rotating casino die icon during selection animation
+ * - Uses theme's tertiary colors for visibility
+ * - Disables during animation to prevent multiple clicks
+ * - Automatically navigates to selected trip after animation
+ *
+ * @param trips List of available trips to select from
+ * @param onTripSelected Callback when a random trip is selected
+ * @param modifier Modifier for styling/layout
+ */
+
 @Composable
 fun SurpriseMeButton(
     trips: List<Trip>,
@@ -24,14 +36,14 @@ fun SurpriseMeButton(
     modifier: Modifier = Modifier
 ) {
     var isAnimating by remember { mutableStateOf(false) }
-    
+
     val rotation by animateFloatAsState(
         targetValue = if (isAnimating) 360f else 0f,
         animationSpec = tween(1000, easing = FastOutSlowInEasing),
         label = "rotationAnimation"
     )
-    
-    TextButton(
+
+    Button(
         onClick = {
             if (!isAnimating && trips.isNotEmpty()) {
                 isAnimating = true
@@ -39,8 +51,9 @@ fun SurpriseMeButton(
         },
         modifier = modifier,
         enabled = trips.isNotEmpty() && !isAnimating,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = MaterialTheme.colorScheme.onPrimary
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.tertiary,
+            contentColor = MaterialTheme.colorScheme.onTertiary
         )
     ) {
         Row(
@@ -60,7 +73,7 @@ fun SurpriseMeButton(
             )
         }
     }
-    
+
     LaunchedEffect(isAnimating) {
         if (isAnimating) {
             delay(1000)
