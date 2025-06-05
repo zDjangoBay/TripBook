@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.model.JournalEntry
 import com.android.tripbook.repository.SupabaseTripRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -165,6 +166,37 @@ class TripDetailsViewModel(
                     error = "Failed to delete activity: ${e.message}"
                 )
             }
+        }
+    }
+
+    fun addJournalEntry(entry: JournalEntry) {
+        viewModelScope.launch {
+            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty() + entry
+            _uiState.value = _uiState.value.copy(
+                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
+            )
+        }
+    }
+
+    fun editJournalEntry(entry: JournalEntry) {
+        viewModelScope.launch {
+            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty().map {
+                if (it.id == entry.id) entry else it
+            }
+            _uiState.value = _uiState.value.copy(
+                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
+            )
+        }
+    }
+
+    fun deleteJournalEntry(entryId: String) {
+        viewModelScope.launch {
+            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty().filterNot {
+                it.id == entryId
+            }
+            _uiState.value = _uiState.value.copy(
+                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
+            )
         }
     }
 
