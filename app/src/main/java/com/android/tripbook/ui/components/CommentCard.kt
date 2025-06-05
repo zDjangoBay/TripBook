@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.model.Comment
+import com.android.tripbook.Model.Comment
 
 @Composable
 fun CommentCard(comment: Comment) {

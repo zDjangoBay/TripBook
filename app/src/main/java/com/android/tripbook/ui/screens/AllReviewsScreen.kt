@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.viewModel.MockReviewViewModel
+import com.android.tripbook.ViewModel.MockReviewViewModel
 import com.android.tripbook.ui.components.ReviewCard
 
 

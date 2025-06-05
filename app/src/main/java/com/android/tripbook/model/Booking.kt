@@ -1,4 +1,4 @@
-package com.android.tripbook.model
+package com.android.tripbook.Model
 
 import java.time.LocalDate
 

@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.model.Booking
-import com.android.tripbook.model.Trip
+import com.android.tripbook.Model.Booking
+import com.android.tripbook.Model.Trip
 import java.time.format.DateTimeFormatter
 
 @Composable
