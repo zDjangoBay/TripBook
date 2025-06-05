@@ -52,7 +52,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    // Removed implementation(libs.androidx.work.runtime.ktx) from here as it seems to be problematic
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -93,6 +94,9 @@ dependencies {
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // --- ADDED THIS LINE FOR WORKMANAGER ---
+    implementation("androidx.work:work-runtime-ktx:2.9.0") // Compatible with compileSdk 34
 
     //---------------------------------------------------------
     //      Google Maps and Places API dependencies
