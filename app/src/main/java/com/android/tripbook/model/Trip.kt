@@ -15,7 +15,7 @@ enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
 }
 
-// Location data classes for Maps integration
+// Location data classes for Maps integration///
 data class Location(
     val latitude: Double,
     val longitude: Double,
