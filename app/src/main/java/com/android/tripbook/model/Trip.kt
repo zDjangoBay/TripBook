@@ -2,7 +2,6 @@ package com.android.tripbook.model
 import androidx.room.TypeConverter
 import com.android.tripbook.service.AgencyService
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
 
 enum class TripStatus {
@@ -86,27 +85,6 @@ class Converters {
     @TypeConverter
     fun fromStringList(list: List<String>): String {
         return gson.toJson(list)
-    }
-
-    @TypeConverter
-    fun toRouteInfo(json: String?): RouteInfo? {
-        return json?.let { gson.fromJson(it, RouteInfo::class.java) }
-    }
-
-    @TypeConverter
-    fun fromItineraryList(list: List<ItineraryItem>): String {
-        return gson.toJson(list)
-    }
-
-    @TypeConverter
-    fun toItineraryList(json: String): List<ItineraryItem> {
-        val type = object : TypeToken<List<ItineraryItem>>() {}.type
-        return gson.fromJson(json, type) ?: emptyList()
-    }
-
-    @TypeConverter
-    fun fromAgencyService(service: AgencyService?): String? {
-        return service?.let { gson.toJson(it) }
     }
 
     @TypeConverter
