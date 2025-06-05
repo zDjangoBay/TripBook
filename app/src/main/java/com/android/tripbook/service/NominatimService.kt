@@ -1,33 +1,41 @@
 package com.android.tripbook.service
 
-
-import com.google.gson.annotations.SerializedName
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-
-data class Attraction(
-    val name: String,
-    val location: String
-)
-
-data class NominatimPlace(
-    @SerializedName("display_name") val displayName: String,
-    @SerializedName("lat") val latitude: String,
-    @SerializedName("lon") val longitude: String,
-    @SerializedName("type") val type: String?
-)
 
 interface NominatimApi {
     @GET("search")
     suspend fun searchPlaces(
         @Query("q") query: String,
         @Query("format") format: String = "json",
-        @Query("limit") limit: Int = 5,
-        @Query("featuretype") featureType: String = "monument,viewpoint,tourist_attraction"
+        @Query("limit") limit: Int = 10
     ): List<NominatimPlace>
 }
+
+data class NominatimPlace(
+    val place_id: Long,
+    val licence: String,
+    val osm_type: String,
+    val osm_id: Long,
+    val boundingbox: List<String>,
+    val lat: String,
+    val lon: String,
+    val display_name: String,
+    val class_: String,
+    val type: String,
+    val importance: Double,
+    val icon: String?
+) {
+    val displayName: String
+        get() = display_name
+}
+
+data class Attraction(
+    val name: String,
+    val location: String
+)
 
 class NominatimService {
     private val retrofit = Retrofit.Builder()
