@@ -8,9 +8,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.Location
 import com.android.tripbook.model.Trip
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.*
+// import com.google.android.gms.maps.model.CameraPosition
+// import com.google.android.gms.maps.model.LatLng
+// import com.google.maps.android.compose.GoogleMap
+// import com.google.maps.android.compose.MapProperties
+// import com.google.maps.android.compose.MapType
+// import com.google.maps.android.compose.MapUiSettings
+// import com.google.maps.android.compose.Marker
+// import com.google.maps.android.compose.MarkerState
+// import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun TripMapView(
@@ -179,3 +185,98 @@ fun PlaceSearchField(
         }
     }
 }
+
+/*
+@Composable
+fun SimpleMapView(
+    modifier: Modifier = Modifier,
+    cameraPosition: LatLng = LatLng(0.0, 0.0), // Default to (0,0) or a sensible default
+    zoomLevel: Float = 10f,
+    mapProperties: MapProperties = MapProperties(),
+    mapUiSettings: MapUiSettings = MapUiSettings()
+) {
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(cameraPosition, zoomLevel)
+    }
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = cameraPositionState,
+        properties = mapProperties,
+        uiSettings = mapUiSettings
+    )
+}
+*/
+
+/*
+@Composable
+fun MapWithMarkers(
+    modifier: Modifier = Modifier,
+    markers: List<LatLng>,
+    initialLocation: LatLng = markers.firstOrNull() ?: LatLng(0.0, 0.0),
+    zoomLevel: Float = 10f
+) {
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(initialLocation, zoomLevel)
+    }
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = cameraPositionState
+    ) {
+        markers.forEach { location ->
+            Marker(
+                state = MarkerState(position = location),
+                title = "Marker at $location"
+            )
+        }
+    }
+}
+*/
+
+/**
+ * A more advanced map view that can display a list of locations (markers) and
+ * potentially routes between them (though route drawing isn't implemented here yet).
+ *
+ * @param modifier Modifier for styling the map.
+ * @param locations List of `com.android.tripbook.model.Location` objects to display as markers.
+ * @param onLocationClick Lambda to be invoked when a marker is clicked.
+ * @param mapProperties Properties to configure the map (e.g., map type).
+ * @param mapUiSettings UI settings for the map (e.g., zoom controls).
+ */
+/*
+@Composable
+fun TripMapView(
+    modifier: Modifier = Modifier,
+    locations: List<com.android.tripbook.model.Location>,
+    // onLocationClick: (com.android.tripbook.model.Location) -> Unit = {},
+    // mapProperties: MapProperties = MapProperties(mapType = MapType.NORMAL),
+    // mapUiSettings: MapUiSettings = MapUiSettings(zoomControlsEnabled = true)
+) {
+    val validLocations = locations.filter { it.latitude != 0.0 || it.longitude != 0.0 }
+    val initialCameraPosition = validLocations.firstOrNull()
+        ?.let { LatLng(it.latitude, it.longitude) }
+        ?: LatLng(0.0, 0.0) // Default if no valid locations
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(initialCameraPosition, 10f) // Default zoom
+    }
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = cameraPositionState,
+        // properties = mapProperties,
+        // uiSettings = mapUiSettings
+    ) {
+        validLocations.forEach { location ->
+            Marker(
+                state = MarkerState(position = LatLng(location.latitude, location.longitude)),
+                title = location.address.ifEmpty { "Unnamed Location" },
+                snippet = "Lat: ${location.latitude}, Lng: ${location.longitude}",
+                // onClick = { onLocationClick(location); true } // Returning true consumes the click
+            )
+        }
+        // TODO: Add Polyline drawing for routes if needed
+    }
+}
+*/

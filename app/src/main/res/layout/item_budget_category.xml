@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:text="No expenses logged for this category."
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:visibility="gone" <!-- Initially hidden -->
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/recyclerViewCategoryExpenses"
         app:layout_constraintBottom_toBottomOf="@id/recyclerViewCategoryExpenses"
         app:layout_constraintStart_toStartOf="@id/recyclerViewCategoryExpenses"

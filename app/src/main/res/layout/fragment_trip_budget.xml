@@ -49,7 +49,7 @@
         android:text="No budget categories yet.\nTap 'Add Category' to create one."
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:gravity="center"
-        android:visibility="gone" <!-- Initially hidden -->
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/recyclerViewBudgetCategories"
         app:layout_constraintBottom_toBottomOf="@id/recyclerViewBudgetCategories"
         app:layout_constraintStart_toStartOf="parent"
