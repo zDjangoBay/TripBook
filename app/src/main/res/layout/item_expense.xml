@@ -17,8 +17,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textViewExpenseAmount"
-        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewDeleteExpense" 
+        android:layout_marginEnd="8dp"
         tools:text="Dinner at 'Le Gourmet'" />
 
     <TextView
@@ -35,11 +35,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewDeleteExpense"
         app:layout_constraintTop_toTopOf="@id/textViewExpenseDescription"
         app:layout_constraintBottom_toBottomOf="@id/textViewExpenseDate"
+        android:layout_marginEnd="8dp"
         tools:text="$75.50" />
 
-    <!-- You could add an icon here representing the expense category later -->
+    <!-- Add Delete Icon for Expense -->
+    <ImageView
+        android:id="@+id/imageViewDeleteExpense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_delete"
+        app:tint="?android:attr/textColorSecondary"
+        android:contentDescription="Delete Expense"
+        android:padding="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewExpenseDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textViewExpenseDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

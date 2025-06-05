@@ -21,7 +21,8 @@ class BudgetCategoryAdapter(
     private val budgetViewModel: BudgetViewModel,
     private val onItemClicked: (BudgetCategory) -> Unit,
     private val onExpenseClicked: (Expense) -> Unit,
-    private val onDeleteClicked: (BudgetCategory) -> Unit // New listener for delete
+    private val onCategoryDeleteClicked: (BudgetCategory) -> Unit,
+    private val onExpenseDeleteClicked: (Expense) -> Unit
 ) : ListAdapter<BudgetCategory, BudgetCategoryAdapter.BudgetCategoryViewHolder>(BudgetCategoryDiffCallback()) {
 
     // TODO: Add click listeners for item click, edit, delete in later commits
@@ -29,7 +30,10 @@ class BudgetCategoryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetCategoryViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_budget_category, parent, false)
-        return BudgetCategoryViewHolder(view, lifecycleOwner, budgetViewModel, onItemClicked, onExpenseClicked, onDeleteClicked) // Pass new listener
+        return BudgetCategoryViewHolder(
+            view, lifecycleOwner, budgetViewModel,
+            onItemClicked, onExpenseClicked, onCategoryDeleteClicked, onExpenseDeleteClicked
+        )
     }
 
     override fun onBindViewHolder(holder: BudgetCategoryViewHolder, position: Int) {
@@ -43,7 +47,8 @@ class BudgetCategoryAdapter(
         private val budgetViewModel: BudgetViewModel,
         private val onItemClicked: (BudgetCategory) -> Unit,
         private val onExpenseClicked: (Expense) -> Unit,
-        private val onDeleteClicked: (BudgetCategory) -> Unit // Store delete listener
+        private val onCategoryDeleteClicked: (BudgetCategory) -> Unit,
+        private val onExpenseDeleteClicked: (Expense) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
         private val categoryNameTextView: TextView = itemView.findViewById(R.id.textViewCategoryName)
         private val plannedAmountTextView: TextView = itemView.findViewById(R.id.textViewCategoryPlannedAmount)
@@ -59,8 +64,8 @@ class BudgetCategoryAdapter(
             itemView.setOnClickListener {
                 currentCategory?.let { onItemClicked(it) }
             }
-            deleteCategoryImageView.setOnClickListener { // Set listener for delete icon
-                currentCategory?.let { onDeleteClicked(it) }
+            deleteCategoryImageView.setOnClickListener {
+                currentCategory?.let { onCategoryDeleteClicked(it) }
             }
         }
 
@@ -70,10 +75,14 @@ class BudgetCategoryAdapter(
             plannedAmountTextView.text = currencyFormatter.format(budgetCategory.plannedAmount)
 
             // Setup nested RecyclerView for expenses
-            expenseAdapter = ExpenseAdapter { expense ->
-                // This is where clicks on individual expenses within the category are handled
-                onExpenseClicked(expense)
-            }
+            expenseAdapter = ExpenseAdapter(
+                onItemClicked = { expense ->
+                    onExpenseClicked(expense)
+                },
+                onDeleteClicked = { expense ->
+                    onExpenseDeleteClicked(expense)
+                }
+            )
             expensesRecyclerView.apply {
                 layoutManager = LinearLayoutManager(itemView.context)
                 adapter = expenseAdapter
