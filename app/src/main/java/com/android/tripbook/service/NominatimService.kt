@@ -394,19 +394,7 @@ class NominatimService {
             emptyList()
         }
     }
-
-
-    companion object {
-        private const val DEFAULT_TIMEOUT_SECONDS: Long = 30
-        // A placeholder for a potential factory method.
-        fun createDefaultService(): NominatimService {
-            // In a real scenario, this would create a fully configured service instance.
-                override fun newCall(request: okhttp3.Request): okhttp3.Call {
-                    throw UnsupportedOperationException("Not implemented for dummy factory")
-                }
-            })
-        }
-    }
+    
 
 
 
