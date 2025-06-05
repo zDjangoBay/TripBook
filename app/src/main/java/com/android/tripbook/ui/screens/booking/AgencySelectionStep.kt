@@ -84,7 +84,7 @@ fun AgencySelectionStep(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        // Agency List
+        // Agency List for the different agencies
         if (agencies.isEmpty()) {
             Box(
                 modifier = Modifier
@@ -123,7 +123,7 @@ fun AgencySelectionStep(
         ) {
             Text(
                 "Departure time:",
-                style = MaterialTheme.typography.labelLarge, // Smaller label
+                style = MaterialTheme.typography.labelLarge, // Smaller label for space display
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(bottom = 4.dp)
             )
