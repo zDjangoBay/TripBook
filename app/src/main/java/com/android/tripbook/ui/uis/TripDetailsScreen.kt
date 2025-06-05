@@ -40,8 +40,10 @@ import android.content.Intent
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
-    onEditItineraryClick: () -> Unit
-) {
+    onEditItineraryClick: () -> Unit,
+    onGroupChatClick: () -> Unit // ← ✅ Add this line
+)
+ {
     var selectedTab by remember { mutableStateOf("Overview") }
 
     Box(

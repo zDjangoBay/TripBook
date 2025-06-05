@@ -1,5 +1,6 @@
 package com.android.tripbook
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,12 +9,9 @@ import androidx.compose.runtime.*
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.service.AgencyService
-import com.android.tripbook.service.GoogleMapsService
-import com.android.tripbook.service.NominatimService
-import com.android.tripbook.service.TravelAgencyService
-import com.android.tripbook.ui.uis.*
+import com.android.tripbook.service.*
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.uis.*
 import com.google.firebase.FirebaseApp
 import java.time.LocalDate
 
@@ -21,7 +19,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ✅ Initialize Firebase
         FirebaseApp.initializeApp(this)
 
         val nominatimService = NominatimService()
@@ -40,18 +37,25 @@ class MainActivity : ComponentActivity() {
                 TripBookApp(
                     nominatimService = nominatimService,
                     travelAgencyService = travelAgencyService,
-                    googleMapsService = googleMapsService
+                    googleMapsService = googleMapsService,
+                    openGroupChat = { trip ->
+                        val intent = Intent(this, com.android.tripbook.ui.chat.GroupChatActivity::class.java)
+                        intent.putExtra("TRIP_ID", trip.id)
+                        intent.putExtra("TRIP_NAME", trip.name)
+                        startActivity(intent)
+                    }
                 )
             }
         }
     }
+}
 
-
-    @Composable
+@Composable
 fun TripBookApp(
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
-    googleMapsService: GoogleMapsService
+    googleMapsService: GoogleMapsService,
+    openGroupChat: (Trip) -> Unit
 ) {
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember { mutableStateOf<Trip?>(null) }
@@ -135,6 +139,9 @@ fun TripBookApp(
             },
             onEditItineraryClick = {
                 currentScreen = "ItineraryBuilder"
+            },
+            onGroupChatClick = {
+                selectedTrip?.let { openGroupChat(it) }
             }
         )
 
@@ -192,4 +199,4 @@ fun TripBookApp(
             }
         )
     }
-}}
+}
