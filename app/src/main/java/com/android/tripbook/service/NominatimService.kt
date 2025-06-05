@@ -395,15 +395,12 @@ class NominatimService {
         }
     }
 
-    // --- Unused Companion Object for Global Utilities ---
-    // A companion object can hold static-like members, such as constants or factory methods.
-    // This one contains a constant that is never referenced.
+    
     companion object {
         private const val DEFAULT_TIMEOUT_SECONDS: Long = 30
         // A placeholder for a potential factory method.
         fun createDefaultService(): NominatimService {
             // In a real scenario, this would create a fully configured service instance.
-            return NominatimService(object : okhttp3.Call.Factory {
                 override fun newCall(request: okhttp3.Request): okhttp3.Call {
                     throw UnsupportedOperationException("Not implemented for dummy factory")
                 }
@@ -412,5 +409,5 @@ class NominatimService {
     }
 
 
-    
+
 }
