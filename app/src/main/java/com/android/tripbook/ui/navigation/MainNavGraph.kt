@@ -62,7 +62,8 @@ fun MainNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onNavigateToAddPlace = {navController.navigate("addPlace/{tripId}")}
             )
         }
 

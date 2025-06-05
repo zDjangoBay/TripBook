@@ -1,5 +1,8 @@
+
+@file:OptIn(ExperimentalFoundationApi::class)
 package com.android.tripbook.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -10,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageCarousel(images: List<String>, modifier: Modifier = Modifier) {
     val pagerState = rememberPagerState(pageCount = { images.size })

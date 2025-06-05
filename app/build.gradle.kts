@@ -86,7 +86,8 @@ dependencies {
 
     implementation(libs.coil.compose) // Keep (image loading)
     implementation(libs.androidx.navigation.compose) // Keep (navigation)
-//    implementation(libs.material)
+    implementation(libs.androidx.material)
+    implementation(libs.material)
 
     // Google Maps dependencies - Consolidate these:
     implementation(libs.play.services.maps) // Core Google Maps SDK

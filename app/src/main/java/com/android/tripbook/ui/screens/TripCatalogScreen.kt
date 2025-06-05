@@ -2,7 +2,6 @@
 package com.android.tripbook.ui.screens
 
 import android.annotation.SuppressLint
-import android.text.Layout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -59,10 +58,26 @@ fun mockUsersForTrip(tripId: Int): List<User> { // Keep or replace with real dat
 fun TripCatalogScreen(
     modifier: Modifier = Modifier,
     onTripClick: (Int) -> Unit,
+    onNavigateToAddPlace: () -> Unit,
     mapViewModel: MapViewModel = viewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    // State for controlling AddPlaceScreen visibility
+    var showAddScreen by remember { mutableStateOf(false) }
+
+    // If showing add screen, display it instead of catalog
+    if (showAddScreen) {
+        AddPlaceScreen(
+            onBack = { showAddScreen = false },
+//            onSave = { newPlace ->
+//                // Handle saving logic here
+//                showAddScreen = false
+//            }
+        )
+        return
+    }
 
     // ViewModel states
     val currentAllTrips = mapViewModel.allTrips // Directly use the observable List<Trip>
@@ -154,6 +169,7 @@ fun TripCatalogScreen(
         Scaffold(
             floatingActionButton = {
                 FloatingActionButton(
+
                     onClick = { onNavigateToAddPlace() },
                     modifier = Modifier.padding(16.dp),
                     shape = CircleShape,
@@ -457,6 +473,7 @@ fun TripCatalogScreen(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Spacer(Modifier.height(8.dp))
+
                                     Spacer(Modifier.height(12.dp))
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),

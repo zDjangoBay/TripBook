@@ -19,14 +19,14 @@ data class Trip(
     val caption: String,
     val description: String,
     val imageUrl: List<String>,
-    val rating: Float,
-    val reviewCount: Int,
-    val duration: String,
-    // NEW: Location fields for maps integration
-    val latitude: Double,
-    val longitude: Double,
-    val city: String,
-    val country: String,
+    // Additional fields with default values
+    val latitude: Double = 0.0,               // Default latitude
+    val longitude: Double = 0.0,              // Default longitude
+    val rating: Float = 0.0f,                 // Default rating
+    val reviewCount: Int = 0,                 // Default review count
+    val duration: String = "Not specified",   // Default duration
+    val city: String = "Unknown",             // Default city
+    val country: String = "Unknown",          // Default country
     val region: String? = null
 ) : Serializable
 
