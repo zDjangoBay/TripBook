@@ -12,9 +12,9 @@ import com.android.tripbook.model.converters.DateConverter
 import com.android.tripbook.model.converters.TripStatusConverter
 
 // Define DAOs later - for now, just declare them
-// import com.android.tripbook.dao.BudgetCategoryDao
-// import com.android.tripbook.dao.ExpenseDao
-// import com.android.tripbook.dao.TripDao
+import com.android.tripbook.dao.BudgetCategoryDao
+import com.android.tripbook.dao.ExpenseDao
+import com.android.tripbook.dao.TripDao
 
 @Database(
     entities = [
@@ -33,9 +33,9 @@ import com.android.tripbook.model.converters.TripStatusConverter
 abstract class AppDatabase : RoomDatabase() {
 
     // Abstract methods for DAOs - will be implemented by Room
-    // abstract fun tripDao(): TripDao
-    // abstract fun budgetCategoryDao(): BudgetCategoryDao
-    // abstract fun expenseDao(): ExpenseDao
+    abstract fun tripDao(): TripDao
+    abstract fun budgetCategoryDao(): BudgetCategoryDao
+    abstract fun expenseDao(): ExpenseDao
 
     companion object {
         @Volatile
