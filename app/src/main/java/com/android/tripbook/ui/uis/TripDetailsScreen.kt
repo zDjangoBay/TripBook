@@ -13,10 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,6 +24,7 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
+import com.android.tripbook.model.JournalEntry
 import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripDetailsViewModel
@@ -115,6 +114,12 @@ fun TripDetailsScreen(
                                 uiState = uiState,
                                 viewModel = viewModel
                             )
+                            "Journal" -> JournalSection(
+                                journalEntries = uiState.trip?.journalEntries.orEmpty(),
+                                onAddEntry = viewModel::addJournalEntry,
+                                onEditEntry = viewModel::editJournalEntry,
+                                onDeleteEntry = viewModel::deleteJournalEntry
+                            )
                         }
                     }
                 }
@@ -155,7 +160,7 @@ fun EnhancedTabRow(
             .padding(top = 20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        listOf("Overview", "Itinerary", "Map").forEach { tab ->
+        listOf("Overview", "Itinerary", "Map", "Journal").forEach { tab ->
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -414,6 +419,77 @@ fun TravelersCard(
                     if (index < trip.companions.size - 1) {
                         Spacer(modifier = Modifier.height(8.dp))
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun JournalSection(
+    journalEntries: List<JournalEntry>,
+    onAddEntry: (JournalEntry) -> Unit,
+    onEditEntry: (JournalEntry) -> Unit,
+    onDeleteEntry: (JournalEntry) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Text(
+            text = "Journal",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn {
+            items(journalEntries) { entry ->
+                JournalEntryCard(
+                    entry = entry,
+                    onEdit = { onEditEntry(entry) },
+                    onDelete = { onDeleteEntry(entry) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { onAddEntry(JournalEntry("", LocalDate.now(), "", "")) }) {
+            Text(text = "Add Journal Entry")
+        }
+    }
+}
+
+@Composable
+fun JournalEntryCard(
+    entry: JournalEntry,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = entry.title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = entry.content,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(onClick = onEdit) {
+                    Text(text = "Edit")
+                }
+                Button(onClick = onDelete) {
+                    Text(text = "Delete")
                 }
             }
         }
@@ -952,7 +1028,4 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
                     )
                 )
             )
-    ) {
-        content()
     }
-}
