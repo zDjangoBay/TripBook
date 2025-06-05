@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +27,9 @@ import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripStatistics
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 @Composable
 fun TripStatisticsCard(
@@ -420,9 +424,22 @@ fun EditActivityDialog(
     var isCompleted by remember { mutableStateOf(item.isCompleted) }
 
     // State for validation errors
-    var timeError by remember { mutableStateOf("") }
     var titleError by remember { mutableStateOf("") }
     var locationError by remember { mutableStateOf("") }
+
+    // State to control the visibility of the TimePicker dialog
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    // Initialize TimePickerState from the item's time
+    val initialTime = try {
+        LocalTime.parse(time, DateTimeFormatter.ofPattern("hh:mm a"))
+    } catch (e: DateTimeParseException) {
+        LocalTime.now() // Default to current time if parsing fails
+    }
+    val timePickerState = rememberTimePickerState(
+        initialHour = initialTime.hour,
+        initialMinute = initialTime.minute
+    )
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -455,17 +472,22 @@ fun EditActivityDialog(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Time
+                // Time - now with TimePicker integration
                 OutlinedTextField(
                     value = time,
-                    onValueChange = {
-                        time = it
-                        timeError = ""
+                    onValueChange = { /* Read-only, value set by TimePicker */ },
+                    label = { Text("Time") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showTimePicker = true }, // Open time picker on click
+                    readOnly = true, // Make it read-only
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Schedule,
+                            contentDescription = "Select Time",
+                            modifier = Modifier.clickable { showTimePicker = true }
+                        )
                     },
-                    label = { Text("Time (e.g., 10:00 AM)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = timeError.isNotEmpty(),
-                    supportingText = { if (timeError.isNotEmpty()) Text(timeError, color = MaterialTheme.colorScheme.error) },
                     shape = RoundedCornerShape(12.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -568,12 +590,12 @@ fun EditActivityDialog(
                             titleError = "Title is required"
                             isValid = false
                         }
+                        // Time validation is now handled by the TimePicker, ensuring valid input
                         if (time.trim().isEmpty()) {
-                            timeError = "Time is required"
-                            isValid = false
-                        } else if (!time.matches(Regex("^(1[0-2]|0?[1-9]):[0-5][0-9] ?([AP]M)$"))) {
-                            timeError = "Enter valid time (e.g., 10:00 AM)"
-                            isValid = false
+                            // If time is empty, it means the user hasn't selected anything
+                            // from the picker, so we can consider it an error or default.
+                            // For now, let's make it a requirement.
+                            isValid = false // Mark invalid if time is still empty
                         }
                         if (location.trim().isEmpty()) {
                             locationError = "Location is required"
@@ -608,4 +630,36 @@ fun EditActivityDialog(
         shape = RoundedCornerShape(16.dp),
         containerColor = Color.White
     )
+
+    // TimePicker Dialog
+    if (showTimePicker) {
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            title = { Text("Select Time") },
+            text = {
+                TimePicker(state = timePickerState)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val selectedHour = timePickerState.hour
+                        val selectedMinute = timePickerState.minute
+                        val selectedLocalTime = LocalTime.of(selectedHour, selectedMinute)
+                        // Format the time to "hh:mm a" (e.g., "01:30 PM")
+                        time = selectedLocalTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
+                        showTimePicker = false
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showTimePicker = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
