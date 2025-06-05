@@ -761,6 +761,7 @@ fun PlanNewTripScreen(
                                 )
                             ) {
                                 val newItem = ItineraryItem(
+                                    tripId = "", // Will be set when trip is created
                                     date = date!!,
                                     time = time.trim(),
                                     title = title.trim(),
