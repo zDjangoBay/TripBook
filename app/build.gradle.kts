@@ -136,7 +136,7 @@ dependencies {
 // try to pull in a different version.
 configurations.all {
     resolutionStrategy {
-        force "androidx.work:work-runtime:2.9.0"
-        force "androidx.work:work-runtime-ktx:2.9.0"
+        force("androidx.work:work-runtime:2.9.0") // <--- ADDED PARENTHESES
+        force("androidx.work:work-runtime-ktx:2.9.0") // <--- ADDED PARENTHESES
     }
 }
