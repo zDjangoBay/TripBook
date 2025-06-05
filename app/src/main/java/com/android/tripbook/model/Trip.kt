@@ -57,21 +57,21 @@ data class ItineraryItem(
 data class Trip(
     val id: String = "",
     val name: String,
+    val destination: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val destination: String,
-    val travelers: Int,
-    val budget: Int,
+    val category: TripCategory,
     val status: TripStatus = TripStatus.PLANNED,
-    val category: TripCategory = TripCategory.CULTURAL,
     val description: String = "",
+    val budget: Double = 0.0,
+    val travelers: Int = 1,
     val companions: List<TravelCompanion> = emptyList(),
-    val activities: List<String> = emptyList(),
-    val expenses: List<String> = emptyList(),
     val itinerary: List<ItineraryItem> = emptyList(),
-    // New fields for Maps integration
+    val journalEntries: List<JournalEntry> = emptyList(),
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val notes: String = "",
+    val createdAt: LocalDate = LocalDate.now(),
+    val updatedAt: LocalDate = LocalDate.now()
 )
 
 // Data class for managing trip creation state across multiple steps
