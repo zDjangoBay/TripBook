@@ -1,0 +1,40 @@
+package com.android.tripbook.ui.uis
+
+<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+android:padding="16dp">
+
+<EditText
+android:id="@+id/destinationInput"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:hint="Destination"/>
+
+<EditText
+android:id="@+id/budgetMinInput"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:hint="Minimum Budget"/>
+
+<EditText
+android:id="@+id/budgetMaxInput"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:hint="Maximum Budget"/>
+
+<Button
+android:id="@+id/searchButton"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:text="Search"/>
+
+<RecyclerView
+android:id="@+id/searchResultsRecyclerView"
+android:layout_width="match_parent"
+android:layout_height="0dp"
+android:layout_weight="1"/>
+</LinearLayout>
+}
