@@ -68,4 +68,16 @@ class MessageAdapter(
         messages.addAll(newMessages)
         notifyDataSetChanged()
     }
+
+    fun clearMessages() {
+        messages.clear()
+        notifyDataSetChanged()
+    }
+
+    fun removeMessage(position: Int) {
+        if (position >= 0 && position < messages.size) {
+            messages.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
 }
