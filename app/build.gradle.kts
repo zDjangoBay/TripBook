@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35 // <--- CHANGED THIS TO 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 34 // You can keep this at 34 for now, or update to 35 as well if you wish later.
         versionCode = 1
         versionName = "1.0"
 
@@ -72,7 +72,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.work.runtime.ktx)
     // Removed implementation(libs.androidx.work.runtime.ktx) from here as it seems to be problematic
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -96,8 +95,10 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // --- ADDED THIS LINE FOR WORKMANAGER ---
-    implementation("androidx.work:work-runtime-ktx:2.9.0") // Compatible with compileSdk 34
+    // WorkManager - Keeping it explicitly here as it was added for notifications
+    // If you were using libs.androidx.work.runtime.ktx, this explicit declaration
+    // should take precedence or resolve the conflict if it's the higher version.
+    implementation("androidx.work:work-runtime-ktx:2.9.0") // Keep this at 2.9.0 if you prefer not to upgrade WorkManager further
 
     //---------------------------------------------------------
     //      Google Maps and Places API dependencies

@@ -71,7 +71,8 @@ data class Trip(
     val itinerary: List<ItineraryItem> = emptyList(),
     // New fields for Maps integration
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null, // Center point for map display
+    val type: String
 )
 
 // Data class for managing trip creation state across multiple steps
@@ -112,7 +113,8 @@ data class TripCreationState(
             status = TripStatus.PLANNED,
             category = category,
             description = description,
-            companions = companions
+            companions = companions,
+            type = "Safari"
         )
     }
 }

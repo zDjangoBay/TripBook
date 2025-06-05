@@ -69,7 +69,8 @@ data class SupabaseTrip(
             status = TripStatus.valueOf(status),
             category = TripCategory.valueOf(category),
             description = description,
-            companions = companions
+            companions = companions,
+            type = "Safari"
         )
     }
     

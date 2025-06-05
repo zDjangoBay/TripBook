@@ -18,8 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,16 +27,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.viewmodel.TripViewModel
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import com.android.tripbook.R
 
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
     onTripClick: ((Trip) -> Unit)? = null,
-    onAgenciesClick: () -> Unit
+    onAgenciesClick: () -> Unit,
+    trips: List<Trip>
 ) {
     val trips by tripViewModel.trips.collectAsState()
     val isLoading by tripViewModel.isLoading.collectAsState()

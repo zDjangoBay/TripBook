@@ -847,7 +847,8 @@ fun PlanNewTripScreen(
                                     travelers = travelers.toInt(),
                                     budget = budget.toInt(),
                                     status = TripStatus.PLANNED,
-                                    itinerary = itineraryItems
+                                    itinerary = itineraryItems,
+                                    type = "Safari"
                                 )
                                 onTripCreated(newTrip)
                             }

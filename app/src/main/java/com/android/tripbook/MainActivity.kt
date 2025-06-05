@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.service.AgencyService
 import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
@@ -27,6 +26,7 @@ import androidx.core.content.ContextCompat
 import android.os.Build // Required for Build.VERSION.SDK_INT
 import android.util.Log // For logging in the scheduler (optional, but good for debugging)
 import androidx.compose.ui.platform.LocalContext // To get context within a Composable
+import java.util.UUID
 
 
 class MainActivity : ComponentActivity() {
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
         // ✅ Get API key from manifest
         val apiKey = applicationContext.packageManager
-            .getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
+            .getApplicationInfo(packageName, PackageManager.GET_META_DATA)
             .metaData.getString("com.google.android.geo.API_KEY") ?: ""
 
         val googleMapsService = GoogleMapsService(applicationContext, apiKey)
@@ -131,7 +131,8 @@ class MainActivity : ComponentActivity() {
                         travelers = 2,
                         budget = 1800,
                         status = TripStatus.ACTIVE,
-                        itinerary = listOf()
+                        itinerary = listOf(),
+                        type = "Safari"
                     ),
                     Trip(
                         id = "3",
@@ -142,23 +143,28 @@ class MainActivity : ComponentActivity() {
                         travelers = 6,
                         budget = 3200,
                         status = TripStatus.COMPLETED,
-                        itinerary = listOf()
+                        itinerary = listOf(),
+                        type = "Safari"
                     )
                 )
             )
         }
 
         when (currentScreen) {
-            "MyTrips" -> MyTripsScreen(
-                trips = trips,
-                onPlanNewTripClick = {
-                    currentScreen = "PlanNewTrip"
-                },
-                onTripClick = { trip ->
-                    selectedTrip = trip
-                    currentScreen = "TripDetails"
-                }
-            )
+            "MyTrips" -> {
+                MyTripsScreen(
+                    trips = trips,
+                    onPlanNewTripClick = {
+                        currentScreen = "PlanNewTrip"
+                    },
+                    onTripClick = { trip ->
+                        selectedTrip = trip
+                        currentScreen = "TripDetails"
+                    },
+                    tripViewModel = TODO(),
+                    onAgenciesClick = TODO()
+                )
+            }
 
             "PlanNewTrip" -> PlanNewTripScreen(
                 onBackClick = {
@@ -246,7 +252,7 @@ class MainActivity : ComponentActivity() {
                         // --- IMPORTANT: Ensure ItineraryItem has an 'id' field, as discussed previously. ---
                         // If you haven't updated your ItineraryItem data class, please do so.
                         val newItem = ItineraryItem(
-                            id = java.util.UUID.randomUUID()
+                            id = UUID.randomUUID()
                                 .toString(), // Generate a unique ID for the new item
                             date = trip.startDate, // Default to trip start date, user can change later
                             time = "10:00 AM", // Default time, user can change later
