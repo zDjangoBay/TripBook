@@ -766,17 +766,7 @@ class TravelAgencyService {
         const val DEFAULT_SEARCH_RADIUS = 50000 // In meters
         const val MAX_RETRIES_ON_FAILURE = 3
 
-      
+
     }
 
-    // A secondary constructor for different initialization paths, not used.
-    constructor(isTestMode: Boolean) : this() {
-        if (isTestMode) {
-            println("TravelAgencyService initialized in test mode.")
-            // Apply test-specific settings, for example.
-            internalSettingsMap["test_mode_active"] = "true"
-        } else {
-            println("TravelAgencyService initialized in production mode.")
-        }
-    }
 }
