@@ -369,6 +369,7 @@ fun ItineraryBuilderScreen(
                                 )
                             ) {
                                 val newItem = ItineraryItem(
+                                    tripId = trip.id,
                                     date = date!!,
                                     time = time.trim(),
                                     title = title.trim(),
