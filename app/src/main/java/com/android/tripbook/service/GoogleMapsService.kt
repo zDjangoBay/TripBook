@@ -27,7 +27,18 @@ import android.annotation.SuppressLint
 
 private const val PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json"
 
-
+// Data classes for Places API responses
+@Serializable
+data class PlaceResult(
+    val placeId: String = "",
+    val name: String,
+    val address: String,
+    val types: List<String> = emptyList(),
+    val rating: Double? = null,
+    val priceLevel: Int? = null,
+    val photoReference: String? = null,
+    val geometry: Geometry? = null
+)
 
 @Serializable
 data class PlaceDetails(
