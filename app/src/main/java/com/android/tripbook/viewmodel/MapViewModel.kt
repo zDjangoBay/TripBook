@@ -63,6 +63,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     }
     // --- END INIT BLOCK ---
 
+    fun generateNewTripId(): Int {
+        // Find the highest existing ID from the current list and add 1
+        val maxId = allTrips.maxOfOrNull { it.id } ?: 0
+        return maxId + 1
+    }
+
 
     fun updateUserLocation(location: Location?) {
         _userLocation.value = location

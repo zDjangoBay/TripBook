@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
@@ -83,9 +84,12 @@ fun LocationSearchBar(
                             },
                             onClick = {
                                 onSuggestionClick(suggestion)
-                                onSearchQueryChange(TextFieldValue(suggestion))
+                                onSearchQueryChange(
+                                    TextFieldValue(suggestion, TextRange(suggestion.length))
+                                )
                                 isExpanded = false
                             }
+
                         )
                     }
                 }
