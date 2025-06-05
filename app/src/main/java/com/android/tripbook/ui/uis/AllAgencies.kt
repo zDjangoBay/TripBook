@@ -32,7 +32,7 @@ import com.android.tripbook.viewmodel.AgencyViewModel
 fun AllAgenciesScreen(
     onBackClick: () -> Unit,
     agencyViewModel: AgencyViewModel,
-    onAgencyClick: (Agency) -> Unit // Added callback for agency selection
+    onAgencyClick: (Agency) -> Unit // Added callback for agency selection//
 ) {
     val agencies by agencyViewModel.agencies.collectAsState()
     val isLoading by agencyViewModel.isLoading.collectAsState()
