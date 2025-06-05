@@ -55,6 +55,7 @@ class BudgetCategoryAdapter(
         private val actualAmountTextView: TextView = itemView.findViewById(R.id.textViewCategoryActualAmount)
         private val deleteCategoryImageView: ImageView = itemView.findViewById(R.id.imageViewDeleteCategory) // Get delete icon
         private val expensesRecyclerView: RecyclerView = itemView.findViewById(R.id.recyclerViewCategoryExpenses)
+        private val emptyExpensesTextView: TextView = itemView.findViewById(R.id.textViewEmptyExpensesInCategory) // Get the new TextView
         private val currencyFormatter = NumberFormat.getCurrencyInstance() // Consider locale
         private lateinit var expenseAdapter: ExpenseAdapter // For the nested list
 
@@ -97,9 +98,19 @@ class BudgetCategoryAdapter(
                         expenseAdapter.submitList(it)
                         val totalSpent = it.sumOf { expense -> expense.amount }
                         actualAmountTextView.text = currencyFormatter.format(totalSpent)
+
+                        if (it.isEmpty()) {
+                            expensesRecyclerView.visibility = View.GONE
+                            emptyExpensesTextView.visibility = View.VISIBLE
+                        } else {
+                            expensesRecyclerView.visibility = View.VISIBLE
+                            emptyExpensesTextView.visibility = View.GONE
+                        }
                     } ?: run {
                         expenseAdapter.submitList(emptyList())
                         actualAmountTextView.text = currencyFormatter.format(0.0)
+                        expensesRecyclerView.visibility = View.GONE
+                        emptyExpensesTextView.visibility = View.VISIBLE
                     }
                 }
         }

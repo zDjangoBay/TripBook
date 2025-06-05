@@ -42,6 +42,20 @@
         app:layout_constraintTop_toBottomOf="@id/textViewPlannedBudgetCategoriesLabel"
         tools:listitem="@layout/item_budget_category" /> <!-- We will create item_budget_category next -->
 
+    <TextView
+        android:id="@+id/textViewEmptyCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No budget categories yet.\nTap 'Add Category' to create one."
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:gravity="center"
+        android:visibility="gone" <!-- Initially hidden -->
+        app:layout_constraintTop_toTopOf="@id/recyclerViewBudgetCategories"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerViewBudgetCategories"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
+
     <Button
         android:id="@+id/buttonAddBudgetCategory"
         android:layout_width="wrap_content"

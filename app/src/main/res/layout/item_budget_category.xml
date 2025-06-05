@@ -76,9 +76,31 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCategoryExpenses"
-    <!-- ... (rest of the RecyclerView setup) ... -->
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/textViewActualAmountLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_expense"
+        tools:itemCount="2"/>
 
-    <!-- You might want to add a ProgressBar here later to show budget usage -->
-    <!-- Or a RecyclerView for expenses within this category if not showing separately -->
+    <!-- Empty State for Expenses within a Category -->
+    <TextView
+        android:id="@+id/textViewEmptyExpensesInCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No expenses logged for this category."
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:visibility="gone" <!-- Initially hidden -->
+        app:layout_constraintTop_toTopOf="@id/recyclerViewCategoryExpenses"
+        app:layout_constraintBottom_toBottomOf="@id/recyclerViewCategoryExpenses"
+        app:layout_constraintStart_toStartOf="@id/recyclerViewCategoryExpenses"
+        app:layout_constraintEnd_toEndOf="@id/recyclerViewCategoryExpenses"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
