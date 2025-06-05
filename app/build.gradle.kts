@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("androidx.navigation.safeargs.kotlin") version "2.7.7" apply false
 }
 
 android {
@@ -56,4 +57,8 @@ dependencies {
     // testImplementation("junit:junit:4.13.2")
     // androidTestImplementation("androidx.test.ext:junit:1.1.5")
     // androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    val nav_version = "2.7.7" // Use the latest stable version
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 } 
