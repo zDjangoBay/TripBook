@@ -231,31 +231,7 @@ class TravelAgencyService {
 
 
 
-    private suspend fun fetchAgenciesFromFoursquare(destination: String): List<TravelAgency> {
-        val authHeader = apiKey
-
-        // Try coordinate-based search first
-        val coordinates = findLocationCoordinates(destination)
-        if (coordinates != null) {
-            try {
-                val nearbyResponse = foursquareApi.searchNearby(
-                    authorization = authHeader,
-                    latLng = coordinates,
-                    categories = "16000,12000,13000", // Travel, Professional Services, Retail
-                    limit = 15,
-                    radius = 25000
-                )
-
-                if (nearbyResponse.isSuccessful && nearbyResponse.body() != null) {
-                    val nearbyResults = convertFoursquarePlacesToAgencies(nearbyResponse.body()!!.results, destination)
-                    if (nearbyResults.isNotEmpty()) {
-                        return nearbyResults
-                    }
-                }
-            } catch (e: Exception) {
-                println("Nearby search failed: ${e.message}")
-            }
-        }
+    
 
         // Fallback to text search
         return searchAgenciesByText(destination, authHeader)
