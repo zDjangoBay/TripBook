@@ -1,7 +1,5 @@
 package com.android.tripbook.model
-import androidx.room.TypeConverter
 import com.android.tripbook.service.AgencyService
-import com.google.gson.Gson
 import java.time.LocalDate
 
 enum class TripStatus {
@@ -78,17 +76,3 @@ data class Trip(
 
 }
 
-// Type converters for Room database
-class Converters {
-    private val gson = Gson()
-
-    @TypeConverter
-    fun fromStringList(list: List<String>): String {
-        return gson.toJson(list)
-    }
-
-    @TypeConverter
-    fun toAgencyService(json: String?): AgencyService? {
-        return json?.let { gson.fromJson(it, AgencyService::class.java) }
-    }
-}
