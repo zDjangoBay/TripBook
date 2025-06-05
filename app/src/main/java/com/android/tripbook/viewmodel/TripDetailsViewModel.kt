@@ -171,32 +171,54 @@ class TripDetailsViewModel(
 
     fun addJournalEntry(entry: JournalEntry) {
         viewModelScope.launch {
-            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty() + entry
-            _uiState.value = _uiState.value.copy(
-                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
-            )
+            try {
+                val currentTrip = _uiState.value.trip ?: return@launch
+                val updatedEntries = currentTrip.journalEntries + entry
+                _uiState.value = _uiState.value.copy(
+                    trip = currentTrip.copy(journalEntries = updatedEntries)
+                )
+                // TODO: Add repository call to persist the entry
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to add journal entry: ${e.message}"
+                )
+            }
         }
     }
 
     fun editJournalEntry(entry: JournalEntry) {
         viewModelScope.launch {
-            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty().map {
-                if (it.id == entry.id) entry else it
+            try {
+                val currentTrip = _uiState.value.trip ?: return@launch
+                val updatedEntries = currentTrip.journalEntries.map {
+                    if (it.id == entry.id) entry else it
+                }
+                _uiState.value = _uiState.value.copy(
+                    trip = currentTrip.copy(journalEntries = updatedEntries)
+                )
+                // TODO: Add repository call to update the entry
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to update journal entry: ${e.message}"
+                )
             }
-            _uiState.value = _uiState.value.copy(
-                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
-            )
         }
     }
 
     fun deleteJournalEntry(entryId: String) {
         viewModelScope.launch {
-            val updatedEntries = uiState.value.trip?.journalEntries.orEmpty().filterNot {
-                it.id == entryId
+            try {
+                val currentTrip = _uiState.value.trip ?: return@launch
+                val updatedEntries = currentTrip.journalEntries.filterNot { it.id == entryId }
+                _uiState.value = _uiState.value.copy(
+                    trip = currentTrip.copy(journalEntries = updatedEntries)
+                )
+                // TODO: Add repository call to delete the entry
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = "Failed to delete journal entry: ${e.message}"
+                )
             }
-            _uiState.value = _uiState.value.copy(
-                trip = uiState.value.trip?.copy(journalEntries = updatedEntries)
-            )
         }
     }
 
