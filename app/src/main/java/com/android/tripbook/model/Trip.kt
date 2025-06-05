@@ -4,7 +4,6 @@ import com.android.tripbook.service.AgencyService
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
@@ -83,11 +82,6 @@ data class Trip(
 // Type converters for Room database
 class Converters {
     private val gson = Gson()
-
-    @TypeConverter
-    fun toLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let { LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE) }
-    }
 
     @TypeConverter
     fun fromTripStatus(status: TripStatus): String {
