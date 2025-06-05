@@ -30,7 +30,7 @@ import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.service.GoogleMapsService
-import com.android.tripbook.service.PlaceResult
+import com.android.tripbook.model.PlaceResult
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate

@@ -1,101 +1,105 @@
 package com.android.tripbook.service
 
-data class AgencyService(
-    val id: String,
-    val name: String,
-    val type: String, // e.g., "Tour", "Accommodation", "Transportation"
-    val description: String,
-    val price: Int, // in USD
-    val rating: Float, // 0.0 to 5.0
-    val location: String // City or region
-)
-
-data class TravelAgency(
-    val id: String,
-    val name: String,
-    val services: List<AgencyService>,
-    val rating: Float
-)
+import com.android.tripbook.model.AgencyService
+import kotlinx.coroutines.delay
 
 class TravelAgencyService {
-    // Mock data for travel agencies
-    private val agencies = listOf(
-        TravelAgency(
-            id = "agency1",
-            name = "Nile Adventures",
-            services = listOf(
-                AgencyService(
-                    id = "service1",
-                    name = "Nile River Cruise",
-                    type = "Tour",
-                    description = "A 3-day cruise along the Nile River",
-                    price = 500,
-                    rating = 4.5f,
-                    location = "Cairo, Egypt"
-                ),
-                AgencyService(
-                    id = "service2",
-                    name = "Pyramids Tour",
-                    type = "Tour",
-                    description = "Guided tour of the Giza Pyramids",
-                    price = 150,
-                    rating = 4.8f,
-                    location = "Giza, Egypt"
-                )
+    suspend fun getAgenciesForDestination(destination: String): List<AgencyService> {
+        // Simulate network delay
+        delay(1000)
+        
+        // Mock data
+        return listOf(
+            AgencyService(
+                id = "1",
+                name = "Safari Adventures",
+                location = destination,
+                price = 299.99,
+                rating = 4.7,
+                description = "Guided safari tours with experienced rangers"
             ),
-            rating = 4.6f
-        ),
-        TravelAgency(
-            id = "agency2",
-            name = "Sahara Travels",
-            services = listOf(
-                AgencyService(
-                    id = "service3",
-                    name = "Desert Safari",
-                    type = "Tour",
-                    description = "2-day desert safari experience",
-                    price = 300,
-                    rating = 4.2f,
-                    location = "Marrakech, Morocco"
-                ),
-                AgencyService(
-                    id = "service4",
-                    name = "Luxury Hotel Booking",
-                    type = "Accommodation",
-                    description = "5-star hotel in Marrakech",
-                    price = 200,
-                    rating = 4.7f,
-                    location = "Marrakech, Morocco"
-                )
+            AgencyService(
+                id = "2",
+                name = "African Explorers",
+                location = destination,
+                price = 199.99,
+                rating = 4.5,
+                description = "Cultural tours and wildlife experiences"
             ),
-            rating = 4.4f
-        )
-    )
-
-    fun getAgenciesForDestination(destination: String): List<TravelAgency> {
-        // Filter agencies based on destination (case-insensitive, partial match)
-        val normalizedDestination = destination.lowercase()
-        return agencies.filter { agency ->
-            agency.services.any { service ->
-                service.location.lowercase().contains(normalizedDestination)
-            }
-        }
-    }
-
-    fun filterAgencies(
-        agencies: List<TravelAgency>,
-        minRating: Float? = null,
-        maxPrice: Int? = null,
-        serviceType: String? = null
-    ): List<TravelAgency> {
-        return agencies.map { agency ->
-            agency.copy(
-                services = agency.services.filter { service ->
-                    (minRating == null || service.rating >= minRating) &&
-                            (maxPrice == null || service.price <= maxPrice) &&
-                            (serviceType == null || service.type == serviceType)
-                }
+            AgencyService(
+                id = "3",
+                name = "Luxury Safaris",
+                location = destination,
+                price = 499.99,
+                rating = 4.9,
+                description = "Premium safari experiences with luxury accommodations"
             )
-        }.filter { it.services.isNotEmpty() }
+        )
+    }
+    
+    suspend fun getAccommodationsForDestination(destination: String): List<AgencyService> {
+        // Simulate network delay
+        delay(1000)
+        
+        // Mock data
+        return listOf(
+            AgencyService(
+                id = "4",
+                name = "Safari Lodge",
+                location = destination,
+                price = 150.0,
+                rating = 4.6,
+                description = "Comfortable lodge with views of the savanna"
+            ),
+            AgencyService(
+                id = "5",
+                name = "Luxury Tented Camp",
+                location = destination,
+                price = 250.0,
+                rating = 4.8,
+                description = "Luxury tents with en-suite bathrooms and private decks"
+            ),
+            AgencyService(
+                id = "6",
+                name = "Eco Resort",
+                location = destination,
+                price = 180.0,
+                rating = 4.4,
+                description = "Sustainable eco-friendly resort with solar power"
+            )
+        )
+    }
+    
+    suspend fun getTransportationForDestination(destination: String): List<AgencyService> {
+        // Simulate network delay
+        delay(1000)
+        
+        // Mock data
+        return listOf(
+            AgencyService(
+                id = "7",
+                name = "Safari Jeep Rental",
+                location = destination,
+                price = 80.0,
+                rating = 4.3,
+                description = "4x4 vehicles suitable for safari terrain"
+            ),
+            AgencyService(
+                id = "8",
+                name = "Airport Transfers",
+                location = destination,
+                price = 50.0,
+                rating = 4.5,
+                description = "Reliable airport pickup and drop-off service"
+            ),
+            AgencyService(
+                id = "9",
+                name = "Private Guide & Driver",
+                location = destination,
+                price = 120.0,
+                rating = 4.7,
+                description = "Experienced local guides with private vehicles"
+            )
+        )
     }
 }
