@@ -1,10 +1,13 @@
 package com.android.tripbook
 
 
+import android.Manifest
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.app.ActivityCompat
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Agency
@@ -23,6 +26,10 @@ import com.android.tripbook.viewmodel.AgencyViewModel
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        const val CALENDAR_PERMISSION_REQUEST_CODE = 1001
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,6 +54,29 @@ class MainActivity : ComponentActivity() {
                     agencyRepository = agencyRepository
                 )
             }
+        }
+    }
+
+    fun requestCalendarPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.READ_CALENDAR,
+                Manifest.permission.WRITE_CALENDAR
+            ),
+            CALENDAR_PERMISSION_REQUEST_CODE
+        )
+    }
+
+    // Optionally, handle the result if you want to show a message or trigger a callback
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CALENDAR_PERMISSION_REQUEST_CODE) {
+            // You can notify your Compose UI via a shared ViewModel or state
         }
     }
 

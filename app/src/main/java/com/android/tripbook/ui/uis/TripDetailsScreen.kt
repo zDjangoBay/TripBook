@@ -26,6 +26,8 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
+import com.android.tripbook.service.NominatimService
+import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripDetailsViewModel
@@ -36,6 +38,24 @@ import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import androidx.compose.runtime.collectAsState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.filled.CalendarToday
+import com.android.tripbook.service.CalendarIntegrationService
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.rememberCoroutineScope
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
+import android.Manifest
+import android.app.Activity
+import androidx.core.app.ActivityCompat
+import com.android.tripbook.MainActivity
 
 @Composable
 fun TripDetailsScreen(
@@ -45,6 +65,14 @@ fun TripDetailsScreen(
 ) {
     val viewModel: TripDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    val context = LocalContext.current
+    val scaffoldState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    var showCalendarPicker by remember { mutableStateOf(false) }
+    var selectedCalendarId by remember { mutableStateOf<Long?>(null) }
+
+    val activity = context as? Activity
 
     // Initialize with the provided trip
     LaunchedEffect(trip.id) {
@@ -108,7 +136,11 @@ fun TripDetailsScreen(
                                 trip = currentTrip,
                                 uiState = uiState,
                                 viewModel = viewModel,
-                                onEditItineraryClick = onEditItineraryClick
+                                onEditItineraryClick = onEditItineraryClick,
+                                showCalendarPicker = showCalendarPicker,
+                                onShowCalendarPicker = { showCalendarPicker = it },
+                                selectedCalendarId = selectedCalendarId,
+                                onCalendarSelected = { selectedCalendarId = it }
                             )
                             "Map" -> EnhancedMapTab(
                                 trip = currentTrip,
@@ -139,6 +171,35 @@ fun TripDetailsScreen(
         LaunchedEffect(error) {
             // Show error message (you could use a Snackbar here)
             viewModel.clearError()
+        }
+    }
+
+    // Calendar picker dialog
+    if (showCalendarPicker) {
+        if (CalendarIntegrationService.hasCalendarPermission(context)) {
+            CalendarPickerDialog(
+                context = context,
+                onCalendarSelected = { calendarId ->
+                    selectedCalendarId = calendarId
+                    val results = CalendarIntegrationService.syncTripToCalendar(
+                        context,
+                        currentTrip.itinerary,
+                        calendarId
+                    )
+                    coroutineScope.launch {
+                        scaffoldState.showSnackbar(
+                            if (results.any { it != null }) "Trip synced to calendar"
+                            else "Trip already synced"
+                        )
+                    }
+                    showCalendarPicker = false
+                },
+                onDismiss = { showCalendarPicker = false }
+            )
+        } else {
+            LaunchedEffect(Unit) {
+                scaffoldState.showSnackbar("Calendar permission required")
+            }
         }
     }
 }
@@ -215,12 +276,17 @@ fun EnhancedItineraryTab(
     uiState: com.android.tripbook.viewmodel.TripDetailsUiState,
     viewModel: TripDetailsViewModel,
     onEditItineraryClick: () -> Unit,
-    modifier: Modifier = Modifier
+    showCalendarPicker: Boolean,
+    onShowCalendarPicker: (Boolean) -> Unit,
+    selectedCalendarId: Long?,
+    onCalendarSelected: (Long) -> Unit
 ) {
+    val scaffoldState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Header with edit button and view toggle
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -252,7 +318,6 @@ fun EnhancedItineraryTab(
                     fontSize = 14.sp
                 )
             }
-
             Button(
                 onClick = onEditItineraryClick,
                 colors = ButtonDefaults.buttonColors(
@@ -267,8 +332,58 @@ fun EnhancedItineraryTab(
                     color = Color.White
                 )
             }
+            Button(
+                onClick = {
+                    if (CalendarIntegrationService.hasCalendarPermission(context)) {
+                        if (selectedCalendarId != null) {
+                            val results = CalendarIntegrationService.syncTripToCalendar(
+                                context,
+                                trip.itinerary,
+                                selectedCalendarId
+                            )
+                            coroutineScope.launch {
+                                scaffoldState.showSnackbar(
+                                    if (results.any { it != null }) "Trip synced to calendar"
+                                    else "Trip already synced"
+                                )
+                            }
+                        } else {
+                            onShowCalendarPicker(true)
+                        }
+                    } else {
+                        val activity = context as? Activity
+                        activity?.let {
+                            ActivityCompat.requestPermissions(
+                                it,
+                                arrayOf(
+                                    Manifest.permission.READ_CALENDAR,
+                                    Manifest.permission.WRITE_CALENDAR
+                                ),
+                                MainActivity.CALENDAR_PERMISSION_REQUEST_CODE
+                            )
+                        }
+                        coroutineScope.launch {
+                            scaffoldState.showSnackbar("Calendar permission required")
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50)
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = "Sync to Calendar",
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Sync",
+                    fontSize = 14.sp
+                )
+            }
         }
-
         when (uiState.mapViewMode) {
             MapViewMode.LIST -> {
                 // Date selector
@@ -291,7 +406,10 @@ fun EnhancedItineraryTab(
                 }
             }
             MapViewMode.MAP -> {
-                EnhancedMapTab(trip = trip, uiState = uiState, viewModel = viewModel)
+                // Wrap in a Box to ensure proper composable context
+                Box(modifier = Modifier.fillMaxSize()) {
+                    EnhancedMapTab(trip = trip, uiState = uiState, viewModel = viewModel)
+                }
             }
         }
     }
@@ -320,13 +438,11 @@ fun EnhancedMapTab(
         // Map view
         TripMapView(
             trip = trip,
-            selectedDate = uiState.selectedDate,
-            showRoutes = true,
-            mapType = MapType.NORMAL,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp)),
+            showRoute = true
         )
 
         // Legend
@@ -413,195 +529,6 @@ fun TravelersCard(
                     )
                     if (index < trip.companions.size - 1) {
                         Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
-            }
-        }
-    }
-}
-
-// Rest of the file remains unchanged
-@Composable
-private fun MapTab(trip: Trip) {
-    var showRoutes by remember { mutableStateOf(true) }
-    var mapType by remember { mutableStateOf(MapType.NORMAL) }
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Map controls
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Route toggle
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                ;
-                Switch(
-                    checked = showRoutes,
-                    onCheckedChange = { showRoutes = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color(0xFF667EEA),
-                        checkedTrackColor = Color(0xFF667EEA).copy(alpha = 0.5f)
-                    )
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Show Routes",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-
-            // Map type selector
-            OutlinedButton(
-                onClick = {
-                    mapType = when (mapType) {
-                        MapType.NORMAL -> MapType.SATELLITE
-                        MapType.SATELLITE -> MapType.HYBRID
-                        MapType.HYBRID -> MapType.TERRAIN
-                        MapType.TERRAIN -> MapType.NORMAL
-                        else -> MapType.NORMAL
-                    }
-                },
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color(0xFF667EEA)
-                ),
-                border = ButtonDefaults.outlinedButtonBorder.copy(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF667EEA), Color(0xFF667EEA))
-                    )
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = when (mapType) {
-                        MapType.NORMAL -> "Normal"
-                        MapType.SATELLITE -> "Satellite"
-                        MapType.HYBRID -> "Hybrid"
-                        MapType.TERRAIN -> "Terrain"
-                        else -> "Normal"
-                    },
-                    fontSize = 12.sp
-                )
-            }
-        }
-
-        // Map view
-        TripMapView(
-            trip = trip,
-            showRoutes = showRoutes,
-            mapType = mapType,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .clip(RoundedCornerShape(16.dp))
-        )
-
-        // Legend
-        if (trip.itinerary.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(16.dp))
-            MapLegend()
-        }
-    }
-}
-
-@Composable
-private fun TripMapView(
-    trip: Trip,
-    selectedDate: LocalDate? = null,
-    showRoutes: Boolean = true,
-    mapType: MapType = MapType.NORMAL,
-    modifier: Modifier = Modifier
-) {
-    // Calculate map center based on trip data
-    val mapCenter = remember(trip) {
-        trip.destinationCoordinates?.let {
-            LatLng(it.latitude, it.longitude)
-        } ?: trip.itinerary.firstOrNull()?.coordinates?.let {
-            LatLng(it.latitude, it.longitude)
-        } ?: LatLng(3.848, 11.502) // Default to Yaoundé, Cameroon
-    }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(mapCenter, 12f)
-    }
-
-    GoogleMap(
-        modifier = modifier,
-        cameraPositionState = cameraPositionState,
-        uiSettings = MapUiSettings(
-            zoomControlsEnabled = true,
-            compassEnabled = true,
-            myLocationButtonEnabled = true,
-            mapToolbarEnabled = true
-        ),
-        properties = MapProperties(
-            mapType = mapType,
-            isMyLocationEnabled = false
-        )
-    ) {
-        // Add destination marker if available
-        trip.destinationCoordinates?.let { destination ->
-            Marker(
-                state = MarkerState(
-                    position = LatLng(destination.latitude, destination.longitude)
-                ),
-                title = trip.destination,
-                snippet = "Main Destination",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
-            )
-        }
-
-        // Add markers for itinerary items (filtered by selected date if provided)
-        val itemsToShow = if (selectedDate != null) {
-            trip.itinerary.filter { it.date == selectedDate }
-        } else {
-            trip.itinerary
-        }
-
-        itemsToShow.forEachIndexed { index, item ->
-            item.coordinates?.let { location ->
-                Marker(
-                    state = MarkerState(
-                        position = LatLng(location.latitude, location.longitude)
-                    ),
-                    title = item.title,
-                    snippet = "${item.time} - ${item.location}",
-                    icon = when (item.type) {
-                        ItineraryType.ACTIVITY -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                        ItineraryType.ACCOMMODATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                        ItineraryType.TRANSPORTATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-                    }
-                )
-            }
-        }
-
-        // Add route polylines if enabled and route data exists
-        if (showRoutes) {
-            trip.itinerary.forEachIndexed { index, item ->
-                item.routeToNext?.let { route ->
-                    if (route.polyline.isNotEmpty()) {
-                        if (index < trip.itinerary.size - 1) {
-                            val currentCoords = item.coordinates
-                            val nextCoords = trip.itinerary[index + 1].coordinates
-
-                            if (currentCoords != null && nextCoords != null) {
-                                Polyline(
-                                    points = listOf(
-                                        LatLng(currentCoords.latitude, currentCoords.longitude),
-                                        LatLng(nextCoords.latitude, nextCoords.longitude)
-                                    ),
-                                    color = Color(0xFF667EEA),
-                                    width = 5f
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -887,8 +814,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     }
 }
 
-
-
 @Composable
 private fun DetailItem(icon: String, text: String) {
     Row(
@@ -936,8 +861,6 @@ private fun TravelerItem(initials: String, name: String, color: Color) {
         )
     }
 }
-
-
 
 @Composable
 private fun TripBookGradientBackground(content: @Composable () -> Unit) {
