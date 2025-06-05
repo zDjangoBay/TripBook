@@ -31,7 +31,7 @@ fun TripCreationFlowScreen(
     val isLoading by tripViewModel.isLoading.collectAsState()
     val error by tripViewModel.error.collectAsState()
 
-    // Handle error display
+    // Handle error display//
     error?.let { errorMessage ->
         LaunchedEffect(errorMessage) {
             // You could show a snackbar or toast here
