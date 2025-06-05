@@ -92,17 +92,19 @@ fun CommentScreen(
                     }
                 )
             } else {
-                CommentInput(onPost = { text ->
+                CommentInput(onPost = { text, imageUri ->
                     val comment = Comment(
                         id = UUID.randomUUID().toString(),
                         userId = currentUserId,
                         username = currentUsername,
                         avatarUrl = currentAvatar,
                         text = text,
-                        timestamp = System.currentTimeMillis()
+                        timestamp = System.currentTimeMillis(),
+                        imageUri = imageUri
                     )
                     onPost(comment)
                 })
+
             }
         }
     }
