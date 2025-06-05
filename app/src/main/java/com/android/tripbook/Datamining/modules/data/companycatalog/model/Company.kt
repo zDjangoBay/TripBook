@@ -1,7 +1,9 @@
 package com.android.Tripbook.Datamining.modules.data.companycatalog.model
 
 import java.util.UUID
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Company(
     val Company_Id:String=UUID.randomUUID().toString(),
     val CompanyName:String,
