@@ -87,7 +87,7 @@ fun DateSelectionStep(
                 .padding(vertical = 16.dp),
             enabled = startDate <= endDate
         ) {
-            Text("Continue to Traveler Information")
+            Text("Continue to Agency Selection")
         }
     }
 }

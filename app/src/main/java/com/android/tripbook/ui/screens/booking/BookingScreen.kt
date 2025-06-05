@@ -125,7 +125,7 @@ fun BookingScreen(
                         onContinue = { viewModel.nextStep() },
                         modifier = Modifier.fillMaxSize(),
                         selectedAgency = selectedAgency?.id,
-                        agencies = agencies
+                        agencies = agencies,
                     )
                 }
 

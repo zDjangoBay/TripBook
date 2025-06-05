@@ -9,5 +9,5 @@ data class Agency(
     val reviewCount: Int,
     val perks: List<String>,  // e.g., ["Free cancellation", "24/7 support"]
     val imageUrl: String,
-    val description: String
+    val description: String,
 ) : Serializable
