@@ -3,6 +3,7 @@ package com.android.tripbook.comment.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -15,10 +16,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.comment.model.Comment
+import com.android.tripbook.comment.model.Reply
 import com.android.tripbook.comment.util.TimeUtils
 
 @Composable
@@ -65,6 +69,19 @@ fun CommentItem(
                     text = comment.text,
                     style = MaterialTheme.typography.bodyMedium
                 )
+
+                comment.imageUri?.let { uri ->
+                    Image(
+                        painter = rememberAsyncImagePainter(uri),
+                        contentDescription = "Comment image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .padding(top = 8.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                    )
+                }
 
                 Text(
                     text = TimeUtils.getRelativeTimeSpan(comment.timestamp),
@@ -146,7 +163,7 @@ fun CommentItem(
                     ReplyItem(
                         reply = reply,
                         currentUserId = currentUserId,
-                        onLike = { /* Handle reply like */ }
+                        onLike = { onLike(comment.copy(replies = listOf(reply))) }
                     )
                 }
             }
@@ -158,9 +175,9 @@ fun CommentItem(
 
 @Composable
 fun ReplyItem(
-    reply: com.android.tripbook.comment.model.Reply,
+    reply: Reply,
     currentUserId: String,
-    onLike: (com.android.tripbook.comment.model.Reply) -> Unit
+    onLike: (Reply) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -219,12 +236,10 @@ fun ReplyItem(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun DeletedCommentItem() {
     Row(
         modifier = Modifier
-
             .fillMaxWidth()
             .padding(8.dp)
     ) {
@@ -234,4 +249,44 @@ fun DeletedCommentItem() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCommentItem() {
+    CommentItem(
+        comment = Comment(
+            id = "1",
+            userId = "user1",
+            username = "John Doe",
+            avatarUrl = "",
+            text = "This is a sample comment",
+            timestamp = System.currentTimeMillis(),
+            likes = 5,
+            imageUri = null,
+            replies = emptyList()
+        ),
+        currentUserId = "user1",
+        onReply = {},
+        onLike = {},
+        onDelete = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewReplyItem() {
+    ReplyItem(
+        reply = Reply(
+            id = "1",
+            userId = "user2",
+            username = "Jane Smith",
+            avatarUrl = "",
+            text = "This is a sample reply",
+            timestamp = System.currentTimeMillis(),
+            likes = 2
+        ),
+        currentUserId = "user1",
+        onLike = {}
+    )
 }
