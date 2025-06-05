@@ -281,23 +281,22 @@ fun TripCard(
                         color = Color(0xFF1A202C)
                     )
                     // Safe date formatting with null checks
-                    try {
-                        Text(
-                            text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
+                    val dateText = remember(trip.startDate, trip.endDate) {
+                        try {
+                            "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
                                 trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                            }",
-                            fontSize = 14.sp,
-                            color = Color(0xFF667EEA),
-                            fontWeight = FontWeight.Medium
-                        )
-                    } catch (e: Exception) {
-                        Text(
-                            text = "Date not available",
-                            fontSize = 14.sp,
-                            color = Color(0xFF667EEA),
-                            fontWeight = FontWeight.Medium
-                        )
+                            }"
+                        } catch (e: Exception) {
+                            "Date not available"
+                        }
                     }
+
+                    Text(
+                        text = dateText,
+                        fontSize = 14.sp,
+                        color = Color(0xFF667EEA),
+                        fontWeight = FontWeight.Medium
+                    )
                 }
 
                 Box(
