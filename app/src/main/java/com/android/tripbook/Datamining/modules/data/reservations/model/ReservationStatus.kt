@@ -1,5 +1,8 @@
 package com.android.Tripbook.Datamining.modules.data.reservations.model
 
+import kotlinx.serialization.*
+
+@Serializable
 enum class ReservationStatus {
     CONFIRMED,
     PENDING,
