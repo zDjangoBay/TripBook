@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.android.tripbook.R
@@ -55,7 +56,7 @@ class AddEditExpenseDialogFragment : DialogFragment() {
         _binding = DialogAddEditExpenseBinding.inflate(LayoutInflater.from(context))
 
         currentTripId = requireArguments().getString(ARG_TRIP_ID)!!
-        existingExpense = requireArguments().getParcelable(ARG_EXPENSE) // Expense needs to be Parcelable
+        existingExpense = requireArguments().getParcelable(ARG_EXPENSE)
 
         val viewModelFactory = BudgetViewModelFactory(requireActivity().application, currentTripId)
         budgetViewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(BudgetViewModel::class.java)
@@ -70,21 +71,25 @@ class AddEditExpenseDialogFragment : DialogFragment() {
             binding.editTextExpenseAmount.setText(it.amount.toString())
             calendar.timeInMillis = it.date
             binding.editTextExpenseDate.setText(dateFormatter.format(calendar.time))
-            // Category will be set by observing LiveData for spinner
+            // Category selection will be handled by setupCategorySpinner observing LiveData
         } ?: run {
-            // For new expense, set default date to today
-             binding.editTextExpenseDate.setText(dateFormatter.format(Date()))
+            binding.editTextExpenseDate.setText(dateFormatter.format(Date())) // Default to today for new expense
         }
-
 
         return MaterialAlertDialogBuilder(requireContext())
             .setView(binding.root)
             .setTitle(dialogTitle)
-            .setPositiveButton(if (existingExpense == null) "Add" else "Save") { _, _ ->
-                saveExpense()
-            }
+            .setPositiveButton(if (existingExpense == null) "Add" else "Save", null) // Null listener initially
             .setNegativeButton("Cancel", null)
             .create()
+            .apply {
+                setOnShowListener { dialogInterface ->
+                    val positiveButton = (dialogInterface as AlertDialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                    positiveButton.setOnClickListener {
+                        validateAndSaveExpense()
+                    }
+                }
+            }
     }
 
     private fun setupDatePicker() {
@@ -131,12 +136,12 @@ class AddEditExpenseDialogFragment : DialogFragment() {
         }
     }
 
-
-    private fun saveExpense() {
+    private fun validateAndSaveExpense() {
         val description = binding.editTextExpenseDescription.text.toString().trim()
         val amountStr = binding.editTextExpenseAmount.text.toString().trim()
         val dateStr = binding.editTextExpenseDate.text.toString().trim()
 
+        // Validate Description
         if (description.isEmpty()) {
             binding.textFieldExpenseDescriptionLayout.error = "Description cannot be empty"
             return
@@ -144,32 +149,42 @@ class AddEditExpenseDialogFragment : DialogFragment() {
             binding.textFieldExpenseDescriptionLayout.error = null
         }
 
+        // Validate Amount
         val amount = amountStr.toDoubleOrNull()
-        if (amount == null || amount <= 0) { // Expenses should be positive
+        if (amount == null || amount <= 0) { // Expenses should typically be positive
             binding.textFieldExpenseAmountLayout.error = "Please enter a valid positive amount"
             return
         } else {
             binding.textFieldExpenseAmountLayout.error = null
         }
 
-        val selectedDateInMillis = try {
-            dateFormatter.parse(dateStr)?.time ?: throw NullPointerException()
+        // Validate Date
+        val selectedDateInMillis: Long
+        try {
+            val parsedDate = dateFormatter.parse(dateStr)
+            if (parsedDate == null) {
+                binding.textFieldExpenseDateLayout.error = "Please select a valid date"
+                return
+            }
+            selectedDateInMillis = parsedDate.time
+            binding.textFieldExpenseDateLayout.error = null
         } catch (e: Exception) {
-            binding.textFieldExpenseDateLayout.error = "Please select a valid date"
+            binding.textFieldExpenseDateLayout.error = "Invalid date format"
             return
         }
-        binding.textFieldExpenseDateLayout.error = null
 
-
+        // Validate Category Spinner
         val selectedCategoryPosition = binding.spinnerExpenseCategory.selectedItemPosition
         if (allCategoriesForTrip.isEmpty() || selectedCategoryPosition == Spinner.INVALID_POSITION || selectedCategoryPosition >= allCategoriesForTrip.size) {
-            Toast.makeText(context, "Please select a valid category or add one first.", Toast.LENGTH_LONG).show()
-            // Potentially highlight spinner or show error on its TextInputLayout if you wrap it
+            Toast.makeText(context, "Please select a valid category. Add one if none exist.", Toast.LENGTH_LONG).show()
+            // Optionally, you could try to set an error on the Spinner's TextInputLayout if you wrap it,
+            // or just rely on the Toast for now.
             return
         }
         val selectedCategory = allCategoriesForTrip[selectedCategoryPosition]
 
 
+        // All validations passed, proceed to save
         if (existingExpense == null) {
             val newExpense = Expense(
                 tripId = currentTripId,
@@ -179,17 +194,18 @@ class AddEditExpenseDialogFragment : DialogFragment() {
                 date = selectedDateInMillis
             )
             budgetViewModel.insertExpense(newExpense)
+            Toast.makeText(context, "Expense '$description' added", Toast.LENGTH_SHORT).show()
         } else {
             val updatedExpense = existingExpense!!.copy(
-                // tripId should not change for an existing expense
                 categoryId = selectedCategory.id,
                 description = description,
                 amount = amount,
                 date = selectedDateInMillis
             )
             budgetViewModel.updateExpense(updatedExpense)
+            Toast.makeText(context, "Expense '$description' updated", Toast.LENGTH_SHORT).show()
         }
-        dismiss()
+        dismiss() // Dismiss dialog only if save is successful
     }
 
     override fun onDestroyView() {
