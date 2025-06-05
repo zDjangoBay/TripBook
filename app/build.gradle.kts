@@ -1,16 +1,17 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services") // ✅ This is required
 }
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -29,19 +30,25 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
+        viewBinding = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -51,8 +58,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
+    //           Default dependencies for the project
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -65,6 +71,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,6 +83,36 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //---------------------------------------------------------
-    //      You can add your own dependencies down here
+    //        Custom dependencies
     //---------------------------------------------------------
+
+    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
+
+    // Extended Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
+    // Calendar
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
+
+    ///// Firebase SDK using BoM for version management
+    implementation (platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 }
+//configurations.all {
+//    resolutionStrategy {
+//        force 'com.google.firebase:firebase-common:21.1.0'
+//        force 'com.google.firebase:firebase-firestore:24.10.2'
+//    }
+//}
