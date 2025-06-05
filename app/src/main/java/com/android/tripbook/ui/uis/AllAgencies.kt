@@ -1,6 +1,9 @@
 package com.android.tripbook.ui.uis
 
 
+
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -173,6 +177,8 @@ fun AgencyCard(
     agency: Agency,
     onClick: () -> Unit // Added onClick parameter
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -238,7 +244,14 @@ fun AgencyCard(
                 agency.contactPhone?.let { phone ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.weight(1f, fill = false)
+                        modifier = Modifier
+                            .weight(1f, fill = false)
+                            .clickable {
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = Uri.parse("tel:$phone")
+                                }
+                                context.startActivity(intent)
+                            }
                     ) {
                         Text(
                             text = "📞",
@@ -260,7 +273,16 @@ fun AgencyCard(
             agency.website?.let { website ->
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        val url = if (!website.startsWith("http://") && !website.startsWith("https://")) {
+                            "https://$website"
+                        } else {
+                            website
+                        }
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+                    }
                 ) {
                     Text(
                         text = "🌐",
