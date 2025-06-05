@@ -395,7 +395,7 @@ class NominatimService {
         }
     }
 
-    
+
     companion object {
         private const val DEFAULT_TIMEOUT_SECONDS: Long = 30
         // A placeholder for a potential factory method.
