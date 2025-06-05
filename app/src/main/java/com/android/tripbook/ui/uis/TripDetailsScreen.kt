@@ -26,7 +26,7 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
-import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.components.* // Import all components, including EditActivityDialog
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripDetailsViewModel
 import com.android.tripbook.viewmodel.MapViewMode
@@ -41,10 +41,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
-    onEditItineraryClick: () -> Unit
+    onEditItineraryClick: () -> Unit, // This was originally for the main "Edit Itinerary" button
 ) {
     val viewModel: TripDetailsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+
+    // State for showing the Edit Activity Dialog
+    var showEditActivityDialog by remember { mutableStateOf(false) }
+    var activityToEdit by remember { mutableStateOf<ItineraryItem?>(null) }
 
     // Initialize with the provided trip
     LaunchedEffect(trip.id) {
@@ -65,7 +69,7 @@ fun TripDetailsScreen(
             // Header with back button
             TripBookHeader(
                 title = currentTrip.name,
-                subtitle = "${currentTrip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${currentTrip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                subtitle = "${currentTrip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${currentTrip.endDate.format(DateTimeFormatter.ofPattern("MMM d,yyyy"))}",
                 onBackClick = onBackClick
             )
 
@@ -108,7 +112,13 @@ fun TripDetailsScreen(
                                 trip = currentTrip,
                                 uiState = uiState,
                                 viewModel = viewModel,
-                                onEditItineraryClick = onEditItineraryClick
+                                onUpdateActivityClick = { item: ItineraryItem -> // Explicitly define type
+                                    activityToEdit = item
+                                    showEditActivityDialog = true
+                                },
+                                onDeleteActivityClick = { itemId: String -> // Explicitly define type
+                                    viewModel.deleteItineraryItem(itemId)
+                                }
                             )
                             "Map" -> EnhancedMapTab(
                                 trip = currentTrip,
@@ -122,7 +132,7 @@ fun TripDetailsScreen(
         }
     }
 
-    // Add Activity Dialog
+    // Add Activity Dialog (for adding new activities via the '+' button)
     if (uiState.showAddActivityDialog) {
         uiState.selectedDate?.let { selectedDate ->
             AddActivityDialog(
@@ -133,6 +143,27 @@ fun TripDetailsScreen(
             )
         }
     }
+
+    // Edit Activity Dialog (for updating/deleting existing activities)
+    if (showEditActivityDialog) {
+        activityToEdit?.let { item ->
+            EditActivityDialog(
+                item = item,
+                onDismiss = { showEditActivityDialog = false; activityToEdit = null },
+                onSave = { updatedItem: ItineraryItem -> // Explicitly define type
+                    viewModel.updateItineraryItem(updatedItem)
+                    showEditActivityDialog = false
+                    activityToEdit = null
+                },
+                onDelete = { itemId: String -> // Explicitly define type
+                    viewModel.deleteItineraryItem(itemId)
+                    showEditActivityDialog = false
+                    activityToEdit = null
+                }
+            )
+        }
+    }
+
 
     // Error handling
     uiState.error?.let { error ->
@@ -214,7 +245,8 @@ fun EnhancedItineraryTab(
     trip: Trip,
     uiState: com.android.tripbook.viewmodel.TripDetailsUiState,
     viewModel: TripDetailsViewModel,
-    onEditItineraryClick: () -> Unit,
+    onUpdateActivityClick: (ItineraryItem) -> Unit, // New parameter
+    onDeleteActivityClick: (String) -> Unit,       // New parameter
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -225,7 +257,7 @@ fun EnhancedItineraryTab(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.End, // Changed to End to align toggle to right
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
@@ -252,21 +284,6 @@ fun EnhancedItineraryTab(
                     fontSize = 14.sp
                 )
             }
-
-            Button(
-                onClick = onEditItineraryClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = TripBookColors.Primary
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "Edit Itinerary",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White
-                )
-            }
         }
 
         when (uiState.mapViewMode) {
@@ -286,7 +303,9 @@ fun EnhancedItineraryTab(
                         date = selectedDate,
                         activities = activitiesForDate,
                         onActivityClick = { /* Handle activity click */ },
-                        onAddActivityClick = viewModel::showAddActivityDialog
+                        onAddActivityClick = viewModel::showAddActivityDialog,
+                        onUpdateActivityClick = onUpdateActivityClick, // Pass update callback
+                        onDeleteActivityClick = onDeleteActivityClick  // Pass delete callback
                     )
                 }
             }
@@ -420,7 +439,13 @@ fun TravelersCard(
     }
 }
 
-// Rest of the file remains unchanged
+// The following composables were not part of the `TripDetailsScreen` in previous versions,
+// but were included in the original `TripDetailsScreen.kt` file provided.
+// They are kept here for completeness, assuming they are indeed top-level declarations
+// in the original file, but they are not directly called by the `TripDetailsScreen` logic
+// as modified. If they were meant to be part of a different screen or utility,
+// they should be moved accordingly.
+
 @Composable
 private fun MapTab(trip: Trip) {
     var showRoutes by remember { mutableStateOf(true) }
@@ -683,72 +708,76 @@ private fun LegendItem(
 }
 
 @Composable
-private fun OverviewTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+private fun DetailItem(icon: String, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Trip Summary",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Travelers",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    TravelerItem(
-                        initials = "JD",
-                        name = "John Doe (Trip Leader)",
-                        color = Color(0xFF667EEA)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Jane Smith",
-                        color = Color(0xFF764BA2)
-                    )
-                }
-            }
-        }
+        Text(
+            text = icon,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(end = 12.dp)
+        )
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            color = Color(0xFF64748B)
+        )
     }
 }
 
+@Composable
+private fun TravelerItem(initials: String, name: String, color: Color) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(color, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = initials,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = name,
+            fontSize = 14.sp,
+            color = Color(0xFF1A202C)
+        )
+    }
+}
+
+@Composable
+private fun TripBookGradientBackground(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
+                    )
+                )
+            )
+    ) {
+        content()
+    }
+}
+
+// These are composables that were potentially misplaced or were intended to be
+// top-level. I'm moving them to the end of the file as top-level declarations
+// to resolve the "Expecting a top level declaration" error if they were
+// causing it by being inside another scope.
+// ItineraryTab was previously included and is now moved to the end as a top-level.
 @Composable
 private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     Column(
@@ -760,6 +789,9 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.End
         ) {
+            // This button is removed as it was causing navigation to ItineraryBuilderScreen for editing
+            // and individual item editing is handled by the dialog.
+            /*
             Button(
                 onClick = onEditItineraryClick,
                 colors = ButtonDefaults.buttonColors(
@@ -774,6 +806,7 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                     color = Color.White
                 )
             }
+            */
         }
 
         if (trip.itinerary.isEmpty()) {
@@ -884,75 +917,5 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                 }
             }
         }
-    }
-}
-
-
-
-@Composable
-private fun DetailItem(icon: String, text: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = icon,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(end = 12.dp)
-        )
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            color = Color(0xFF64748B)
-        )
-    }
-}
-
-@Composable
-private fun TravelerItem(initials: String, name: String, color: Color) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .background(color, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = initials,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = name,
-            fontSize = 14.sp,
-            color = Color(0xFF1A202C)
-        )
-    }
-}
-
-
-
-@Composable
-private fun TripBookGradientBackground(content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
-        content()
     }
 }
