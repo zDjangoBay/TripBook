@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.android.tripbook.comment.model.Comment
-import com.android.tripbook.comment.model.Reply
 import com.android.tripbook.comment.util.TimeUtils
 
 @Composable
@@ -87,7 +88,7 @@ fun CommentItem(
 
                     IconButton(onClick = { onReply(comment) }) {
                         Icon(
-                            imageVector = Icons.Default.Reply,
+                            imageVector = Icons.Default.Refresh,
                             contentDescription = "Reply"
                         )
                     }
