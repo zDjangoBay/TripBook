@@ -1,13 +1,13 @@
 [versions]
-agp = "8.6.0" # Garde cette version récente
-kotlin = "1.9.23" # Garde cette version récente
+agp = "8.6.0" 
+kotlin = "1.9.23" 
 
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.7.0"
-material = "1.10.0" # Tu peux laisser cette dépendance si tu en as besoin, mais elle peut être source de conflits avec Material3
+material = "1.10.0" 
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.8.0"
 composeBom = "2024.04.00" # <--- MISE À JOUR IMPORTANTE DU BOM !
@@ -17,10 +17,10 @@ coreSplashscreen = "1.2.0-alpha02"
 coreSplashscreenVersion = "1.0.1"
 activity = "1.10.1"
 constraintlayout = "2.1.4"
-# uiToolingPreviewAndroid = "1.7.8" # Suppression, car déjà dans androidx-ui-tooling-preview
-# foundationLayoutAndroid = "1.7.8" # Suppression, car géré par BOM / androidx-ui
-# runtimeAndroid = "1.7.8" # Suppression, car géré par BOM / androidx-ui
-# uiAndroid = "1.7.8" # Suppression, car géré par BOM / androidx-ui
+# uiToolingPreviewAndroid = "1.7.8" 
+# foundationLayoutAndroid = "1.7.8" 
+# runtimeAndroid = "1.7.8" 
+# uiAndroid = "1.7.8" 
 # material3Android = "1.3.2" # Suppression, car géré par BOM / androidx-material3
 
 # ---- New Versions (Assure la compatibilité avec le NOUVEAU composeBom) ----
