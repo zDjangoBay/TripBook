@@ -4,7 +4,7 @@ import com.android.tripbook.service.AgencyService
 import java.time.LocalDate
 
 enum class TripStatus {
-    PLANNED, ACTIVE, COMPLETED, UPCOMING, CANCELLED
+    PLANNED, ACTIVE, COMPLETED
 }
 
 enum class ItineraryType {
