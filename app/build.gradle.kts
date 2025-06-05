@@ -64,7 +64,6 @@ dependencies {
     //                  Do not touch them !!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
-//    implementation(libs.androidx.databinding.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
@@ -89,15 +88,4 @@ dependencies {
     //---------------------------------------------------------
     //        Custom dependencies
     //---------------------------------------------------------
-
-    implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
-
-
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
-
-
-
-
 }
