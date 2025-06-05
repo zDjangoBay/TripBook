@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -182,6 +183,83 @@ fun MyTripsScreen(
                             fontWeight = if (selectedTab == tab) FontWeight.SemiBold else FontWeight.Normal,
                             color = if (selectedTab == tab) Color(0xFF667EEA) else Color.White
                         )
+                    }
+                }
+            }
+
+            // Error State with Retry Button
+            if (!error.isNullOrEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "Connection Error",
+                            tint = Color(0xFFDC2626),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Connection Lost",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1F2937),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = error!!,
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                tripViewModel.refreshTrips()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF667EEA)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retrying...",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retry",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
                     }
                 }
             }
