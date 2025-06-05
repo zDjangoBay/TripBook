@@ -438,7 +438,7 @@ fun TripCard(
                     )
                     Text(
                         text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         color = Color(0xFF667EEA),
                         fontWeight = FontWeight.Medium
                     )
