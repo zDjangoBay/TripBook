@@ -111,7 +111,6 @@ dependencies {
     // Kotlin coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    implementation ("com.github.ibrahimsn98:CurvedBottomNavigation:1.0.0")
 
 }
 
