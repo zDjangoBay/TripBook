@@ -19,7 +19,6 @@ data class Trip(
     val caption: String,
     val description: String,
     val imageUrl: List<String>,
-    val price: String,
     val rating: Float,
     val reviewCount: Int,
     val duration: String,

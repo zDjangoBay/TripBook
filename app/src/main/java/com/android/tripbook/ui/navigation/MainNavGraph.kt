@@ -16,6 +16,10 @@ import androidx.navigation.compose.composable
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
+
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
@@ -52,15 +56,16 @@ fun MainNavGraph(
                 )
             }
         }
-        composable("catalog") {
+
+        composable("catalog") { // Or whatever your route name is
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                },
-                onAddTripClick = {}
+                }
             )
         }
+
         composable("profile") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -131,6 +136,18 @@ fun MainNavGraph(
                         }
                     }
                 }
+            )
+        }
+
+
+
+        // Ensure you have a composable route defined for "addPlaceRoute" that shows his AddPlaceScreen
+        composable(
+            route = "addPlace/{tripId}", // This route expects a tripId argument
+            arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+        ) {
+            AddPlaceScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }

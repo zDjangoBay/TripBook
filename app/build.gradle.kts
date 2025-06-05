@@ -11,6 +11,7 @@ android {
         applicationId = "com.android.tripbook"
         minSdk = 31 // Keep this as 31
         targetSdk = 34 // Keep this as 34
+
         versionCode = 1
         versionName = "1.0"
 
@@ -66,7 +67,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3) // Ensure this is using your updated version in libs.versions.toml
     implementation(libs.androidx.material.icons.extended) // For Icons.Default.Notifications
-    implementation(libs.androidx.foundation.layout.android) // Good to have for Compose layouts
+    // Good to have for Compose layouts
     implementation(libs.play.services.location) // Keep this for location services
 
     // Testing dependencies (keep as is)
@@ -85,7 +86,7 @@ dependencies {
 
     implementation(libs.coil.compose) // Keep (image loading)
     implementation(libs.androidx.navigation.compose) // Keep (navigation)
-    implementation(libs.material)
+//    implementation(libs.material)
 
     // Google Maps dependencies - Consolidate these:
     implementation(libs.play.services.maps) // Core Google Maps SDK
@@ -105,6 +106,7 @@ dependencies {
     // Kotlin coroutines (remove duplicate)
     implementation(libs.kotlinx.coroutines.android)
 
+
     // You don't need these lines again if they are already above and part of `libs.versions.toml`:
     // implementation(libs.material.icons.extended) // Duplicated
     // implementation(libs.maps.compose.v430) // Duplicated/potentially redundant
@@ -112,7 +114,13 @@ dependencies {
     // implementation(libs.kotlinx.coroutines.android) // Duplicated
     // implementation(libs.play.services.maps) // Duplicated
 
+    implementation(libs.androidx.compose.foundation)
+
+
+
+}
+
+
     // If you were specifically trying to add Material3 again for some reason,
     // it should be handled by `implementation(libs.androidx.material3)` above.
     // implementation(libs.material3) // Duplicated
-}
