@@ -16,7 +16,7 @@ class AgencyViewModel(private val agencyRepository: SupabaseAgencyRepository) : 
     private val _agencies = MutableStateFlow<List<Agency>>(emptyList())
     val agencies: StateFlow<List<Agency>> = _agencies.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _error = MutableStateFlow<String?>(null)

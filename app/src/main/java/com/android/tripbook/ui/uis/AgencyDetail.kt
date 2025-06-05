@@ -11,11 +11,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -29,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Agency
 import com.android.tripbook.model.Destination
+import com.android.tripbook.model.Review
 import com.android.tripbook.viewmodel.AgencyViewModel
 import java.text.NumberFormat
 import java.util.*
@@ -42,16 +41,23 @@ fun AgencyDetailScreen(
     val destinations by agencyViewModel.destinations.collectAsState()
     val isLoading by agencyViewModel.isLoading.collectAsState()
     val error by agencyViewModel.error.collectAsState()
+    val reviews by agencyViewModel.reviews.collectAsState()
     val context = LocalContext.current
+
+    var ratingInput by remember { mutableStateOf(0) }
+    var commentInput by remember { mutableStateOf("") }
+    var isSubmitting by remember { mutableStateOf(false) }
+    var submitError by remember { mutableStateOf<String?>(null) }
 
     // Log the agency ID for debugging//
     LaunchedEffect(Unit) {
         Log.d("AgencyDetailScreen", "Agency ID: ${agency.agencyId}")
     }
 
-    // Load destinations for the agency
+    // Load destinations and reviews for the agency
     LaunchedEffect(agency.agencyId) {
         agencyViewModel.loadDestinationsForAgency(agency.agencyId)
+        agencyViewModel.loadReviewsForAgency(agency.agencyId.toInt())
     }
 
     // Log destinations state for debugging
@@ -268,6 +274,118 @@ fun AgencyDetailScreen(
                         }
                     }
                 }
+
+                // Reviews Section
+                Text(
+                    text = "Reviews",
+                    style = TextStyle(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    ),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                if (reviews.isEmpty() && !isLoading) {
+                    Text(
+                        text = "No reviews yet.",
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(reviews) { review ->
+                            ReviewCard(review = review)
+                        }
+                    }
+                }
+
+                // Submit Review Form
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Submit a Review",
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    ),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                if (submitError != null) {
+                    Text(
+                        text = submitError ?: "",
+                        color = Color.Red,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    for (i in 1..5) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Star $i",
+                            tint = if (i <= ratingInput) Color.Yellow else Color.Gray,
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clickable {
+                                    ratingInput = i
+                                }
+                        )
+                    }
+                }
+
+                OutlinedTextField(
+                    value = commentInput,
+                    onValueChange = { commentInput = it },
+                    label = { Text("Comment") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                )
+
+                Button(
+                    onClick = {
+                        if (ratingInput == 0) {
+                            submitError = "Please select a rating"
+                            return@Button
+                        }
+                        if (commentInput.isBlank()) {
+                            submitError = "Please enter a comment"
+                            return@Button
+                        }
+                        submitError = null
+                        isSubmitting = true
+                        val review = Review(
+                            agencyId = agency.agencyId.toString(),
+                            userId = "currentUserId", // Replace with actual user ID
+                            userName = "Current User", // Replace with actual user name
+                            rating = ratingInput,
+                            comment = commentInput
+                        )
+                        agencyViewModel.submitReview(review) { success ->
+                            isSubmitting = false
+                            if (success) {
+                                ratingInput = 0
+                                commentInput = ""
+                                agencyViewModel.loadReviewsForAgency(agency.agencyId.toInt())
+                            } else {
+                                submitError = "Failed to submit review"
+                            }
+                        }
+                    },
+                    enabled = !isSubmitting,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (isSubmitting) "Submitting..." else "Submit Review")
+                }
             }
         }
     }
@@ -313,6 +431,53 @@ fun DestinationCard(destination: Destination) {
                     color = Color(0xFF667EEA)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ReviewCard(review: Review) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(
+                elevation = 2.dp,
+                shape = RoundedCornerShape(8.dp),
+                spotColor = Color.Black.copy(alpha = 0.1f)
+            ),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = review.userName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color(0xFF1A202C)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Row {
+                    repeat(review.rating) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = "Star",
+                            tint = Color.Yellow,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = review.comment,
+                fontSize = 14.sp,
+                color = Color(0xFF64748B)
+            )
         }
     }
 }

@@ -153,7 +153,7 @@ class SupabaseAgencyRepository {
 
             val reviewsResponse = supabase.from(REVIEWS_TABLE)
                 .select()
-                .eq("agency_id", agencyId)
+                .filter("agency_id", "eq", agencyId.toString())
                 .order("created_at", ascending = false)
                 .decodeList<SupabaseReview>()
 
@@ -214,9 +214,10 @@ class SupabaseAgencyRepository {
             Log.d(TAG, "Raw Supabase destinations: $allSupabaseDestinations")
 
             val filteredDestinations = allSupabaseDestinations
-                .map { it.toDestination() }
-                .filter { it.agencyId == agencyId }
-                .sortedBy { it.destinationName }
+                ?.map { it.toDestination() }
+                ?.filter { it.agencyId == agencyId }
+                ?.sortedBy { it.destinationName }
+                ?: emptyList()
 
             Log.d(TAG, "Filtered ${filteredDestinations.size} destinations for agency $agencyId: $filteredDestinations")
 
@@ -395,6 +396,7 @@ class SupabaseAgencyRepository {
         private const val AGENCIES_TABLE = "agency"
         private const val DESTINATIONS_TABLE = "destination"
         private const val BUS_TABLE = "bus"
+        private const val REVIEWS_TABLE = "review"
 
         @Volatile
         private var INSTANCE: SupabaseAgencyRepository? = null
