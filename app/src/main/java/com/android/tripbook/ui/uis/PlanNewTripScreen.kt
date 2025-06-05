@@ -10,6 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +32,8 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
+import com.android.tripbook.service.GoogleMapsService
+import com.android.tripbook.service.PlaceResult
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -41,6 +46,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanNewTripScreen(
@@ -48,6 +54,7 @@ fun PlanNewTripScreen(
     onTripCreated: (Trip) -> Unit,
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
+    googleMapsService: GoogleMapsService,
     onBrowseAgencies: (String) -> Unit
 ) {
     var tripName by remember { mutableStateOf("") }
@@ -58,8 +65,10 @@ fun PlanNewTripScreen(
     var budget by remember { mutableStateOf("") }
     var selectedTripType by remember { mutableStateOf("") }
     var itineraryItems by remember { mutableStateOf<List<ItineraryItem>>(emptyList()) }
-    var destinationSuggestions by remember { mutableStateOf<List<Attraction>>(emptyList()) }
+    var destinationSuggestions by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
+    var itineraryLocationSuggestions by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
     var isLoadingSuggestions by remember { mutableStateOf(false) }
+    var isLoadingItinerarySuggestions by remember { mutableStateOf(false) }
 
     var date by remember { mutableStateOf<LocalDate?>(null) }
     var time by remember { mutableStateOf("") }
@@ -89,111 +98,42 @@ fun PlanNewTripScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header with back button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Plan New Trip",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                )
-            }
+            TripBookHeader(
+                title = "Plan New Trip",
+                onBackClick = onBackClick
+            )
 
             // Form card
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
-            ) {
+            TripBookContentCard {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(20.dp)
                 ) {
                     // Trip Name
-                    Text(
-                        text = "Trip Name",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    OutlinedTextField(
+                    TripBookTextField(
                         value = tripName,
                         onValueChange = {
                             tripName = it
                             nameError = ""
                         },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g., Egyptian Pyramids Tour") },
+                        label = "Trip Name",
+                        placeholder = "e.g., Egyptian Pyramids Tour",
                         isError = nameError.isNotEmpty(),
-                        supportingText = {
-                            if (nameError.isNotEmpty()) {
-                                Text(nameError, color = MaterialTheme.colorScheme.error)
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
+                        errorMessage = nameError
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Destination
-                    Text(
-                        text = "Destination",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
+                    TripBookSectionTitle("Destination")
                     Column {
                         OutlinedTextField(
                             value = destination,
@@ -203,8 +143,28 @@ fun PlanNewTripScreen(
                                 if (it.trim().length >= 3) {
                                     isLoadingSuggestions = true
                                     coroutineScope.launch {
-                                        destinationSuggestions = nominatimService.getNearbyAttractions(it)
-                                        isLoadingSuggestions = false
+                                        try {
+                                            // Try Google Places API first
+                                            destinationSuggestions = googleMapsService.searchPlaces(it)
+                                            isLoadingSuggestions = false
+                                        } catch (e: Exception) {
+                                            // Fallback to Nominatim
+                                            try {
+                                                val attractions = nominatimService.getNearbyAttractions(it)
+                                                destinationSuggestions = attractions.map { attraction ->
+                                                    PlaceResult(
+                                                        placeId = "",
+                                                        name = attraction.name,
+                                                        address = attraction.location,
+                                                        types = listOf("tourist_attraction")
+                                                    )
+                                                }
+                                                isLoadingSuggestions = false
+                                            } catch (e2: Exception) {
+                                                destinationSuggestions = emptyList()
+                                                isLoadingSuggestions = false
+                                            }
+                                        }
                                     }
                                 } else {
                                     destinationSuggestions = emptyList()
@@ -217,7 +177,7 @@ fun PlanNewTripScreen(
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
                                     contentDescription = "Location",
-                                    tint = Color(0xFFE91E63)
+                                    tint = TripBookColors.Secondary
                                 )
                             },
                             isError = destinationError.isNotEmpty(),
@@ -227,9 +187,9 @@ fun PlanNewTripScreen(
                                 }
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF667EEA),
-                                focusedLabelColor = Color(0xFF667EEA),
-                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                                focusedBorderColor = TripBookColors.BorderFocused,
+                                focusedLabelColor = TripBookColors.BorderFocused,
+                                unfocusedBorderColor = TripBookColors.Border
                             ),
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true
@@ -250,20 +210,20 @@ fun PlanNewTripScreen(
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
                                 LazyColumn(
-                                    modifier = Modifier.heightIn(max = 150.dp)
+                                    modifier = Modifier.heightIn(max = 200.dp)
                                 ) {
                                     items(destinationSuggestions) { suggestion ->
-                                        SuggestionItem(
+                                        EnhancedSuggestionItem(
                                             suggestion = suggestion,
                                             onClick = {
-                                                destination = suggestion.location
+                                                destination = "${suggestion.name}, ${suggestion.address}"
                                                 destinationSuggestions = emptyList()
                                                 if (startDate != null) {
                                                     itineraryItems = itineraryItems + ItineraryItem(
                                                         date = startDate!!,
                                                         time = "10:00 AM",
                                                         title = suggestion.name,
-                                                        location = suggestion.location,
+                                                        location = suggestion.address,
                                                         type = ItineraryType.ACTIVITY,
                                                         notes = "Suggested attraction"
                                                     )
@@ -280,34 +240,15 @@ fun PlanNewTripScreen(
 
                     // Browse Travel Agencies Button
                     if (destination.isNotEmpty()) {
-                        Button(
-                            onClick = { onBrowseAgencies(destination) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFE91E63)
-                            ),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(
-                                text = "Browse Travel Agencies",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White
-                            )
-                        }
+                        TripBookSecondaryButton(
+                            text = "Browse Travel Agencies",
+                            onClick = { onBrowseAgencies(destination) }
+                        )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
 
                     // Trip Type Selection
-                    Text(
-                        text = "Trip Type",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
+                    TripBookSectionTitle("Trip Type")
                     val tripTypes = listOf("Adventure", "Cultural", "Relaxation", "Safari", "Beach")
                     Row(
                         modifier = Modifier
@@ -316,21 +257,10 @@ fun PlanNewTripScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tripTypes.take(3).forEach { type ->
-                            FilterChip(
+                            TripBookFilterChip(
                                 selected = selectedTripType == type,
                                 onClick = { selectedTripType = if (selectedTripType == type) "" else type },
-                                label = { Text(type) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color(0xFF667EEA),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF64748B)
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = if (selectedTripType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
-                                    selectedBorderColor = Color(0xFF667EEA)
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                                label = type
                             )
                         }
                     }
@@ -341,21 +271,10 @@ fun PlanNewTripScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tripTypes.drop(3).forEach { type ->
-                            FilterChip(
+                            TripBookFilterChip(
                                 selected = selectedTripType == type,
                                 onClick = { selectedTripType = if (selectedTripType == type) "" else type },
-                                label = { Text(type) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color(0xFF667EEA),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF64748B)
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = if (selectedTripType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
-                                    selectedBorderColor = Color(0xFF667EEA)
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                                label = type
                             )
                         }
                     }
@@ -658,35 +577,99 @@ fun PlanNewTripScreen(
                         color = Color(0xFF374151),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    OutlinedTextField(
-                        value = location,
-                        onValueChange = {
-                            location = it
-                            locationError = ""
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("e.g., Giza, Egypt") },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location",
-                                tint = Color(0xFFE91E63)
+                    Column {
+                        OutlinedTextField(
+                            value = location,
+                            onValueChange = {
+                                location = it
+                                locationError = ""
+                                if (it.trim().length >= 3) {
+                                    isLoadingItinerarySuggestions = true
+                                    coroutineScope.launch {
+                                        try {
+                                            itineraryLocationSuggestions = googleMapsService.searchPlaces(it)
+                                            isLoadingItinerarySuggestions = false
+                                        } catch (e: Exception) {
+                                            try {
+                                                val attractions = nominatimService.getNearbyAttractions(it)
+                                                itineraryLocationSuggestions = attractions.map { attraction ->
+                                                    PlaceResult(
+                                                        placeId = "",
+                                                        name = attraction.name,
+                                                        address = attraction.location,
+                                                        types = listOf("tourist_attraction")
+                                                    )
+                                                }
+                                                isLoadingItinerarySuggestions = false
+                                            } catch (e2: Exception) {
+                                                itineraryLocationSuggestions = emptyList()
+                                                isLoadingItinerarySuggestions = false
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    itineraryLocationSuggestions = emptyList()
+                                    isLoadingItinerarySuggestions = false
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("e.g., Giza, Egypt") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Location",
+                                    tint = Color(0xFFE91E63)
+                                )
+                            },
+                            isError = locationError.isNotEmpty(),
+                            supportingText = {
+                                if (locationError.isNotEmpty()) {
+                                    Text(locationError, color = MaterialTheme.colorScheme.error)
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF667EEA),
+                                focusedLabelColor = Color(0xFF667EEA),
+                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            singleLine = true
+                        )
+
+                        // Location suggestions for itinerary
+                        if (isLoadingItinerarySuggestions) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 8.dp),
+                                strokeWidth = 2.dp
                             )
-                        },
-                        isError = locationError.isNotEmpty(),
-                        supportingText = {
-                            if (locationError.isNotEmpty()) {
-                                Text(locationError, color = MaterialTheme.colorScheme.error)
+                        } else if (itineraryLocationSuggestions.isNotEmpty()) {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            ) {
+                                LazyColumn(
+                                    modifier = Modifier.heightIn(max = 150.dp)
+                                ) {
+                                    items(itineraryLocationSuggestions) { suggestion ->
+                                        EnhancedSuggestionItem(
+                                            suggestion = suggestion,
+                                            onClick = {
+                                                location = "${suggestion.name}, ${suggestion.address}"
+                                                itineraryLocationSuggestions = emptyList()
+                                            }
+                                        )
+                                    }
+                                }
                             }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        singleLine = true
-                    )
+                        }
+                    }
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -716,6 +699,8 @@ fun PlanNewTripScreen(
                                     labelColor = Color(0xFF64748B)
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
+                                    enabled = true,
+                                    selected = selectedItineraryType == type,
                                     borderColor = if (selectedItineraryType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
                                     selectedBorderColor = Color(0xFF667EEA)
                                 ),
@@ -861,7 +846,6 @@ fun PlanNewTripScreen(
                                     travelers = travelers.toInt(),
                                     budget = budget.toInt(),
                                     status = TripStatus.PLANNED,
-                                    type = selectedTripType,
                                     itinerary = itineraryItems
                                 )
                                 onTripCreated(newTrip)
@@ -1053,33 +1037,61 @@ private fun ItineraryItemCard(item: ItineraryItem) {
 }
 
 @Composable
-private fun SuggestionItem(suggestion: Attraction, onClick: () -> Unit) {
-    Row(
+private fun EnhancedSuggestionItem(suggestion: PlaceResult, onClick: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(12.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.Place,
-            contentDescription = "Attraction",
-            tint = Color(0xFF667EEA),
-            modifier = Modifier.size(20.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
-                text = suggestion.name,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1A202C)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Place,
+                contentDescription = "Place",
+                tint = Color(0xFF667EEA),
+                modifier = Modifier.size(20.dp)
             )
-            Text(
-                text = suggestion.location,
-                fontSize = 12.sp,
-                color = Color(0xFF64748B)
-            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = suggestion.name,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF1A202C)
+                )
+                Text(
+                    text = suggestion.address,
+                    fontSize = 12.sp,
+                    color = Color(0xFF64748B),
+                    maxLines = 1
+                )
+            }
+        }
+
+        // Display place types as chips
+        if (suggestion.types.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                suggestion.types.take(3).forEach { type ->
+                    Surface(
+                        color = Color(0xFFE3F2FD),
+                        contentColor = Color(0xFF1976D2),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.padding(0.dp)
+                    ) {
+                        Text(
+                            text = type.replace("_", " ").lowercase().split(" ")
+                                .joinToString(" ") { it.capitalize() },
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }

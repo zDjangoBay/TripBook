@@ -11,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import com.android.tripbook.ui.components.*
+import com.android.tripbook.ui.theme.TripBookColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,88 +72,30 @@ fun ItineraryBuilderScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header with back button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "Build Itinerary: ${trip.name}",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                )
-            }
+            TripBookHeader(
+                title = "Build Itinerary: ${trip.name}",
+                onBackClick = onBackClick
+            )
 
             // Form card
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
-            ) {
+            TripBookContentCard {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(20.dp)
                 ) {
                     // Browse Travel Agencies Button
-                    Button(
-                        onClick = { onBrowseAgencies(trip.destination) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE91E63)
-                        ),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = "Browse Travel Agencies",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
-                    }
+                    TripBookSecondaryButton(
+                        text = "Browse Travel Agencies",
+                        onClick = { onBrowseAgencies(trip.destination) }
+                    )
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Date
@@ -364,21 +309,10 @@ fun ItineraryBuilderScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         ItineraryType.values().forEach { type ->
-                            FilterChip(
+                            TripBookFilterChip(
                                 selected = selectedType == type,
                                 onClick = { selectedType = if (selectedType == type) null else type },
-                                label = { Text(type.name) },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Color(0xFF667EEA),
-                                    selectedLabelColor = Color.White,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF64748B)
-                                ),
-                                border = FilterChipDefaults.filterChipBorder(
-                                    borderColor = if (selectedType == type) Color(0xFF667EEA) else Color(0xFFE2E8F0),
-                                    selectedBorderColor = Color(0xFF667EEA)
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                                label = type.name
                             )
                         }
                     }

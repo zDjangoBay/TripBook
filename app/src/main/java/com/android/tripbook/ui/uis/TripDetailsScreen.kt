@@ -24,8 +24,13 @@ import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
+import com.android.tripbook.model.Location
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 @Composable
 fun TripDetailsScreen(
@@ -35,74 +40,27 @@ fun TripDetailsScreen(
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
+    TripBookGradientBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
             // Header with back button
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(
-                            color = Color.White.copy(alpha = 0.2f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = trip.name,
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    )
-                    Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.9f)
-                        )
-                    )
-                }
-            }
+            TripBookHeader(
+                title = trip.name,
+                subtitle = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                onBackClick = onBackClick
+            )
 
             // Content card
             Card(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -114,7 +72,7 @@ fun TripDetailsScreen(
                             .padding(top = 20.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        listOf("Overview", "Itinerary", "Expenses").forEach { tab ->
+                        listOf("Overview", "Itinerary", "Map", "Expenses").forEach { tab ->
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -158,6 +116,7 @@ fun TripDetailsScreen(
                         when (selectedTab) {
                             "Overview" -> OverviewTab(trip)
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
+                            "Map" -> MapTab(trip)
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
@@ -168,13 +127,310 @@ fun TripDetailsScreen(
 }
 
 @Composable
+private fun TripBookHeader(
+    title: String,
+    subtitle: String,
+    onBackClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, start = 20.dp, end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            )
+            Text(
+                text = subtitle,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            )
+        }
+    }
+}
+
+// Rest of the file remains unchanged
+@Composable
+private fun MapTab(trip: Trip) {
+    var showRoutes by remember { mutableStateOf(true) }
+    var mapType by remember { mutableStateOf(MapType.NORMAL) }
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Map controls
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Route toggle
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ;
+                Switch(
+                    checked = showRoutes,
+                    onCheckedChange = { showRoutes = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color(0xFF667EEA),
+                        checkedTrackColor = Color(0xFF667EEA).copy(alpha = 0.5f)
+                    )
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Show Routes",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B)
+                )
+            }
+
+            // Map type selector
+            OutlinedButton(
+                onClick = {
+                    mapType = when (mapType) {
+                        MapType.NORMAL -> MapType.SATELLITE
+                        MapType.SATELLITE -> MapType.HYBRID
+                        MapType.HYBRID -> MapType.TERRAIN
+                        MapType.TERRAIN -> MapType.NORMAL
+                        else -> MapType.NORMAL
+                    }
+                },
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFF667EEA)
+                ),
+                border = ButtonDefaults.outlinedButtonBorder.copy(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFF667EEA), Color(0xFF667EEA))
+                    )
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = when (mapType) {
+                        MapType.NORMAL -> "Normal"
+                        MapType.SATELLITE -> "Satellite"
+                        MapType.HYBRID -> "Hybrid"
+                        MapType.TERRAIN -> "Terrain"
+                        else -> "Normal"
+                    },
+                    fontSize = 12.sp
+                )
+            }
+        }
+
+        // Map view
+        TripMapView(
+            trip = trip,
+            showRoutes = showRoutes,
+            mapType = mapType,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(16.dp))
+        )
+
+        // Legend
+        if (trip.itinerary.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            MapLegend()
+        }
+    }
+}
+
+@Composable
+private fun TripMapView(
+    trip: Trip,
+    showRoutes: Boolean = true,
+    mapType: MapType = MapType.NORMAL,
+    modifier: Modifier = Modifier
+) {
+    // Calculate map center based on trip data
+    val mapCenter = remember(trip) {
+        trip.destinationCoordinates?.let {
+            LatLng(it.latitude, it.longitude)
+        } ?: trip.itinerary.firstOrNull()?.coordinates?.let {
+            LatLng(it.latitude, it.longitude)
+        } ?: LatLng(3.848, 11.502) // Default to Yaoundé, Cameroon
+    }
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(mapCenter, 12f)
+    }
+
+    GoogleMap(
+        modifier = modifier,
+        cameraPositionState = cameraPositionState,
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = true,
+            compassEnabled = true,
+            myLocationButtonEnabled = true,
+            mapToolbarEnabled = true
+        ),
+        properties = MapProperties(
+            mapType = mapType,
+            isMyLocationEnabled = false
+        )
+    ) {
+        // Add destination marker if available
+        trip.destinationCoordinates?.let { destination ->
+            Marker(
+                state = MarkerState(
+                    position = LatLng(destination.latitude, destination.longitude)
+                ),
+                title = trip.destination,
+                snippet = "Main Destination",
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+            )
+        }
+
+        // Add markers for itinerary items
+        trip.itinerary.forEachIndexed { index, item ->
+            item.coordinates?.let { location ->
+                Marker(
+                    state = MarkerState(
+                        position = LatLng(location.latitude, location.longitude)
+                    ),
+                    title = item.title,
+                    snippet = "${item.time} - ${item.location}",
+                    icon = when (item.type) {
+                        ItineraryType.ACTIVITY -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                        ItineraryType.ACCOMMODATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                        ItineraryType.TRANSPORTATION -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+                    }
+                )
+            }
+        }
+
+        // Add route polylines if enabled and route data exists
+        if (showRoutes) {
+            trip.itinerary.forEachIndexed { index, item ->
+                item.routeToNext?.let { route ->
+                    if (route.polyline.isNotEmpty()) {
+                        if (index < trip.itinerary.size - 1) {
+                            val currentCoords = item.coordinates
+                            val nextCoords = trip.itinerary[index + 1].coordinates
+
+                            if (currentCoords != null && nextCoords != null) {
+                                Polyline(
+                                    points = listOf(
+                                        LatLng(currentCoords.latitude, currentCoords.longitude),
+                                        LatLng(nextCoords.latitude, nextCoords.longitude)
+                                    ),
+                                    color = Color(0xFF667EEA),
+                                    width = 5f
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapLegend() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Map Legend",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A202C),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                LegendItem(
+                    color = Color(0xFF667EEA),
+                    label = "Activities",
+                    modifier = Modifier.weight(1f)
+                )
+                LegendItem(
+                    color = Color(0xFF00CC66),
+                    label = "Hotels",
+                    modifier = Modifier.weight(1f)
+                )
+                LegendItem(
+                    color = Color(0xFFFF9500),
+                    label = "Transport",
+                    modifier = Modifier.weight(1f)
+                )
+                LegendItem(
+                    color = Color(0xFFDC2626),
+                    label = "Destination",
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LegendItem(
+    color: Color,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Box(
+            modifier = Modifier
+                .size(12.dp)
+                .background(color, CircleShape)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            color = Color(0xFF64748B)
+        )
+    }
+}
+
+@Composable
 private fun OverviewTab(trip: Trip) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            // Trip Summary Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -201,7 +457,6 @@ private fun OverviewTab(trip: Trip) {
         }
 
         item {
-            // Travelers Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -283,7 +538,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // Timeline indicator
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.width(30.dp)
@@ -315,7 +569,6 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                             }
                         }
 
-                        // Itinerary item card
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -383,7 +636,6 @@ private fun ExpensesTab(trip: Trip) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            // Budget Overview Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -403,11 +655,10 @@ private fun ExpensesTab(trip: Trip) {
 
                     BudgetRow("Total Budget:", "FCFA ${trip.budget}", Color(0xFF667EEA))
                     BudgetRow("Spent:", "FCFA 68000", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "FCfA 72000", Color(0xFF059669))
+                    BudgetRow("Remaining:", "FCFA 72000", Color(0xFF059669))
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Progress bar
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -546,3 +797,21 @@ private data class ExpenseItem(
     val description: String,
     val amount: String
 )
+
+@Composable
+private fun TripBookGradientBackground(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
+                    )
+                )
+            )
+    ) {
+        content()
+    }
+}
