@@ -140,3 +140,44 @@ fun TripDetailScreen(
         }
     }
 }
+
+@Composable
+fun TripDetailScreen(
+    tripId: String,
+    viewModel: MockReviewViewModel = viewModel()
+) {
+    val reviewState by viewModel.reviewState.collectAsState()
+
+    // Top-level: Display Trip Details — (optional; you may load trip info too)
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text("Trip Details for ID: $tripId", style = MaterialTheme.typography.headlineMedium)
+
+        // Reviews:
+        when (reviewState) {
+            is UiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            is UiState.Success -> {
+                val reviews = (reviewState as UiState.Success<List<Review>>).data
+                LazyColumn {
+                    items(reviews) { review ->
+                        ReviewCard(review)
+                    }
+                }
+            }
+            is UiState.Empty -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No reviews yet.")
+                }
+            }
+            is UiState.Error -> {
+                val errorMessage = (reviewState as UiState.Error).message
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error: $errorMessage")
+                }
+            }
+        }
+    }
+}

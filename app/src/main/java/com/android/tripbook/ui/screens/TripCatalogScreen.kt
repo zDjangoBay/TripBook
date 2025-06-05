@@ -91,3 +91,47 @@ fun TripCatalogScreen(
         }
     }
 }
+
+@Composable
+fun TripCatalogScreen(viewModel: MockTripViewModel) {
+    val uiState by viewModel.tripState.collectAsState()
+
+    when (uiState) {
+        is UiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is UiState.Success -> {
+            val trips = (uiState as UiState.Success<List<Trip>>).data
+            LazyColumn {
+                items(trips) { trip ->
+                    TripCard(trip)
+                }
+            }
+        }
+
+        is UiState.Empty -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("No trips available.")
+            }
+        }
+
+        is UiState.Error -> {
+            val message = (uiState as UiState.Error).message
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Error: $message")
+            }
+        }
+    }
+}

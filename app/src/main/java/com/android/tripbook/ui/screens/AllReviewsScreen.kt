@@ -54,3 +54,42 @@ fun AllReviewsScreen(tripId: Int, onBack: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun AllReviewsScreen(
+    tripId: String,
+    viewModel: MockReviewViewModel = viewModel()
+) {
+    val reviewState by viewModel.reviewState.collectAsState()
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text("All Reviews for Trip ID: $tripId", style = MaterialTheme.typography.headlineMedium)
+
+        when (reviewState) {
+            is UiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            is UiState.Success -> {
+                val reviews = (reviewState as UiState.Success<List<Review>>).data
+                LazyColumn {
+                    items(reviews) { review ->
+                        ReviewCard(review)
+                    }
+                }
+            }
+            is UiState.Empty -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No reviews available.")
+                }
+            }
+            is UiState.Error -> {
+                val errorMessage = (reviewState as UiState.Error).message
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error: $errorMessage")
+                }
+            }
+        }
+    }
+}

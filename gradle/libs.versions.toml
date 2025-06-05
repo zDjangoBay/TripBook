@@ -66,4 +66,6 @@ play-services-maps = { module = "com.google.android.gms:play-services-maps", ver
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version = "1.9.0-1.0.13" }
+google-services = { id = "com.google.gms.google-services", version = "4.3.10" }
 
