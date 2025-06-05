@@ -61,6 +61,21 @@ object SampleTrips {
                 "https://media.gettyimages.com/id/953837336/photo/cameroon-politics-unrest-police.jpg?s=2048x2048&w=gi&k=20&c=FB3Qus6FKDhoijiBjUfBNKEoBNmmdjaDntYX2ZxRSlA=",
                 "https://source.unsplash.com/800x600/?mountains"
             )
+        ),
+        Trip(
+            id = 5,
+            title = "Bamenda Town",
+            caption = "Experience the soul of the highlands.",
+            description = """
+                Set amidst rolling hills and cool highland air, Bamenda offers a unique blend of tradition and progress. Known for its rich cultural heritage, the town is home to vibrant festivals, traditional dances, and bustling markets filled with colorful crafts and textiles. As the unofficial capital of the English-speaking northwest, Bamenda has a distinct identity that sets it apart from other Cameroonian cities.
+
+                The landscape around Bamenda is equally captivating. Terraced hills, hidden waterfalls, and scenic drives through the countryside make it a haven for hikers and photographers. Despite recent social challenges, the spirit of the city remains welcoming and resilient. Visiting Bamenda provides not only an escape into nature but also a deep cultural immersion that leaves a lasting impression.
+            """.trimIndent(),
+            imageUrl = listOf(
+                "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k=",
+                "https://media.gettyimages.com/id/953837336/photo/cameroon-politics-unrest-police.jpg?s=2048x2048&w=gi&k=20&c=FB3Qus6FKDhoijiBjUfBNKEoBNmmdjaDntYX2ZxRSlA=",
+                "https://source.unsplash.com/800x600/?mountains"
+            )
         )
     )
 }
