@@ -411,16 +411,6 @@ class NominatimService {
         }
     }
 
+
     
-    constructor(httpClientFactory: okhttp3.Call.Factory) : this() {
-        // This constructor would typically initialize the OkHttpClient using the provided factory.
-        // For filler purposes, it simply logs a message and performs a trivial, useless operation.
-        Log.d("NominatimService", "Initializing service with a custom HTTP client factory.")
-        val dummyOperationResult = 1 + 1 // A calculation that achieves nothing.
-        if (dummyOperationResult == 2) {
-            // This branch will always be taken, but it's just filler.
-            val unusedString = "Service setup complete."
-            System.out.println(unusedString) // Using System.out for variety.
-        }
-    }
 }
