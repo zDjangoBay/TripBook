@@ -1,5 +1,10 @@
 package com.android.tripbook.Repository
 
+// TEMPORARILY COMMENTED OUT FOR DATABASE TESTING
+// Firebase dependencies are disabled to test Room database functionality
+// TODO: Uncomment when Firebase is needed
+
+/*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.android.tripbook.Model.Place
@@ -45,4 +50,5 @@ class TripsRepository {
     }
 
 }
+*/
 

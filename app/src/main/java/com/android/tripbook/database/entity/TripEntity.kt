@@ -12,7 +12,13 @@ import com.google.gson.reflect.TypeToken
  * Room Entity for Trip data
  * Converts existing Trip model to database entity
  */
-@Entity(tableName = "trips")
+@Entity(
+    tableName = "trips",
+    indices = [
+        androidx.room.Index(value = ["title"]),    // Fast title searches
+        androidx.room.Index(value = ["caption"])   // Fast caption searches
+    ]
+)
 @TypeConverters(TripEntity.Converters::class)
 data class TripEntity(
     @PrimaryKey

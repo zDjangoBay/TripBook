@@ -13,6 +13,11 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
 import com.android.tripbook.data.SampleTrips
+import androidx.compose.ui.platform.LocalContext
+import com.android.tripbook.database.TripBookDatabase
+import com.android.tripbook.model.Trip
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Main Trip Catalog Screen combining:
@@ -25,7 +30,41 @@ fun TripCatalogScreen(
     modifier: Modifier = Modifier,
     onTripClick: (Int) -> Unit
 ) {
-    val allTrips = remember { SampleTrips.get() } // Replace with real fetch
+    // 🧪 USE ROOM DATABASE INSTEAD OF MOCK DATA
+    val context = LocalContext.current
+    var allTrips by remember { mutableStateOf<List<Trip>>(emptyList()) }
+
+    // Load trips from Room database
+    LaunchedEffect(Unit) {
+        try {
+            val database = TripBookDatabase.getDatabase(context)
+            val tripEntities = withContext(Dispatchers.IO) {
+                database.tripDao().getAllTripsOnce()
+            }
+
+            // Convert TripEntity to Trip model
+            val roomTrips = tripEntities.map { entity ->
+                Trip(
+                    id = entity.id,
+                    title = entity.title,
+                    description = entity.description,
+                    imageUrl = entity.imageUrl, // Keep as List<String>
+                    caption = entity.caption
+                )
+            }
+
+            // 🎯 COMBINE Room trips + Sample trips for full catalog
+            val sampleTrips = SampleTrips.get()
+            allTrips = roomTrips + sampleTrips
+
+            android.util.Log.d("TripCatalog", "✅ Combined: ${roomTrips.size} Room trips + ${sampleTrips.size} sample trips = ${allTrips.size} total")
+
+        } catch (e: Exception) {
+            android.util.Log.e("TripCatalog", "❌ Error loading trips: ${e.message}")
+            // Fallback to sample data on error
+            allTrips = SampleTrips.get()
+        }
+    }
 
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 
@@ -33,13 +72,20 @@ fun TripCatalogScreen(
     var currentPage by remember { mutableStateOf(1) }
 
     // Filtered and paginated list of trips
-    val displayedTrips = remember(searchQuery.text, currentPage) {
-        allTrips
-            .filter { trip ->
-                trip.title.contains(searchQuery.text, ignoreCase = true)
-                        || trip.description.contains(searchQuery.text, ignoreCase = true)
-            }
-            .take(currentPage * pageSize)
+    val displayedTrips = remember(searchQuery.text, currentPage, allTrips) {
+        if (searchQuery.text.isEmpty()) {
+            // Show all trips when search is empty
+            allTrips.take(currentPage * pageSize)
+        } else {
+            // Filter trips when search has text
+            allTrips
+                .filter { trip ->
+                    trip.title.contains(searchQuery.text, ignoreCase = true)
+                            || trip.description.contains(searchQuery.text, ignoreCase = true)
+                            || trip.caption.contains(searchQuery.text, ignoreCase = true)
+                }
+                .take(currentPage * pageSize)
+        }
     }
 
     var isLoading by remember { mutableStateOf(false) }

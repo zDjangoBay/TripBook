@@ -22,6 +22,8 @@ import com.android.tripbook.ViewModel.RoomTripViewModel
 import com.android.tripbook.ViewModel.TripBookViewModelFactory
 import com.android.tripbook.ui.components.ImageCarousel
 import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.model.Trip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

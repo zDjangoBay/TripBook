@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -75,31 +75,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
-
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
-
-// Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
-
-// Compose + lifecycle
-//    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.an   droid)
-
-
-
-
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
+// Kotlin coroutines
+    implementation(libs.kotlinx.coroutines.android)
     implementation("androidx.compose.material:material-icons-extended:1.6.1")
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
@@ -114,9 +96,6 @@ dependencies {
 
 // Compose + lifecycle
 //    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
 
     // Chip Navigation Bar
     implementation("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
@@ -147,11 +126,6 @@ dependencies {
 
     // IMAGE LOADING (Missing)
     implementation(libs.glide)
-
-    // FIREBASE (If using - currently referenced in code)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.auth.ktx)
 
 //   ------------------------------------------------------------
 
