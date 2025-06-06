@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.uis
 
 
+
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,7 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions // This was likely already there
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -24,7 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType // <--- Make sure this line is present
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,13 +37,15 @@ import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.android.tripbook.R
-@OptIn(ExperimentalMaterial3Api::class) // Added for AlertDialog
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
     onTripClick: ((Trip) -> Unit)? = null,
-    onAgenciesClick: () -> Unit
+    onAgenciesClick: () -> Unit,
+    onNearbyUsersClick: () -> Unit // New parameter for navigating to NearbyUsersScreen
 ) {
     val trips by tripViewModel.trips.collectAsState()
     val isLoading by tripViewModel.isLoading.collectAsState()
@@ -62,7 +66,6 @@ fun MyTripsScreen(
     var editedTripEndDate by remember { mutableStateOf(LocalDate.now()) }
     var editedTripTravelers by remember { mutableStateOf("") }
     var editedTripBudget by remember { mutableStateOf("") }
-
 
     Box(
         modifier = Modifier
@@ -179,32 +182,51 @@ fun MyTripsScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 listOf("All", "Planned", "Active", "Completed").forEach { tab ->
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                if (selectedTab == tab) Color.White else Color.Transparent,
-                                RoundedCornerShape(20.dp)
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = if (selectedTab == tab) Color.White else Color.White.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { selectedTab = tab }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = tab,
-                            fontSize = 14.sp,
-                            fontWeight = if (selectedTab == tab) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (selectedTab == tab) Color(0xFF667EEA) else Color.White
-                        )
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    if (selectedTab == tab) Color.White else Color.Transparent,
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = if (selectedTab == tab) Color.White else Color.White.copy(alpha = 0.5f),
+                                    shape = RoundedCornerShape(20.dp)
+                                )
+                                .clickable { selectedTab = tab }
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            Text(
+                                text = tab,
+                                fontSize = 14.sp,
+                                fontWeight = if (selectedTab == tab) FontWeight.SemiBold else FontWeight.Normal,
+                                color = if (selectedTab == tab) Color(0xFF667EEA) else Color.White
+                            )
+                        }
+                        // Add icon next to "Completed" chip
+                        if (tab == "Completed") {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            IconButton(
+                                onClick = onNearbyUsersClick,
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Group,
+                                    contentDescription = "Nearby Users",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
 
-            // Error State with Retry Button//
+            // Error State with Retry Button
             if (!error.isNullOrEmpty()) {
                 Card(
                     modifier = Modifier
@@ -386,8 +408,6 @@ fun MyTripsScreen(
                         label = { Text("Destination") },
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
-                    // You'll need to implement date pickers for startDate and endDate
-                    // For simplicity, I'm keeping them as text fields for now, but a proper UI for date selection is recommended.
                     OutlinedTextField(
                         value = editedTripStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                         onValueChange = {
@@ -416,16 +436,14 @@ fun MyTripsScreen(
                         value = editedTripTravelers,
                         onValueChange = { editedTripTravelers = it },
                         label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
-                        value = editedTripTravelers,
-                        onValueChange = { editedTripTravelers = it },
-                        label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                        value = editedTripBudget,
+                        onValueChange = { editedTripBudget = it },
+                        label = { Text("Budget") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                 }
@@ -469,8 +487,8 @@ fun MyTripsScreen(
 fun TripCard(
     trip: Trip,
     onClick: () -> Unit,
-    onEditClick: (Trip) -> Unit, // New parameter for edit button
-    onDeleteClick: (Trip) -> Unit // New parameter for delete button
+    onEditClick: (Trip) -> Unit,
+    onDeleteClick: (Trip) -> Unit
 ) {
     val statusColor = when (trip.status) {
         TripStatus.PLANNED -> Color(0xFF0066CC)
@@ -545,7 +563,7 @@ fun TripCard(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between buttons and status
+                    Spacer(modifier = Modifier.width(8.dp))
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
