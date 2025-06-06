@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Triphome
 
 @Composable
 fun TripItem(trip: Triphome, onClick: () -> Unit = {}) {

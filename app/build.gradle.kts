@@ -127,13 +127,10 @@ dependencies {
     implementation(libs.coil.compose)
 
 
-
-
-
-
     // Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Layout
     implementation(libs.constraintlayout.compose)
@@ -143,6 +140,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation(libs.androidx.compose.foundation)
 

@@ -1,3 +1,4 @@
+
 package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.Image
@@ -12,59 +13,66 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Trip
-import com.android.tripbook.model.User
 
-/**
- * Renders a single trip card with image, title, and description.
- * @param trip The Trip object containing the trip data
- */
-@OptIn(ExperimentalMaterial3Api::class)
+
+
 @Composable
 fun TripCard(
-    trip: Trip,
+    trip: Trip, // <<<< THIS MUST BE YOUR UNIFIED TRIP MODEL
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     miniProfileContent: @Composable (() -> Unit)? = null
 ) {
-    // For demo: create a mock list of users for each trip (replace with real user data in production)
-    val users = listOf(
-        User("alice", "https://randomuser.me/api/portraits/women/1.jpg", "Alice"),
-        User("bob", "https://randomuser.me/api/portraits/men/2.jpg", "Bob"),
-        User("carol", "https://randomuser.me/api/portraits/women/3.jpg", "Carol"),
-        User("dan", "https://randomuser.me/api/portraits/men/4.jpg", "Dan"),
-        User("eve", "https://randomuser.me/api/portraits/women/5.jpg", "Eve")
-    )
     Card(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            // Use the first image URL if available, else fallback to empty string
-            val imageUrl = trip.imageUrl.firstOrNull().orEmpty()
+        Column {
+            val imageUrl = trip.imageUrl.firstOrNull() // Uses the first image from the list
 
             Image(
-                painter = rememberAsyncImagePainter(imageUrl),
-                contentDescription = null,
+                painter = rememberAsyncImagePainter(
+                    model = imageUrl,
+
+                ),
+                contentDescription = trip.title, // Good for accessibility
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(180.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
             )
-            Spacer(modifier = Modifier.height(12.dp))
-            miniProfileContent?.invoke()
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = trip.title, style = MaterialTheme.typography.titleMedium)
-            Text(
-                text = trip.caption,
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+
+            Column(Modifier.padding(12.dp)) {
+                miniProfileContent?.invoke()
+
+                if (miniProfileContent != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                Text(
+                    text = trip.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = trip.caption,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+
+            }
         }
     }
 }

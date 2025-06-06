@@ -1,8 +1,8 @@
-package com.android.tripbook.Repository
+package com.android.tripbook.repository
 
-import com.android.tripbook.Model.Place
+import com.android.tripbook.model.Place
 import android.util.Log
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Triphome
 
 class TripsRepository {
     // Mock data implementation since Firebase is removed

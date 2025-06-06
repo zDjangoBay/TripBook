@@ -1,13 +1,13 @@
-package com.android.tripbook.viewmodel
+package com.android.tripbook.viewmodel // Or your actual package
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.android.tripbook.data.SampleTrips
-import com.android.tripbook.model.Review
+import androidx.lifecycle.viewModelScope // Ensure this import is present
+import com.android.tripbook.data.SampleTrips // Assuming this is still used for initial data
+import com.android.tripbook.model.Review // Assuming you have this model
 import com.android.tripbook.model.Trip
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,21 +20,41 @@ class MockTripViewModel : ViewModel() {
         _trips.value.find { it.id == id }
 
     fun addReview(review: Review) {
-        // Add to a mutable list or API call
+
+        Log.d("MockTripViewModel", "addReview called with: $review (Not yet implemented)")
     }
 
-    fun addNewTrip(title: String, caption: String, description: String, imageUrl: String) {
+    /**
+     * Adds a new trip to the list.
+     * This function now requires all necessary fields to construct a valid Trip object.
+     */
+    fun addNewTrip(
+        title: String,
+        description: String,
+        city: String,
+        country: String,
+        latitude: Double,
+        longitude: Double,
+        imageUrl: String,
+        caption: String = "",
+        region: String? = null
+    ) {
         viewModelScope.launch {
             _trips.update { currentTrips ->
+                val newId = currentTrips.maxOfOrNull { it.id }?.plus(1) ?: 0
                 currentTrips + Trip(
-                    id = currentTrips.maxOfOrNull { it.id }?.plus(1) ?: 0, // Auto-increment ID
+                    id = newId,
                     title = title,
-                    caption = caption,
                     description = description,
-                    imageUrl = listOf(imageUrl) // Single image URL
-                )
+                    city = city,
+                    country = country,
+                    latitude = latitude,
+                    longitude = longitude,
+                    imageUrl = listOf(imageUrl),
+                    caption = caption,
+                    region = region
+                     )
             }
         }
     }
 }
-
