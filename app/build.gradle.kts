@@ -1,8 +1,9 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    alias(libs.plugins.google.gms.google.services)
-//    id("com.google.devtools.ksp") version "1.9.0-1.0.13" // Apply KSP plugin here
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    id("kotlin-parcelize")
+    id("kotlin-android")
 }
 
 android {
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 24
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -92,12 +93,11 @@ dependencies {
 
     implementation("com.github.IsmaelDivita:chip-navigation-bar:1.4.0")
 
-
+    // Media Gallery dependencies
     implementation("com.github.bumptech.glide:glide:4.16.0")
-       // ksp("com.github.bumptech.glide:ksp:4.16.0") // Glide's KSP processor
-        // ... other dependencies ...
-
-
-
-
+    ksp("com.github.bumptech.glide:ksp:4.16.0")
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.cardview:cardview:1.0.0")
 }
