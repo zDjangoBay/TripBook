@@ -1,11 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.compiler.processing.testing)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,7 +75,42 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+  // viewmodel
+  implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+  // navigation compose
+    implementation(libs.androidx.navigation.compose)
+    //Hilt (for dependency injection)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
+    // Hilt (for dependency injection)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose.v110)
+
+    //coil (image loading)
+    implementation(libs.coil.compose)
+
+    //material icons extended (for icons.e.g. search, etc.)
+    implementation(libs.androidx.material.icons.extended)
+
+    //testing dependencies
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit.v121)
+    androidTestImplementation(libs.androidx.espresso.core.v361)
+    androidTestImplementation(libs.androidx.x023.x0.x0)
+    androidTestImplementation(libs.ui.test.junit4)
+    debugImplementation(libs.ui.test.manifest)
+    androidTestImplementation(libs.ui.tooling)
+
+    implementation(libs.gson)
+
+
+
+
 }
