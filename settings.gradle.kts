@@ -9,9 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-    }
-    plugins {
-        id("com.google.gms.google-services") version "4.4.1"
+        maven("https://jitpack.io")
     }
 }
 dependencyResolutionManagement {
@@ -19,9 +17,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
 rootProject.name = "TripBook"
 include(":app")
-include(":userprofile")
