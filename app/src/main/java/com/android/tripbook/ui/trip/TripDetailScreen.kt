@@ -30,9 +30,10 @@ import java.util.*
 @Composable
 fun TripDetailScreen(
     tripViewModel: TripViewModel,
+    tripId: String,
     onNavigateToBudget: (String) -> Unit
 ) {
-    val trip by tripViewModel.trip.observeAsState()
+    val trip by tripViewModel.getTripById(tripId).observeAsState()
     val currentTrip = trip
 
     Scaffold(
@@ -42,7 +43,7 @@ fun TripDetailScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { currentTrip?.id?.let(onNavigateToBudget) }) {
+            FloatingActionButton(onClick = { onNavigateToBudget(tripId) }) {
                 Icon(Icons.Filled.Add, contentDescription = "Go to Budget")
             }
         }

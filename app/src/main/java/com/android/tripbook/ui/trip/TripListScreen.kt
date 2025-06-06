@@ -25,7 +25,7 @@ fun TripListScreen(
     onNavigateToTripDetail: (String) -> Unit,
     onNavigateToCreateTrip: () -> Unit
 ) {
-    val trips by tripViewModel.trips.observeAsState(initial = emptyList())
+    val trips by tripViewModel.allTrips.observeAsState(initial = emptyList())
     val currentTrips = trips
 
     Scaffold(

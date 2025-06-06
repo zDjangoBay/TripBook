@@ -106,5 +106,8 @@ dependencies {
     // Compose LiveData integration
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
 
+    // Compose Foundation for KeyboardOptions
+    implementation("androidx.compose.foundation:foundation:1.6.8")
+
     // Core AndroidX libraries
 } 
