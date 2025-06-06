@@ -1,42 +1,71 @@
 package com.android.tripbook.model
 
-import java.time.LocalDate
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
 enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
 }
 
-data class Trip(
-    val id: String,
-    val name: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val destination: String,
-    val travelers: Int,
-    val budget: Int,
-    val status: TripStatus,
-    val type: String = "",
-    val description: String = "",
-    val activities: List<Activity> = emptyList(),
-    val expenses: List<Expense> = emptyList(),
-    val travelersList: List<Traveler> = emptyList()
+enum class ItineraryType {
+    ACTIVITY, ACCOMMODATION, TRANSPORTATION
+}
+
+// Location data classes for Maps integration
+data class Location(
+    val latitude: Double,
+    val longitude: Double,
+    val address: String = "",
+    val placeId: String = "" // For Places API
 )
 
-data class Activity(
-    val date: LocalDate,
+data class RouteInfo(
+    val distance: String = "",
+    val duration: String = "",
+    val polyline: String = "" // Encoded polyline for route display
+)
+
+// ItineraryItem will likely become its own @Entity later
+data class ItineraryItem(
+    val date: Long, // Using timestamp instead of LocalDate
     val time: String,
     val title: String,
     val location: String,
-    val description: String = ""
+    @Ignore
+    val type: ItineraryType,
+    val notes: String = "",
+    @Ignore
+    val agencyService: com.android.tripbook.service.AgencyService? = null,
+    @Ignore
+    val coordinates: Location? = null,
+    @Ignore
+    val routeToNext: RouteInfo? = null
 )
 
-data class Expense(
-    val category: String,
-    val description: String,
-    val amount: Int
-)
-
-data class Traveler(
-    val name: String,
-    val isLeader: Boolean = false
+@Entity(tableName = "trips")
+data class Trip(
+    @PrimaryKey
+    var id: String = "",
+    var name: String = "",
+    var startDate: Long = System.currentTimeMillis(), // Using timestamp
+    var endDate: Long = System.currentTimeMillis(),   // Using timestamp
+    var destination: String = "",
+    var travelers: Int = 0,
+    var budget: Int = 0,
+    var status: TripStatus = TripStatus.PLANNED,
+    var type: String = "",
+    var description: String = "",
+    @Ignore
+    var activities: List<String> = emptyList(),
+    @Ignore
+    var expenses: List<String> = emptyList(),
+    @Ignore
+    var travelersList: List<String> = emptyList(),
+    @Ignore
+    var itinerary: List<ItineraryItem> = emptyList(),
+    @Ignore
+    var destinationCoordinates: Location? = null,
+    @Ignore
+    var mapCenter: Location? = null
 )

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/textViewExpenseDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewDeleteExpense" 
+        android:layout_marginEnd="8dp"
+        tools:text="Dinner at 'Le Gourmet'" />
+
+    <TextView
+        android:id="@+id/textViewExpenseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewExpenseDescription"
+        tools:text="2024-07-15" />
+
+    <TextView
+        android:id="@+id/textViewExpenseAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewDeleteExpense"
+        app:layout_constraintTop_toTopOf="@id/textViewExpenseDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textViewExpenseDate"
+        android:layout_marginEnd="8dp"
+        tools:text="$75.50" />
+
+    <!-- Add Delete Icon for Expense -->
+    <ImageView
+        android:id="@+id/imageViewDeleteExpense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_delete"
+        app:tint="?android:attr/textColorSecondary"
+        android:contentDescription="Delete Expense"
+        android:padding="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/textViewExpenseDescription"
+        app:layout_constraintBottom_toBottomOf="@id/textViewExpenseDate" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
