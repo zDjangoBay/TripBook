@@ -1,4 +1,4 @@
-hpackage com.android.tripbook.data // This package is used in the ViewModel, ensure it's consistent
+package com.android.tripbook.data // This package is used in the ViewModel, ensure it's consistent
 
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
