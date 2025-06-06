@@ -77,4 +77,10 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    // For Location Services
+    implementation("com.google.android.gms:play-services-location:21.3.0") // Check for the latest version
+
+    // For LatLng and other Maps functionalities (if needed)
+    implementation("com.google.android.gms:play-services-maps:18.2.0")    // Check for the latest version
+
 }
