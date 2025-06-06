@@ -64,12 +64,12 @@ fun TripListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mes Voyages") }
+                title = { Text("My Trips") }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToCreateTrip) {
-                Icon(Icons.Filled.Add, contentDescription = "Tester le Suivi Budget")
+                Icon(Icons.Filled.Add, contentDescription = "Test Budget Tracker")
             }
         }
     ) { paddingValues ->
@@ -81,9 +81,9 @@ fun TripListScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Chargement des voyages d'exemple...")
+                    Text("Loading sample Cameroonian destinations...")
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Astuce: Cliquez sur le + pour tester le Suivi Budget!")
+                    Text("Tip: Click the + button to test Budget Tracker!")
                 }
             }
         } else {

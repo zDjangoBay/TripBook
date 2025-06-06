@@ -58,11 +58,11 @@ object CurrencyUtils {
      * Gets suggested budget categories for Cameroonian travel
      */
     object DefaultCategories {
-        val ACCOMMODATION = "Hébergement" to 40000
-        val FOOD = "Nourriture" to 25000  
+        val ACCOMMODATION = "Accommodation" to 40000
+        val FOOD = "Food" to 25000  
         val TRANSPORT = "Transport" to 30000
-        val ACTIVITIES = "Activités" to 20000
-        val SHOPPING = "Achats" to 15000
-        val EMERGENCY = "Urgence" to 10000
+        val ACTIVITIES = "Activities" to 20000
+        val SHOPPING = "Shopping" to 15000
+        val EMERGENCY = "Emergency" to 10000
     }
 } 

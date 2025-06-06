@@ -36,14 +36,14 @@ fun AddEditBudgetCategoryDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = if (existingCategory == null) "Ajouter Catégorie Budget" else "Modifier Catégorie Budget",
+                    text = if (existingCategory == null) "Add Budget Category" else "Edit Budget Category",
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nom de la catégorie (ex: Transport, Hébergement)") },
+                    label = { Text("Category Name (e.g., Transport, Accommodation)") },
                     isError = nameError != null,
                     supportingText = { nameError?.let { Text(it) } }
                 )
@@ -51,8 +51,8 @@ fun AddEditBudgetCategoryDialog(
                 OutlinedTextField(
                     value = plannedAmount,
                     onValueChange = { plannedAmount = it },
-                    label = { Text("Budget prévu (CFA)") },
-                    placeholder = { Text("ex: 50000") },
+                    label = { Text("Planned Budget (CFA)") },
+                    placeholder = { Text("e.g., 50000") },
                     isError = amountError != null,
                     supportingText = { amountError?.let { Text(it) } },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -63,13 +63,13 @@ fun AddEditBudgetCategoryDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Annuler")
+                        Text("Cancel")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        nameError = if (name.isBlank()) "Le nom ne peut pas être vide" else null
+                        nameError = if (name.isBlank()) "Name cannot be empty" else null
                         val amount = plannedAmount.toDoubleOrNull()
-                        amountError = if (amount == null || amount < 0) "Montant invalide" else null
+                        amountError = if (amount == null || amount < 0) "Invalid amount" else null
 
                         if (nameError == null && amountError == null) {
                             if (existingCategory == null) {
@@ -82,7 +82,7 @@ fun AddEditBudgetCategoryDialog(
                             onDismiss()
                         }
                     }) {
-                        Text(if (existingCategory == null) "Ajouter" else "Sauvegarder")
+                        Text(if (existingCategory == null) "Add" else "Save")
                     }
                 }
             }

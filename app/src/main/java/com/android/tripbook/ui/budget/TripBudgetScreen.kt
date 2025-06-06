@@ -50,13 +50,13 @@ fun BudgetCategoryCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             val totalSpent = expenses.sumOf { it.amount }
-            Text("Budget: ${CurrencyUtils.formatCFA(category.plannedAmount)} | Dépensé: ${CurrencyUtils.formatCFA(totalSpent)}")
+            Text("Budget: ${CurrencyUtils.formatCFA(category.plannedAmount)} | Spent: ${CurrencyUtils.formatCFA(totalSpent)}")
             LinearProgressIndicator(
                 progress = (totalSpent / category.plannedAmount).toFloat(),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Dépenses:", style = MaterialTheme.typography.titleMedium)
+            Text("Expenses:", style = MaterialTheme.typography.titleMedium)
             expenses.forEach { expense ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -68,7 +68,7 @@ fun BudgetCategoryCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = onAddExpenseClick, modifier = Modifier.align(Alignment.End)) {
-                Text("Ajouter Dépense")
+                Text("Add Expense")
             }
         }
     }
@@ -132,10 +132,10 @@ fun TripBudgetScreen(
                     onClick = { showAddCategoryDialog = true },
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Ajouter Catégorie Budget")
+                    Icon(Icons.Filled.Add, contentDescription = "Add Budget Category")
                 }
                 FloatingActionButton(onClick = { showAddExpenseDialog = true }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Ajouter Dépense")
+                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
                 }
             }
         }
@@ -147,7 +147,7 @@ fun TripBudgetScreen(
             if (categories.isEmpty()) {
                 item {
                     Text(
-                        "Aucune catégorie de budget pour le moment.\nCommencez par créer des catégories comme Transport, Hébergement, Nourriture...",
+                        "No budget categories yet.\nStart by creating categories like Transport, Accommodation, Food...",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
