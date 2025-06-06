@@ -29,16 +29,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.viewmodel.TripViewModel
+import com.android.tripbook.ui.components.NotificationIconWithBadge
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.android.tripbook.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
     onTripClick: ((Trip) -> Unit)? = null,
-    onAgenciesClick: () -> Unit
+    onAgenciesClick: () -> Unit,
+    onNotificationsClick: () -> Unit = {}
 ) {
     val trips by tripViewModel.trips.collectAsState()
     val isLoading by tripViewModel.isLoading.collectAsState()
@@ -63,7 +66,7 @@ fun MyTripsScreen(
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            // Header with Agencies Button
+            // Header with Agencies Button and Test Notification
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,18 +82,29 @@ fun MyTripsScreen(
                         color = Color.White
                     )
                 )
-                IconButton(
-                    onClick = onAgenciesClick,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Business,
-                        contentDescription = "Travel Agencies",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                    // Notifications Button with Badge
+                    NotificationIconWithBadge(
+                        onNotificationClick = onNotificationsClick,
+                        onTestNotificationClick = { tripViewModel.sendTestNotification() }
                     )
+
+                    // Agencies Button
+                    IconButton(
+                        onClick = onAgenciesClick,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Business,
+                            contentDescription = "Travel Agencies",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
                 }
             }
             Text(

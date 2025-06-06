@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import com.android.tripbook.model.Agency
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
@@ -61,7 +62,7 @@ class MainActivity : ComponentActivity() {
         var selectedTrip by remember { mutableStateOf<Trip?>(null) }
         var selectedDestination by remember { mutableStateOf<String?>(null) }
         var selectedAgency by remember { mutableStateOf<Agency?>(null) } // Added for agency details
-        val tripViewModel: TripViewModel = viewModel()
+        val tripViewModel: TripViewModel = viewModel { TripViewModel(application = this@MainActivity.application) }
         val agencyViewModel = remember { AgencyViewModel(agencyRepository) }
 
         LaunchedEffect(Unit) {
@@ -76,7 +77,8 @@ class MainActivity : ComponentActivity() {
                     selectedTrip = trip
                     currentScreen = "TripDetails"
                 },
-                onAgenciesClick = { currentScreen = "AllAgencies" }
+                onAgenciesClick = { currentScreen = "AllAgencies" },
+                onNotificationsClick = { currentScreen = "Notifications" }
             )
 
             "CreateTrip" -> TripCreationFlowScreen(
@@ -177,6 +179,21 @@ class MainActivity : ComponentActivity() {
                 agency = selectedAgency ?: Agency(),
                 agencyViewModel = agencyViewModel,
                 onBackClick = { currentScreen = "AllAgencies" }
+            )
+
+            "Notifications" -> NotificationScreen(
+                onBackClick = { currentScreen = "MyTrips" },
+                onNavigateToTrip = { tripId ->
+                    // Find the trip by ID and navigate to it
+                    tripViewModel.getTripById(tripId)?.let { trip ->
+                        selectedTrip = trip
+                        currentScreen = "TripDetails"
+                    }
+                }
+            )
+
+            "NotificationSettings" -> NotificationSettingsScreen(
+                onBackClick = { currentScreen = "Notifications" }
             )
         }
     }

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
@@ -43,7 +44,10 @@ fun TripDetailsScreen(
     onBackClick: () -> Unit,
     onEditItineraryClick: () -> Unit
 ) {
-    val viewModel: TripDetailsViewModel = viewModel()
+    val context = LocalContext.current
+    val viewModel: TripDetailsViewModel = viewModel {
+        TripDetailsViewModel(application = context.applicationContext as android.app.Application)
+    }
     val uiState by viewModel.uiState.collectAsState()
 
     // Initialize with the provided trip

@@ -1,9 +1,11 @@
 package com.android.tripbook.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.notifications.TripNotificationService
 import com.android.tripbook.repository.SupabaseTripRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,9 +28,11 @@ enum class MapViewMode {
 }
 
 class TripDetailsViewModel(
+    application: Application,
     private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance()
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
+    private val notificationService = TripNotificationService.getInstance(application)
     private val _uiState = MutableStateFlow(TripDetailsUiState())
     val uiState: StateFlow<TripDetailsUiState> = _uiState.asStateFlow()
 
@@ -88,6 +92,8 @@ class TripDetailsViewModel(
                     // Reload trip details to get updated itinerary
                     _uiState.value.trip?.let { trip ->
                         loadTripDetails(trip.id)
+                        // Update notifications for the trip with new itinerary item
+                        notificationService.onItineraryItemAdded(trip, item)
                     }
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -113,14 +119,16 @@ class TripDetailsViewModel(
                 if (result.isSuccess) {
                     // Update the trip in the current state
                     _uiState.value.trip?.let { trip ->
-                        val updatedItinerary = trip.itinerary.map { 
-                            if (it.id == item.id) item else it 
+                        val updatedItinerary = trip.itinerary.map {
+                            if (it.id == item.id) item else it
                         }
                         val updatedTrip = trip.copy(itinerary = updatedItinerary)
                         _uiState.value = _uiState.value.copy(
                             trip = updatedTrip,
                             isLoading = false
                         )
+                        // Update notifications for the modified itinerary item
+                        notificationService.onItineraryItemUpdated(updatedTrip, item)
                     }
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -152,6 +160,8 @@ class TripDetailsViewModel(
                             trip = updatedTrip,
                             isLoading = false
                         )
+                        // Update notifications after deleting itinerary item
+                        notificationService.onItineraryItemDeleted(updatedTrip, itemId)
                     }
                 } else {
                     _uiState.value = _uiState.value.copy(

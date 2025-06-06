@@ -1,16 +1,22 @@
 package com.android.tripbook.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripCreationState
+import com.android.tripbook.notifications.TripNotificationService
+import com.android.tripbook.notifications.NotificationTester
 import com.android.tripbook.repository.SupabaseTripRepository
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TripViewModel(
+    application: Application,
     private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance()
-) : ViewModel() {
+) : AndroidViewModel(application) {
+
+    private val notificationService = TripNotificationService.getInstance(application)
 
     val trips: StateFlow<List<Trip>> = repository.trips
     val isLoading: StateFlow<Boolean> = repository.isLoading
@@ -36,7 +42,12 @@ class TripViewModel(
             val trip = tripCreationState.toTrip()
             val result = repository.addTrip(trip)
 
-            if (result.isFailure) {
+            if (result.isSuccess) {
+                // Schedule notifications for the new trip
+                result.getOrNull()?.let { createdTrip ->
+                    notificationService.onTripCreated(createdTrip)
+                }
+            } else {
                 // Error is already handled in repository
                 result.exceptionOrNull()?.let { exception ->
                     // Additional error handling if needed
@@ -49,7 +60,10 @@ class TripViewModel(
         viewModelScope.launch {
             val result = repository.updateTrip(trip)
 
-            if (result.isFailure) {
+            if (result.isSuccess) {
+                // Update notifications for the modified trip
+                notificationService.onTripUpdated(trip)
+            } else {
                 // Error is already handled in repository
                 result.exceptionOrNull()?.let { exception ->
                     // Additional error handling if needed
@@ -62,7 +76,10 @@ class TripViewModel(
         viewModelScope.launch {
             val result = repository.deleteTrip(tripId)
 
-            if (result.isFailure) {
+            if (result.isSuccess) {
+                // Cancel notifications for the deleted trip
+                notificationService.onTripDeleted(tripId)
+            } else {
                 // Error is already handled in repository
                 result.exceptionOrNull()?.let { exception ->
                     // Additional error handling if needed
@@ -78,4 +95,35 @@ class TripViewModel(
     fun clearError() {
         repository.clearError()
     }
+
+    /**
+     * Send a test notification to verify the notification system is working
+     */
+    fun sendTestNotification() {
+        notificationService.sendTestNotification()
+    }
+
+    /**
+     * Run comprehensive notification tests
+     */
+    fun runNotificationTests() {
+        NotificationTester.runNotificationTests(getApplication())
+    }
+
+    /**
+     * Test immediate notifications for debugging
+     */
+    fun testImmediateNotifications() {
+        NotificationTester.testImmediateNotifications(getApplication())
+    }
+
+    /**
+     * Get notification system status for debugging
+     */
+    fun getNotificationStatus() = notificationService.getNotificationStatus()
+
+    /**
+     * Get test summary
+     */
+    fun getTestSummary() = NotificationTester.getTestSummary()
 }
