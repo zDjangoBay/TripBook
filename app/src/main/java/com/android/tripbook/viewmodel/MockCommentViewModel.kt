@@ -36,27 +36,27 @@ class MockCommentViewModel : ViewModel() {
     fun getCommentsForReview(reviewId: Int): List<Comment> {
         return commentsMap[reviewId] ?: emptyList()
     }
-
+    
     fun addReaction(reviewId: Int, commentId: String, emoji: String, username: String = "You") {
         val commentsList = commentsMap[reviewId] ?: return
         val commentIndex = commentsList.indexOfFirst { it.id == commentId }
         if (commentIndex == -1) return
-
+        
         val comment = commentsList[commentIndex]
-
+        
         // Create a new reaction
         val reaction = CommentReaction(
             commentId = commentId,
             emoji = emoji,
             username = username
         )
-
+        
         // Add or update the reaction
         val updatedComment = comment.copy()
         if (!updatedComment.reactions.containsKey(emoji)) {
             updatedComment.reactions[emoji] = mutableListOf()
         }
-
+        
         // Check if user already reacted with this emoji
         val existingReactionIndex = updatedComment.reactions[emoji]?.indexOfFirst { it.username == username }
         if (existingReactionIndex != null && existingReactionIndex != -1) {
@@ -69,12 +69,12 @@ class MockCommentViewModel : ViewModel() {
             // Add new reaction
             updatedComment.reactions[emoji]?.add(reaction)
         }
-
+        
         // Update the comment in the list
         commentsList[commentIndex] = updatedComment
         _comments.value = commentsList.toList()
     }
-
+    
     fun hasUserReacted(commentId: String, emoji: String, username: String = "You"): Boolean {
         val comment = _comments.value.find { it.id == commentId } ?: return false
         return comment.reactions[emoji]?.any { it.username == username } == true
@@ -84,20 +84,20 @@ class MockCommentViewModel : ViewModel() {
         val commentsList = commentsMap[reviewId] ?: return
         val parentCommentIndex = commentsList.indexOfFirst { it.id == parentCommentId }
         if (parentCommentIndex == -1) return
-
+        
         val parentComment = commentsList[parentCommentIndex]
-
+        
         // Create a new reply comment
         val reply = Comment(
             text = replyText,
             authorName = username,
             parentId = parentCommentId
         )
-
+        
         // Add the reply to the parent comment
         val updatedComment = parentComment.copy()
         updatedComment.replies.add(0, reply) // Add to beginning of replies
-
+        
         // Update the comment in the list
         commentsList[parentCommentIndex] = updatedComment
         _comments.value = commentsList.toList()

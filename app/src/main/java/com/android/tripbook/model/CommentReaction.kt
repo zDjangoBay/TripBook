@@ -1,6 +1,5 @@
 package com.android.tripbook.model
 
-
 import java.util.UUID
 
 data class CommentReaction(

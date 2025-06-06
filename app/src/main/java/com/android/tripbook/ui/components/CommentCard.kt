@@ -28,7 +28,7 @@ fun CommentCard(
     onReplySelected: (Comment) -> Unit = {}
 ) {
     var showReactionPopup by remember { mutableStateOf(false) }
-
+    
     Card(
         modifier = Modifier
             .width(280.dp)
@@ -104,7 +104,7 @@ fun CommentCard(
                     contentScale = ContentScale.Crop
                 )
             }
-
+            
             // Display reactions if any
             if (comment.reactions.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -142,7 +142,7 @@ fun CommentCard(
                     }
                 }
             }
-
+            
             // Reply button
             TextButton(
                 onClick = { onReplySelected(comment) },
@@ -154,11 +154,11 @@ fun CommentCard(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-
+            
             // Display replies if any
             if (comment.replies.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
-
+                
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,7 +168,7 @@ fun CommentCard(
                         ReplyCard(reply = reply)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
-
+                    
                     // Show "View more replies" if there are more than 2
                     if (comment.replies.size > 2) {
                         TextButton(
@@ -186,7 +186,7 @@ fun CommentCard(
             }
         }
     }
-
+    
     // Show reaction popup on long press
     ReactionPopup(
         visible = showReactionPopup,
@@ -239,9 +239,9 @@ fun ReplyCard(reply: Comment) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-
+        
         Spacer(modifier = Modifier.height(4.dp))
-
+        
         // Reply text
         Text(
             text = reply.text,

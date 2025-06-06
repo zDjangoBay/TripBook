@@ -41,7 +41,7 @@ fun ReplyInput(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Replying to ${parentAuthor}",
+                    text = "Replying to $parentAuthor",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
@@ -72,7 +72,7 @@ fun ReplyInput(
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("Write a reply...") },
                     shape = RoundedCornerShape(24.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     ),

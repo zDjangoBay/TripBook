@@ -52,13 +52,13 @@ fun ReactionPopup(
                 ) {
                     // Common reactions
                     val reactions = listOf("👍", "❤️", "😂", "😮", "😢", "🙏")
-
+                    
                     reactions.forEach { emoji ->
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .clickable {
+                                .clickable { 
                                     onReactionSelected(emoji)
                                     onDismiss()
                                 }

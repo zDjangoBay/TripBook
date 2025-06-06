@@ -354,12 +354,12 @@ private fun CommentsHeader(commentsCount: Int) {
 
 @Composable
 private fun CommentsCarousel(
-    comments: List<Comment>,
-    commentViewModel: MockCommentViewModel,
+    comments: List<Comment>, 
+    commentViewModel: MockCommentViewModel, 
     reviewId: Int
 ) {
     var replyingToComment by remember { mutableStateOf<Comment?>(null) }
-
+    
     Column(modifier = Modifier.fillMaxWidth()) {
         // Comments list
         LazyRow(
@@ -379,7 +379,7 @@ private fun CommentsCarousel(
                 )
             }
         }
-
+        
         // Reply input if replying to a comment
         replyingToComment?.let { comment ->
             Spacer(modifier = Modifier.height(8.dp))
