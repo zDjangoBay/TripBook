@@ -35,15 +35,15 @@ class TripViewModel : ViewModel() {
     )
 
     fun saveData(
-        Trip:Trip,
+        trip:Trip,
         context: Context
     ) = CoroutineScope(Dispatchers.IO).launch {
         val fireStoreRef = Firebase.firestore
             .collection("Trip")
-            .document(Trip.name)
+            .document(trip.name)
 
         try{
-            fireStoreRef.set(Trip)
+            fireStoreRef.set(trip)
                 .addOnSuccessListener{
                     Toast.makeText(context,"successfully saved", Toast.LENGTH_SHORT).show()
                 }
@@ -56,8 +56,8 @@ class TripViewModel : ViewModel() {
     private val _tripList = mutableStateOf<List<Trip>>(emptyList())
     var tripList: State<List<Trip>> = _tripList
 
-    var isLoading by mutableStateOf(true)
-    var errorMessage by mutableStateOf<String?>(null)
+    private var isLoading by mutableStateOf(true)
+    private var errorMessage by mutableStateOf<String?>(null)
 
 
     init {

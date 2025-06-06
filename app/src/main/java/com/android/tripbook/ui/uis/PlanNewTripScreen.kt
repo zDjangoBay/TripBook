@@ -1,7 +1,6 @@
 package com.android.tripbook.ui.uis
 
 import android.app.TimePickerDialog
-import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -299,7 +297,7 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         Button(
                             onClick = {
                                 onBackClick()
-                                val Trip = Trip(
+                                val trip = Trip(
                                     name = name,
                                     destination = destination,
                                     travelers = travelers,
@@ -308,7 +306,7 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                                     time = viewModel.tripInfo.time,
                                     status = status
                                 )
-                                viewModel.saveData(Trip = Trip, context = context)
+                                viewModel.saveData(trip = trip, context = context)
                                       },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -329,31 +327,5 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun TripTypeChip(
-    text: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(24.dp))
-            .background(
-                if (isSelected) Color(0xFF6B73FF) else Color(0xFFF0F0F0)
-            )
-            .clickable { onClick() }
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            color = if (isSelected) Color.White else Color.Gray,
-            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
-        )
     }
 }
