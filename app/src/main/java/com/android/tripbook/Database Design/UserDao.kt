@@ -1,3 +1,8 @@
+package app.src.main.java.com.android.tripbook.`Database Design`
+
+import Agency
+import Trip
+import User
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
