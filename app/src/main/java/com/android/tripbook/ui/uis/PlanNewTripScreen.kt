@@ -94,7 +94,6 @@ fun TimePickerTextField(
 ) {
     val context = LocalContext.current
     var timeText by remember { mutableStateOf(time.format(DateTimeFormatter.ofPattern("hh:mm a"))) }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,16 +129,6 @@ fun TimePickerTextField(
 
 @Composable
 fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
-    val selectedTripType = remember { mutableStateOf("Cultural") }
-//    val id = remember { mutableStateOf("") }
-    var name: String by remember { mutableStateOf("") }
-    var startDate: LocalDate by remember { mutableStateOf(LocalDate.now()) }
-//    val endDate: LocalDate,
-    var travelers: String by remember { mutableStateOf("") }
-    var travNum: Int by remember { mutableStateOf(0) }
-    var budget: String by remember { mutableStateOf("") }
-    var budgetNum: Int by remember { mutableStateOf(0) }
-    var destination: String by remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -201,6 +190,7 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                             .verticalScroll(rememberScrollState())
                             .padding(20.dp)
                     ) {
+                        val name = viewModel.tripInfo.name
 
                         // Trip Name
                         Text(text = "Trip Name", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
@@ -208,7 +198,7 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         BasicTextField(
                             value = name,
                             onValueChange = {
-                                name = it
+                                viewModel.updateName(it)
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -217,13 +207,14 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
+                        val destination = viewModel.tripInfo.destination
 
                         // Destination
                         Text(text = "Destination", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
                         Spacer(modifier = Modifier.height(8.dp))
                         BasicTextField(
                             value = destination,
-                            onValueChange = { destination = it },
+                            onValueChange = { viewModel.updateDestination(it) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
@@ -232,33 +223,31 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // Start and End Date
+                        // Start Date
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
-//                            val selectedTime = viewModel.tripTime.time
-//
-//                            TimePickerTextField(
-//                                label = "Start Time",
-//                                time = selectedTime,
-//                                onTimeSelected = { viewModel.updateTime(it) }
-//                            )
+
+                            TimePickerTextField(
+                                label = "Start Time",
+                                time = viewModel.getLocalTime(),
+                                onTimeSelected = { viewModel.updateTime(it) }
+                            )
 
                             Spacer(modifier = Modifier.height(16.dp))
 
 
                             DatePickerTextField(
                                 label = "Select Date",
-                                date = startDate,
-                                onDateSelected = {
-                                    startDate = it
-                                }
+                                date = viewModel.getLocalDate(), // Parses from string
+                                onDateSelected = { viewModel.updateDate(it) }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(20.dp))
 
+                        val travelers = viewModel.tripInfo.travelers
                         // Number of Travelers
                         Text(text = "Number of Travelers", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
                         Spacer(modifier = Modifier.height(8.dp))
@@ -270,10 +259,9 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             BasicTextField(
-                                value = travelers,
+                                value = viewModel.travelersInput,
                                 onValueChange = {
-                                    travelers = it
-                                    travNum = travelers.toInt()
+                                    viewModel.updateTravelers(it)
                                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -283,15 +271,15 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         }
 
                         Spacer(modifier = Modifier.height(20.dp))
+                        val budget = viewModel.tripInfo.budget
 
                         // Budget
                         Text(text = "Budget (USD)", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
                         Spacer(modifier = Modifier.height(8.dp))
                         BasicTextField(
-                            value = budget,
+                            value = viewModel.budgetInput,
                             onValueChange = {
-                                budget = it
-                                budgetNum = budget.toInt()
+                                viewModel.updateBudget(it)
                                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -301,75 +289,11 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
+                        val status = viewModel.tripInfo.status
 
                         // Trip Type
                         Text(text = "Trip Type", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
                         Spacer(modifier = Modifier.height(12.dp))
-
-                        // First row of trip types
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            TripTypeChip(
-                                text = "Adventure",
-                                isSelected = selectedTripType.value == "Adventure",
-                                onClick = { selectedTripType.value = "Adventure" },
-                                modifier = Modifier.weight(1f)
-                            )
-                            TripTypeChip(
-                                text = "Cultural",
-                                isSelected = selectedTripType.value == "Cultural",
-                                onClick = { selectedTripType.value = "Cultural" },
-                                modifier = Modifier.weight(1f)
-                            )
-                            TripTypeChip(
-                                text = "Relaxation",
-                                isSelected = selectedTripType.value == "Relaxation",
-                                onClick = { selectedTripType.value = "Relaxation" },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        // Second row of trip types
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            TripTypeChip(
-                                text = "Safari",
-                                isSelected = selectedTripType.value == "Safari",
-                                onClick = { selectedTripType.value = "Safari" },
-                                modifier = Modifier.weight(1f)
-                            )
-                            TripTypeChip(
-                                text = "Beach",
-                                isSelected = selectedTripType.value == "Beach",
-                                onClick = { selectedTripType.value = "Beach" },
-                                modifier = Modifier.weight(1f)
-                            )
-                            // Empty space to balance the layout
-                            Spacer(modifier = Modifier.weight(1f))
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Description
-                        Text(text = "Description", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        BasicTextField(
-                            value = "",
-                            onValueChange = {},
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
-                                .padding(16.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(30.dp))
 
                         // Create Trip Button
                         Button(
@@ -378,9 +302,11 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                                 val Trip = Trip(
                                     name = name,
                                     destination = destination,
-                                    travelers = travNum,
-                                    budget = budgetNum,
-                                    startDate = startDate
+                                    travelers = travelers,
+                                    budget = budget,
+                                    startDate = viewModel.tripInfo.startDate,
+                                    time = viewModel.tripInfo.time,
+                                    status = status
                                 )
                                 viewModel.saveData(Trip = Trip, context = context)
                                       },
