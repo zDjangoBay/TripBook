@@ -30,6 +30,7 @@ fun TripCreationFlowScreen(
     var tripState by remember { mutableStateOf(TripCreationState()) }
     val isLoading by tripViewModel.isLoading.collectAsState()
     val error by tripViewModel.error.collectAsState()
+    val tripCreationSuccess by tripViewModel.tripCreationSuccess.collectAsState() // Observe trip creation success
 
     // Handle error display
     error?.let { errorMessage ->
@@ -37,6 +38,14 @@ fun TripCreationFlowScreen(
             // You could show a snackbar or toast here
             // For now, we'll just clear the error after showing it
             tripViewModel.clearError()
+        }
+    }
+
+    // New: Handle trip creation success
+    LaunchedEffect(tripCreationSuccess) {
+        if (tripCreationSuccess) {
+            onTripCreated()
+            tripViewModel.clearTripCreationSuccess() // Clear the success flag after handling
         }
     }
 
@@ -53,14 +62,14 @@ fun TripCreationFlowScreen(
                     subtitle = "Step ${tripState.currentStep} of ${tripState.totalSteps}",
                     onBackClick = onBackClick
                 )
-                
+
                 // Progress Indicator
                 ProgressIndicator(
                     currentStep = tripState.currentStep,
                     totalSteps = tripState.totalSteps,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
                 )
-                
+
                 // Step Content
                 Box(
                     modifier = Modifier
@@ -94,7 +103,7 @@ fun TripCreationFlowScreen(
                         )
                     }
                 }
-                
+
                 // Navigation Buttons
                 StepNavigationButtons(
                     currentStep = tripState.currentStep,
@@ -114,7 +123,7 @@ fun TripCreationFlowScreen(
                         if (!isLoading) {
                             // Create the trip using the ViewModel
                             tripViewModel.createTrip(tripState)
-                            onTripCreated()
+                            // onTripCreated() // Removed: will be called by LaunchedEffect when tripCreationSuccess is true
                         }
                     },
                     modifier = Modifier.padding(top = 16.dp)
