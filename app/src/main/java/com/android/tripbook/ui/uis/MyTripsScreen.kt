@@ -391,9 +391,17 @@ fun MyTripsScreen(
                             (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
                             (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
                             (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
-                            (searchText.isEmpty() ||
-                                    trip.name.contains(searchText, ignoreCase = true) ||
-                                    trip.destination.contains(searchText, ignoreCase = true))
+                    (searchText.isEmpty() ||
+                            trip.name.contains(searchText, ignoreCase = true) ||
+                            trip.destination.contains(searchText, ignoreCase = true)) &&
+                    (filterDestination.isEmpty() || trip.destination.contains(filterDestination, ignoreCase = true)) &&
+                    (filterStatus == "Any" || trip.status.name.equals(filterStatus, ignoreCase = true)) &&
+                    (filterMinBudget.isEmpty() || trip.budget >= filterMinBudget.toIntOrNull() ?: 0) &&
+                    (filterMaxBudget.isEmpty() || trip.budget <= filterMaxBudget.toIntOrNull() ?: Int.MAX_VALUE) &&
+                    (filterMinTravelers.isEmpty() || trip.travelers >= filterMinTravelers.toIntOrNull() ?: 0) &&
+                    (filterMaxTravelers.isEmpty() || trip.travelers <= filterMaxTravelers.toIntOrNull() ?: Int.MAX_VALUE) &&
+                    (filterStartDate == null || !trip.startDate.isBefore(filterStartDate)) &&
+                    (filterEndDate == null || !trip.endDate.isAfter(filterEndDate))
                 }) { trip ->
                     TripCard(trip = trip, onClick = { onTripClick?.invoke(trip) })
                 }
@@ -559,3 +567,6 @@ fun TripCard(
         }
     }
 }
+
+
+
