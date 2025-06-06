@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -13,11 +14,11 @@ import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.ui.trip.TripDetailScreen
 import com.android.tripbook.ui.trip.TripListScreen
 import com.android.tripbook.viewmodel.BudgetViewModel
+import com.android.tripbook.viewmodel.BudgetViewModelFactory
 import com.android.tripbook.viewmodel.TripViewModel
 
 class MainActivity : ComponentActivity() {
     private val tripViewModel: TripViewModel by viewModels()
-    private val budgetViewModel: BudgetViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +45,9 @@ class MainActivity : ComponentActivity() {
             composable("trip_detail/{tripId}") { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getString("tripId")
                 tripId?.let {
-                    tripViewModel.loadTrip(it)
                     TripDetailScreen(
                         tripViewModel = tripViewModel,
+                        tripId = it,
                         onNavigateToBudget = {
                             navController.navigate("trip_budget/$it")
                         }
@@ -56,7 +57,9 @@ class MainActivity : ComponentActivity() {
             composable("trip_budget/{tripId}") { backStackEntry ->
                 val tripId = backStackEntry.arguments?.getString("tripId")
                 tripId?.let {
-                    budgetViewModel.loadBudgetCategoriesForTrip(it)
+                    val budgetViewModel: BudgetViewModel = viewModel(
+                        factory = BudgetViewModelFactory(application, it)
+                    )
                     TripBudgetScreen(
                         budgetViewModel = budgetViewModel,
                         tripId = it,
