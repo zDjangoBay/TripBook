@@ -66,8 +66,6 @@ data class Trip(
     val category: TripCategory = TripCategory.CULTURAL,
     val description: String = "",
     val companions: List<TravelCompanion> = emptyList(),
-    val activities: List<String> = emptyList(),
-    val expenses: List<String> = emptyList(),
     val itinerary: List<ItineraryItem> = emptyList(),
     // New fields for Maps integration
     val destinationCoordinates: Location? = null,
