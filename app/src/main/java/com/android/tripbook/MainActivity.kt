@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
                         startDate = LocalDate.of(2024, 12, 15),
                         endDate = LocalDate.of(2024, 12, 22),
                         destination = "Yaounde, Cameroon",
-                        // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 3.8480, longitude = 11.5021, name = "Yaounde, Cameroon", address = "Yaounde, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 4,
                         budget = 2400,
@@ -77,7 +76,6 @@ class MainActivity : ComponentActivity() {
                         startDate = LocalDate.of(2025, 1, 10),
                         endDate = LocalDate.of(2025, 1, 18),
                         destination = "Buea, Cameroon",
-                        // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 4.1481, longitude = 9.2323, name = "Buea, Cameroon", address = "Buea, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 2,
                         budget = 1800,
@@ -90,7 +88,6 @@ class MainActivity : ComponentActivity() {
                         startDate = LocalDate.of(2024, 9, 5),
                         endDate = LocalDate.of(2024, 9, 12),
                         destination = "Bamenda, Cameroon",
-                        // *** IMPORTANT CHANGE HERE ***
                         destinationCoordinates = Location(latitude = 5.9622, longitude = 10.1587, name = "Bamenda, Cameroon", address = "Bamenda, Cameroon", rating = 0.0, types = emptyList(), placeId = null),
                         travelers = 6,
                         budget = 3200,

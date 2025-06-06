@@ -598,7 +598,7 @@ private fun ItineraryItemCard(item: ItineraryItem) {
             )
             if (item.agencyService != null) {
                 Text(
-                    text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
+                    text = "Booked via: ${item.agencyService.name} (FCFA${item.agencyService.price})",
                     fontSize = 12.sp,
                     color = Color(0xFF64748B),
                     modifier = Modifier.padding(top = 4.dp)

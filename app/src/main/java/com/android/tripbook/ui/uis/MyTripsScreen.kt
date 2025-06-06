@@ -364,7 +364,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "FCFA ${trip.budget}",
+                        text = "FCFA ${trip.budget.toString().replace("$", "")}",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )

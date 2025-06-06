@@ -192,7 +192,7 @@ fun TravelAgencyScreen(
                                 onClick = {
                                     maxPrice = if (maxPrice == null) 300 else null
                                 },
-                                label = { Text("Price ≤ $300") },
+                                label = { Text("Price ≤ FCFA300") },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Color(0xFF667EEA),
                                     selectedLabelColor = Color.White
@@ -463,7 +463,7 @@ private fun EnhancedServiceItem(service: AgencyService, onClick: () -> Unit) {
 
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = "$${service.price}",
+                        text = "FCFA${service.price}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF667EEA)
