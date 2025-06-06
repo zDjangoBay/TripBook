@@ -1,26 +1,41 @@
 [versions]
-agp = "8.4.1"
-kotlin = "1.9.0"
+agp = "8.6.0" 
+kotlin = "1.9.23" 
+
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.7.0"
-material = "1.10.0"
+material = "1.10.0" 
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.8.0"
-composeBom = "2023.08.00"
+composeBom = "2024.04.00" # <--- MISE À JOUR IMPORTANTE DU BOM !
+# Alignement de kotlinCompilerExtensionVersion avec le BOM 2024.04.00 (généralement 1.5.11 ou 1.5.10 pour les derniers BOM)
+kotlinCompilerExtensionVersion = "1.5.11" # <--- ALIGNEMENT IMPORTANT
 coreSplashscreen = "1.2.0-alpha02"
 coreSplashscreenVersion = "1.0.1"
 activity = "1.10.1"
 constraintlayout = "2.1.4"
-uiToolingPreviewAndroid = "1.7.8"
-foundationLayoutAndroid = "1.7.8"
-runtimeAndroid = "1.7.8"
-uiAndroid = "1.7.8"
-material3Android = "1.3.2"
+# uiToolingPreviewAndroid = "1.7.8" 
+# foundationLayoutAndroid = "1.7.8" 
+# runtimeAndroid = "1.7.8" 
+# uiAndroid = "1.7.8" 
+# material3Android = "1.3.2" # Suppression, car géré par BOM / androidx-material3
+
+# ---- New Versions (Assure la compatibilité avec le NOUVEAU composeBom) ----
+composeMaterialIconsExtended = "1.6.7" # Compatible avec Compose 1.6.x (ce qui est dans le BOM 2024.04.00)
+navigationCompose = "2.7.0" # Compatible avec Compose 1.6.x
+coilCompose = "2.6.0"
+lifecycleViewmodelCompose = "2.8.0"
+kotlinxCoroutinesAndroid = "1.8.0"
+# foundationAndroid = "1.6.7" # <--- Suppression, souvent causé par le BOM
+
+# navigationComposeJvmstubs = "2.9.0" # <--- Suppression, rarement nécessaire et source de conflits
+# ----------------------
 
 [libraries]
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "composeMaterialIconsExtended" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -30,24 +45,36 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+# Ces lignes DOIVENT ÊTRE SANS version.ref car le BOM les gère.
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" } # Material3
+
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreenVersion" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
-androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
-androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
-androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
-androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+
+# Ces dépendances sont souvent des doublons ou gérées par le BOM, les supprimer ou les adapter
+# androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
+# androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+# androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+# androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
+# androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+
+# ---- New Libraries (gardées) ----
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+# androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" } # <--- Supprimé
+# androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" } # <--- Supprimé
+# -----------------------
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

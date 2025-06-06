@@ -4,5 +4,5 @@ data class TagModel(
     val id: String,
     val name: String,
     val category: Category,
-    val isSelected: Boolean = false
+    val isSelected: Boolean = false 
 )

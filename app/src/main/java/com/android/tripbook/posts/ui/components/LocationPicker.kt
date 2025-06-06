@@ -1,6 +1,5 @@
 package com.android.tripbook.posts.ui.components
 
-
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,12 +12,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color // Import Color
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.posts.model.Location
+
+// Les data classes Location et Coordinates ne sont plus définies ici.
+// Elles sont remplacées par LocationSearchItem et CoordinatesPayload de data.model.LocationRequestModels.kt
+import com.android.tripbook.data.model.LocationSearchItem // <-- NOUVEL IMPORT
+import com.android.tripbook.data.model.CoordinatesPayload // <-- NOUVEL IMPORT
+
 import com.android.tripbook.posts.viewmodel.PostEvent
 import com.android.tripbook.posts.viewmodel.PostUIState
 import com.android.tripbook.posts.viewmodel.PostViewModel
+import com.android.tripbook.ui.theme.TripBookTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,9 +32,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationPicker(
-    selectedLocation: Location?,
-    onLocationSelected: (Location) -> Unit,
-    error: String?, // Validation error for the location field itself
+    selectedLocation: LocationSearchItem?, // <-- Type mis à jour
+    onLocationSelected: (LocationSearchItem) -> Unit, // <-- Type mis à jour
+    error: String?,
     modifier: Modifier = Modifier,
     viewModel: PostViewModel
 ) {
@@ -41,7 +47,6 @@ fun LocationPicker(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Determine the border color conditionally
         val borderColor = if (error != null && selectedLocation == null) {
             MaterialTheme.colorScheme.error
         } else {
@@ -59,8 +64,7 @@ fun LocationPicker(
                 containerColor = if (error != null && selectedLocation == null) MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
                 else MaterialTheme.colorScheme.surface
             ),
-            // Apply the conditional border directly
-            border = BorderStroke(width = 1.dp, color = borderColor) // Use 1.dp or CardDefaults.outlinedCardBorder.width
+            border = BorderStroke(width = 1.dp, color = borderColor)
         ) {
             Row(
                 modifier = Modifier
@@ -69,9 +73,8 @@ fun LocationPicker(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = Icons.Default.LocationOn,
+                    imageVector = Icons.Filled.LocationOn,
                     contentDescription = "Location Icon",
-                    // Tint the icon based on the same error condition
                     tint = if (error != null && selectedLocation == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                 )
 
@@ -132,7 +135,7 @@ fun LocationPicker(
 private fun LocationSelectionDialog(
     uiState: PostUIState,
     onLocationSearch: (String) -> Unit,
-    onLocationSelected: (Location) -> Unit,
+    onLocationSelected: (LocationSearchItem) -> Unit, // <-- Type mis à jour
     onDismiss: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -154,7 +157,7 @@ private fun LocationSelectionDialog(
                                 delay(350)
                                 onLocationSearch(newQuery)
                             }
-                        } else {
+                        } else if (newQuery.isEmpty()) {
                             onLocationSearch("")
                         }
                     },
@@ -242,4 +245,34 @@ private fun LocationSelectionDialog(
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLocationPicker() {
+    TripBookTheme {
+        val mockViewModel = remember { PostViewModel() }
+        var selectedLoc by remember { mutableStateOf<LocationSearchItem?>(null) } // <-- Type mis à jour
+        LocationPicker(
+            selectedLocation = selectedLoc,
+            onLocationSelected = { selectedLoc = it },
+            error = null,
+            viewModel = mockViewModel
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLocationPickerWithError() {
+    TripBookTheme {
+        val mockViewModel = remember { PostViewModel() }
+        var selectedLoc by remember { mutableStateOf<LocationSearchItem?>(null) } // <-- Type mis à jour
+        LocationPicker(
+            selectedLocation = selectedLoc,
+            onLocationSelected = { selectedLoc = it },
+            error = "Location selection is required.",
+            viewModel = mockViewModel
+        )
+    }
 }
