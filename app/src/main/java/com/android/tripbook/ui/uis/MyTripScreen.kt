@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,7 @@ fun MyTripsScreen(
     onTripClick: (Trip) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf("All") }
+    val trips by viewModel.tripList
 
     Box(
         modifier = Modifier
@@ -111,19 +113,13 @@ fun MyTripsScreen(
                 }
             }
 
-            val info = viewModel.tripInfo
             // Trip List
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(viewModel.List.filter { trip ->
-                    (selectedTab == "All" ||
-                            (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
-                            (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
-                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED))
-                }) { trip ->
-                    TripCard(trip = trip,info = info ,onClick = { onTripClick(info) })
+                items(trips) { trip ->
+                    TripCard(trip = trip,onClick = { onTripClick(trip) })
                 }
             }
         }
@@ -151,8 +147,7 @@ fun MyTripsScreen(
 
 @Composable
 fun TripCard(
-    trip: Activity,
-    info: Trip,
+    trip: Trip,
     onClick: () -> Unit
 ) {
     val statusColor = when (trip.status) {
@@ -178,6 +173,7 @@ fun TripCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -191,13 +187,13 @@ fun TripCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = info.name,
+                        text = trip.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1A202C)
                     )
                     Text(
-                        text = info.startDate.format(DateTimeFormatter.ofPattern("MMM d")),
+                        text = trip.startDate.format(DateTimeFormatter.ofPattern("MMM d")),
                         fontSize = 14.sp,
                         color = Color(0xFF667EEA),
                         fontWeight = FontWeight.Medium
@@ -236,7 +232,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = info.destination,
+                        text = trip.destination,
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
@@ -251,7 +247,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${info.travelers} travelers",
+                        text = "${trip.travelers} travelers",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
@@ -266,7 +262,7 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$${info.budget}",
+                        text = "$${trip.budget}",
                         fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
