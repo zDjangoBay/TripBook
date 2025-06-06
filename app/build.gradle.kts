@@ -65,8 +65,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.runtime.android)
-    implementation(libs.androidx.navigation.compose.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -83,8 +81,12 @@ dependencies {
 
     // For LatLng and other Maps functionalities (if needed)
     implementation("com.google.android.gms:play-services-maps:18.2.0")    // Check for the latest version
-    implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("com.google.firebase:firebase-database:20.3.0")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-database-ktx")
+
+
+    implementation ("androidx.core:core-ktx:1.10.1")
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("com.google.android.material:material:1.9.0")
 }
