@@ -3,7 +3,14 @@ package com.android.tripbook.data
 import com.android.tripbook.model.Trip
 
 object SampleTrips {
-    fun get(): List<Trip> = listOf(
+    fun get(): List<Trip> = trips
+
+    fun addTrip(trip: Trip) {
+        trips.add(trip)
+    }
+
+    fun generateId(): Int = (trips.maxOfOrNull { it.id } ?: 0) + 1
+    private val trips = mutableListOf(
         Trip(
             id = 1,
             title = "Yaounde Capital",
@@ -63,4 +70,6 @@ object SampleTrips {
             )
         )
     )
+
+
 }
