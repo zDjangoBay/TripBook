@@ -44,6 +44,64 @@ class TripRepository {
         return emptyList()
     }
 
+    // --- Budget/Statistics/Category Management Methods ---
+
+    fun getTotalPlannedBudget(): Double {
+        return _trips.value.sumOf { (it.plannedBudget as? Double?) ?: (it.budget as? Double?) ?: 0.0 }
+    }
+
+    fun getTotalActualCost(): Double {
+        return _trips.value.sumOf { (it.actualCost as? Double?) ?: 0.0 }
+    }
+
+    fun getBudgetByCategory(category: TripCategory): Double {
+        return _trips.value
+            .filter { it.category == category || it.categories.contains(category) }
+            .sumOf { (it.plannedBudget as? Double?) ?: (it.budget as? Double?) ?: 0.0 }
+    }
+
+    fun getTripsByCategory(category: TripCategory): List<Trip> {
+        return _trips.value.filter { it.category == category || it.categories.contains(category) }
+    }
+
+    fun getTripCountByStatus(status: TripStatus): Int {
+        return _trips.value.count { it.status == status }
+    }
+
+    fun getAllCategories(): Set<TripCategory> {
+        return _trips.value.flatMap { it.categories }.toSet()
+    }
+
+    fun updateTripCategories(tripId: String, categories: List<TripCategory>) {
+        val currentTrips = _trips.value.toMutableList()
+        val index = currentTrips.indexOfFirst { it.id == tripId }
+        if (index != -1) {
+            val trip = currentTrips[index]
+            currentTrips[index] = trip.copy(categories = categories)
+            _trips.value = currentTrips
+        }
+    }
+
+    fun updateTripPlannedBudget(tripId: String, plannedBudget: Double) {
+        val currentTrips = _trips.value.toMutableList()
+        val index = currentTrips.indexOfFirst { it.id == tripId }
+        if (index != -1) {
+            val trip = currentTrips[index]
+            currentTrips[index] = trip.copy(plannedBudget = plannedBudget)
+            _trips.value = currentTrips
+        }
+    }
+
+    fun updateTripActualCost(tripId: String, actualCost: Double) {
+        val currentTrips = _trips.value.toMutableList()
+        val index = currentTrips.indexOfFirst { it.id == tripId }
+        if (index != -1) {
+            val trip = currentTrips[index]
+            currentTrips[index] = trip.copy(actualCost = actualCost)
+            _trips.value = currentTrips
+        }
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: TripRepository? = null

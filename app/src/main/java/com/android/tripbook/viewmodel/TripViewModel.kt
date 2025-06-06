@@ -3,6 +3,7 @@ package com.android.tripbook.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripCategory
 import com.android.tripbook.model.TripCreationState
 import com.android.tripbook.repository.SupabaseTripRepository
 import kotlinx.coroutines.flow.StateFlow
@@ -65,5 +66,35 @@ class TripViewModel(
             repository.updateTrip(trip)
             refreshTrips()
         }
+    }
+
+    // --- Budget/Statistics Logic ---
+
+    fun getTotalPlannedBudget(): Double {
+        return trips.value.sumOf { it.plannedBudget ?: (it.budget?.toDouble() ?: 0.0) }
+    }
+
+    fun getTotalActualCost(): Double {
+        return trips.value.sumOf { it.actualCost ?: 0.0 }
+    }
+
+    fun getBudgetByCategory(category: TripCategory): Double {
+        return trips.value
+            .filter { it.category == category || (it.categories?.contains(category) == true) }
+            .sumOf { it.plannedBudget ?: (it.budget?.toDouble() ?: 0.0) }
+    }
+
+    fun getTripsByCategory(category: TripCategory): List<Trip> {
+        return trips.value.filter { it.category == category || (it.categories?.contains(category) == true) }
+    }
+
+    // --- Navigation Logic (stubs, expand as needed) ---
+
+    fun navigateToBudgetScreen(onNavigate: () -> Unit) {
+        onNavigate()
+    }
+
+    fun navigateToTripDetails(tripId: String, onNavigate: (String) -> Unit) {
+        onNavigate(tripId)
     }
 }

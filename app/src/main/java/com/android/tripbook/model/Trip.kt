@@ -71,7 +71,12 @@ data class Trip(
     val itinerary: List<ItineraryItem> = emptyList(),
     // New fields for Maps integration
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null, // Center point for map display
+
+    // --- Added fields below ---
+    val plannedBudget: Double? = null,
+    val actualCost: Double? = null,
+    val categories: List<TripCategory> = emptyList()
 )
 
 // Data class for managing trip creation state across multiple steps

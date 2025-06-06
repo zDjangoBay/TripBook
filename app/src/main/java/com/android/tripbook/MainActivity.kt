@@ -23,6 +23,8 @@ import com.android.tripbook.ui.uis.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.viewmodel.TripViewModel
 import com.android.tripbook.viewmodel.AgencyViewModel
+import com.android.tripbook.ui.statistics.StatisticsScreen
+import com.android.tripbook.ui.transactions.AllTransactionsScreen
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
@@ -131,7 +133,8 @@ class MainActivity : ComponentActivity() {
                             selectedTrip = trip
                             currentScreen = "TripDetails"
                         },
-                        onAgenciesClick = { currentScreen = "AllAgencies" }
+                        onAgenciesClick = { currentScreen = "AllAgencies" },
+                        onAddBudgetClick = { currentScreen = "BudgetScreen" }  // Add navigation to budget screen
                     )
 
                     "MyTrips" -> MyTripsScreen(
@@ -144,7 +147,8 @@ class MainActivity : ComponentActivity() {
                             selectedTrip = trip
                             currentScreen = "TripDetails"
                         },
-                        onAgenciesClick = { currentScreen = "AllAgencies" }
+                        onAgenciesClick = { currentScreen = "AllAgencies" },
+                        onAddBudgetClick = { currentScreen = "BudgetScreen" }  // Add navigation to budget screen
                     )
 
                     "CreateTrip" -> TripCreationFlowScreen(
@@ -268,6 +272,20 @@ class MainActivity : ComponentActivity() {
                         agency = selectedAgency ?: Agency(),
                         agencyViewModel = agencyViewModel,
                         onBackClick = { currentScreen = "AllAgencies" }
+                    )
+
+                    "BudgetScreen" -> StatisticsScreen(
+                        onMonthSelect = { /* Handle month selection */ },
+                        onStatisticsCardClick = { /* Handle statistics card click */ },
+                        onViewAllBudgetPlan = { /* Handle view all budget plan */ },
+                        onAddCategory = { /* Handle add category */ },
+                        onViewAllTransactions = { currentScreen = "AllTransactions" }
+                    )
+
+                    "AllTransactions" -> AllTransactionsScreen(
+                        onBack = {
+                            currentScreen = "BudgetScreen"
+                        }
                     )
                 }
             }

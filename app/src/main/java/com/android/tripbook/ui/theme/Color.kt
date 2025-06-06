@@ -48,4 +48,24 @@ object TripBookColors {
     val WarningBackground = Color(0xFFFFF3CD)
     val ErrorBackground = Color(0xFFFFE6E6)
     val InfoBackground = Color(0xFFE6F3FF)
+
+    // --- New UI Element Colors ---
+    // Button colors
+    val ButtonPrimary = Color(0xFF667EEA)
+    val ButtonSecondary = Color(0xFF6B5B95)
+    val ButtonDisabled = Color(0xFFB0B7C3)
+
+    // Chip colors
+    val ChipBackground = Color(0xFFF1F5F9)
+    val ChipSelected = Color(0xFF667EEA)
+    val ChipText = Color(0xFF374151)
+
+    // Card colors
+    val CardBackground = Color(0xFFFFFFFF)
+    val CardShadow = Color(0x22000000)
+
+    // Input field colors
+    val InputBackground = Color(0xFFF8FAFC)
+    val InputBorder = Color(0xFFE5E7EB)
+    val InputFocused = Color(0xFF667EEA)
 }

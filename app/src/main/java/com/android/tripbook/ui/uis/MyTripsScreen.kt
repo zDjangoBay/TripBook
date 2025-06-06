@@ -1,6 +1,5 @@
 package com.android.tripbook.ui.uis
 
-
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,7 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions // This was likely already there
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -24,7 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType // <--- Make sure this line is present
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,13 +34,15 @@ import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.android.tripbook.R
-@OptIn(ExperimentalMaterial3Api::class) // Added for AlertDialog
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
     onPlanNewTripClick: () -> Unit,
     onTripClick: ((Trip) -> Unit)? = null,
-    onAgenciesClick: () -> Unit
+    onAgenciesClick: () -> Unit,
+    onAddBudgetClick: () -> Unit = {} // <-- Add this parameter
 ) {
     val trips by tripViewModel.trips.collectAsState()
     val isLoading by tripViewModel.isLoading.collectAsState()
@@ -63,6 +64,9 @@ fun MyTripsScreen(
     var editedTripTravelers by remember { mutableStateOf("") }
     var editedTripBudget by remember { mutableStateOf("") }
 
+    // Calculate total budget
+    // Fix the sumOf function by ensuring it returns a Double
+    val totalBudget = trips.sumOf { it.budget?.toDouble() ?: 0.0 }
 
     Box(
         modifier = Modifier
@@ -203,6 +207,53 @@ fun MyTripsScreen(
                     }
                 }
             }
+
+            // --- Total Budget Card START ---
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+                    .clickable { onAddBudgetClick() }, // Make the whole card clickable
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "Total Budget",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF667EEA)
+                        )
+                        Text(
+                            text = "$${"%.2f".format(totalBudget)}",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1A202C)
+                        )
+                    }
+                    IconButton(
+                        onClick = onAddBudgetClick,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color(0xFF667EEA), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Budget",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
+            }
+            // --- Total Budget Card END ---
 
             // Error State with Retry Button//
             if (!error.isNullOrEmpty()) {
@@ -378,16 +429,18 @@ fun MyTripsScreen(
                         value = editedTripName,
                         onValueChange = { editedTripName = it },
                         label = { Text("Trip Name") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
                         value = editedTripDestination,
                         onValueChange = { editedTripDestination = it },
                         label = { Text("Destination") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
-                    // You'll need to implement date pickers for startDate and endDate
-                    // For simplicity, I'm keeping them as text fields for now, but a proper UI for date selection is recommended.
                     OutlinedTextField(
                         value = editedTripStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                         onValueChange = {
@@ -398,7 +451,9 @@ fun MyTripsScreen(
                             }
                         },
                         label = { Text("Start Date (YYYY-MM-DD)") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
                         value = editedTripEndDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
@@ -410,23 +465,27 @@ fun MyTripsScreen(
                             }
                         },
                         label = { Text("End Date (YYYY-MM-DD)") },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
                         value = editedTripTravelers,
                         onValueChange = { editedTripTravelers = it },
                         label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
-                        value = editedTripTravelers,
-                        onValueChange = { editedTripTravelers = it },
-                        label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        value = editedTripBudget,
+                        onValueChange = { editedTripBudget = it },
+                        label = { Text("Budget") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
                     )
                 }
             },
@@ -440,7 +499,7 @@ fun MyTripsScreen(
                                 startDate = editedTripStartDate,
                                 endDate = editedTripEndDate,
                                 travelers = editedTripTravelers.toIntOrNull() ?: it.travelers,
-                                budget = editedTripBudget.toIntOrNull() ?: it.budget
+                                budget = editedTripBudget.toDoubleOrNull()?.toInt() ?: 0
                             )
                             tripViewModel.updateTrip(updatedTrip)
                         }
@@ -469,8 +528,8 @@ fun MyTripsScreen(
 fun TripCard(
     trip: Trip,
     onClick: () -> Unit,
-    onEditClick: (Trip) -> Unit, // New parameter for edit button
-    onDeleteClick: (Trip) -> Unit // New parameter for delete button
+    onEditClick: (Trip) -> Unit,
+    onDeleteClick: (Trip) -> Unit
 ) {
     val statusColor = when (trip.status) {
         TripStatus.PLANNED -> Color(0xFF0066CC)
@@ -514,7 +573,7 @@ fun TripCard(
                         color = Color(0xFF1A202C)
                     )
                     Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d,yyyy"))}",
                         fontSize = 14.sp,
                         color = Color(0xFF667EEA),
                         fontWeight = FontWeight.Medium
@@ -545,7 +604,7 @@ fun TripCard(
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between buttons and status
+                    Spacer(modifier = Modifier.width(8.dp))
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))

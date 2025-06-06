@@ -23,3 +23,4 @@ object SupabaseConfig {
         install(Storage)
     }
 }
+
