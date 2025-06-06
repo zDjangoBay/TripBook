@@ -1,4 +1,4 @@
-package com.android.tripbook.ui
+package com.tripbook.userprofileKollekang.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

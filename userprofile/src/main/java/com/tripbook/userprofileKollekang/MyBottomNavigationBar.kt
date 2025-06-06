@@ -1,33 +1,44 @@
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.android.tripbook.ui.BottomNavItem
+import com.tripbook.userprofileKollekang.ui.BottomNavItem
 
 @Composable
 fun MyBottomNavigationBar(navController: NavController) {
-    val items = kotlin.collections.listOf(
+    val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Explore,
         BottomNavItem.Search,
         BottomNavItem.Profile
     )
 
-    BottomNavigation(
-        // backgroundColor = MaterialTheme.colors.primary, // Customize as needed
-        // contentColor = Color.White // Customize as needed
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
         items.forEach { item ->
-            BottomNavigationItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(item.label) },
+            NavigationBarItem(
+                icon = {
+                    Icon(
+                        item.icon,
+                        contentDescription = item.label
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.label,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                },
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {
@@ -46,8 +57,13 @@ fun MyBottomNavigationBar(navController: NavController) {
                         restoreState = true
                     }
                 },
-                // selectedContentColor = Color.White, // Customize
-                // unselectedContentColor = Color.White.copy(0.4f) // Customize
+                colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
         }
     }
