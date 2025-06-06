@@ -1,11 +1,9 @@
 package com.android.tripbook.model
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -13,7 +11,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,16 +31,6 @@ class TripViewModel : ViewModel() {
             budget = 0,
             status = TripStatus.PLANNED,
             time = LocalTime.now().toString()
-        )
-    )
-
-    var tripTime by mutableStateOf(
-        Activity(
-            time = LocalTime.now(),
-            date = LocalDate.now(),
-            title = "",
-            location = "",
-            description = ""
         )
     )
 
@@ -72,22 +59,6 @@ class TripViewModel : ViewModel() {
     var isLoading by mutableStateOf(true)
     var errorMessage by mutableStateOf<String?>(null)
 
-//    init {
-//        retrieveData()
-//    }
-//
-//    fun retrieveData() {
-//        Firebase.firestore.collection("Trip")
-//            .get()
-//            .addOnSuccessListener { result ->
-//                val trips = result.documents.mapNotNull { it.toObject(Trip::class.java) }
-//                _tripList.value = trips
-//            }
-//            .addOnFailureListener { exception ->
-//                // Log error or handle it via another state
-//                Log.e("TripViewModel", "Error fetching trips", exception)
-//            }
-//    }
 
     init {
         listenToTrips()
@@ -161,15 +132,4 @@ class TripViewModel : ViewModel() {
             LocalTime.now()
         }
     }
-
-//    private fun updateStatus() {
-//        val now = LocalDate.now()
-//        tripInfo = tripInfo.copy(
-//            status = when {
-//                now.isBefore(tripInfo.startDate) -> TripStatus.PLANNED
-//                now.isEqual(tripInfo.startDate) -> TripStatus.ACTIVE
-//                else -> TripStatus.COMPLETED
-//            }
-//        )
-//    }
 }
