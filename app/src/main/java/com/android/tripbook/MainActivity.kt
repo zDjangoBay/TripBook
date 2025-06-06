@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Agency
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripCategory
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.repository.SupabaseAgencyRepository
 import com.android.tripbook.service.AgencyService
@@ -106,7 +107,8 @@ class MainActivity : ComponentActivity() {
                     endDate = LocalDate.now().plusDays(1),
                     destination = "Unknown",
                     travelers = 1,
-                    budget = 0,
+                    budget = 0.0,
+                    category = TripCategory.CULTURAL,
                     status = TripStatus.PLANNED
                 ),
                 onBackClick = { currentScreen = "MyTrips" },
@@ -121,7 +123,8 @@ class MainActivity : ComponentActivity() {
                     endDate = LocalDate.now().plusDays(1),
                     destination = "Unknown",
                     travelers = 1,
-                    budget = 0,
+                    budget = 0.0,
+                    category = TripCategory.CULTURAL,
                     status = TripStatus.PLANNED
                 ),
                 onBackClick = { currentScreen = "TripDetails" },

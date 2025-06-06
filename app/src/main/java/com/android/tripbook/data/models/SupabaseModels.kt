@@ -50,7 +50,7 @@ data class SupabaseTrip(
     val end_date: String,   // ISO date string
     val destination: String,
     val travelers: Int,
-    val budget: Int,
+    val budget: Double,  // Changed from Int to Double
     val status: String,     // TripStatus as string
     val category: String,   // TripCategory as string
     val description: String = "",
@@ -99,7 +99,6 @@ data class SupabaseItineraryItem(
     val time: String,
     val title: String,
     val location: String,
-    val type: String, // ItineraryType as string
     val notes: String = "",
     val description: String = "",
     val duration: String = "",

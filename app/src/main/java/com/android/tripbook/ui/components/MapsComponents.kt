@@ -18,12 +18,12 @@ fun TripMapView(
     modifier: Modifier = Modifier,
     showRoute: Boolean = true
 ) {
-    // Default center point (you can customize this)
-    val defaultCenter = LatLng(0.0, 0.0)
-    val mapCenter = trip.mapCenter?.let {
-        LatLng(it.latitude, it.longitude)
-    } ?: trip.destinationCoordinates?.let {
-        LatLng(it.latitude, it.longitude)
+    // Default center point (Yaoundé, Cameroon)
+    val defaultCenter = LatLng(3.848, 11.502)
+    val mapCenter = trip.destinationCoordinates?.let { coordinates ->
+        LatLng(coordinates.latitude, coordinates.longitude)
+    } ?: trip.itinerary.firstOrNull()?.coordinates?.let { coordinates ->
+        LatLng(coordinates.latitude, coordinates.longitude)
     } ?: defaultCenter
 
     val cameraPositionState = rememberCameraPositionState {

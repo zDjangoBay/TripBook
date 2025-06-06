@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripCategory
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
@@ -845,7 +846,8 @@ fun PlanNewTripScreen(
                                     endDate = endDate!!,
                                     destination = destination.trim(),
                                     travelers = travelers.toInt(),
-                                    budget = budget.toInt(),
+                                    budget = budget.toDoubleOrNull() ?: 0.0,
+                                    category = TripCategory.valueOf(selectedTripType.uppercase()),
                                     status = TripStatus.PLANNED,
                                     itinerary = itineraryItems
                                 )

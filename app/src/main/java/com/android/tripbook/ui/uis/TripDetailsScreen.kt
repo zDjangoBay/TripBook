@@ -115,11 +115,12 @@ fun TripDetailsScreen(
                                 viewModel = viewModel
                             )
                             "Journal" -> JournalSection(
-                                journalEntries = uiState.trip?.journalEntries.orEmpty(),
+                                journalEntries = currentTrip.journalEntries,
                                 onAddEntry = viewModel::addJournalEntry,
                                 onEditEntry = viewModel::editJournalEntry,
                                 onDeleteEntry = viewModel::deleteJournalEntry
                             )
+                            else -> {}
                         }
                     }
                 }
@@ -430,68 +431,88 @@ fun JournalSection(
     journalEntries: List<JournalEntry>,
     onAddEntry: (JournalEntry) -> Unit,
     onEditEntry: (JournalEntry) -> Unit,
-    onDeleteEntry: (JournalEntry) -> Unit
+    onDeleteEntry: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-        Text(
-            text = "Journal",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+    var showAddDialog by remember { mutableStateOf(false) }
+    var editingEntry by remember { mutableStateOf<JournalEntry?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
 
-        LazyColumn {
-            items(journalEntries) { entry ->
-                JournalEntryCard(
-                    entry = entry,
-                    onEdit = { onEditEntry(entry) },
-                    onDelete = { onDeleteEntry(entry) }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Search and Add Entry Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Search entries...") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Entry",
+                    tint = Color.White
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onAddEntry(JournalEntry("", LocalDate.now(), "", "")) }) {
-            Text(text = "Add Journal Entry")
-        }
-    }
-}
-
-@Composable
-fun JournalEntryCard(
-    entry: JournalEntry,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = entry.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = entry.content,
-                fontSize = 14.sp,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Button(onClick = onEdit) {
-                    Text(text = "Edit")
-                }
-                Button(onClick = onDelete) {
-                    Text(text = "Delete")
-                }
+        // Entries List
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(
+                items = journalEntries.filter { entry ->
+                    entry.title.contains(searchQuery, ignoreCase = true) ||
+                    entry.content.contains(searchQuery, ignoreCase = true)
+                },
+                key = { it.id }
+            ) { entry ->
+                JournalEntryCard(
+                    entry = entry,
+                    onEdit = { onEditEntry(entry) },
+                    onDelete = { onDeleteEntry(entry.id) }
+                )
             }
         }
+    }
+
+    // Add/Edit Dialog
+    if (showAddDialog || editingEntry != null) {
+        JournalEntryDialog(
+            entry = editingEntry,
+            onDismiss = {
+                showAddDialog = false
+                editingEntry = null
+            },
+            onSave = { entry ->
+                if (editingEntry != null) {
+                    onEditEntry(entry)
+                } else {
+                    onAddEntry(entry)
+                }
+                showAddDialog = false
+                editingEntry = null
+            }
+        )
     }
 }
 
@@ -1027,4 +1048,7 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
                     )
                 )
             )
+    ) {
+        content()
     }
+}

@@ -88,9 +88,9 @@ fun TripSettingsStep(
                 )
                 
                 OutlinedTextField(
-                    value = if (state.budget == 0) "" else state.budget.toString(),
+                    value = if (state.budget == 0.0) "" else state.budget.toString(),
                     onValueChange = { newValue ->
-                        val budget = newValue.toIntOrNull() ?: 0
+                        val budget = newValue.toDoubleOrNull() ?: 0.0
                         onStateChange(state.copy(budget = budget))
                     },
                     placeholder = { Text("Enter budget amount") },

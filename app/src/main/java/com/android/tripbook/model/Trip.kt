@@ -87,7 +87,7 @@ data class TripCreationState(
     val category: TripCategory = TripCategory.CULTURAL,
     val description: String = "",
     val companions: List<TravelCompanion> = emptyList(),
-    val budget: Int = 0
+    val budget: Double = 0.0
 ) {
     fun canProceedToNextStep(): Boolean {
         return when (currentStep) {
