@@ -80,7 +80,7 @@ fun TripSettingsStep(
                 
                 // Budget
                 Text(
-                    text = "Estimated Budget (USD)",
+                    text = "Estimated Budget (FCFA)",
                     fontSize = 14.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Medium,

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.ui.utils.TextDefaults
 import com.android.tripbook.viewmodel.TripStatistics
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,7 +36,7 @@ fun TripStatisticsCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -64,14 +65,14 @@ fun TripStatisticsCard(
                     icon = Icons.Default.Place,
                     value = "${statistics.activitiesCount}",
                     label = "Activities",
-                    color = Color(0xFF00CC66),
+                    color = TripBookColors.Success,
                     modifier = Modifier.weight(1f)
                 )
                 StatisticItem(
                     icon = Icons.Default.CheckCircle,
                     value = "${statistics.completedActivities}",
                     label = "Completed",
-                    color = Color(0xFFE91E63),
+                    color = TripBookColors.Secondary,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -147,8 +148,8 @@ private fun DateChip(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (isSelected) TripBookColors.Primary else Color.White
-    val textColor = if (isSelected) Color.White else TripBookColors.TextPrimary
+    val backgroundColor = if (isSelected) TripBookColors.Primary else TripBookColors.Surface
+    val textColor = if (isSelected) TripBookColors.TextOnPrimary else TripBookColors.TextPrimary
     
     Card(
         modifier = Modifier
@@ -217,7 +218,7 @@ fun DayTimelineView(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Activity",
-                    tint = Color.White,
+                    tint = TripBookColors.TextOnPrimary,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -230,7 +231,7 @@ fun DayTimelineView(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -247,14 +248,14 @@ fun DayTimelineView(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No activities planned for this day",
+                        text = TextDefaults.NO_ACTIVITIES_PLANNED,
                         fontSize = 16.sp,
                         color = TripBookColors.TextSecondary,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Tap the + button to add your first activity",
+                        text = TextDefaults.ADD_FIRST_ACTIVITY,
                         fontSize = 14.sp,
                         color = TripBookColors.TextSecondary.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center
@@ -289,7 +290,7 @@ fun ActivityTimelineCard(
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -315,9 +316,9 @@ fun ActivityTimelineCard(
                         .size(12.dp)
                         .background(
                             when (activity.type) {
-                                ItineraryType.ACTIVITY -> TripBookColors.Primary
-                                ItineraryType.ACCOMMODATION -> Color(0xFF00CC66)
-                                ItineraryType.TRANSPORTATION -> Color(0xFFFF9500)
+                                ItineraryType.ACTIVITY -> TripBookColors.ActivityColor
+                                ItineraryType.ACCOMMODATION -> TripBookColors.AccommodationColor
+                                ItineraryType.TRANSPORTATION -> TripBookColors.TransportationColor
                             },
                             CircleShape
                         )
@@ -367,7 +368,7 @@ fun ActivityTimelineCard(
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Completed",
-                    tint = Color(0xFF00CC66),
+                    tint = TripBookColors.Success,
                     modifier = Modifier.size(20.dp)
                 )
             }

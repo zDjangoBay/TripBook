@@ -17,6 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.TripCreationState
 import com.android.tripbook.ui.components.StepHeader
+import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.ui.utils.TextDefaults
+import com.android.tripbook.ui.utils.ifEmptyDefault
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -34,7 +37,7 @@ fun ReviewStep(
         Card(
             modifier = Modifier.fillMaxSize(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface)
         ) {
             Column(
                 modifier = Modifier
@@ -48,22 +51,22 @@ fun ReviewStep(
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF6B73FF))
+                    colors = CardDefaults.cardColors(containerColor = TripBookColors.Primary)
                 ) {
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
                         Text(
-                            text = state.tripName.ifEmpty { "Untitled Trip" },
+                            text = state.tripName.ifEmptyDefault(TextDefaults.UNTITLED_TRIP),
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = TripBookColors.TextOnPrimary
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = state.category.name.lowercase().replaceFirstChar { it.uppercase() } + " Trip",
                             fontSize = 16.sp,
-                            color = Color.White.copy(alpha = 0.8f)
+                            color = TripBookColors.TextOnPrimary.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -72,7 +75,7 @@ fun ReviewStep(
                 ReviewSection(
                     icon = Icons.Default.LocationOn,
                     title = "Destination",
-                    content = state.destination.ifEmpty { "Not specified" }
+                    content = state.destination.ifEmptyDefault(TextDefaults.NO_DESTINATION)
                 )
 
                 // Agency Section
@@ -90,7 +93,7 @@ fun ReviewStep(
                         }
                     }
                 } else {
-                    "No agency selected"
+                    TextDefaults.NO_AGENCY_SELECTED
                 }
 
                 ReviewSection(
@@ -180,7 +183,7 @@ fun ReviewStep(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F8FF))
+                    colors = CardDefaults.cardColors(containerColor = TripBookColors.SurfaceInfo)
                 ) {
                     Row(
                         modifier = Modifier.padding(16.dp),
@@ -189,7 +192,7 @@ fun ReviewStep(
                         Icon(
                             imageVector = Icons.Default.Info,
                             contentDescription = "Info",
-                            tint = Color(0xFF6B73FF),
+                            tint = TripBookColors.Primary,
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
@@ -198,12 +201,12 @@ fun ReviewStep(
                                 text = "Ready to create your trip?",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = TripBookColors.TextPrimary
                             )
                             Text(
                                 text = "You can edit these details later from your trip dashboard.",
                                 fontSize = 14.sp,
-                                color = Color.Gray
+                                color = TripBookColors.TextSecondary
                             )
                         }
                     }
@@ -225,7 +228,7 @@ private fun ReviewSection(
             .fillMaxWidth()
             .padding(bottom = 12.dp),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA))
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.SurfaceSecondary)
     ) {
         Row(
             modifier = Modifier
@@ -236,7 +239,7 @@ private fun ReviewSection(
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                tint = Color(0xFF6B73FF),
+                tint = TripBookColors.Primary,
                 modifier = Modifier.size(24.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
@@ -246,13 +249,13 @@ private fun ReviewSection(
                     text = title,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = TripBookColors.TextPrimary,
                     modifier = Modifier.padding(bottom = 4.dp)
                 )
                 Text(
                     text = content,
                     fontSize = 14.sp,
-                    color = Color.Black,
+                    color = TripBookColors.TextPrimary,
                     lineHeight = 20.sp
                 )
             }

@@ -28,6 +28,8 @@ import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
 import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.ui.utils.TextDefaults
+import com.android.tripbook.ui.utils.ifEmptyDefault
 import com.android.tripbook.viewmodel.TripDetailsViewModel
 import com.android.tripbook.viewmodel.MapViewMode
 import com.google.android.gms.maps.model.CameraPosition
@@ -75,7 +77,7 @@ fun TripDetailsScreen(
                     .fillMaxSize()
                     .padding(horizontal = 20.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
@@ -232,9 +234,9 @@ fun EnhancedItineraryTab(
                 onClick = { viewModel.toggleMapViewMode() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (uiState.mapViewMode == MapViewMode.MAP)
-                        TripBookColors.Primary else Color.White,
+                        TripBookColors.Primary else TripBookColors.Surface,
                     contentColor = if (uiState.mapViewMode == MapViewMode.MAP)
-                        Color.White else TripBookColors.Primary
+                        TripBookColors.TextOnPrimary else TripBookColors.Primary
                 ),
                 border = if (uiState.mapViewMode == MapViewMode.LIST)
                     BorderStroke(1.dp, TripBookColors.Primary) else null,
@@ -264,7 +266,7 @@ fun EnhancedItineraryTab(
                     text = "Edit Itinerary",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.White
+                    color = TripBookColors.TextOnPrimary
                 )
             }
         }
@@ -345,7 +347,7 @@ fun TripSummaryCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -380,7 +382,7 @@ fun TravelersCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -396,7 +398,7 @@ fun TravelersCard(
 
             if (trip.companions.isEmpty()) {
                 Text(
-                    text = "Solo trip",
+                    text = TextDefaults.SOLO_TRIP,
                     fontSize = 14.sp,
                     color = TripBookColors.TextSecondary
                 )
@@ -406,9 +408,9 @@ fun TravelersCard(
                         initials = companion.name.split(" ").mapNotNull { it.firstOrNull() }.take(2).joinToString(""),
                         name = companion.name,
                         color = when (index % 3) {
-                            0 -> TripBookColors.Primary
-                            1 -> Color(0xFF00CC66)
-                            else -> Color(0xFFE91E63)
+                            0 -> TripBookColors.AvatarColor1
+                            1 -> TripBookColors.AvatarColor2
+                            else -> TripBookColors.AvatarColor3
                         }
                     )
                     if (index < trip.companions.size - 1) {
@@ -624,7 +626,7 @@ private fun MapLegend() {
                 text = "Map Legend",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C),
+                color = TripBookColors.TextDark,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
@@ -633,22 +635,22 @@ private fun MapLegend() {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 LegendItem(
-                    color = Color(0xFF667EEA),
+                    color = TripBookColors.ActivityColor,
                     label = "Activities",
                     modifier = Modifier.weight(1f)
                 )
                 LegendItem(
-                    color = Color(0xFF00CC66),
+                    color = TripBookColors.AccommodationColor,
                     label = "Hotels",
                     modifier = Modifier.weight(1f)
                 )
                 LegendItem(
-                    color = Color(0xFFFF9500),
+                    color = TripBookColors.TransportationColor,
                     label = "Transport",
                     modifier = Modifier.weight(1f)
                 )
                 LegendItem(
-                    color = Color(0xFFDC2626),
+                    color = TripBookColors.DestinationColor,
                     label = "Destination",
                     modifier = Modifier.weight(1f)
                 )
@@ -677,7 +679,7 @@ private fun LegendItem(
         Text(
             text = label,
             fontSize = 12.sp,
-            color = Color(0xFF64748B)
+            color = TripBookColors.TextSecondary
         )
     }
 }
@@ -939,20 +941,3 @@ private fun TravelerItem(initials: String, name: String, color: Color) {
 
 
 
-@Composable
-private fun TripBookGradientBackground(content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
-        content()
-    }
-}

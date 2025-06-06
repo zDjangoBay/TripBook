@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.ui.utils.TextDefaults
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -103,7 +104,7 @@ fun ItineraryBuilderScreen(
                         text = "Date",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
+                        color = TripBookColors.TextPrimary,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
@@ -119,7 +120,7 @@ fun ItineraryBuilderScreen(
                             Icon(
                                 imageVector = Icons.Default.DateRange,
                                 contentDescription = "Date",
-                                tint = Color(0xFF667EEA)
+                                tint = TripBookColors.Primary
                             )
                         },
                         isError = dateError.isNotEmpty(),
@@ -129,7 +130,7 @@ fun ItineraryBuilderScreen(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            disabledBorderColor = if (dateError.isNotEmpty()) MaterialTheme.colorScheme.error else Color(0xFFE5E7EB),
+                            disabledBorderColor = if (dateError.isNotEmpty()) MaterialTheme.colorScheme.error else TripBookColors.Border,
                             disabledTextColor = Color.Black
                         ),
                         shape = RoundedCornerShape(12.dp)
@@ -167,9 +168,9 @@ fun ItineraryBuilderScreen(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            focusedBorderColor = TripBookColors.BorderFocused,
+                            focusedLabelColor = TripBookColors.BorderFocused,
+                            unfocusedBorderColor = TripBookColors.Border
                         ),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true
@@ -182,7 +183,7 @@ fun ItineraryBuilderScreen(
                         text = "Title",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
+                        color = TripBookColors.TextPrimary,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
@@ -200,9 +201,9 @@ fun ItineraryBuilderScreen(
                             }
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            focusedBorderColor = TripBookColors.BorderFocused,
+                            focusedLabelColor = TripBookColors.BorderFocused,
+                            unfocusedBorderColor = TripBookColors.Border
                         ),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true
@@ -215,7 +216,7 @@ fun ItineraryBuilderScreen(
                         text = "Location",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
+                        color = TripBookColors.TextPrimary,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Column {
@@ -241,7 +242,7 @@ fun ItineraryBuilderScreen(
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
                                     contentDescription = "Location",
-                                    tint = Color(0xFFE91E63)
+                                    tint = TripBookColors.Secondary
                                 )
                             },
                             isError = locationError.isNotEmpty(),
@@ -251,9 +252,9 @@ fun ItineraryBuilderScreen(
                                 }
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF667EEA),
-                                focusedLabelColor = Color(0xFF667EEA),
-                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                                focusedBorderColor = TripBookColors.BorderFocused,
+                                focusedLabelColor = TripBookColors.BorderFocused,
+                                unfocusedBorderColor = TripBookColors.Border
                             ),
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true
@@ -270,7 +271,7 @@ fun ItineraryBuilderScreen(
                                     .fillMaxWidth()
                                     .padding(top = 4.dp),
                                 shape = RoundedCornerShape(8.dp),
-                                colors = CardDefaults.cardColors(containerColor = Color.White),
+                                colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                             ) {
                                 LazyColumn(
@@ -299,7 +300,7 @@ fun ItineraryBuilderScreen(
                         text = "Type",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
+                        color = TripBookColors.TextPrimary,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     Row(
@@ -332,7 +333,7 @@ fun ItineraryBuilderScreen(
                         text = "Notes",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151),
+                        color = TripBookColors.TextPrimary,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
@@ -343,9 +344,9 @@ fun ItineraryBuilderScreen(
                             .height(120.dp),
                         placeholder = { Text("Additional details or notes") },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF667EEA),
-                            focusedLabelColor = Color(0xFF667EEA),
-                            unfocusedBorderColor = Color(0xFFE5E7EB)
+                            focusedBorderColor = TripBookColors.BorderFocused,
+                            focusedLabelColor = TripBookColors.BorderFocused,
+                            unfocusedBorderColor = TripBookColors.Border
                         ),
                         shape = RoundedCornerShape(12.dp)
                     )
@@ -391,7 +392,7 @@ fun ItineraryBuilderScreen(
                             .fillMaxWidth()
                             .height(48.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF667EEA)
+                            containerColor = TripBookColors.Primary
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -399,7 +400,7 @@ fun ItineraryBuilderScreen(
                             text = "Add Itinerary Item",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = TripBookColors.TextOnPrimary
                         )
                     }
 
@@ -411,7 +412,7 @@ fun ItineraryBuilderScreen(
                             text = "Itinerary Items",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF374151),
+                            color = TripBookColors.TextPrimary,
                             modifier = Modifier.padding(bottom = 12.dp)
                         )
                         LazyColumn(
@@ -438,7 +439,7 @@ fun ItineraryBuilderScreen(
                             .fillMaxWidth()
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF667EEA)
+                            containerColor = TripBookColors.Primary
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -446,7 +447,7 @@ fun ItineraryBuilderScreen(
                             text = "Save Itinerary",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = TripBookColors.TextOnPrimary
                         )
                     }
                 }
@@ -495,7 +496,7 @@ private fun ItineraryItemCard(item: ItineraryItem) {
         modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -507,35 +508,35 @@ private fun ItineraryItemCard(item: ItineraryItem) {
                 text = "${item.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${item.time}",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF667EEA)
+                color = TripBookColors.Primary
             )
             Text(
                 text = item.title,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C),
+                color = TripBookColors.TextDark,
                 modifier = Modifier.padding(vertical = 4.dp)
             )
             Text(
                 text = item.location,
                 fontSize = 14.sp,
-                color = Color(0xFF64748B)
+                color = TripBookColors.TextSecondary
             )
             Text(
                 text = item.type.name,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = when (item.type) {
-                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
-                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
-                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                    ItineraryType.ACTIVITY -> TripBookColors.ActivityColor
+                    ItineraryType.ACCOMMODATION -> TripBookColors.Secondary
+                    ItineraryType.TRANSPORTATION -> TripBookColors.AccommodationColor
                 }
             )
             if (item.agencyService != null) {
                 Text(
                     text = "Booked via: ${item.agencyService.name} ($${item.agencyService.price})",
                     fontSize = 12.sp,
-                    color = Color(0xFF64748B),
+                    color = TripBookColors.TextSecondary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -543,7 +544,7 @@ private fun ItineraryItemCard(item: ItineraryItem) {
                 Text(
                     text = "Notes: ${item.notes}",
                     fontSize = 12.sp,
-                    color = Color(0xFF64748B),
+                    color = TripBookColors.TextSecondary,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -563,7 +564,7 @@ private fun SuggestionItem(suggestion: Attraction, onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Default.Place,
             contentDescription = "Attraction",
-            tint = Color(0xFF667EEA),
+            tint = TripBookColors.Primary,
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -572,12 +573,12 @@ private fun SuggestionItem(suggestion: Attraction, onClick: () -> Unit) {
                 text = suggestion.name,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1A202C)
+                color = TripBookColors.TextDark
             )
             Text(
                 text = suggestion.location,
                 fontSize = 12.sp,
-                color = Color(0xFF64748B)
+                color = TripBookColors.TextSecondary
             )
         }
     }

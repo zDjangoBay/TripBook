@@ -26,11 +26,15 @@ object TripBookColors {
     val Background = Color(0xFFF8FAFC)
     val Surface = Color.White
     val SurfaceVariant = Color(0xFFF1F5F9)
+    val SurfaceSecondary = Color(0xFFFAFAFA)
+    val SurfaceInfo = Color(0xFFF0F8FF)
 
     // Text colors
     val TextPrimary = Color(0xFF374151)
     val TextSecondary = Color(0xFF64748B)
+    val TextTertiary = Color(0xFF9CA3AF)
     val TextOnPrimary = Color.White
+    val TextDark = Color(0xFF1A202C)
 
     // Border and divider colors
     val Border = Color(0xFFE5E7EB)
@@ -48,4 +52,23 @@ object TripBookColors {
     val WarningBackground = Color(0xFFFFF3CD)
     val ErrorBackground = Color(0xFFFFE6E6)
     val InfoBackground = Color(0xFFE6F3FF)
+
+    // Trip status colors
+    val StatusPlanned = Color(0xFF0066CC)
+    val StatusPlannedBackground = Color(0xFFE6F3FF)
+    val StatusActive = Color(0xFF00CC66)
+    val StatusActiveBackground = Color(0xFFE6FFE6)
+    val StatusCompleted = Color(0xFF666666)
+    val StatusCompletedBackground = Color(0xFFF0F0F0)
+
+    // Itinerary type colors
+    val ActivityColor = Color(0xFF667EEA)
+    val AccommodationColor = Color(0xFF00CC66)
+    val TransportationColor = Color(0xFFFF9500)
+    val DestinationColor = Color(0xFFDC2626)
+
+    // Traveler avatar colors
+    val AvatarColor1 = Color(0xFF667EEA)
+    val AvatarColor2 = Color(0xFF00CC66)
+    val AvatarColor3 = Color(0xFFE91E63)
 }

@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
+import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.ui.utils.TextDefaults
+import com.android.tripbook.ui.utils.orDefaultBudget
 import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -52,8 +55,8 @@ fun MyTripsScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
+                        TripBookColors.GradientStart,
+                        TripBookColors.GradientEnd
                     )
                 )
             )
@@ -117,7 +120,7 @@ fun MyTripsScreen(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        tint = Color(0xFF9CA3AF),
+                        tint = TripBookColors.TextTertiary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -138,8 +141,8 @@ fun MyTripsScreen(
                             ) {
                                 if (searchText.isEmpty()) {
                                     Text(
-                                        text = "Search trips...",
-                                        color = Color(0xFF9CA3AF),
+                                        text = TextDefaults.SEARCH_PLACEHOLDER,
+                                        color = TripBookColors.TextTertiary,
                                         fontSize = 16.sp,
                                         textAlign = TextAlign.Center
                                     )
@@ -180,7 +183,7 @@ fun MyTripsScreen(
                             text = tab,
                             fontSize = 14.sp,
                             fontWeight = if (selectedTab == tab) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (selectedTab == tab) Color(0xFF667EEA) else Color.White
+                            color = if (selectedTab == tab) TripBookColors.Primary else Color.White
                         )
                     }
                 }
@@ -211,8 +214,8 @@ fun MyTripsScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
-            containerColor = Color.White,
-            contentColor = Color(0xFF667EEA),
+            containerColor = TripBookColors.Surface,
+            contentColor = TripBookColors.Primary,
             shape = CircleShape
         ) {
             Icon(
@@ -230,14 +233,14 @@ fun TripCard(
     onClick: () -> Unit
 ) {
     val statusColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFF0066CC)
-        TripStatus.ACTIVE -> Color(0xFF00CC66)
-        TripStatus.COMPLETED -> Color(0xFF666666)
+        TripStatus.PLANNED -> TripBookColors.StatusPlanned
+        TripStatus.ACTIVE -> TripBookColors.StatusActive
+        TripStatus.COMPLETED -> TripBookColors.StatusCompleted
     }
     val statusBgColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFFE6F3FF)
-        TripStatus.ACTIVE -> Color(0xFFE6FFE6)
-        TripStatus.COMPLETED -> Color(0xFFF0F0F0)
+        TripStatus.PLANNED -> TripBookColors.StatusPlannedBackground
+        TripStatus.ACTIVE -> TripBookColors.StatusActiveBackground
+        TripStatus.COMPLETED -> TripBookColors.StatusCompletedBackground
     }
 
     Card(
@@ -250,7 +253,7 @@ fun TripCard(
                 spotColor = Color.Black.copy(alpha = 0.1f)
             ),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = TripBookColors.Surface)
     ) {
         Column(
             modifier = Modifier
@@ -268,12 +271,12 @@ fun TripCard(
                         text = trip.name,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
+                        color = TripBookColors.TextDark
                     )
                     Text(
                         text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
                         fontSize = 14.sp,
-                        color = Color(0xFF667EEA),
+                        color = TripBookColors.Primary,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -315,7 +318,7 @@ fun TripCard(
                     Text(
                         text = trip.destination,
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B),
+                        color = TripBookColors.TextSecondary,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
@@ -335,7 +338,7 @@ fun TripCard(
                     Text(
                         text = "${trip.travelers} travelers",
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B),
+                        color = TripBookColors.TextSecondary,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
@@ -353,9 +356,9 @@ fun TripCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$${trip.budget}",
+                        text = trip.budget.orDefaultBudget(),
                         fontSize = 14.sp,
-                        color = Color(0xFF64748B),
+                        color = TripBookColors.TextSecondary,
                         maxLines = 1,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
