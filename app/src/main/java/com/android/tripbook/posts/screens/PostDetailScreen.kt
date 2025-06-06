@@ -1,19 +1,18 @@
 package com.android.tripbook.posts.screens
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.PostModel
-import com.android.tripbook.posts.model.Comment
-import com.android.tripbook.posts.model.Location
+import com.android.tripbook.data.model.Comment // <-- Import du modèle canonique Comment
+import com.android.tripbook.data.model.TravelLocation // <-- Import du modèle canonique TravelLocation
 import com.android.tripbook.posts.model.ImageModel
 import com.android.tripbook.posts.model.PostVisibility
 import com.android.tripbook.posts.ui.components.CommentItem
@@ -21,7 +20,17 @@ import com.android.tripbook.posts.ui.components.PostCard
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.Instant
 import android.net.Uri
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +44,7 @@ fun PostDetailScreen(post: PostModel, currentUserId: String, onBack: () -> Unit)
                 title = { Text(post.title) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back") 
                     }
                 }
             )
@@ -54,7 +63,7 @@ fun PostDetailScreen(post: PostModel, currentUserId: String, onBack: () -> Unit)
                     onCommentClick = { println("Comment section scrolled to on post ${post.id}") }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) // <-- Renommé
                 Text(
                     text = "Comments (${post.comments.size})",
                     style = MaterialTheme.typography.titleMedium,
@@ -81,7 +90,7 @@ fun PostDetailScreen(post: PostModel, currentUserId: String, onBack: () -> Unit)
                     replyText = replyText,
                     onReplyTextChange = { replyText = it }
                 )
-                Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp)) // <-- Renommé
             }
 
             item {
@@ -103,7 +112,7 @@ fun PostDetailScreen(post: PostModel, currentUserId: String, onBack: () -> Unit)
                                 },
                                 enabled = replyText.isNotBlank()
                             ) {
-                                Icon(Icons.Filled.Send, contentDescription = "Send Comment")
+                                Icon(Icons.Filled.Send, contentDescription = "Send Comment") 
                             }
                         }
                     )
@@ -131,7 +140,7 @@ fun PreviewPostDetailScreen() {
                 ImageModel("img2", Uri.parse("https://via.placeholder.com/600/00FF00/FFFFFF?text=AngkorWat")),
                 ImageModel("img3", Uri.parse("https://via.placeholder.com/600/0000FF/FFFFFF?text=HaLongBay"))
             ),
-            location = Location("locSEA", "Southeast Asia", "", "Multiple", null),
+            location = TravelLocation("locSEA", "Southeast Asia", 0.0, 0.0, "Multiple countries, Southeast Asia", null), // <-- Utilise TravelLocation du module data.model
             tags = emptyList(),
             createdAt = Instant.now().minusSeconds(86400 * 5),
             lastEditedAt = Instant.now().minusSeconds(3600 * 2),
