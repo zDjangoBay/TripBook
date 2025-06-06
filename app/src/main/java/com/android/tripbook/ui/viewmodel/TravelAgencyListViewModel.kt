@@ -64,9 +64,10 @@ class TravelAgencyListViewModel : ViewModel() {
                 servicesOffered = listOf("Scuba Diving", "Snorkeling", "Marine Tours"),
                 isVerified = true,
                 minPrice = 150.0,
-                maxPrice = 6000.0
+                maxPrice = 6000.0,
+                reviewCount = 45.0
             ),
-            Agency( 
+            Agency(
                 id = UUID.randomUUID().toString(),
                 name = "Mountain Trekkers",
                 description = "Guided treks and mountain climbing in the Himalayas.",
@@ -74,11 +75,12 @@ class TravelAgencyListViewModel : ViewModel() {
                 rating = 4.7,
                 reviewsCount = 150,
                 contactEmail = "info@mountaintrekkers.com",
-                contactPhone = "555-123-4567",  
+                contactPhone = "555-123-4567",
                 servicesOffered = listOf("Trekking", "Climbing", "Guided Tours"),
                 isVerified = true,
                 minPrice = 200.0,
-                maxPrice = 7000.0
+                maxPrice = 7000.0,
+                reviewCount = 45.0
             ),
             Agency(
                 id = UUID.randomUUID().toString(),
@@ -91,8 +93,9 @@ class TravelAgencyListViewModel : ViewModel() {
                 contactPhone = "555-987-6543",
                 servicesOffered = listOf("Cultural Tours", "Workshops", "Local Experiences"),
                 isVerified = true,
-                minPrice = 80.0,            
-                maxPrice = 4000.0
+                minPrice = 80.0,
+                maxPrice = 4000.0,
+                reviewCount = 45.0
             )
         )
     }
