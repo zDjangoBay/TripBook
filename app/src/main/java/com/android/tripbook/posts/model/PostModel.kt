@@ -1,13 +1,12 @@
 package com.android.tripbook.posts.model
 
-import java.time.Instant
 import java.util.UUID
 
 data class PostModel(
     val id: String = UUID.randomUUID().toString(),
     val userId: String,
     val username: String,
-    val userAvatar: String? = null,
+    val userAvatar: String,
     val title: String,
     val description: String,
     val location: Location,
@@ -15,8 +14,12 @@ data class PostModel(
     val categories: List<Category> = emptyList(),
     val tags: List<TagModel> = emptyList(),
     val hashtags: List<String> = emptyList(),
-    val timestamp: Instant = Instant.now(),
-    val isVerified: Boolean = false,
-    val likes: Set<String> = emptySet(),
-    val comments: List<Comment> = emptyList()
+    val likes: List<String> = emptyList(),
+    val comments: List<Comment> = emptyList(),
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )
+
+enum class Category {
+    ADVENTURE, CULTURE, FOOD, NATURE, URBAN, BEACH, MOUNTAINS, HISTORICAL
+}

@@ -1,9 +1,10 @@
 package com.android.tripbook.posts.model
 
+import java.util.UUID
+
 data class ImageModel(
-    val id: String = java.util.UUID.randomUUID().toString(),
+    val id: String = UUID.randomUUID().toString(),
     val uri: String,
-    val path: String? = null,
-    val isUploaded: Boolean = false,
-    val uploadUrl: String? = null
+    val caption: String = "",
+    val isLocal: Boolean = true
 )

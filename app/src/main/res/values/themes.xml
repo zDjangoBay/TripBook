@@ -13,13 +13,4 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="circleImage">
-        <item name="cornerSize">50%</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
-
-    <style name="cornerImage">
-        <item name="cornerSize">30dp</item>
-        <item name="cornerFamily">rounded</item>
-    </style>
 </resources>

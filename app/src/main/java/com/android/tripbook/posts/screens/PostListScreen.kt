@@ -1,4 +1,5 @@
 package com.android.tripbook.posts.screens
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,50 +10,47 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-// import androidx.lifecycle.viewmodel.compose.viewModel // ViewModel is now passed as a parameter
-import com.android.tripbook.posts.model.PostModel // Ensure this is imported
 import com.android.tripbook.posts.ui.components.PostCard
-import com.android.tripbook.posts.viewmodel.*
+import com.android.tripbook.posts.viewmodel.PostEvent
+import com.android.tripbook.posts.viewmodel.PostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostListScreen(
-    viewModel: PostViewModel, // Accepts the shared ViewModel
+    viewModel: PostViewModel,
     onNavigateToCreatePost: () -> Unit,
     onNavigateToPostDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    // LaunchedEffect to load posts when the screen is first composed or viewModel instance changes.
-    // This ensures posts are loaded if this screen is visited for the first time or if the ViewModel instance were to change.
-    // Given the shared ViewModel from AppNavigation, this mainly handles the initial load.
-    LaunchedEffect(key1 = viewModel) {
+    
+    LaunchedEffect(Unit) {
         viewModel.handleEvent(PostEvent.LoadPosts)
     }
-
+    
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("TripBook Posts") },
+                title = { 
+                    Text(
+                        "TripBook",
+                        style = MaterialTheme.typography.headlineMedium
+                    ) 
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant, // Example color
-                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    viewModel.handleEvent(PostEvent.ResetForm) // Ensure form is reset before navigating
-                    onNavigateToCreatePost()
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                onClick = onNavigateToCreatePost,
+                containerColor = MaterialTheme.colorScheme.secondary
             ) {
                 Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Create Post"
+                    Icons.Default.Add, 
+                    contentDescription = "Create Post",
+                    tint = MaterialTheme.colorScheme.onSecondary
                 )
             }
         }
@@ -63,59 +61,64 @@ fun PostListScreen(
                 .padding(paddingValues)
         ) {
             when {
-                uiState.isLoading && uiState.posts.isEmpty() -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                uiState.isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
+                
                 uiState.error != null -> {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center).padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        )
                     ) {
                         Text(
-                            text = "Error Loading Posts",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            text = uiState.error,
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.onErrorContainer
                         )
-                        Text(
-                            text = uiState.error!!, // Safe due to null check
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                        Button(onClick = { viewModel.handleEvent(PostEvent.RefreshPosts) }) {
-                            Text("Retry")
-                        }
                     }
                 }
-                uiState.posts.isEmpty() && !uiState.isLoading -> {
+                
+                uiState.posts.isEmpty() -> {
                     Column(
-                        modifier = Modifier.align(Alignment.Center).padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("No posts yet", style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            text = "No posts yet",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Tap the '+' to create your first travel post!",
-                            style = MaterialTheme.typography.bodyLarge,
+                            text = "Create your first travel post!",
+                            style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
+                
                 else -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp), // Space for FAB
+                        contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(uiState.posts, key = { post -> post.id }) { post ->
+                        items(uiState.posts) { post ->
                             PostCard(
                                 post = post,
                                 onCardClick = { onNavigateToPostDetail(post.id) },
-                                onLikeClick = { viewModel.handleEvent(PostEvent.ToggleLike(post.id)) },
-                                onCommentClick = { onNavigateToPostDetail(post.id) }
-                                // currentUserId is handled internally in PostCard or passed from ViewModel if exposed
+                                onLikeClick = { 
+                                    viewModel.handleEvent(PostEvent.ToggleLike(post.id))
+                                },
+                                onCommentClick = { onNavigateToPostDetail(post.id) },
+                                showFullContent = false
                             )
                         }
                     }
