@@ -27,6 +27,30 @@ class UserRepository {
         }
     }
 
+    suspend fun updateUserName(userId: Int, newName: String) = withContext(Dispatchers.IO) {
+        try {
+            client.from("userstrip").update({
+                set("name", newName)
+            }) {
+                filter { eq("id", userId) }
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed to update user name: ${e.message}")
+        }
+    }
+
+    suspend fun updateUserDestination(userId: Int, newDestination: String) = withContext(Dispatchers.IO) {
+        try {
+            client.from("userstrip").update({
+                set("destination", newDestination)
+            }) {
+                filter { eq("id", userId) }
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed to update user destination: ${e.message}")
+        }
+    }
+
     companion object {
         private var instance: UserRepository? = null
 
@@ -38,3 +62,4 @@ class UserRepository {
         }
     }
 }
+

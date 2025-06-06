@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
         var selectedTrip by remember { mutableStateOf<Trip?>(null) }
         var selectedDestination by remember { mutableStateOf<String?>(null) }
         var selectedAgency by remember { mutableStateOf<Agency?>(null) }
+        var selectedUserId by remember { mutableStateOf<Int?>(null) }
 
         val tripViewModel: TripViewModel = viewModel()
         val agencyViewModel = remember { AgencyViewModel(agencyRepository) }
@@ -279,6 +280,7 @@ class MainActivity : ComponentActivity() {
                             selectedTab = 1
                             currentScreen = "MyTrips"
                         },
+                        onPreferencesClick = { /* TODO: Implement or remove if not needed */ },
                         userViewModel = userViewModel
                     )
                 }
@@ -293,3 +295,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+

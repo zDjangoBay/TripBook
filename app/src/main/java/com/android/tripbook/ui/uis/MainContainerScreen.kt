@@ -236,6 +236,7 @@ fun MainContainerScreen(
                         selectedTab = 1
                         currentScreen = "MyTrips"
                     },
+                    onPreferencesClick = { /* TODO: Implement or remove if not needed */ },
                     userViewModel = userViewModel
                 )
             }
@@ -249,3 +250,4 @@ private fun shouldShowBottomBar(currentScreen: String): Boolean {
         else -> false
     }
 }
+

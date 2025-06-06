@@ -36,4 +36,27 @@ class UserViewModel(
             }
         }
     }
+
+    fun updateUserName(userId: Int, newName: String) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateUserName(userId, newName)
+                fetchUsers()
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
+
+    fun updateUserDestination(userId: Int, newDestination: String) {
+        viewModelScope.launch {
+            try {
+                userRepository.updateUserDestination(userId, newDestination)
+                fetchUsers()
+            } catch (e: Exception) {
+                _error.value = e.message
+            }
+        }
+    }
 }
+

@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -27,16 +28,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.viewmodel.UserViewModel
+import java.time.LocalDate
 
 data class User(
     val id: Int,
     val name: String,
-    val destination: String
+    val destination: String,
+    val travelStyle: String? = null,
+    val companions: String? = null,
+    val budget: Int? = null,
+    val accommodation: String? = null,
+    val transportation: String? = null,
+    val activities: String? = null,
+    val startDate: LocalDate? = null,
+    val endDate: LocalDate? = null
 )
 
 @Composable
 fun NearbyUsersScreen(
     onBackClick: () -> Unit,
+    onPreferencesClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     userViewModel: UserViewModel = viewModel()
 ) {
@@ -44,6 +55,7 @@ fun NearbyUsersScreen(
     val isLoading by userViewModel.isLoading.collectAsState()
     val error by userViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
+    var isEditEnabled by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         userViewModel.fetchUsers()
@@ -104,6 +116,19 @@ fun NearbyUsersScreen(
                 ),
                 modifier = Modifier.padding(bottom = 24.dp)
             )
+
+            // Enable Edit Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = { isEditEnabled = !isEditEnabled },
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(if (isEditEnabled) "Disable Edit" else "Enable Edit")
+                }
+            }
 
             // Search Bar
             Box(
@@ -245,7 +270,13 @@ fun NearbyUsersScreen(
                                     user.destination.contains(searchText, ignoreCase = true)
                         }
                     ) { user ->
-                        UserCard(user = user)
+                        UserCard(
+                            user = user,
+                            isEditEnabled = isEditEnabled,
+                            onEditName = { newName -> userViewModel.updateUserName(user.id, newName) },
+                            onEditDestination = { newDestination -> userViewModel.updateUserDestination(user.id, newDestination) },
+                            onPreferencesClick = { onPreferencesClick(user.id) }
+                        )
                     }
                 }
             }
@@ -254,7 +285,13 @@ fun NearbyUsersScreen(
 }
 
 @Composable
-fun UserCard(user: User) {
+fun UserCard(
+    user: User,
+    isEditEnabled: Boolean,
+    onEditName: (String) -> Unit,
+    onEditDestination: (String) -> Unit,
+    onPreferencesClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -271,12 +308,40 @@ fun UserCard(user: User) {
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-            Text(
-                text = user.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C)
-            )
+            var name by remember { mutableStateOf(user.name) }
+            var destination by remember { mutableStateOf(user.destination) }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isEditEnabled) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = {
+                            name = it
+                            onEditName(it)
+                        },
+                        label = { Text("Name") },
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Text(
+                        text = user.name,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1A202C)
+                    )
+                }
+                IconButton(onClick = onPreferencesClick) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Preferences",
+                        tint = Color(0xFF667EEA)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -287,8 +352,44 @@ fun UserCard(user: User) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
+                if (isEditEnabled) {
+                    OutlinedTextField(
+                        value = destination,
+                        onValueChange = {
+                            destination = it
+                            onEditDestination(it)
+                        },
+                        label = { Text("Destination") },
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Text(
+                        text = user.destination,
+                        fontSize = 14.sp,
+                        color = Color(0xFF64748B)
+                    )
+                }
+            }
+            user.travelStyle?.let {
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = user.destination,
+                    text = "Style: $it",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B)
+                )
+            }
+            user.budget?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Budget: $$it",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B)
+                )
+            }
+            user.activities?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Activities: $it",
                     fontSize = 14.sp,
                     color = Color(0xFF64748B)
                 )
@@ -296,3 +397,4 @@ fun UserCard(user: User) {
         }
     }
 }
+
