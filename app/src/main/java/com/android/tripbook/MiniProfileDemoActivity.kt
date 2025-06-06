@@ -12,7 +12,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.screens.UserProfileDemoScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 
-class MainActivity : ComponentActivity() {
+/**
+ * Mini Profile Embedding Demo Activity
+ *
+ * This activity demonstrates the UserProfileEmbedding component
+ * that can be integrated into any trip catalog.
+ *
+ * Features:
+ * - Circular profile picture with initials
+ * - User name and destination display
+ * - Multiple size options (Small, Medium, Large)
+ * - Material Design 3 styling
+ */
+class MiniProfileDemoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
 @Preview(showBackground = true)
 @Composable
-fun UserProfileDemoPreview() {
+fun MiniProfileDemoPreview() {
     TripBookTheme {
         UserProfileDemoScreen()
     }
