@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -39,7 +38,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     TripBookTheme {
