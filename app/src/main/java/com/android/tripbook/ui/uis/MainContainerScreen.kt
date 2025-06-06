@@ -237,7 +237,8 @@ fun MainContainerScreen(
 
 private fun shouldShowBottomBar(currentScreen: String): Boolean {
     return when (currentScreen) {
-        "Home", "MyTrips", "CreateTrip", "Profile", "Settings" -> true
+        "Home", "MyTrips", "Profile", "Settings" -> true
+        "CreateTrip", "PlanNewTrip" -> false // Hide on screens needing more space
         else -> false
     }
 }
