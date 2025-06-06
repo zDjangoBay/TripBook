@@ -5,19 +5,28 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+
 import com.android.tripbook.posts.model.PostModel
-import com.android.tripbook.posts.model.Location as PostLocation // Alias pour éviter les conflits
-import com.android.tripbook.posts.model.Coordinates as PostCoordinates // Alias pour éviter les conflits
 import com.android.tripbook.posts.model.ImageModel
-import com.android.tripbook.posts.model.Comment as PostComment // Alias pour éviter les conflits
-import com.android.tripbook.posts.model.PostVisibility as PostModuleVisibility // Alias pour éviter les conflits
+// CES ALIAS ET IMPORTS QUI CAUSENT DES CONFLITS OU SONT OBSOLÈTES
+// import com.android.tripbook.posts.model.Location as PostLocation
+// import com.android.tripbook.posts.model.Coordinates as PostCoordinates
+// import com.android.tripbook.posts.model.PostVisibility as PostModuleVisibility
+
+import com.android.tripbook.posts.model.PostVisibility // Import direct du PostVisibility
 import com.android.tripbook.posts.model.UserMinimal
 import com.android.tripbook.posts.screens.CreatePostScreen
 import com.android.tripbook.posts.screens.EditPostScreen
 import com.android.tripbook.posts.screens.PostDetailScreen
 import com.android.tripbook.posts.screens.ReportedPostsScreen
+
+// IMPORTS CANONIQUES POUR LES MODÈLES DE DONNÉES
+import com.android.tripbook.data.model.TravelLocation // Import canonique pour TravelLocation
+import com.android.tripbook.data.model.Comment // Import canonique pour Comment
+
 import java.time.Instant
 import android.net.Uri // Pour ImageModel Uri
+
 
 fun NavGraphBuilder.postNavGraph(navController: NavController) {
     navigation(startDestination = "posts_home_placeholder", route = "posts_graph") {
@@ -39,16 +48,17 @@ fun NavGraphBuilder.postNavGraph(navController: NavController) {
                 title = "Title to Edit (Mock)",
                 description = "Content to edit. This is example text to simulate content of a real post for editing.",
                 images = listOf(ImageModel("img_edit", Uri.parse("https://via.placeholder.com/150/FF0000/FFFFFF?text=Edit+Image"))),
-                location = PostLocation("loc_edit", "Editable Place", "Cityville", "Countryland", null),
+                // MODIFICATION ICI: Utilise TravelLocation du module data.model
+                location = TravelLocation(id = "loc_edit", name = "Editable Place", latitude = 0.0, longitude = 0.0, description = "Cityville, Countryland", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(1000000),
                 lastEditedAt = Instant.now(),
-                visibility = PostModuleVisibility.PUBLIC,
+                visibility = PostVisibility.PUBLIC, // Utilise PostVisibility directement
                 collaborators = listOf(UserMinimal("collab1", "collaborator1")),
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = emptyList(),
-                comments = emptyList()
+                comments = emptyList<Comment>() // Utilise Comment canonique
             )
             EditPostScreen(
                 post = samplePost,
@@ -71,18 +81,19 @@ fun NavGraphBuilder.postNavGraph(navController: NavController) {
                 title = "Post Detail (Mock)",
                 description = "Detailed content of the post. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
                 images = listOf(ImageModel("img_det1", Uri.parse("https://via.placeholder.com/300/0000FF/FFFFFF?text=Detail+Image+1")), ImageModel("img_det2", Uri.parse("https://via.placeholder.com/300/00FF00/FFFFFF?text=Detail+Image+2"))),
-                location = PostLocation("loc_detail", "Detailed Place", "Cityville", "Countryland", PostCoordinates(40.7128, -74.0060)),
+                // MODIFICATION ICI: Utilise TravelLocation du module data.model
+                location = TravelLocation(id = "loc_detail", name = "Detailed Place", latitude = 40.7128, longitude = -74.0060, description = "Cityville, Countryland", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(5000000),
                 lastEditedAt = null,
-                visibility = PostModuleVisibility.PUBLIC,
+                visibility = PostVisibility.PUBLIC, // Utilise PostVisibility directement
                 collaborators = null,
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = listOf("liker1", "liker2", "liker3"),
                 comments = listOf(
-                    PostComment("c1", postId ?: "mock_detail_id", "commenter1", "Commenter One", null, "Great post!", Instant.now().minusSeconds(500000)),
-                    PostComment("c2", postId ?: "mock_detail_id", "commenter2", "Commenter Two", null, "Very insightful!", Instant.now().minusSeconds(100000))
+                    Comment("c1", postId ?: "mock_detail_id", "commenter1", "Commenter One", null, "Great post!", Instant.now().minusSeconds(500000)), // Utilise Comment canonique
+                    Comment("c2", postId ?: "mock_detail_id", "commenter2", "Commenter Two", null, "Very insightful!", Instant.now().minusSeconds(100000)) // Utilise Comment canonique
                 )
             )
             PostDetailScreen(post = samplePost, currentUserId = "my_user_id", onBack = { navController.popBackStack() })
@@ -99,16 +110,17 @@ fun NavGraphBuilder.postNavGraph(navController: NavController) {
                     title = "Abusive Content (Mock)",
                     description = "This post violates our guidelines with inappropriate language.",
                     images = emptyList(),
-                    location = PostLocation("loc_spam", "Internet", "", "Global", null),
+                    // MODIFICATION ICI: Utilise TravelLocation du module data.model
+                    location = TravelLocation("loc_spam", "Internet", 0.0, 0.0, null, null),
                     tags = emptyList(),
                     createdAt = Instant.now(),
                     lastEditedAt = null,
-                    visibility = PostModuleVisibility.PUBLIC,
+                    visibility = PostVisibility.PUBLIC, // Utilise PostVisibility directement
                     collaborators = null,
                     isEphemeral = false,
                     ephemeralDurationMillis = null,
                     likes = emptyList(),
-                    comments = emptyList()
+                    comments = emptyList<Comment>() // Utilise Comment canonique
                 ),
                 PostModel(
                     id = "rp_mock2",
@@ -119,16 +131,17 @@ fun NavGraphBuilder.postNavGraph(navController: NavController) {
                     title = "Hate Speech (Mock)",
                     description = "This post contains harmful and hateful remarks against a group.",
                     images = emptyList(),
-                    location = PostLocation("loc_hate", "Internet", "", "Global", null),
+                    // MODIFICATION ICI: Utilise TravelLocation du module data.model
+                    location = TravelLocation("loc_hate", "Internet", 0.0, 0.0, null, null),
                     tags = emptyList(),
                     createdAt = Instant.now(),
                     lastEditedAt = null,
-                    visibility = PostModuleVisibility.PUBLIC,
+                    visibility = PostVisibility.PUBLIC,
                     collaborators = null,
                     isEphemeral = false,
                     ephemeralDurationMillis = null,
                     likes = emptyList(),
-                    comments = emptyList()
+                    comments = emptyList<Comment>() // Utilise Comment canonique
                 )
             )
             ReportedPostsScreen(
