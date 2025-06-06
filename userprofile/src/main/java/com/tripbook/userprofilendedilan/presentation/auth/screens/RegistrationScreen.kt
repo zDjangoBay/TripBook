@@ -195,7 +195,10 @@ fun RegisterScreen(navController: NavController) {
                            // Validate all fields and go to next step if valid
                            viewModel.goToNextStep()
                        },
-                       isSignUpEnabled = viewModel.isCurrentStepValid.value
+                       isSignUpEnabled = viewModel.isCurrentStepValid.value,
+                       onForgotPassword = {
+                           navController.navigate(Screen.PasswordReset.route)
+                       }
                    )
                     1 -> ProfilePicturePage(
                         currentUri = registrationData.profilePictureUri,
