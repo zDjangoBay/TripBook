@@ -90,6 +90,7 @@ fun TripBudgetScreen(
     if (showAddCategoryDialog) {
         AddEditBudgetCategoryDialog(
             budgetViewModel = budgetViewModel,
+            tripId = tripId,
             onDismiss = { showAddCategoryDialog = false }
         )
     }

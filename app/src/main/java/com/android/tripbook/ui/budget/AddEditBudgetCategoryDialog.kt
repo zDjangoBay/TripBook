@@ -1,9 +1,11 @@
 package com.android.tripbook.ui.budget
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.android.tripbook.model.BudgetCategory
@@ -51,7 +53,7 @@ fun AddEditBudgetCategoryDialog(
                     label = { Text("Planned Amount") },
                     isError = amountError != null,
                     supportingText = { amountError?.let { Text(it) } },
-                    keyboardOptions = androidx.compose.ui.text.input.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
                 Row(
