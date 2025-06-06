@@ -29,7 +29,6 @@ class TripCatalogActivity : ComponentActivity() {
                     isLoading = isLoading,
                     trips = SampleTrips.get(),
                     onTripSelected = { trip ->
-                        // Handle trip selection, e.g., navigate to detail
                         navController.navigate("detail/${trip.id}")
                     }
                 ) { innerPadding ->

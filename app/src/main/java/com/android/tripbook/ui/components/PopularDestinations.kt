@@ -50,7 +50,7 @@ fun PopularDestinations(
                 .mapValues { it.value.size }
                 .toList()
                 .sortedByDescending { it.second }
-                .take(5) // Top 5 popular
+                .take(5)
         }
     }
 

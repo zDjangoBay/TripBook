@@ -23,14 +23,12 @@ fun TopBar(
         title = { Text(text = title) },
         actions = {
             if (currentRoute.startsWith("catalog")) {
-                // Show SurpriseMeButton on catalog screen
                 SurpriseMeButton(
                     trips = trips,
                     onTripSelected = onTripSelected,
                     modifier = Modifier.padding(end = 8.dp)
                 )
             } else {
-                // Show notification icon on other screens
                 IconButton(onClick = { /* Handle notification click */ }) {
                     Icon(
                         imageVector = Icons.Default.Notifications,

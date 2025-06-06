@@ -36,10 +36,6 @@ fun SmartRecommendations(
     modifier: Modifier = Modifier,
     onTripClick: (Int) -> Unit
 ) {
-    // Simulate user preferences based on:
-    // - Previously viewed trips
-    // - Bookmarked trips
-    // - Demographic info
     val simulatedPreferences = remember {
         setOf("beach", "luxury", "family") // Simulated user preferences to be replaced with real preferences
     }
@@ -48,7 +44,7 @@ fun SmartRecommendations(
         derivedStateOf {
             trips.filter { trip ->
                 trip.tags.any { tag -> simulatedPreferences.contains(tag) }
-            }.shuffled().take(5) // Take 5 random matches
+            }.shuffled().take(5)
         }
     }
 

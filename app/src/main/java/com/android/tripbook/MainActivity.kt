@@ -26,9 +26,8 @@ class MainActivity : ComponentActivity() {
                 BaseScaffold(
     navController = navController,
     isLoading = isLoading,
-    trips = SampleTrips.get(), // Or your actual trips data
+    trips = SampleTrips.get(),
     onTripSelected = { trip ->
-        // Handle trip selection, e.g., navigate to detail
         navController.navigate("detail/${trip.id}")
     }
 ) { padding ->
