@@ -309,21 +309,33 @@ fun TripCatalogScreen(
                                     Column(Modifier.padding(top = 12.dp)) {
                                         Text("Filter by Region:", style = MaterialTheme.typography.labelMedium)
                                         Spacer(Modifier.height(4.dp))
-                                        ExposedDropdownMenuBox(showRegionDropdown, { showRegionDropdown = !it }, Modifier.fillMaxWidth()) {
+                                        // FIX 1: The onExpandedChange lambda is the proper way to control the dropdown's visibility.
+                                        ExposedDropdownMenuBox(
+                                            expanded = showRegionDropdown,
+                                            onExpandedChange = { showRegionDropdown = !showRegionDropdown },
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+                                            // FIX 2: Added a modifier to the TextField to make it clickable and open the menu.
                                             OutlinedTextField(
                                                 value = selectedRegionFilter,
-                                                onValueChange = {}, readOnly = true,
+                                                onValueChange = {}, // Stays empty as the dropdown items handle changes
+                                                readOnly = true,
                                                 label = { Text("Region") },
                                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showRegionDropdown) },
+                                                // The menuAnchor modifier is essential for positioning the dropdown.
                                                 modifier = Modifier.menuAnchor().fillMaxWidth(),
                                                 shape = RoundedCornerShape(8.dp)
                                             )
-                                            ExposedDropdownMenu(showRegionDropdown, { showRegionDropdown = false }) {
+                                            ExposedDropdownMenu(
+                                                expanded = showRegionDropdown,
+                                                // This is called when the user clicks outside the menu or presses back
+                                                onDismissRequest = { showRegionDropdown = false }
+                                            ) {
                                                 DropdownMenuItem(
                                                     text = { Text("All Regions") },
                                                     onClick = {
-                                                        selectedRegionFilter = "All Regions"
-                                                        searchFieldValue = TextFieldValue("")
+                                                        selectedRegionFilter = "All Regions" // Update the text field's display text
+                                                        searchFieldValue = TextFieldValue("") // Clear the actual search query
                                                         showRegionDropdown = false
                                                         showAdvancedFilters = false
                                                     }
@@ -332,8 +344,8 @@ fun TripCatalogScreen(
                                                     DropdownMenuItem(
                                                         text = { Text(region) },
                                                         onClick = {
-                                                            selectedRegionFilter = region
-                                                            searchFieldValue = TextFieldValue("region:$region")
+                                                            selectedRegionFilter = region // Update the text field's display text
+                                                            searchFieldValue = TextFieldValue("region:$region") // Set the actual search query
                                                             showRegionDropdown = false
                                                             showAdvancedFilters = false
                                                         }
