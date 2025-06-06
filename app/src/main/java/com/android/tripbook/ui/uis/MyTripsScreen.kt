@@ -273,103 +273,69 @@ fun TripCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = trip.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
-                    )
-                    // Safe date formatting with null checks
-                    val dateText = remember(trip.startDate, trip.endDate) {
-                        try {
-                            "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                                trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                            }"
-                        } catch (e: Exception) {
-                            "Date not available"
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // First row: Location and Travelers
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        // Location
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Location",
+                                tint = Color(0xFF64748B),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = trip.destination,
+                                fontSize = 14.sp,
+                                color = Color(0xFF64748B),
+                                maxLines = 1
+                            )
+                        }
+
+                        // Travelers
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Travelers",
+                                tint = Color(0xFF64748B),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${trip.travelers} travelers",
+                                fontSize = 14.sp,
+                                color = Color(0xFF64748B)
+                            )
                         }
                     }
 
-                    Text(
-                        text = dateText,
-                        fontSize = 14.sp,
-                        color = Color(0xFF667EEA),
-                        fontWeight = FontWeight.Medium
-                    )
+                    // Second row: Budget (full width)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.AttachMoney,
+                            contentDescription = "Budget",
+                            tint = Color(0xFF64748B),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "FCFA ${String.format("%,d", trip.budget)}",
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
                 }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(statusBgColor)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = trip.status.name.uppercase(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = statusColor
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Details row with vector icons instead of emojis
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // Location
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Location",
-                        tint = Color(0xFF64748B),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = trip.destination,
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-
-                // Travelers
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Travelers",
-                        tint = Color(0xFF64748B),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${trip.travelers} travelers",
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-
-                // Budget
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.AttachMoney,
-                        contentDescription = "Budget",
-                        tint = Color(0xFF64748B),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "FCFA ${String.format("%,d", trip.budget)}",
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-            }
         }
     }
-}
+}}
