@@ -7,8 +7,14 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
+import com.android.tripbook.model.Review
+import com.android.tripbook.model.Rating
+import com.android.tripbook.model.ReviewSummary
+import com.android.tripbook.model.ReviewType
+import com.android.tripbook.model.ReviewStatus
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 // Serializable models for Supabase database operations
@@ -176,5 +182,138 @@ data class TripWithDetails(
     fun toTrip(): Trip {
         return trip.toTrip(companions.map { it.toTravelCompanion() })
             .copy(itinerary = itinerary.map { it.toItineraryItem() })
+    }
+}
+
+// Review and Rating Supabase Models
+@Serializable
+data class SupabaseReview(
+    val id: String? = null,
+    val user_id: String,
+    val user_name: String,
+    val user_avatar: String = "",
+    val review_type: String, // ReviewType as string
+    val target_id: String,
+    val target_name: String,
+    val rating: Float,
+    val title: String,
+    val content: String,
+    val pros: List<String> = emptyList(),
+    val cons: List<String> = emptyList(),
+    val photos: List<String> = emptyList(),
+    val helpful_count: Int = 0,
+    val is_verified: Boolean = false,
+    val status: String = "PENDING", // ReviewStatus as string
+    val created_at: String? = null,
+    val updated_at: String? = null
+) {
+    fun toReview(): Review {
+        return Review(
+            id = id ?: "",
+            userId = user_id,
+            userName = user_name,
+            userAvatar = user_avatar,
+            reviewType = ReviewType.valueOf(review_type),
+            targetId = target_id,
+            targetName = target_name,
+            rating = rating,
+            title = title,
+            content = content,
+            pros = pros,
+            cons = cons,
+            photos = photos,
+            helpfulCount = helpful_count,
+            isVerified = is_verified,
+            status = ReviewStatus.valueOf(status),
+            createdAt = created_at?.let { LocalDateTime.parse(it) } ?: LocalDateTime.now(),
+            updatedAt = updated_at?.let { LocalDateTime.parse(it) } ?: LocalDateTime.now()
+        )
+    }
+
+    companion object {
+        fun fromReview(review: Review): SupabaseReview {
+            return SupabaseReview(
+                id = review.id.takeIf { it.isNotEmpty() },
+                user_id = review.userId,
+                user_name = review.userName,
+                user_avatar = review.userAvatar,
+                review_type = review.reviewType.name,
+                target_id = review.targetId,
+                target_name = review.targetName,
+                rating = review.rating,
+                title = review.title,
+                content = review.content,
+                pros = review.pros,
+                cons = review.cons,
+                photos = review.photos,
+                helpful_count = review.helpfulCount,
+                is_verified = review.isVerified,
+                status = review.status.name
+            )
+        }
+    }
+}
+
+@Serializable
+data class SupabaseRating(
+    val id: String? = null,
+    val user_id: String,
+    val review_type: String, // ReviewType as string
+    val target_id: String,
+    val rating: Float,
+    val created_at: String? = null
+) {
+    fun toRating(): Rating {
+        return Rating(
+            id = id ?: "",
+            userId = user_id,
+            reviewType = ReviewType.valueOf(review_type),
+            targetId = target_id,
+            rating = rating,
+            createdAt = created_at?.let { LocalDateTime.parse(it) } ?: LocalDateTime.now()
+        )
+    }
+
+    companion object {
+        fun fromRating(rating: Rating): SupabaseRating {
+            return SupabaseRating(
+                id = rating.id.takeIf { it.isNotEmpty() },
+                user_id = rating.userId,
+                review_type = rating.reviewType.name,
+                target_id = rating.targetId,
+                rating = rating.rating
+            )
+        }
+    }
+}
+
+@Serializable
+data class SupabaseReviewSummary(
+    val review_type: String,
+    val target_id: String,
+    val total_reviews: Int,
+    val average_rating: Float,
+    val five_star_count: Int = 0,
+    val four_star_count: Int = 0,
+    val three_star_count: Int = 0,
+    val two_star_count: Int = 0,
+    val one_star_count: Int = 0
+) {
+    fun toReviewSummary(): ReviewSummary {
+        val ratingDistribution = mapOf(
+            5 to five_star_count,
+            4 to four_star_count,
+            3 to three_star_count,
+            2 to two_star_count,
+            1 to one_star_count
+        )
+
+        return ReviewSummary(
+            targetId = target_id,
+            reviewType = ReviewType.valueOf(review_type),
+            averageRating = average_rating,
+            totalReviews = total_reviews,
+            ratingDistribution = ratingDistribution
+        )
     }
 }

@@ -2,6 +2,7 @@ package com.android.tripbook.model
 
 import com.android.tripbook.service.AgencyService
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
@@ -13,6 +14,14 @@ enum class TripCategory {
 
 enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
+}
+
+enum class ReviewType {
+    TRIP, DESTINATION, AGENCY, ACTIVITY
+}
+
+enum class ReviewStatus {
+    PENDING, APPROVED, REJECTED
 }
 
 // Location data classes for Maps integration///
@@ -33,6 +42,46 @@ data class TravelCompanion(
     val name: String,
     val email: String = "",
     val phone: String = ""
+)
+
+// Review and Rating System Models
+data class Review(
+    val id: String = "",
+    val userId: String = "", // User who wrote the review
+    val userName: String = "", // Display name of the reviewer
+    val userAvatar: String = "", // Profile picture URL
+    val reviewType: ReviewType,
+    val targetId: String, // ID of trip, agency, destination, or activity being reviewed
+    val targetName: String, // Name of the target for display
+    val rating: Float, // 1.0 to 5.0
+    val title: String,
+    val content: String,
+    val pros: List<String> = emptyList(),
+    val cons: List<String> = emptyList(),
+    val photos: List<String> = emptyList(), // URLs to review photos
+    val helpfulCount: Int = 0, // Number of users who found this helpful
+    val isVerified: Boolean = false, // Whether the reviewer actually completed the trip/used the service
+    val status: ReviewStatus = ReviewStatus.PENDING,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val updatedAt: LocalDateTime = LocalDateTime.now()
+)
+
+data class Rating(
+    val id: String = "",
+    val userId: String,
+    val reviewType: ReviewType,
+    val targetId: String,
+    val rating: Float, // 1.0 to 5.0
+    val createdAt: LocalDateTime = LocalDateTime.now()
+)
+
+data class ReviewSummary(
+    val targetId: String,
+    val reviewType: ReviewType,
+    val averageRating: Float,
+    val totalReviews: Int,
+    val ratingDistribution: Map<Int, Int> = emptyMap(), // Star count to number of reviews
+    val recentReviews: List<Review> = emptyList()
 )
 
 data class ItineraryItem(

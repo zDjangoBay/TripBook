@@ -27,6 +27,8 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
+import com.android.tripbook.model.ReviewType
+import com.android.tripbook.viewmodel.ReviewViewModel
 import com.android.tripbook.ui.components.* // Import all components, including EditActivityDialog
 import com.android.tripbook.ui.theme.TripBookColors
 import com.android.tripbook.viewmodel.TripDetailsViewModel
@@ -131,6 +133,9 @@ fun TripDetailsScreen(
                             "Weather" -> WeatherForecastTab(
                                 trip = currentTrip,
                                 viewModel = viewModel
+                            )
+                            "Reviews" -> ReviewsTab(
+                                trip = currentTrip
                             )
                         }
                     }
@@ -608,7 +613,7 @@ fun EnhancedTabRow(
             .padding(top = 20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        listOf("Overview", "Itinerary", "Map", "Weather").forEach { tab ->
+        listOf("Overview", "Itinerary", "Map", "Weather", "Reviews").forEach { tab ->
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -1340,4 +1345,246 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+fun ReviewsTab(
+    trip: Trip,
+    modifier: Modifier = Modifier
+) {
+    val reviewViewModel: ReviewViewModel = viewModel()
+    val uiState by reviewViewModel.uiState.collectAsState()
+
+    // Load reviews when the tab is opened
+    LaunchedEffect(trip.id) {
+        if (trip.id.isNotEmpty()) {
+            reviewViewModel.loadReviewsForTarget(
+                reviewType = ReviewType.TRIP,
+                targetId = trip.id,
+                targetName = trip.name
+            )
+        }
+    }
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            // Review Summary Card
+            ReviewSummaryCard(
+                reviewSummary = uiState.reviewSummary,
+                onWriteReviewClick = {
+                    if (trip.status == com.android.tripbook.model.TripStatus.COMPLETED) {
+                        reviewViewModel.showReviewDialog()
+                    }
+                },
+                onRateClick = {
+                    if (trip.status == com.android.tripbook.model.TripStatus.COMPLETED) {
+                        reviewViewModel.showRatingDialog()
+                    }
+                }
+            )
+        }
+
+        // Show user's existing review if any
+        uiState.userReview?.let { userReview ->
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F9FF)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Your Review",
+                                tint = Color(0xFF667EEA),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Your Review",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFF667EEA)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ReviewCard(
+                            review = userReview,
+                            onHelpfulClick = { /* User can't mark their own review helpful */ }
+                        )
+                    }
+                }
+            }
+        }
+
+        // Reviews from other users
+        if (uiState.reviews.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Community Reviews",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A202C),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            items(uiState.reviews.filter { it.userId != uiState.userReview?.userId }) { review ->
+                ReviewCard(
+                    review = review,
+                    onHelpfulClick = { isHelpful ->
+                        reviewViewModel.markReviewHelpful(review.id, isHelpful)
+                    }
+                )
+            }
+        } else if (!uiState.isLoading && uiState.userReview == null) {
+            item {
+                // No reviews state
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.RateReview,
+                            contentDescription = "No reviews",
+                            tint = Color(0xFF9CA3AF),
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No reviews yet",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF6B7280)
+                        )
+                        Text(
+                            text = "Be the first to share your experience!",
+                            fontSize = 14.sp,
+                            color = Color(0xFF9CA3AF),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Loading state
+        if (uiState.isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = Color(0xFF667EEA)
+                    )
+                }
+            }
+        }
+
+        // Error state
+        uiState.error?.let { error ->
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF2F2)),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                tint = Color(0xFFDC2626),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Error loading reviews",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(0xFFDC2626)
+                            )
+                        }
+                        Text(
+                            text = error,
+                            fontSize = 14.sp,
+                            color = Color(0xFF7F1D1D),
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = { reviewViewModel.clearError() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFDC2626)
+                            )
+                        ) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Review submission dialog
+    ReviewSubmissionDialog(
+        isVisible = uiState.showReviewDialog,
+        targetName = trip.name,
+        onDismiss = { reviewViewModel.hideReviewDialog() },
+        onSubmit = { rating, title, content, pros, cons ->
+            reviewViewModel.submitReview(
+                reviewType = ReviewType.TRIP,
+                targetId = trip.id,
+                targetName = trip.name,
+                rating = rating,
+                title = title,
+                content = content,
+                pros = pros,
+                cons = cons
+            )
+        },
+        isSubmitting = uiState.isSubmittingReview
+    )
+
+    // Rating dialog
+    RatingDialog(
+        isVisible = uiState.showRatingDialog,
+        targetName = trip.name,
+        currentRating = uiState.userRating?.rating ?: 0f,
+        onDismiss = { reviewViewModel.hideRatingDialog() },
+        onSubmit = { rating ->
+            reviewViewModel.submitRating(
+                reviewType = ReviewType.TRIP,
+                targetId = trip.id,
+                rating = rating
+            )
+        },
+        isSubmitting = uiState.isSubmittingRating
+    )
 }

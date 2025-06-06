@@ -34,7 +34,6 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import com.android.tripbook.R
 @OptIn(ExperimentalMaterial3Api::class) // Added for AlertDialog
 @Composable
 fun MyTripsScreen(
@@ -416,15 +415,13 @@ fun MyTripsScreen(
                         value = editedTripTravelers,
                         onValueChange = { editedTripTravelers = it },
                         label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                     OutlinedTextField(
-                        value = editedTripTravelers,
-                        onValueChange = { editedTripTravelers = it },
-                        label = { Text("Travelers") },
-                        // Ensure this line uses 'KeyboardType.Number'
+                        value = editedTripBudget,
+                        onValueChange = { editedTripBudget = it },
+                        label = { Text("Budget") },
                         keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
