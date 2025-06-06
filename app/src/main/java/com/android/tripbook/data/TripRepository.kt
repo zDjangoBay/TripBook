@@ -117,8 +117,8 @@ class TripRepository {
                 description = "Discovering ancient Roman history and enjoying Italian culture.",
                 status = TripStatus.COMPLETED,
                 itinerary = listOf(
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("05/05/2024", formatter), "09:00 AM", "Colosseum Tour", "Colosseum", ItineraryType.ATTRACTION, true),
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("06/05/2024", formatter), "02:00 PM", "Vatican City Visit", "Vatican City", ItineraryType.ATTRACTION, true)
+                    ItineraryItem(LocalDate.parse("05/05/2024", formatter), "09:00 AM", "Colosseum Tour", "Colosseum", ItineraryType.ACTIVITY, ""),
+                    ItineraryItem(LocalDate.parse("06/05/2024", formatter), "02:00 PM", "Vatican City Visit", "Vatican City", ItineraryType.ACTIVITY, "")
                 )
             ),
             Trip(
