@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.TripCreationState
 import com.android.tripbook.ui.components.StepHeader
+import com.android.tripbook.utils.DateValidationUtils
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -38,6 +40,8 @@ fun DateSelectionStep(
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var isSelectingStartDate by remember { mutableStateOf(true) }
+    var userMessage by remember { mutableStateOf<String?>(null) }
+    var showMessageSnackbar by remember { mutableStateOf(false) }
     
     Column(modifier = modifier.fillMaxSize()) {
         StepHeader(
@@ -141,13 +145,48 @@ fun DateSelectionStep(
                     isSelectingStartDate = isSelectingStartDate,
                     onDateSelected = { selectedDate ->
                         if (isSelectingStartDate) {
-                            onStateChange(state.copy(startDate = selectedDate))
-                            if (state.endDate == null || selectedDate.isAfter(state.endDate)) {
+                            // Handle start date selection with smart logic
+                            val result = DateValidationUtils.handleStartDateSelection(
+                                selectedStartDate = selectedDate,
+                                currentEndDate = state.endDate
+                            )
+
+                            onStateChange(state.copy(
+                                startDate = result.startDate,
+                                endDate = result.endDate
+                            ))
+
+                            if (result.shouldSwitchToEndDate) {
                                 isSelectingStartDate = false
                             }
+
+                            result.message?.let { message ->
+                                userMessage = message
+                                showMessageSnackbar = true
+                            }
                         } else {
-                            if (state.startDate == null || selectedDate.isAfter(state.startDate)) {
-                                onStateChange(state.copy(endDate = selectedDate))
+                            // Handle end date selection with validation
+                            val result = DateValidationUtils.handleEndDateSelection(
+                                selectedEndDate = selectedDate,
+                                currentStartDate = state.startDate
+                            )
+
+                            if (result.isValid) {
+                                onStateChange(state.copy(
+                                    startDate = result.startDate,
+                                    endDate = result.endDate
+                                ))
+
+                                result.message?.let { message ->
+                                    userMessage = message
+                                    showMessageSnackbar = true
+                                }
+                            } else {
+                                // Show error message for invalid selection
+                                result.message?.let { message ->
+                                    userMessage = message
+                                    showMessageSnackbar = true
+                                }
                             }
                         }
                     }
@@ -189,7 +228,7 @@ fun DateSelectionStep(
                             }
 
                             if (state.startDate != null && state.endDate != null) {
-                                val duration = state.endDate.toEpochDay() - state.startDate.toEpochDay()
+                                val duration = state.endDate.toEpochDay() - state.startDate.toEpochDay() + 1
                                 Text(
                                     text = "Duration: $duration days",
                                     fontSize = 14.sp,
@@ -197,11 +236,43 @@ fun DateSelectionStep(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
+
+                            // Show user message if available
+                            if (showMessageSnackbar && userMessage != null) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = "Info",
+                                        tint = Color(0xFF6B73FF),
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = userMessage!!,
+                                        fontSize = 12.sp,
+                                        color = Color(0xFF6B73FF),
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    // Show user feedback messages
+    if (showMessageSnackbar && userMessage != null) {
+        LaunchedEffect(userMessage) {
+            showMessageSnackbar = false
+        }
+
+        // You can replace this with a proper Snackbar implementation
+        // For now, we'll show it in the selected dates summary
     }
 }
 

@@ -34,6 +34,7 @@ import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.PlaceResult
+import com.android.tripbook.utils.DateValidationUtils
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -880,10 +881,25 @@ fun PlanNewTripScreen(
                 TextButton(
                     onClick = {
                         startDatePickerState.selectedDateMillis?.let { millis ->
-                            startDate = Instant.ofEpochMilli(millis)
+                            val selectedStartDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            dateError = ""
+
+                            // Use smart date validation
+                            val result = DateValidationUtils.handleStartDateSelection(
+                                selectedStartDate = selectedStartDate,
+                                currentEndDate = endDate
+                            )
+
+                            startDate = result.startDate
+                            endDate = result.endDate
+
+                            // Show message if there's feedback
+                            result.message?.let { message ->
+                                dateError = message
+                            } ?: run {
+                                dateError = ""
+                            }
                         }
                         showStartDatePicker = false
                     }
@@ -914,10 +930,33 @@ fun PlanNewTripScreen(
                 TextButton(
                     onClick = {
                         endDatePickerState.selectedDateMillis?.let { millis ->
-                            endDate = Instant.ofEpochMilli(millis)
+                            val selectedEndDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            dateError = ""
+
+                            // Use smart date validation
+                            val result = DateValidationUtils.handleEndDateSelection(
+                                selectedEndDate = selectedEndDate,
+                                currentStartDate = startDate
+                            )
+
+                            if (result.isValid) {
+                                startDate = result.startDate
+                                endDate = result.endDate
+
+                                // Show positive feedback
+                                result.message?.let { message ->
+                                    dateError = message
+                                } ?: run {
+                                    dateError = ""
+                                }
+                            } else {
+                                // Show error message
+                                result.message?.let { message ->
+                                    dateError = message
+                                }
+                                return@TextButton // Don't close dialog on error
+                            }
                         }
                         showEndDatePicker = false
                     }
@@ -948,10 +987,29 @@ fun PlanNewTripScreen(
                 TextButton(
                     onClick = {
                         itineraryDatePickerState.selectedDateMillis?.let { millis ->
-                            date = Instant.ofEpochMilli(millis)
+                            val selectedDate = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            itineraryDateError = ""
+
+                            // Validate itinerary date is within trip range
+                            when {
+                                startDate == null || endDate == null -> {
+                                    itineraryDateError = "Please select trip dates first"
+                                    return@TextButton
+                                }
+                                selectedDate.isBefore(startDate) -> {
+                                    itineraryDateError = "Itinerary date cannot be before trip start date"
+                                    return@TextButton
+                                }
+                                selectedDate.isAfter(endDate) -> {
+                                    itineraryDateError = "Itinerary date cannot be after trip end date"
+                                    return@TextButton
+                                }
+                                else -> {
+                                    date = selectedDate
+                                    itineraryDateError = ""
+                                }
+                            }
                         }
                         showItineraryDatePicker = false
                     }
@@ -1123,19 +1181,16 @@ private fun validateForm(
         isValid = false
     }
 
-    when {
-        startDate == null -> {
-            setDateError("Start date is required")
-            isValid = false
-        }
-        endDate == null -> {
-            setDateError("End date is required")
-            isValid = false
-        }
-        startDate.isAfter(endDate) -> {
-            setDateError("Start date must be before end date")
-            isValid = false
-        }
+    // Use DateValidationUtils for comprehensive date validation
+    val dateValidation = DateValidationUtils.validateDateRange(
+        startDate = startDate,
+        endDate = endDate,
+        allowSingleDay = true
+    )
+
+    if (!dateValidation.isValid) {
+        setDateError(dateValidation.errorMessage ?: "Invalid date range")
+        isValid = false
     }
 
     if (travelers.isEmpty() || travelers.toIntOrNull() == null || travelers.toInt() <= 0) {
