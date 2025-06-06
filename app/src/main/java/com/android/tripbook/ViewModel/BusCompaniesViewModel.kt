@@ -1,9 +1,9 @@
-package com.android.tripbook.ViewModel
+package com.android.tripbook.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.Model.BusCompany
-import com.android.tripbook.Model.PopularDestination
+import com.android.tripbook.model.BusCompany
+import com.android.tripbook.model.PopularDestination
 import com.android.tripbook.data.BusMockData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

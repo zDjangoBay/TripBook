@@ -25,10 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.Model.Comment
+import com.android.tripbook.model.Comment
 import com.android.tripbook.ui.components.CommentCard
-import com.android.tripbook.ViewModel.MockReviewViewModel
-import com.android.tripbook.ViewModel.MockCommentViewModel
+import com.android.tripbook.viewmodel.MockReviewViewModel
+import com.android.tripbook.viewmodel.MockCommentViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -218,7 +218,7 @@ private fun HeroImageCarousel(images: List<String>) {
 
 @Composable
 private fun ReviewContentCard(
-    review: com.android.tripbook.Model.Review,
+    review: com.android.tripbook.model.Review,
     isLiked: Boolean,
     isFlagged: Boolean,
     likeCount: Int,

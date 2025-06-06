@@ -17,15 +17,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.android.tripbook.ViewModel.MainViewModel
+import com.android.tripbook.viewmodel.MainViewModel
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
 import com.android.tripbook.ui.screens.BoatCompaniesScreen
-import com.android.tripbook.ViewModel.BoatCompanyViewModel
+import com.android.tripbook.viewmodel.BoatCompanyViewModel
 import com.android.tripbook.ui.screens.TrainCompaniesScreen
-import com.android.tripbook.ViewModel.BusCompaniesViewModel
+import com.android.tripbook.viewmodel.BusCompaniesViewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+
 
 
 

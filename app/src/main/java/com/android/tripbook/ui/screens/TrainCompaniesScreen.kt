@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.android.tripbook.Model.TrainCompany
-import com.android.tripbook.Model.TrainDestination
+import com.android.tripbook.model.TrainCompany
+import com.android.tripbook.model.TrainDestination
 import com.android.tripbook.R
 import com.android.tripbook.data.TrainMockData
 

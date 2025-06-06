@@ -25,8 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.android.tripbook.ViewModel.MockReviewViewModel
-import com.android.tripbook.ViewModel.MockTripViewModel
+import com.android.tripbook.viewmodel.MockReviewViewModel
+import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
 

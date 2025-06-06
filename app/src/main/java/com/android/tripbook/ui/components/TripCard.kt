@@ -11,8 +11,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.Model.Trip
-import com.android.tripbook.Model.User
+import com.android.tripbook.model.Trip
+import com.android.tripbook.model.User
 
 /**
  * Renders a single trip card with image, title, and description.
