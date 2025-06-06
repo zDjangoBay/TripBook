@@ -3,46 +3,41 @@ package com.android.tripbook
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.*
+import com.android.tripbook.comment.model.Comment
+import com.android.tripbook.comment.ui.CommentScreen
 import com.android.tripbook.ui.theme.TripBookTheme
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppContent()
             }
         }
     }
 }
 
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview
-@Composable
-fun GreetingPreview() {
-    TripBookTheme {
-        Greeting("Android")
+fun AppContent() {
+    var comments by remember {
+        mutableStateOf(
+            listOf(
+                Comment("1", "u1", "Alice", null, "Wow!", System.currentTimeMillis()),
+                Comment("2", "u2", "Bob", null, "Love the views!", System.currentTimeMillis())
+            )
+        )
     }
+
+    CommentScreen(
+        comments = comments,
+        onPost = { newComment ->
+            comments = comments + newComment
+        },
+        onBack = {
+            // Do nothing for now (optional: Toast or navigate back)
+        }
+    )
 }
