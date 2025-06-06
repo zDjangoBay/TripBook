@@ -24,6 +24,16 @@
         </activity>
         <activity android:name=".TripCatalogActivity" />
         <activity
+            android:name=".TripCalendarActivity"
+            android:exported="false"
+            android:label="Trip Calendar"
+            android:theme="@style/Theme.TripBook" />
+        <activity
+            android:name=".AddTripActivity"
+            android:exported="false"
+            android:label="Add Trip"
+            android:theme="@style/Theme.TripBook" />
+        <activity
             android:name=".BookingActivity"
             android:exported="false"
             android:label="Book Trip"

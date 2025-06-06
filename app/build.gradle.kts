@@ -72,46 +72,30 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
-
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
-
-// Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
-
-// Compose + lifecycle
-//    implementation(libs.androidx.lifecycle.runtime.compose)
-
-// Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
-
-
-
-
 
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.maps.compose) // Or latest
-    implementation(libs.play.services.maps)
+    // Material Date Picker
+    implementation("com.google.android.material:material:1.11.0")
 
-    // Google Maps Compose
-    implementation(libs.maps.compose.v430)
+    // RecyclerView for trip list
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    // Accompanist for sticky headers (optional if using custom pinned behavior)
-    implementation(libs.accompanist.placeholder)
+    // CardView for trip items
+    implementation("androidx.cardview:cardview:1.0.0")
 
-    // Kotlin coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    // ViewModel and LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended")
 }
-
-

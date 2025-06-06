@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,7 +14,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.TripCalendarActivity
 import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageGallery
@@ -32,6 +35,7 @@ fun TripDetailScreen(
     val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
     val reviewsForTrip = allReviews.filter { it.tripId == tripId }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -97,6 +101,26 @@ fun TripDetailScreen(
                             )
                             Text("Book Now")
                         }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            val intent = Intent(context, TripCalendarActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("View Calendar")
                     }
                 }
 
