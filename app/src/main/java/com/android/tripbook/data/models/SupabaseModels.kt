@@ -1,5 +1,6 @@
 package com.android.tripbook.data.models
 
+import android.util.Log
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TravelCompanion
 import com.android.tripbook.model.TripCategory
@@ -61,13 +62,13 @@ data class SupabaseTrip(
         return Trip(
             id = id ?: "",
             name = name,
-            startDate = LocalDate.parse(start_date),
-            endDate = LocalDate.parse(end_date),
+            startDate = DateUtils.parseLocalDateSafely(start_date),
+            endDate = DateUtils.parseLocalDateSafely(end_date),
             destination = destination,
             travelers = travelers,
             budget = budget,
-            status = TripStatus.valueOf(status),
-            category = TripCategory.valueOf(category),
+            status = DateUtils.parseEnumSafely(status, TripStatus.PLANNED, "TripStatus", TripStatus::class.java),
+            category = DateUtils.parseEnumSafely(category, TripCategory.RELAXATION, "TripCategory", TripCategory::class.java),
             description = description,
             companions = companions
         )
@@ -76,10 +77,10 @@ data class SupabaseTrip(
     companion object {
         fun fromTrip(trip: Trip): SupabaseTrip {
             return SupabaseTrip(
-                id = trip.id?.takeIf { it.isNotEmpty() },
+                id = trip.id.takeIf { it.isNotEmpty() },
                 name = trip.name,
-                start_date = trip.startDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
-                end_date = trip.endDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                start_date = DateUtils.formatLocalDateSafely(trip.startDate),
+                end_date = DateUtils.formatLocalDateSafely(trip.endDate),
                 destination = trip.destination,
                 travelers = trip.travelers,
                 budget = trip.budget,
@@ -116,11 +117,11 @@ data class SupabaseItineraryItem(
         return ItineraryItem(
             id = id ?: "",
             tripId = trip_id,
-            date = LocalDate.parse(date),
+            date = DateUtils.parseLocalDateSafely(date),
             time = time,
             title = title,
             location = location,
-            type = ItineraryType.valueOf(type),
+            type = DateUtils.parseEnumSafely(type, ItineraryType.ACTIVITY, "ItineraryType", ItineraryType::class.java),
             notes = notes,
             description = description,
             duration = duration,
@@ -137,7 +138,7 @@ data class SupabaseItineraryItem(
             return SupabaseItineraryItem(
                 id = item.id.takeIf { it.isNotEmpty() },
                 trip_id = item.tripId,
-                date = item.date.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                date = DateUtils.formatLocalDateSafely(item.date),
                 time = item.time,
                 title = item.title,
                 location = item.location,
