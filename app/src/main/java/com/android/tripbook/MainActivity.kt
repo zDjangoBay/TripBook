@@ -20,13 +20,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.ui.admin.AdminReservationsScreen
 import com.android.tripbook.ui.screens.DashboardActivity
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Log.d("TripBook", "MainActivity onCreate started")
 
         try {
@@ -37,8 +40,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        // Progressive loading with error handling
-                        SafeDashboardLoader()
+                        AdminReservationsScreen()
                     }
                 }
             }
@@ -128,6 +130,14 @@ fun TestScreen(onLoadDashboard: () -> Unit) {
         ) {
             Text("Load Dashboard")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AdminPreview() {
+    TripBookTheme {
+        AdminReservationsScreen()
     }
 }
 
