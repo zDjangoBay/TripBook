@@ -3,7 +3,6 @@ package com.android.tripbook.model
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.time.LocalDate
 
 enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
@@ -29,8 +28,7 @@ data class RouteInfo(
 
 // ItineraryItem will likely become its own @Entity later
 data class ItineraryItem(
-    @Ignore
-    val date: LocalDate,
+    val date: Long, // Using timestamp instead of LocalDate
     val time: String,
     val title: String,
     val location: String,
@@ -50,8 +48,8 @@ data class Trip(
     @PrimaryKey
     var id: String = "",
     var name: String = "",
-    var startDate: LocalDate = LocalDate.now(),
-    var endDate: LocalDate = LocalDate.now(),
+    var startDate: Long = System.currentTimeMillis(), // Using timestamp
+    var endDate: Long = System.currentTimeMillis(),   // Using timestamp
     var destination: String = "",
     var travelers: Int = 0,
     var budget: Int = 0,

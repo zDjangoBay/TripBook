@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                 val tripId = backStackEntry.arguments?.getString("tripId")
                 tripId?.let {
                     val budgetViewModel: BudgetViewModel = viewModel(
-                        factory = BudgetViewModelFactory(application, it)
+                        factory = BudgetViewModelFactory(this@MainActivity.application, it)
                     )
                     TripBudgetScreen(
                         budgetViewModel = budgetViewModel,

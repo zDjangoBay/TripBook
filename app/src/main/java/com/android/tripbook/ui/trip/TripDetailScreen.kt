@@ -56,9 +56,10 @@ fun TripDetailScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Start Date: ${currentTrip.startDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) }}")
+                    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                    Text("Start Date: ${dateFormat.format(Date(currentTrip.startDate))}")
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("End Date: ${currentTrip.endDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) }}")
+                    Text("End Date: ${dateFormat.format(Date(currentTrip.endDate))}")
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }

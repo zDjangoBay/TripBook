@@ -15,9 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripStatus
 import com.android.tripbook.viewmodel.TripViewModel
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,22 +37,22 @@ fun TripListScreen(
             val sampleTrip1 = Trip(
                 id = "sample_trip_123",
                 destination = "Kribi Beach, Littoral Region",
-                startDate = LocalDate.now().plusDays(7), // 7 days from now
-                endDate = LocalDate.now().plusDays(14), // 14 days from now
+                startDate = System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000L, // 7 days from now
+                endDate = System.currentTimeMillis() + 14 * 24 * 60 * 60 * 1000L, // 14 days from now
                 budget = 150000 // 150,000 CFA Franc (~$250 USD)
             )
             val sampleTrip2 = Trip(
                 id = "sample_trip_456", 
                 destination = "Waza National Park, Far North",
-                startDate = LocalDate.now().plusDays(30), // 30 days from now
-                endDate = LocalDate.now().plusDays(45), // 45 days from now
+                startDate = System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L, // 30 days from now
+                endDate = System.currentTimeMillis() + 45 * 24 * 60 * 60 * 1000L, // 45 days from now
                 budget = 200000 // 200,000 CFA Franc (~$330 USD)
             )
             val sampleTrip3 = Trip(
                 id = "sample_trip_789",
                 destination = "Douala Business District",
-                startDate = LocalDate.now().plusDays(3), // 3 days from now
-                endDate = LocalDate.now().plusDays(5), // 5 days from now
+                startDate = System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000L, // 3 days from now
+                endDate = System.currentTimeMillis() + 5 * 24 * 60 * 60 * 1000L, // 5 days from now
                 budget = 75000 // 75,000 CFA Franc (~$125 USD)
             )
             tripViewModel.insert(sampleTrip1)
@@ -111,8 +111,9 @@ fun TripListItem(trip: Trip, onClick: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = trip.destination, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(4.dp))
-            val startDate = trip.startDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) } ?: "N/A"
-            val endDate = trip.endDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) } ?: "N/A"
+            val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val startDate = dateFormat.format(Date(trip.startDate))
+            val endDate = dateFormat.format(Date(trip.endDate))
             Text(text = "$startDate - $endDate", style = MaterialTheme.typography.bodySmall)
         }
     }

@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import com.android.tripbook.model.BudgetCategory
 import com.android.tripbook.model.Expense
 import com.android.tripbook.model.Trip
-import com.android.tripbook.model.converters.DateConverter
 import com.android.tripbook.model.converters.TripStatusConverter
 
 // Define DAOs later - for now, just declare them
@@ -22,11 +21,10 @@ import com.android.tripbook.dao.TripDao
         BudgetCategory::class,
         Expense::class
     ],
-    version = 1, // Start with version 1. Increment if you change schema.
+    version = 2, // Increment version due to schema change
     exportSchema = false // Recommended to disable for non-library apps to avoid version history files
 )
 @TypeConverters(
-    DateConverter::class,
     TripStatusConverter::class
     // Add other converters here if needed, e.g., for List<String>
 )
