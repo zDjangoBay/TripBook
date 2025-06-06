@@ -344,6 +344,59 @@ fun ItineraryBuilderScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
+                    // Add Item Button
+                    Button(
+                        onClick = {
+                            if (validateItineraryItem(
+                                    date,
+                                    time,
+                                    title,
+                                    location,
+                                    selectedType,
+                                    setDateError = { dateError = it },
+                                    setTimeError = { timeError = it },
+                                    setTitleError = { titleError = it },
+                                    setLocationError = { locationError = it },
+                                    setTypeError = { typeError = it }
+                                )
+                            ) {
+                                val newItem = ItineraryItem(
+                                    tripId = trip.id,
+                                    date = date!!,
+                                    time = time.trim(),
+                                    title = title.trim(),
+                                    location = location.trim(),
+                                    type = selectedType!!,
+                                    notes = notes.trim()
+                                )
+                                itineraryItems = itineraryItems + newItem
+                                // Reset form
+                                date = null
+                                time = ""
+                                title = ""
+                                location = ""
+                                selectedType = null
+                                notes = ""
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF667EEA)
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            text = "Add Itinerary Item",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
                     // Itinerary List
                     if (itineraryItems.isNotEmpty()) {
                         Text(

@@ -104,7 +104,7 @@ fun PlanNewTripScreen(
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
-            // Header with back button
+            // Header with back button//
             TripBookHeader(
                 title = "Plan New Trip",
                 onBackClick = onBackClick
@@ -761,6 +761,7 @@ fun PlanNewTripScreen(
                                 )
                             ) {
                                 val newItem = ItineraryItem(
+                                    tripId = "", // Will be set when trip is created
                                     date = date!!,
                                     time = time.trim(),
                                     title = title.trim(),

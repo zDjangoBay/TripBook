@@ -8,7 +8,7 @@ data class Bus(
     val timeOfDeparture: LocalDateTime,
     val agencyId: Int,
     val destinationId: Int,
-    // Additional fields for UI display
+    // Additional fields for UI display//
     val destinationName: String = "",
     val agencyName: String = ""
 )

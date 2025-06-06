@@ -21,24 +21,46 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Location
+import com.android.tripbook.ui.components.* // Import all components, including EditActivityDialog
+import com.android.tripbook.ui.theme.TripBookColors
+import com.android.tripbook.viewmodel.TripDetailsViewModel
+import com.android.tripbook.viewmodel.MapViewMode
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import androidx.compose.ui.res.painterResource
+import com.android.tripbook.R
 
 @Composable
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
-    onEditItineraryClick: () -> Unit
+    onEditItineraryClick: () -> Unit, // This was originally for the main "Edit Itinerary" button
 ) {
-    var selectedTab by remember { mutableStateOf("Overview") }
+    val viewModel: TripDetailsViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    // State for showing the Edit Activity Dialog
+    var showEditActivityDialog by remember { mutableStateOf(false) }
+    var activityToEdit by remember { mutableStateOf<ItineraryItem?>(null) }
+
+    // Initialize with the provided trip
+    LaunchedEffect(trip.id) {
+        if (trip.id.isNotEmpty()) {
+            viewModel.loadTripDetails(trip.id)
+        }
+    }
+
+    // Use the trip from viewModel if available, otherwise use the provided trip
+    val currentTrip = uiState.trip ?: trip
 
     TripBookGradientBackground {
         Column(
@@ -48,8 +70,8 @@ fun TripDetailsScreen(
         ) {
             // Header with back button
             TripBookHeader(
-                title = trip.name,
-                subtitle = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                title = currentTrip.name,
+                subtitle = "${currentTrip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${currentTrip.endDate.format(DateTimeFormatter.ofPattern("MMM d,yyyy"))}",
                 onBackClick = onBackClick
             )
 
@@ -65,44 +87,14 @@ fun TripDetailsScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    // Tabs
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        listOf("Overview", "Itinerary", "Map").forEach { tab ->
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clickable { selectedTab = tab },
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = tab,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = if (selectedTab == tab) Color(0xFF667EEA) else Color(0xFF64748B)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                if (selectedTab == tab) {
-                                    Box(
-                                        modifier = Modifier
-                                            .width(40.dp)
-                                            .height(3.dp)
-                                            .background(
-                                                Color(0xFF667EEA),
-                                                RoundedCornerShape(2.dp)
-                                            )
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    // Enhanced Tabs
+                    EnhancedTabRow(
+                        selectedTab = uiState.selectedTab,
+                        onTabSelected = viewModel::selectTab
+                    )
 
-                    Divider(
-                        color = Color(0xFFE2E8F0),
+                    HorizontalDivider(
+                        color = TripBookColors.Divider,
                         thickness = 1.dp,
                         modifier = Modifier.padding(top = 8.dp)
                     )
@@ -113,11 +105,455 @@ fun TripDetailsScreen(
                             .fillMaxSize()
                             .padding(20.dp)
                     ) {
-                        when (selectedTab) {
-                            "Overview" -> OverviewTab(trip)
-                            "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
-                            "Map" -> MapTab(trip)
+                        when (uiState.selectedTab) {
+                            "Overview" -> EnhancedOverviewTab(
+                                trip = currentTrip,
+                                statistics = viewModel.getTripStatistics()
+                            )
+                            "Itinerary" -> EnhancedItineraryTab(
+                                trip = currentTrip,
+                                uiState = uiState,
+                                viewModel = viewModel,
+                                onUpdateActivityClick = { item: ItineraryItem ->
+                                    activityToEdit = item
+                                    showEditActivityDialog = true
+                                },
+                                onDeleteActivityClick = { itemId: String ->
+                                    viewModel.deleteItineraryItem(itemId)
+                                }
+                            )
+                            "Map" -> EnhancedMapTab(
+                                trip = currentTrip,
+                                uiState = uiState,
+                                viewModel = viewModel
+                            )
+                            "Weather" -> WeatherForecastTab(
+                                trip = currentTrip,
+                                viewModel = viewModel
+                            )
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    // Add Activity Dialog (for adding new activities via the '+' button)
+    if (uiState.showAddActivityDialog) {
+        uiState.selectedDate?.let { selectedDate ->
+            AddActivityDialog(
+                tripId = currentTrip.id,
+                selectedDate = selectedDate,
+                onDismiss = viewModel::hideAddActivityDialog,
+                onActivityAdded = viewModel::addItineraryItem
+            )
+        }
+    }
+
+    // Edit Activity Dialog (for updating/deleting existing activities)
+    if (showEditActivityDialog) {
+        activityToEdit?.let { item ->
+            EditActivityDialog(
+                item = item,
+                onDismiss = { showEditActivityDialog = false; activityToEdit = null },
+                onSave = { updatedItem: ItineraryItem ->
+                    viewModel.updateItineraryItem(updatedItem)
+                    showEditActivityDialog = false
+                    activityToEdit = null
+                },
+                onDelete = { itemId: String ->
+                    viewModel.deleteItineraryItem(itemId)
+                    showEditActivityDialog = false
+                    activityToEdit = null
+                }
+            )
+        }
+    }
+
+    // Error handling
+    uiState.error?.let { error ->
+        LaunchedEffect(error) {
+            // Show error message (you could use a Snackbar here)
+            viewModel.clearError()
+        }
+    }
+}
+
+@Composable
+fun WeatherForecastTab(trip: Trip, viewModel: TripDetailsViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .background(Color.White)
+    ) {
+        // Location header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.LocationOn,
+                contentDescription = "Location",
+                tint = TripBookColors.Primary,
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(TripBookColors.Primary.copy(alpha = 0.1f), CircleShape)
+                    .padding(4.dp)
+            )
+            Text(
+                text = trip.destination,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Medium,
+                color = TripBookColors.TextPrimary,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+        
+        // Current weather
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = "27°",
+                    fontSize = 64.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TripBookColors.TextPrimary
+                )
+                Text(
+                    text = "Partly Cloudy",
+                    fontSize = 20.sp,
+                    color = TripBookColors.TextSecondary
+                )
+                
+                Row(
+                    modifier = Modifier.padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowUpward,
+                        contentDescription = "High",
+                        tint = TripBookColors.TextSecondary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "28° /",
+                        fontSize = 16.sp,
+                        color = TripBookColors.TextSecondary
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowDownward,
+                        contentDescription = "Low",
+                        tint = TripBookColors.TextSecondary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = " 20°",
+                        fontSize = 16.sp,
+                        color = TripBookColors.TextSecondary
+                    )
+                }
+                Text(
+                    text = "Feels like 29°",
+                    fontSize = 14.sp,
+                    color = TripBookColors.TextSecondary,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+            
+            // Weather icon
+            Icon(
+                imageVector = Icons.Default.WbSunny,
+                contentDescription = "Partly Cloudy",
+                tint = TripBookColors.Primary,
+                modifier = Modifier.size(80.dp)
+            )
+        }
+        
+        // Weather alert
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+        ) {
+            Text(
+                text = "Showers ending early. Low 20C.",
+                fontSize = 14.sp,
+                color = TripBookColors.TextPrimary,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+        
+        // Hourly forecast
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // 5 PM
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "5 PM",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = null,
+                            tint = TripBookColors.Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "26°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "11%",
+                            fontSize = 12.sp,
+                            color = Color(0xFF4FC3F7)
+                        )
+                    }
+                    
+                    // 6 PM
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "6 PM",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = null,
+                            tint = TripBookColors.Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "25°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "9%",
+                            fontSize = 12.sp,
+                            color = Color(0xFF4FC3F7)
+                        )
+                    }
+                    
+                    // 6:23 PM - Sunset
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "6:23 PM",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Text(
+                            text = "Sunset",
+                            fontSize = 12.sp,
+                            color = Color(0xFFFF9800)
+                        )
+                        Text(
+                            text = "25°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "8%",
+                            fontSize = 12.sp,
+                            color = Color(0xFF4FC3F7)
+                        )
+                    }
+                    
+                    // 7 PM
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "7 PM",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Cloud,
+                            contentDescription = null,
+                            tint = TripBookColors.Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "24°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "7%",
+                            fontSize = 12.sp,
+                            color = Color(0xFF4FC3F7)
+                        )
+                    }
+                    
+                    // 8 PM
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "8 PM",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Cloud,
+                            contentDescription = null,
+                            tint = TripBookColors.Primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = "23°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "9%",
+                            fontSize = 12.sp,
+                            color = Color(0xFF4FC3F7)
+                        )
+                    }
+                }
+                
+                // Temperature line
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(Color.White)
+                )
+            }
+        }
+        
+        // Rain forecast
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.WaterDrop,
+                        contentDescription = "Rain",
+                        tint = Color(0xFF4FC3F7),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Column(modifier = Modifier.padding(start = 8.dp)) {
+                        Text(
+                            text = "Rain Coming",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = TripBookColors.TextPrimary
+                        )
+                        Text(
+                            text = "Rain possible this evening",
+                            fontSize = 14.sp,
+                            color = TripBookColors.TextSecondary
+                        )
+                    }
+                }
+                Text(
+                    text = "34%",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TripBookColors.TextPrimary
+                )
+            }
+        }
+        
+        // Daily forecast
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F0FF))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Yesterday",
+                        fontSize = 16.sp,
+                        color = TripBookColors.TextPrimary
+                    )
+                    Text(
+                        text = "28° 20°",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = TripBookColors.TextPrimary
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Today",
+                        fontSize = 16.sp,
+                        color = TripBookColors.TextPrimary
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.WaterDrop,
+                            contentDescription = "Rain",
+                            tint = Color(0xFF4FC3F7),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "11%",
+                            fontSize = 14.sp,
+                            color = Color(0xFF4FC3F7),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.WbSunny,
+                            contentDescription = "Partly Cloudy",
+                            tint = TripBookColors.Primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "28° 20°",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = TripBookColors.TextPrimary,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
                     }
                 }
             }
@@ -126,47 +562,309 @@ fun TripDetailsScreen(
 }
 
 @Composable
-private fun TripBookHeader(
-    title: String,
-    subtitle: String,
-    onBackClick: () -> Unit
+private fun HourlyForecastItem(
+    time: String,
+    temp: Int,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    precipitation: Int
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = time,
+            fontSize = 14.sp,
+            color = Color.White.copy(alpha = 0.8f)
+        )
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = "${temp}°",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.White
+        )
+        Text(
+            text = "${precipitation}%",
+            fontSize = 12.sp,
+            color = Color.White.copy(alpha = 0.8f)
+        )
+    }
+}
+
+@Composable
+fun EnhancedTabRow(
+    selectedTab: String,
+    onTabSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, start = 20.dp, end = 20.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(top = 20.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.size(48.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back",
-                tint = Color.White
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            )
-            Text(
-                text = subtitle,
-                style = TextStyle(
+        listOf("Overview", "Itinerary", "Map", "Weather").forEach { tab ->
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onTabSelected(tab) },
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = tab,
                     fontSize = 14.sp,
-                    color = Color.White.copy(alpha = 0.9f)
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (selectedTab == tab) TripBookColors.Primary else TripBookColors.TextSecondary
                 )
-            )
+                Spacer(modifier = Modifier.height(8.dp))
+                if (selectedTab == tab) {
+                    Box(
+                        modifier = Modifier
+                            .width(40.dp)
+                            .height(3.dp)
+                            .background(
+                                TripBookColors.Primary,
+                                RoundedCornerShape(2.dp)
+                            )
+                    )
+                }
+            }
         }
     }
 }
+
+@Composable
+fun EnhancedOverviewTab(
+    trip: Trip,
+    statistics: com.android.tripbook.viewmodel.TripStatistics,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            TripStatisticsCard(statistics = statistics)
+        }
+
+        item {
+            TripSummaryCard(trip = trip)
+        }
+
+        item {
+            TravelersCard(trip = trip)
+        }
+    }
+}
+
+@Composable
+fun EnhancedItineraryTab(
+    trip: Trip,
+    uiState: com.android.tripbook.viewmodel.TripDetailsUiState,
+    viewModel: TripDetailsViewModel,
+    onUpdateActivityClick: (ItineraryItem) -> Unit, // New parameter
+    onDeleteActivityClick: (String) -> Unit,       // New parameter
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        // Header with edit button and view toggle
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.End, // Changed to End to align toggle to right
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = { viewModel.toggleMapViewMode() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (uiState.mapViewMode == MapViewMode.MAP)
+                        TripBookColors.Primary else Color.White,
+                    contentColor = if (uiState.mapViewMode == MapViewMode.MAP)
+                        Color.White else TripBookColors.Primary
+                ),
+                border = if (uiState.mapViewMode == MapViewMode.LIST)
+                    BorderStroke(1.dp, TripBookColors.Primary) else null,
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Icon(
+                    imageVector = if (uiState.mapViewMode == MapViewMode.MAP)
+                        Icons.Default.List else Icons.Default.Map,
+                    contentDescription = "Toggle View",
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (uiState.mapViewMode == MapViewMode.MAP) "List View" else "Map View",
+                    fontSize = 14.sp
+                )
+            }
+        }
+
+        when (uiState.mapViewMode) {
+            MapViewMode.LIST -> {
+                // Date selector
+                DateSelector(
+                    dates = viewModel.getTripDates(),
+                    selectedDate = uiState.selectedDate,
+                    onDateSelected = viewModel::selectDate,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // Day timeline view
+                uiState.selectedDate?.let { selectedDate ->
+                    val activitiesForDate = viewModel.getItineraryByDate(selectedDate)
+                    DayTimelineView(
+                        date = selectedDate,
+                        activities = activitiesForDate,
+                        onActivityClick = { /* Handle activity click */ },
+                        onAddActivityClick = viewModel::showAddActivityDialog,
+                        onUpdateActivityClick = onUpdateActivityClick, // Pass update callback
+                        onDeleteActivityClick = onDeleteActivityClick  // Pass delete callback
+                    )
+                }
+            }
+            MapViewMode.MAP -> {
+                EnhancedMapTab(trip = trip, uiState = uiState, viewModel = viewModel)
+            }
+        }
+    }
+}
+
+@Composable
+fun EnhancedMapTab(
+    trip: Trip,
+    uiState: com.android.tripbook.viewmodel.TripDetailsUiState,
+    viewModel: TripDetailsViewModel,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        // Date filter for map
+        if (trip.itinerary.isNotEmpty()) {
+            DateSelector(
+                dates = viewModel.getTripDates(),
+                selectedDate = uiState.selectedDate,
+                onDateSelected = viewModel::selectDate,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+        // Map view
+        TripMapView(
+            trip = trip,
+            selectedDate = uiState.selectedDate,
+            showRoutes = true,
+            mapType = MapType.NORMAL,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(16.dp))
+        )
+
+        // Legend
+        if (trip.itinerary.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            MapLegend()
+        }
+    }
+}
+
+@Composable
+fun TripSummaryCard(
+    trip: Trip,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = "Trip Summary",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = TripBookColors.TextPrimary,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            val totalDays = java.time.temporal.ChronoUnit.DAYS.between(trip.startDate, trip.endDate).toInt() + 1
+            DetailItem(icon = "📅", text = "$totalDays days")
+            DetailItem(icon = "📍", text = trip.destination)
+            DetailItem(icon = "👥", text = "${trip.travelers} travelers")
+            DetailItem(icon = "💰", text = "FCFA ${trip.budget} budget")
+            DetailItem(icon = "📝", text = trip.category.name.lowercase().replaceFirstChar { it.uppercase() })
+            if (trip.description.isNotEmpty()) {
+                DetailItem(icon = "📋", text = trip.description)
+            }
+        }
+    }
+}
+
+@Composable
+fun TravelersCard(
+    trip: Trip,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp)
+        ) {
+            Text(
+                text = "Travelers",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = TripBookColors.TextPrimary,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+
+            if (trip.companions.isEmpty()) {
+                Text(
+                    text = "Solo trip",
+                    fontSize = 14.sp,
+                    color = TripBookColors.TextSecondary
+                )
+            } else {
+                trip.companions.forEachIndexed { index, companion ->
+                    TravelerItem(
+                        initials = companion.name.split(" ").mapNotNull { it.firstOrNull() }.take(2).joinToString(""),
+                        name = companion.name,
+                        color = when (index % 3) {
+                            0 -> TripBookColors.Primary
+                            1 -> Color(0xFF00CC66)
+                            else -> Color(0xFFE91E63)
+                        }
+                    )
+                    if (index < trip.companions.size - 1) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+// The following composables were not part of the `TripDetailsScreen` in previous versions,
+// but were included in the original `TripDetailsScreen.kt` file provided.
+// They are kept here for completeness, assuming they are indeed top-level declarations
+// in the original file, but they are not directly called by the `TripDetailsScreen` logic
+// as modified. If they were meant to be part of a different screen or utility,
+// they should be moved accordingly.
 
 @Composable
 private fun MapTab(trip: Trip) {
@@ -260,6 +958,7 @@ private fun MapTab(trip: Trip) {
 @Composable
 private fun TripMapView(
     trip: Trip,
+    selectedDate: LocalDate? = null,
     showRoutes: Boolean = true,
     mapType: MapType = MapType.NORMAL,
     modifier: Modifier = Modifier
@@ -303,8 +1002,14 @@ private fun TripMapView(
             )
         }
 
-        // Add markers for itinerary items
-        trip.itinerary.forEachIndexed { index, item ->
+        // Add markers for itinerary items (filtered by selected date if provided)
+        val itemsToShow = if (selectedDate != null) {
+            trip.itinerary.filter { it.date == selectedDate }
+        } else {
+            trip.itinerary
+        }
+
+        itemsToShow.forEachIndexed { index, item ->
             item.coordinates?.let { location ->
                 Marker(
                     state = MarkerState(
@@ -422,69 +1127,68 @@ private fun LegendItem(
 }
 
 @Composable
-private fun OverviewTab(trip: Trip) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+private fun DetailItem(icon: String, text: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Trip Summary",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
+        Text(
+            text = icon,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(end = 12.dp)
+        )
+        Text(
+            text = text,
+            fontSize = 14.sp,
+            color = Color(0xFF64748B)
+        )
+    }
+}
 
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
-                }
-            }
+@Composable
+private fun TravelerItem(initials: String, name: String, color: Color) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(color, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = initials,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
         }
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = name,
+            fontSize = 14.sp,
+            color = Color(0xFF1A202C)
+        )
+    }
+}
 
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
-                ) {
-                    Text(
-                        text = "Travelers",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C),
-                        modifier = Modifier.padding(bottom = 12.dp)
+@Composable
+private fun TripBookGradientBackground(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
                     )
-
-                    TravelerItem(
-                        initials = "JD",
-                        name = "John Doe (Trip Leader)",
-                        color = Color(0xFF667EEA)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Jane Smith",
-                        color = Color(0xFF764BA2)
-                    )
-                }
-            }
-        }
+                )
+            )
+    ) {
+        content()
     }
 }
 
@@ -499,6 +1203,9 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.End
         ) {
+            // This button is removed as it was causing navigation to ItineraryBuilderScreen for editing
+            // and individual item editing is handled by the dialog.
+            /*
             Button(
                 onClick = onEditItineraryClick,
                 colors = ButtonDefaults.buttonColors(
@@ -513,6 +1220,7 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                     color = Color.White
                 )
             }
+            */
         }
 
         if (trip.itinerary.isEmpty()) {
@@ -623,71 +1331,5 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun DetailItem(icon: String, text: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = icon,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(end = 12.dp)
-        )
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            color = Color(0xFF64748B)
-        )
-    }
-}
-
-@Composable
-private fun TravelerItem(initials: String, name: String, color: Color) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .background(color, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = initials,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = name,
-            fontSize = 14.sp,
-            color = Color(0xFF1A202C)
-        )
-    }
-}
-
-@Composable
-private fun TripBookGradientBackground(content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF667EEA),
-                        Color(0xFF764BA2)
-                    )
-                )
-            )
-    ) {
-        content()
     }
 }

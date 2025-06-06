@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions // This was likely already there
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType // <--- Make sure this line is present
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +35,7 @@ import com.android.tripbook.viewmodel.TripViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.android.tripbook.R
-
+@OptIn(ExperimentalMaterial3Api::class) // Added for AlertDialog
 @Composable
 fun MyTripsScreen(
     tripViewModel: TripViewModel = viewModel(),
@@ -45,6 +48,21 @@ fun MyTripsScreen(
     val error by tripViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("All") }
+
+    // State for showing the delete confirmation dialog
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var tripToDelete by remember { mutableStateOf<Trip?>(null) }
+
+    // State for showing the edit dialog
+    var showEditDialog by remember { mutableStateOf(false) }
+    var tripToEdit by remember { mutableStateOf<Trip?>(null) }
+    var editedTripName by remember { mutableStateOf("") }
+    var editedTripDestination by remember { mutableStateOf("") }
+    var editedTripStartDate by remember { mutableStateOf(LocalDate.now()) }
+    var editedTripEndDate by remember { mutableStateOf(LocalDate.now()) }
+    var editedTripTravelers by remember { mutableStateOf("") }
+    var editedTripBudget by remember { mutableStateOf("") }
+
 
     Box(
         modifier = Modifier
@@ -186,6 +204,83 @@ fun MyTripsScreen(
                 }
             }
 
+            // Error State with Retry Button//
+            if (!error.isNullOrEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "Connection Error",
+                            tint = Color(0xFFDC2626),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Connection Lost",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1F2937),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = error!!,
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                tripViewModel.refreshTrips()
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF667EEA)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retrying...",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retry",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             // Trip List
             LazyColumn(
                 modifier = Modifier.weight(1f),
@@ -200,7 +295,24 @@ fun MyTripsScreen(
                                     trip.name.contains(searchText, ignoreCase = true) ||
                                     trip.destination.contains(searchText, ignoreCase = true))
                 }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick?.invoke(trip) })
+                    TripCard(
+                        trip = trip,
+                        onClick = { onTripClick?.invoke(trip) },
+                        onEditClick = {
+                            tripToEdit = it
+                            editedTripName = it.name
+                            editedTripDestination = it.destination
+                            editedTripStartDate = it.startDate
+                            editedTripEndDate = it.endDate
+                            editedTripTravelers = it.travelers.toString()
+                            editedTripBudget = it.budget.toString()
+                            showEditDialog = true
+                        },
+                        onDeleteClick = {
+                            tripToDelete = it
+                            showDeleteDialog = true
+                        }
+                    )
                 }
             }
         }
@@ -222,12 +334,143 @@ fun MyTripsScreen(
             )
         }
     }
+
+    // Delete Confirmation Dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Trip") },
+            text = { Text("Are you sure you want to delete '${tripToDelete?.name}'?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        tripToDelete?.let {
+                            tripViewModel.deleteTrip(it.id)
+                        }
+                        showDeleteDialog = false
+                        tripToDelete = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showDeleteDialog = false
+                        tripToDelete = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // Edit Trip Dialog
+    if (showEditDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditDialog = false },
+            title = { Text("Edit Trip") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = editedTripName,
+                        onValueChange = { editedTripName = it },
+                        label = { Text("Trip Name") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = editedTripDestination,
+                        onValueChange = { editedTripDestination = it },
+                        label = { Text("Destination") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    // You'll need to implement date pickers for startDate and endDate
+                    // For simplicity, I'm keeping them as text fields for now, but a proper UI for date selection is recommended.
+                    OutlinedTextField(
+                        value = editedTripStartDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        onValueChange = {
+                            try {
+                                editedTripStartDate = LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                            } catch (e: Exception) {
+                                // Handle invalid date format
+                            }
+                        },
+                        label = { Text("Start Date (YYYY-MM-DD)") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = editedTripEndDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        onValueChange = {
+                            try {
+                                editedTripEndDate = LocalDate.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                            } catch (e: Exception) {
+                                // Handle invalid date format
+                            }
+                        },
+                        label = { Text("End Date (YYYY-MM-DD)") },
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = editedTripTravelers,
+                        onValueChange = { editedTripTravelers = it },
+                        label = { Text("Travelers") },
+                        // Ensure this line uses 'KeyboardType.Number'
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = editedTripTravelers,
+                        onValueChange = { editedTripTravelers = it },
+                        label = { Text("Travelers") },
+                        // Ensure this line uses 'KeyboardType.Number'
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        tripToEdit?.let {
+                            val updatedTrip = it.copy(
+                                name = editedTripName,
+                                destination = editedTripDestination,
+                                startDate = editedTripStartDate,
+                                endDate = editedTripEndDate,
+                                travelers = editedTripTravelers.toIntOrNull() ?: it.travelers,
+                                budget = editedTripBudget.toIntOrNull() ?: it.budget
+                            )
+                            tripViewModel.updateTrip(updatedTrip)
+                        }
+                        showEditDialog = false
+                        tripToEdit = null
+                    }
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showEditDialog = false
+                        tripToEdit = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
 fun TripCard(
     trip: Trip,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onEditClick: (Trip) -> Unit, // New parameter for edit button
+    onDeleteClick: (Trip) -> Unit // New parameter for delete button
 ) {
     val statusColor = when (trip.status) {
         TripStatus.PLANNED -> Color(0xFF0066CC)
@@ -278,18 +521,44 @@ fun TripCard(
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(statusBgColor)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = trip.status.name.uppercase(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = statusColor
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Edit Button
+                    IconButton(
+                        onClick = { onEditClick(trip) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Trip",
+                            tint = Color(0xFF64748B)
+                        )
+                    }
+                    // Delete Button
+                    IconButton(
+                        onClick = { onDeleteClick(trip) },
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Trip",
+                            tint = Color.Red
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between buttons and status
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(statusBgColor)
+                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = trip.status.name.uppercase(),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = statusColor
+                        )
+                    }
                 }
             }
 
