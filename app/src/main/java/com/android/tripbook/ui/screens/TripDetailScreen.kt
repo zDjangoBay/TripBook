@@ -1,6 +1,9 @@
 package com.android.tripbook.ui.screens
 
 import android.content.Intent
+=======
+import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.TripCalendarActivity
+import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageGallery
@@ -27,6 +31,7 @@ import com.android.tripbook.ui.components.ReviewCard
 fun TripDetailScreen(
     tripId: Int,
     onBack: () -> Unit,
+    navController: NavHostController,
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
@@ -74,6 +79,7 @@ fun TripDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
+
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -155,9 +161,16 @@ fun TripDetailScreen(
                         )
                     } else {
                         reviewsForTrip.take(3).forEach { review ->
-                            ReviewCard(review = review)
+                            ReviewCard(
+                                review = review,
+                                onClick = {
+                                    navController.navigate("detailReview/${review.id}/$tripId")
+                                }
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
                         }
+
+
                     }
                 }
             }
