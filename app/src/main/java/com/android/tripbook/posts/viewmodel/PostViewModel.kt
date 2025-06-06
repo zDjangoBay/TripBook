@@ -1,180 +1,58 @@
-package com.android.tripbook.posts.viewmodel
+package com.android.tripbook.posts.ViewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.posts.model.*
+import com.android.tripbook.posts.model.Category
+import com.android.tripbook.posts.model.Comment
+import com.android.tripbook.posts.model.Coordinates
+import com.android.tripbook.posts.model.ImageModel
+import com.android.tripbook.posts.model.Location
+import com.android.tripbook.posts.model.PostModel
+import com.android.tripbook.posts.model.TagModel
 import com.android.tripbook.posts.repository.PostRepository
-import com.android.tripbook.posts.utils.ConfigManager
 import com.android.tripbook.posts.utils.PostValidator
+// Make sure PostUIState and PostEvent are imported from here if they are in the same package
+// If they are in a different sub-package, the import will reflect that, e.g.:
+// import com.android.tripbook.posts.viewmodel.PostEvent
+// import com.android.tripbook.posts.viewmodel.PostUIState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class PostViewModel(
     private val repository: PostRepository,
     private val validator: PostValidator
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(PostUIState())
     val uiState: StateFlow<PostUIState> = _uiState.asStateFlow()
-    
+
+    private val currentUserId = "current_user_simulated"
+    private var locationSearchJob: Job? = null
+    private val LOCATION_API_LOG_TAG = "GeoapifyAPI" // Updated Log Tag
+
     init {
-        initializeData()
+        loadPosts()
+        loadAvailableTags()
     }
-    
-    private fun initializeData() {
-        viewModelScope.launch {
-            // Add sample Cameroon travel posts
-            addSampleCameroonPosts()
-            
-            // Initialize available tags
-            updateAvailableTags()
-            
-            // Collect posts from repository
-            repository.getAllPosts().collect { posts ->
-                _uiState.value = _uiState.value.copy(
-                    posts = posts,
-                    isLoading = false
-                )
-            }
-        }
-    }
-    
-    private suspend fun addSampleCameroonPosts() {
-        val samplePosts = listOf(
-            PostModel(
-                userId = ConfigManager.DEFAULT_USER_ID,
-                username = "CameroonExplorer",
-                userAvatar = "https://i.pravatar.cc/100?u=cameroon001",
-                title = "Mount Cameroon Adventure",
-                description = "Just conquered the highest peak in West Africa! The sunrise from Mount Cameroon was absolutely breathtaking. The volcanic landscape and diverse ecosystems make this a must-visit destination for any adventure seeker.",
-                location = Location(
-                    name = "Mount Cameroon",
-                    city = "Buea",
-                    country = "Cameroon",
-                    coordinates = Coordinates(4.2026, 9.1705)
-                ),
-                categories = listOf(Category.ADVENTURE, Category.MOUNTAINS, Category.NATURE),
-                tags = listOf(
-                    TagModel("1", "Hiking", Category.ADVENTURE),
-                    TagModel("2", "Mountain", Category.MOUNTAINS),
-                    TagModel("3", "Volcano", Category.NATURE)
-                ),
-                hashtags = listOf("#MountCameroon", "#WestAfrica", "#Hiking", "#Adventure"),
-                likes = listOf("user1", "user2", "user3"),
-                comments = listOf(
-                    Comment(
-                        userId = "user1",
-                        username = "TravelBuddy",
-                        text = "Wow! This looks amazing. How long did the hike take?"
-                    )
-                )
-            ),
-            PostModel(
-                userId = ConfigManager.DEFAULT_USER_ID,
-                username = "AfricaWanderer",
-                userAvatar = "https://i.pravatar.cc/100?u=cameroon002",
-                title = "Waza National Park Safari",
-                description = "Incredible wildlife spotting at Waza National Park! Saw elephants, giraffes, lions, and so many beautiful bird species. The dry season is perfect for game viewing as animals gather around water sources.",
-                location = Location(
-                    name = "Waza National Park",
-                    city = "Waza",
-                    country = "Cameroon",
-                    coordinates = Coordinates(11.3167, 14.6500)
-                ),
-                categories = listOf(Category.NATURE, Category.ADVENTURE),
-                tags = listOf(
-                    TagModel("4", "Safari", Category.NATURE),
-                    TagModel("5", "Wildlife", Category.NATURE),
-                    TagModel("6", "Photography", Category.ADVENTURE)
-                ),
-                hashtags = listOf("#WazaPark", "#Safari", "#Wildlife", "#Cameroon"),
-                likes = listOf("user4", "user5"),
-                comments = listOf()
-            ),
-            PostModel(
-                userId = ConfigManager.DEFAULT_USER_ID,
-                username = "CulturalTraveler",
-                userAvatar = "https://i.pravatar.cc/100?u=cameroon003",
-                title = "Foumban Royal Palace",
-                description = "Exploring the rich Bamoun culture at the Royal Palace of Foumban. The architecture is stunning and the museum houses incredible artifacts that tell the story of this ancient kingdom. A perfect blend of history and culture!",
-                location = Location(
-                    name = "Foumban Royal Palace",
-                    city = "Foumban",
-                    country = "Cameroon",
-                    coordinates = Coordinates(5.7269, 10.9003)
-                ),
-                categories = listOf(Category.CULTURE, Category.HISTORICAL),
-                tags = listOf(
-                    TagModel("7", "Culture", Category.CULTURE),
-                    TagModel("8", "History", Category.HISTORICAL),
-                    TagModel("9", "Palace", Category.HISTORICAL)
-                ),
-                hashtags = listOf("#Foumban", "#BamounCulture", "#RoyalPalace", "#History"),
-                likes = listOf("user6", "user7", "user8", "user9"),
-                comments = listOf(
-                    Comment(
-                        userId = "user6",
-                        username = "HistoryBuff",
-                        text = "The Bamoun script is fascinating! Did you learn about it during your visit?"
-                    ),
-                    Comment(
-                        userId = "user7",
-                        username = "CultureLover",
-                        text = "Added to my travel bucket list! Thanks for sharing."
-                    )
-                )
-            ),
-            PostModel(
-                userId = ConfigManager.DEFAULT_USER_ID,
-                username = "BeachVibes",
-                userAvatar = "https://i.pravatar.cc/100?u=cameroon004",
-                title = "Limbe Beach Paradise",
-                description = "Black volcanic sand beaches of Limbe are absolutely unique! Spent the day relaxing by the Atlantic Ocean with the backdrop of Mount Cameroon. Don't miss the Limbe Wildlife Centre nearby - great for conservation efforts!",
-                location = Location(
-                    name = "Limbe Beach",
-                    city = "Limbe",
-                    country = "Cameroon",
-                    coordinates = Coordinates(4.0186, 9.2056)
-                ),
-                categories = listOf(Category.BEACH, Category.NATURE),
-                tags = listOf(
-                    TagModel("10", "Beach", Category.BEACH),
-                    TagModel("11", "Ocean", Category.BEACH),
-                    TagModel("12", "Relaxation", Category.NATURE)
-                ),
-                hashtags = listOf("#LimbeBeach", "#BlackSand", "#Atlantic", "#BeachLife"),
-                likes = listOf("user10", "user11"),
-                comments = listOf()
-            )
-        )
-        
-        samplePosts.forEach { post ->
-            repository.createPost(post)
-        }
-    }
-    
-    private fun updateAvailableTags() {
-        val tags = listOf(
-            TagModel("1", "Adventure", Category.ADVENTURE),
-            TagModel("2", "Culture", Category.CULTURE),
-            TagModel("3", "Food", Category.FOOD),
-            TagModel("4", "Nature", Category.NATURE),
-            TagModel("5", "Urban", Category.URBAN),
-            TagModel("6", "Beach", Category.BEACH),
-            TagModel("7", "Mountains", Category.MOUNTAINS),
-            TagModel("8", "Historical", Category.HISTORICAL),
-            TagModel("9", "Safari", Category.NATURE),
-            TagModel("10", "Wildlife", Category.NATURE),
-            TagModel("11", "Hiking", Category.ADVENTURE),
-            TagModel("12", "Photography", Category.ADVENTURE)
-        )
-        
-        _uiState.value = _uiState.value.copy(availableTags = tags)
-    }
-    
+
     fun handleEvent(event: PostEvent) {
         when (event) {
             is PostEvent.LoadPosts -> loadPosts()
@@ -193,192 +71,298 @@ class PostViewModel(
             is PostEvent.ToggleLike -> toggleLike(event.postId)
             is PostEvent.AddComment -> addComment(event.postId, event.text)
             is PostEvent.AddReply -> addReply(event.postId, event.commentId, event.text)
-            is PostEvent.SearchLocation -> searchLocation(event.query)
+            is PostEvent.SearchLocation -> searchLocationsGeoapify(event.query) // Changed to new method
             is PostEvent.ClearLocationSearch -> clearLocationSearch()
         }
     }
-    
+
     private fun loadPosts() {
-        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-    }
-    
-    private fun refreshPosts() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            // Refresh logic would go here
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            repository.getAllPosts()
+                .catch { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = e.message ?: "Unknown error loading posts"
+                        )
+                    }
+                    Log.e("PostViewModel", "Error loading posts", e)
+                }
+                .collect { updatedPostsList ->
+                    val currentSelectedPostId = _uiState.value.selectedPost?.id
+                    _uiState.update {
+                        it.copy(
+                            posts = updatedPostsList,
+                            isLoading = false,
+                            error = null,
+                            selectedPost = if (currentSelectedPostId != null) {
+                                updatedPostsList.find { post -> post.id == currentSelectedPostId }
+                            } else {
+                                null
+                            }
+                        )
+                    }
+                }
         }
     }
-    
+
+    private fun refreshPosts() {
+        loadPosts()
+    }
+
     private fun selectPost(postId: String) {
         val post = _uiState.value.posts.find { it.id == postId }
-        _uiState.value = _uiState.value.copy(selectedPost = post)
-    }
-    
-    private fun updateTitle(title: String) {
-        _uiState.value = _uiState.value.copy(title = title)
-        validateForm()
-    }
-    
-    private fun updateDescription(description: String) {
-        _uiState.value = _uiState.value.copy(description = description)
-        validateForm()
-    }
-    
-    private fun addImage(image: ImageModel) {
-        val currentImages = _uiState.value.selectedImages.toMutableList()
-        currentImages.add(image)
-        _uiState.value = _uiState.value.copy(selectedImages = currentImages)
-    }
-    
-    private fun removeImage(imageId: String) {
-        val currentImages = _uiState.value.selectedImages.filter { it.id != imageId }
-        _uiState.value = _uiState.value.copy(selectedImages = currentImages)
-    }
-    
-    private fun selectLocation(location: Location) {
-        _uiState.value = _uiState.value.copy(selectedLocation = location)
-        validateForm()
-    }
-    
-    private fun toggleTag(tag: TagModel) {
-        val currentTags = _uiState.value.selectedTags.toMutableList()
-        val existingTag = currentTags.find { it.id == tag.id }
-        
-        if (existingTag != null) {
-            currentTags.remove(existingTag)
-        } else {
-            currentTags.add(tag.copy(isSelected = true))
+        if (post != _uiState.value.selectedPost || _uiState.value.selectedPost == null) {
+            _uiState.update { it.copy(selectedPost = post) }
         }
-        
-        _uiState.value = _uiState.value.copy(selectedTags = currentTags)
     }
-    
+
+    private fun updateTitle(title: String) {
+        _uiState.update { it.copy(title = title) }
+        validateForm()
+    }
+
+    private fun updateDescription(description: String) {
+        _uiState.update { it.copy(description = description) }
+        validateForm()
+    }
+
+    private fun addImage(image: ImageModel) {
+        _uiState.update {
+            val currentImages = it.selectedImages.toMutableList()
+            if (currentImages.size < 10) {
+                currentImages.add(image)
+            }
+            it.copy(selectedImages = currentImages)
+        }
+        validateForm()
+    }
+
+    private fun removeImage(imageId: String) {
+        _uiState.update {
+            val currentImages = it.selectedImages.toMutableList()
+            currentImages.removeAll { img -> img.id == imageId }
+            it.copy(selectedImages = currentImages)
+        }
+        validateForm()
+    }
+
+    private fun selectLocation(location: Location) {
+        _uiState.update { it.copy(selectedLocation = location, locationSearchResults = emptyList(), isSearchingLocation = false, locationSearchError = null) }
+        validateForm()
+    }
+
+    private fun toggleTag(tag: TagModel) {
+        _uiState.update {
+            val currentTags = it.selectedTags.toMutableList()
+            val existingTag = currentTags.find { t -> t.id == tag.id }
+            if (existingTag != null) {
+                currentTags.remove(existingTag)
+            } else {
+                currentTags.add(tag.copy(isSelected = true))
+            }
+            it.copy(selectedTags = currentTags)
+        }
+        validateForm()
+    }
+
     private fun updateHashtags(hashtags: String) {
-        _uiState.value = _uiState.value.copy(hashtags = hashtags)
+        _uiState.update { it.copy(hashtags = hashtags) }
+        validateForm()
     }
-    
+
+    private fun validateForm() {
+        val currentState = _uiState.value
+        val isValid = validator.validatePost(
+            title = currentState.title,
+            description = currentState.description,
+            location = currentState.selectedLocation,
+            images = currentState.selectedImages
+        )
+        _uiState.update { it.copy(isFormValid = isValid) }
+    }
+
     private fun submitPost() {
-        if (!_uiState.value.isFormValid) return
-        
+        if (!_uiState.value.isFormValid) {
+            _uiState.update { it.copy(error = "Please fill all required fields correctly.") }
+            return
+        }
+
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isSubmitting = true, error = null)
-            
             try {
-                val post = PostModel(
-                    userId = ConfigManager.DEFAULT_USER_ID,
-                    username = ConfigManager.DEFAULT_USERNAME,
-                    userAvatar = ConfigManager.DEFAULT_USER_AVATAR,
-                    title = _uiState.value.title,
-                    description = _uiState.value.description,
-                    location = _uiState.value.selectedLocation!!,
-                    images = _uiState.value.selectedImages,
-                    tags = _uiState.value.selectedTags,
-                    hashtags = _uiState.value.hashtags.split(" ").filter { it.startsWith("#") }
+                _uiState.update { it.copy(isSubmitting = true, error = null) }
+                val currentState = _uiState.value
+                val hashtagList = parseHashtags(currentState.hashtags)
+                val newPost = PostModel(
+                    userId = currentUserId, username = "Wanderer_7",
+                    userAvatar = "https://i.pravatar.cc/100?u=${System.currentTimeMillis()}",
+                    title = currentState.title, description = currentState.description,
+                    location = currentState.selectedLocation!!, images = currentState.selectedImages,
+                    categories = currentState.selectedTags.map { it.category }.distinct(),
+                    tags = currentState.selectedTags, hashtags = hashtagList
                 )
-                
-                repository.createPost(post)
+                repository.createPost(newPost)
                 resetForm()
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    error = "Failed to create post: ${e.message}",
-                    isSubmitting = false
-                )
+                Log.e("PostViewModel", "Error submitting post", e)
+                _uiState.update {
+                    it.copy(error = e.message ?: "Failed to create post. Please try again.", isSubmitting = false)
+                }
             }
         }
     }
-    
+
     private fun resetForm() {
-        _uiState.value = _uiState.value.copy(
-            title = "",
-            description = "",
-            selectedImages = emptyList(),
-            selectedLocation = null,
-            selectedTags = emptyList(),
-            hashtags = "",
-            isFormValid = false,
-            isSubmitting = false,
-            error = null
-        )
-    }
-    
-    private fun deletePost(postId: String) {
-        viewModelScope.launch {
-            try {
-                repository.deletePost(postId)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to delete post")
-            }
-        }
-    }
-    
-    private fun toggleLike(postId: String) {
-        viewModelScope.launch {
-            try {
-                repository.toggleLike(postId, ConfigManager.DEFAULT_USER_ID)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to toggle like")
-            }
-        }
-    }
-    
-    private fun addComment(postId: String, text: String) {
-        viewModelScope.launch {
-            try {
-                val comment = Comment(
-                    userId = ConfigManager.DEFAULT_USER_ID,
-                    username = ConfigManager.DEFAULT_USERNAME,
-                    text = text
-                )
-                repository.addComment(postId, comment)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to add comment")
-            }
-        }
-    }
-    
-    private fun addReply(postId: String, commentId: String, text: String) {
-        viewModelScope.launch {
-            try {
-                val reply = Comment(
-                    userId = ConfigManager.DEFAULT_USER_ID,
-                    username = ConfigManager.DEFAULT_USERNAME,
-                    text = text
-                )
-                repository.addReply(postId, commentId, reply)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = "Failed to add reply")
-            }
-        }
-    }
-    
-    private fun searchLocation(query: String) {
-        _uiState.value = _uiState.value.copy(isSearchingLocation = true)
-        // In a real app, this would call a location API
-        // For now, just simulate a search
-        viewModelScope.launch {
-            kotlinx.coroutines.delay(1000)
-            _uiState.value = _uiState.value.copy(
-                isSearchingLocation = false,
-                locationSearchResults = emptyList()
+        _uiState.update {
+            PostUIState(
+                posts = it.posts, availableTags = it.availableTags,
+                title = "", description = "", selectedImages = emptyList(),
+                selectedLocation = null, selectedTags = emptyList(), hashtags = "",
+                isSubmitting = false, isFormValid = false, error = null,
+                locationSearchResults = emptyList(), isSearchingLocation = false,
+                locationSearchError = null, selectedPost = it.selectedPost
             )
         }
     }
-    
-    private fun clearLocationSearch() {
-        _uiState.value = _uiState.value.copy(
-            locationSearchResults = emptyList(),
-            locationSearchError = null
-        )
+
+    private fun parseHashtags(input: String): List<String> {
+        return input.split(" ", ",", "\n").map { it.trim().removePrefix("#") }.filter { it.isNotBlank() && it.length < 30 }
     }
-    
-    private fun validateForm() {
-        val isValid = validator.validatePost(
-            _uiState.value.title,
-            _uiState.value.description,
-            _uiState.value.selectedLocation,
-            _uiState.value.selectedImages
-        )
-        _uiState.value = _uiState.value.copy(isFormValid = isValid)
+
+    private fun loadAvailableTags() {
+        val tags = Category.values().flatMap { cat ->
+            val tagNames = when (cat) {
+                Category.ADVENTURE -> listOf("hiking", "climbing", "kayaking", "ziplining", "scuba diving")
+                Category.CULTURE -> listOf("museum", "festival", "local arts", "temple", "history")
+                Category.FOOD -> listOf("restaurant", "street food", "cooking class", "cafe", "local market")
+                Category.NATURE -> listOf("wildlife", "national park", "waterfall", "forest", "botanical garden")
+                Category.URBAN -> listOf("city walk", "architecture", "nightlife", "shopping", "public art")
+                Category.BEACH -> listOf("surfing", "sunbathing", "snorkeling", "beachcombing", "volleyball")
+                Category.MOUNTAINS -> listOf("trekking", "skiing", "mountain biking", "peak bagging", "scenic drive")
+                Category.HISTORICAL -> listOf("ancient ruins", "monuments", "heritage sites", "castle", "battlefield")
+            }
+            tagNames.map { tagName -> TagModel(id = "${cat.name.lowercase()}_${tagName.replace(" ", "_")}", name = tagName, category = cat) }
+        }
+        _uiState.update { it.copy(availableTags = tags) }
+    }
+
+    private fun deletePost(postId: String) {
+        viewModelScope.launch {
+            try { repository.deletePost(postId) }
+            catch (e: Exception) { Log.e("PostViewModel", "Error deleting post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to delete post") } }
+        }
+    }
+    private fun toggleLike(postId: String) {
+        viewModelScope.launch {
+            try { repository.toggleLike(postId, currentUserId) }
+            catch (e: Exception) { Log.e("PostViewModel", "Error toggling like for post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to toggle like") } }
+        }
+    }
+    private fun addComment(postId: String, text: String) {
+        if (text.isBlank()) return
+        viewModelScope.launch {
+            try { val comment = Comment(userId = currentUserId, username = "Commenter User", text = text.trim()); repository.addComment(postId, comment) }
+            catch (e: Exception) { Log.e("PostViewModel", "Error adding comment to post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to add comment") } }
+        }
+    }
+    private fun addReply(postId: String, commentId: String, text: String) {
+        if (text.isBlank()) return
+        viewModelScope.launch {
+            try { val reply = Comment(userId = currentUserId, username = "Reply User", text = text.trim()); repository.addReply(postId, commentId, reply) }
+            catch (e: Exception) { Log.e("PostViewModel", "Error adding reply to comment $commentId on post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to add reply") } }
+        }
+    }
+
+    // Updated to use Geoapify Geocoding Autocomplete API
+    private fun searchLocationsGeoapify(query: String) {
+        locationSearchJob?.cancel()
+        if (query.length < 2) { // Typically, autocomplete APIs work better with at least 2-3 characters
+            _uiState.update { it.copy(locationSearchResults = emptyList(), isSearchingLocation = false, locationSearchError = null) }
+            return
+        }
+        Log.d(LOCATION_API_LOG_TAG, "Searching Geoapify for: $query")
+        _uiState.update { it.copy(isSearchingLocation = true, locationSearchError = null) }
+
+        locationSearchJob = viewModelScope.launch(Dispatchers.IO) {
+            delay(350) // Debounce to avoid too many API calls while typing
+            val apiKey = "b821c991175547b8b1387e609a80a37d" // Your Geoapify API key
+            val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8.name())
+            // Using Geoapify Geocoding Autocomplete endpoint
+            // You might want to add more parameters like 'type=city' or 'lang=en' if needed
+            val urlString = "https://api.geoapify.com/v1/geocode/autocomplete?text=$encodedQuery&apiKey=$apiKey&limit=10"
+            Log.d(LOCATION_API_LOG_TAG, "Request URL: $urlString")
+
+            var connection: HttpURLConnection? = null
+            try {
+                val url = URL(urlString)
+                connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                // Geoapify usually doesn't require custom host headers like RapidAPI
+                connection.connectTimeout = 15000 // 15 seconds
+                connection.readTimeout = 15000  // 15 seconds
+
+                val responseCode = connection.responseCode
+                Log.d(LOCATION_API_LOG_TAG, "Response Code: $responseCode")
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                    val response = reader.readText()
+                    reader.close()
+                    Log.d(LOCATION_API_LOG_TAG, "Response JSON: $response")
+
+                    val jsonResponse = JSONObject(response)
+                    val featuresArray: JSONArray = jsonResponse.optJSONArray("features") ?: JSONArray()
+                    val results = mutableListOf<Location>()
+
+                    for (i in 0 until featuresArray.length()) {
+                        val feature = featuresArray.getJSONObject(i)
+                        val properties = feature.optJSONObject("properties")
+                        if (properties != null) {
+                            val name = properties.optString("name", properties.optString("formatted","Unknown Place")) // Prefer 'name', fallback to 'formatted'
+                            val city = properties.optString("city", "") // May not always be present or same as name
+                            val country = properties.optString("country", "Unknown Country")
+                            val lat = properties.optDouble("lat", 0.0)
+                            val lon = properties.optDouble("lon", 0.0)
+
+                            // Construct a display name, prefer formatted if available and different from name
+                            val displayName = properties.optString("formatted", name)
+
+                            results.add(
+                                Location(
+                                    name = displayName, // Use formatted or name for display
+                                    city = if (city.isNotEmpty() && city != name) city else name, // Use city if distinct, else name
+                                    country = country,
+                                    coordinates = Coordinates(latitude = lat, longitude = lon)
+                                )
+                            )
+                        }
+                    }
+                    Log.d(LOCATION_API_LOG_TAG, "Parsed ${results.size} locations from Geoapify.")
+                    withContext(Dispatchers.Main) {
+                        _uiState.update { it.copy(locationSearchResults = results, isSearchingLocation = false) }
+                    }
+                } else {
+                    val errorResponse = connection.errorStream?.bufferedReader()?.readText() ?: connection.responseMessage
+                    Log.e(LOCATION_API_LOG_TAG, "Error: $responseCode - $errorResponse")
+                    withContext(Dispatchers.Main) {
+                        _uiState.update { it.copy(isSearchingLocation = false, locationSearchError = "Error fetching locations ($responseCode).") }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(LOCATION_API_LOG_TAG, "Exception during Geoapify location search", e)
+                withContext(Dispatchers.Main) {
+                    _uiState.update { it.copy(isSearchingLocation = false, locationSearchError = "Network error or processing failed.") }
+                }
+            } finally {
+                connection?.disconnect()
+            }
+        }
+    }
+
+    private fun clearLocationSearch() {
+        locationSearchJob?.cancel()
+        _uiState.update { it.copy(locationSearchResults = emptyList(), isSearchingLocation = false, locationSearchError = null) }
     }
 }
 
@@ -386,11 +370,11 @@ class PostViewModelFactory(
     private val repository: PostRepository,
     private val validator: PostValidator
 ) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PostViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
             return PostViewModel(repository, validator) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
+        throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }
 }
