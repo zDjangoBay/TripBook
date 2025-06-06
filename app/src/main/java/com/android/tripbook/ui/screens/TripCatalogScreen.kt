@@ -13,6 +13,16 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
 import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.model.User
+import com.android.tripbook.ui.components.MiniProfileTruncated
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.database.TripBookDatabase
 import com.android.tripbook.model.Trip
@@ -23,13 +33,33 @@ import kotlinx.coroutines.withContext
  * Main Trip Catalog Screen combining:
  * - Search bar (sticky)
  * - Scrollable, paginated trip list
+ * -Add a place button
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun TripCatalogScreen(
     modifier: Modifier = Modifier,
-    onTripClick: (Int) -> Unit
-) {
+    onTripClick: (Int) -> Unit,
+    onAddClick: () -> Unit = {}
+)
+{
+    // State for controlling AddPlaceScreen visibility
+    var showAddScreen by remember { mutableStateOf(false) }
+
+    // If showing add screen, display it instead of catalog
+    if (showAddScreen) {
+        AddPlaceScreen(
+            onBack = { showAddScreen = false },
+//            onSave = { newPlace ->
+//                // Handle saving logic here
+//                showAddScreen = false
+//            }
+        )
+        return
+    }
+
+{
     // 🧪 DATABASE INTEGRATION - COMMENTED OUT FOR TEAM COLLABORATION
     // 📝 INSTRUCTIONS: Uncomment the code below to activate Room database integration
     // 🎯 PURPOSE: Allows team members to use only mock data without database interference
@@ -81,6 +111,10 @@ fun TripCatalogScreen(
     val pageSize = 5
     var currentPage by remember { mutableStateOf(1) }
 
+    // press detects Add place
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
     // Filtered and paginated list of trips
     val displayedTrips = remember(searchQuery.text, currentPage, allTrips) {
         if (searchQuery.text.isEmpty()) {
@@ -100,50 +134,85 @@ fun TripCatalogScreen(
 
     var isLoading by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.fillMaxSize()) {
-        // Search Bar (sticky header)
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                currentPage = 1
-            },
-            label = { Text("Search by location") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(5.dp)
-        )
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(modifier = modifier.fillMaxSize()) {
+            // Search Bar (sticky header)
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = {
+                    searchQuery = it
+                    currentPage = 1
+                },
+                label = { Text("Search by location") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+            )
 
-        // Results Section
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentPadding = PaddingValues(bottom = 100.dp)
-        ) {
-            itemsIndexed(displayedTrips) { index, trip ->
-                TripCard(trip = trip, onClick = { onTripClick(trip.id) })
+            // Results Section
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentPadding = PaddingValues(bottom = 100.dp)
+            ) {
+                itemsIndexed(displayedTrips) { index, trip ->
+                    // For demo: mock users for each trip (replace with real data)
+                    val users = listOf(
+                        User("alice", "https://randomuser.me/api/portraits/women/1.jpg", "Alice"),
+                        User("bob", "https://randomuser.me/api/portraits/men/2.jpg", "Bob"),
+                        User("carol", "https://randomuser.me/api/portraits/women/3.jpg", "Carol"),
+                        User("dan", "https://randomuser.me/api/portraits/men/4.jpg", "Dan"),
+                        User("eve", "https://randomuser.me/api/portraits/women/5.jpg", "Eve")
+                    )
+                    TripCard(
+                        trip = trip,
+                        onClick = { onTripClick(trip.id) },
+                        miniProfileContent = { MiniProfileTruncated(users = users) }
+                    )
 
-                // Trigger pagination when reaching the end
-                if (index == displayedTrips.lastIndex && !isLoading && displayedTrips.size < allTrips.size) {
-                    LaunchedEffect(index) {
-                        isLoading = true
-                        delay(1000) // simulate network
-                        currentPage += 1
-                        isLoading = false
+                    // Trigger pagination when reaching the end
+                    if (index == displayedTrips.lastIndex && !isLoading && displayedTrips.size < allTrips.size) {
+                        LaunchedEffect(index) {
+                            isLoading = true
+                            delay(1000) // simulate network
+                            currentPage += 1
+                            isLoading = false
+                        }
+                    }
+                }
+
+                if (isLoading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
                     }
                 }
             }
-
-            if (isLoading) {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                }
-            }
+        }
+        FloatingActionButton(
+            onClick = {
+                onAddClick()
+                showAddScreen = true
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .graphicsLayer {
+                    scaleX = if (isPressed) 0.9f else 1f
+                    scaleY = if (isPressed) 0.9f else 1f
+                },
+            shape = CircleShape,
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add place",
+                tint = Color.White
+            )
         }
     }
 }

@@ -1,8 +1,11 @@
 package com.android.tripbook.ui.navigation
 import com.android.tripbook.ui.screens.DetailReviewScreen
 import AllReviewsScreen
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,11 +16,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.android.tripbook.ViewModel.MainViewModel
 import com.android.tripbook.ui.screens.*
+import com.android.tripbook.ui.screens.booking.BookingScreen
+
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
+    mainViewModel: MainViewModel,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -26,17 +36,10 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable("home") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Home Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
+            HomeScreenWrapper(
+                navController = navController,
+                mainViewModel = mainViewModel
+            )
         }
         composable("schedule") {
             Box(
@@ -51,6 +54,11 @@ fun MainNavGraph(
                 )
             }
         }
+
+        composable("schedule") {
+            ScheduleScreen(navController = navController)
+        }
+
         composable("catalog") {
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -60,17 +68,7 @@ fun MainNavGraph(
             )
         }
         composable("profile") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Profile Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
+            ProfileScreen(navController = navController)
         }
         composable("detail/{tripId}") {
             val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
@@ -115,22 +113,57 @@ fun MainNavGraph(
 
         composable("booking/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
-            // BookingScreen removed to avoid team conflicts
-            // Placeholder: Show a simple message instead
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Booking functionality coming soon!")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Go Back")
+            BookingScreen(
+                tripId = tripId,
+                onBack = { navController.popBackStack() },
+                onBookingComplete = {
+                    // Navigate back to the catalog after booking is complete
+                    navController.navigate("catalog") {
+                        popUpTo("catalog") {
+                            inclusive = true
+                        }
                     }
                 }
-            }
+            )
         }
 
+        composable(
+            route = "addPlace/{tripId}",
+            arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            AddPlaceScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+    }
+}
 
+@Composable
+private fun ScheduleScreen(navController: NavHostController) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Schedule Trips Screen",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun ProfileScreen(navController: NavHostController) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Profile Screen",
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
     }
 }

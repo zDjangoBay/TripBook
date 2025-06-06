@@ -1,5 +1,6 @@
 package com.android.tripbook
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -57,19 +58,11 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 var isLoading by remember { mutableStateOf(false) }
 
-                BaseScaffold(
-                    navController = navController,
-                    isLoading = isLoading
-                ) { padding ->
-                    MainNavGraph(
-                        navController = navController,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding)
-                            .padding(2.dp)
-                    )
-                }
-            }
-        }
+        // Immediately launch HomeActivity
+        val intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+
+        // Finish MainActivity so user can't navigate back to it
+        finish()
     }
 }
