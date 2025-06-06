@@ -1,7 +1,5 @@
 package com.android.tripbook.ui.uis
 
-
-
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -36,7 +34,7 @@ import com.android.tripbook.viewmodel.AgencyViewModel
 fun AllAgenciesScreen(
     onBackClick: () -> Unit,
     agencyViewModel: AgencyViewModel,
-    onAgencyClick: (Agency) -> Unit // Added callback for agency selection//
+    onAgencyClick: (Agency) -> Unit
 ) {
     val agencies by agencyViewModel.agencies.collectAsState()
     val isLoading by agencyViewModel.isLoading.collectAsState()
@@ -142,30 +140,56 @@ fun AllAgenciesScreen(
             }
 
             error?.let { errorMessage ->
-                Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Button(
-                    onClick = { agencyViewModel.loadAgencies() },
+                Column(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Retry")
+                    Text(
+                        text = if (errorMessage.contains("Unable to resolve host", ignoreCase = true) ||
+                            errorMessage.contains("Network error", ignoreCase = true)) {
+                            "Connection lost. Please check your internet and try again."
+                        } else {
+                            errorMessage
+                        },
+                        color = Color.Red,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Button(
+                        onClick = { agencyViewModel.loadAgencies() },
+                        modifier = Modifier
+                            .width(160.dp)
+                            .height(48.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color(0xFF667EEA)
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                    ) {
+                        Text(
+                            text = "Retry Connection",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(filteredAgencies) { agency ->
-                    AgencyCard(
-                        agency = agency,
-                        onClick = { onAgencyClick(agency) } // Pass click event
-                    )
+            if (error == null && !isLoading) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredAgencies) { agency ->
+                        AgencyCard(
+                            agency = agency,
+                            onClick = { onAgencyClick(agency) }
+                        )
+                    }
                 }
             }
         }
@@ -175,7 +199,7 @@ fun AllAgenciesScreen(
 @Composable
 fun AgencyCard(
     agency: Agency,
-    onClick: () -> Unit // Added onClick parameter
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -187,7 +211,7 @@ fun AgencyCard(
                 shape = RoundedCornerShape(16.dp),
                 spotColor = Color.Black.copy(alpha = 0.1f)
             )
-            .clickable { onClick() }, // Make card clickable
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
