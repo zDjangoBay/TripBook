@@ -210,6 +210,177 @@ fun MyTripsScreen(
                 }
             }
 
+            // Advanced Filters UI
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("Start Date", fontSize = 12.sp, color = Color(0xFF667EEA))
+                            OutlinedTextField(
+                                value = filterStartDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                                onValueChange = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { showStartDatePicker = true },
+                                placeholder = { Text("From") },
+                                readOnly = true,
+                                enabled = false,
+                                singleLine = true
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("End Date", fontSize = 12.sp, color = Color(0xFF667EEA))
+                            OutlinedTextField(
+                                value = filterEndDate?.format(DateTimeFormatter.ofPattern("MMM d, yyyy")) ?: "",
+                                onValueChange = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { showEndDatePicker = true },
+                                placeholder = { Text("To") },
+                                readOnly = true,
+                                enabled = false,
+                                singleLine = true
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = filterMinBudget,
+                            onValueChange = { filterMinBudget = it.filter { c -> c.isDigit() } },
+                            label = { Text("Min Budget") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = filterMaxBudget,
+                            onValueChange = { filterMaxBudget = it.filter { c -> c.isDigit() } },
+                            label = { Text("Max Budget") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = filterDestination,
+                            onValueChange = { filterDestination = it },
+                            label = { Text("Destination") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        // Status Dropdown
+                        var expanded by remember { mutableStateOf(false) }
+                        Box(modifier = Modifier.weight(1f)) {
+                            OutlinedTextField(
+                                value = filterStatus,
+                                onValueChange = {},
+                                label = { Text("Status") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { expanded = true },
+                                readOnly = true,
+                                singleLine = true
+                            )
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                listOf("Any", "Planned", "Active", "Completed").forEach { status ->
+                                    DropdownMenuItem(
+                                        text = { Text(status) },
+                                        onClick = {
+                                            filterStatus = status
+                                            expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = filterMinTravelers,
+                            onValueChange = { filterMinTravelers = it.filter { c -> c.isDigit() } },
+                            label = { Text("Min Travelers") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = filterMaxTravelers,
+                            onValueChange = { filterMaxTravelers = it.filter { c -> c.isDigit() } },
+                            label = { Text("Max Travelers") },
+                            modifier = Modifier.weight(1f),
+                            singleLine = true
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        TextButton(onClick = {
+                            filterStartDate = null
+                            filterEndDate = null
+                            filterMinBudget = ""
+                            filterMaxBudget = ""
+                            filterDestination = ""
+                            filterMinTravelers = ""
+                            filterMaxTravelers = ""
+                            filterStatus = "Any"
+                        }) {
+                            Text("Clear Filters")
+                        }
+                    }
+                }
+            }
+
+            // Date Picker Dialogs
+            if (showStartDatePicker) {
+                val startDatePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = filterStartDate?.let { it.toEpochDay() * 24 * 60 * 60 * 1000 } // LocalDate to millis
+                )
+                DatePickerDialog(
+                    onDismissRequest = { showStartDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            val millis = startDatePickerState.selectedDateMillis
+                            filterStartDate = millis?.let { java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault()).toLocalDate() }
+                            showStartDatePicker = false
+                        }) { Text("OK") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showStartDatePicker = false }) { Text("Cancel") }
+                    }
+                ) {
+                    DatePicker(state = startDatePickerState)
+                }
+            }
+            if (showEndDatePicker) {
+                val endDatePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = filterEndDate?.let { it.toEpochDay() * 24 * 60 * 60 * 1000 }
+                )
+                DatePickerDialog(
+                    onDismissRequest = { showEndDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            val millis = endDatePickerState.selectedDateMillis
+                            filterEndDate = millis?.let { java.time.Instant.ofEpochMilli(it).atZone(java.time.ZoneId.systemDefault()).toLocalDate() }
+                            showEndDatePicker = false
+                        }) { Text("OK") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showEndDatePicker = false }) { Text("Cancel") }
+                    }
+                ) {
+                    DatePicker(state = endDatePickerState)
+                }
+            }
+
             // Trip List
             LazyColumn(
                 modifier = Modifier.weight(1f),
