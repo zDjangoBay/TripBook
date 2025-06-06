@@ -289,10 +289,6 @@ fun PlanNewTripScreen(onBackClick: () -> Unit,viewModel: TripViewModel) {
                         Spacer(modifier = Modifier.height(20.dp))
                         val status = viewModel.tripInfo.status
 
-                        // Trip Type
-                        Text(text = "Trip Type", fontSize = 14.sp, color = Color.Black, fontWeight = FontWeight.Medium)
-                        Spacer(modifier = Modifier.height(12.dp))
-
                         // Create Trip Button
                         Button(
                             onClick = {

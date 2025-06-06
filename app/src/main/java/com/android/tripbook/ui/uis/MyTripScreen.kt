@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.model.TripViewModel
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -34,6 +36,27 @@ fun MyTripsScreen(
 ) {
     var selectedTab by remember { mutableStateOf("All") }
     val trips by viewModel.tripList
+
+    val sampleTrips = listOf(
+        Trip(
+            name = "Beach Vacation",
+            startDate = LocalDate.of(2025, 7, 10).toString(),
+            destination = "Kribi",
+            travelers = 4,
+            budget = 250000,
+            status = TripStatus.PLANNED,
+            time = LocalTime.of(8, 30).toString()
+        ),
+        Trip(
+            name = "Business Trip",
+            startDate = LocalDate.of(2025, 6, 20).toString(),
+            destination = "Douala",
+            travelers = 1,
+            budget = 120000,
+            status = TripStatus.COMPLETED,
+            time = LocalTime.of(10, 0).toString()
+        )
+    )
 
     Box(
         modifier = Modifier
@@ -111,29 +134,11 @@ fun MyTripsScreen(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(trips) { trip ->
+                items(sampleTrips) { trip ->
                     TripCard(trip = trip,onClick = { onTripClick(trip) })
                 }
             }
         }
-
-        // Floating Action Button
-        FloatingActionButton(
-            onClick = onPlanNewTripClick,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(24.dp),
-            containerColor = Color.White,
-            contentColor = Color(0xFF667EEA),
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Trip",
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
 
     }
 }

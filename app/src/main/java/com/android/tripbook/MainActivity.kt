@@ -22,8 +22,16 @@ import com.android.tripbook.ui.uis.MyTripsScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.TravelAgency
+import com.android.tripbook.model.Trip
+import com.android.tripbook.model.TripStatus
 import com.android.tripbook.ui.uis.TravelAgencyListScreen
+import com.android.tripbook.ui.uis.TripDetailsScreen
+import java.time.LocalDate
+import java.time.LocalTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +49,9 @@ class MainActivity : ComponentActivity() {
 fun TripBookApp() {
     val navController = rememberNavController()
     val viewModel = remember { TripViewModel() }
+    val trip = Trip.default()
+
+
 
     val items = listOf(
         BottomNavItem.Agencies,
@@ -64,7 +75,6 @@ fun TripBookApp() {
                     TravelAgency("SpeedGo", "Yaoundé", 10, 20),
                     TravelAgency("VIP Trans", "Bamenda", 15, 15),
                 )
-
                 TravelAgencyListScreen(
                     agencies = agencies,
                     onPlanTripClick = {
@@ -79,14 +89,23 @@ fun TripBookApp() {
                     onPlanNewTripClick = {
                         navController.navigate(BottomNavItem.PlanTrip.route)
                     },
-                    onTripClick = { /* handle trip click */ }
+                    onTripClick = { navController.navigate("trip-details") }
                 )
             }
+
             composable(BottomNavItem.PlanTrip.route) {
                 PlanNewTripScreen(
                     viewModel = viewModel,
                     onBackClick = {
                         navController.navigate(BottomNavItem.MyTrips.route)
+                    }
+                )
+            }
+            composable("trip-details") {
+                TripDetailsScreen(
+                    trip = trip,
+                    onBackClick = {
+
                     }
                 )
             }
@@ -123,5 +142,20 @@ fun BottomNavigationBar(
                 alwaysShowLabel = true
             )
         }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TripDetailScreen(tripName: String) {
+    // Simple placeholder
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Trip Detail") })
+        }
+    ) { padding ->
+        Text(
+            text = "Details for trip: $tripName",
+            modifier = Modifier.padding(padding).padding(16.dp)
+        )
     }
 }
