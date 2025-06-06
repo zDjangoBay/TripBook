@@ -7,7 +7,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.android.tripbook.ViewModel.MainViewModel
+import com.android.tripbook.viewmodel.MainViewModel
 
 @Composable
 fun HomeScreenWrapper(

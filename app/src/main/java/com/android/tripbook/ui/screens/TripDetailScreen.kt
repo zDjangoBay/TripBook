@@ -1,10 +1,7 @@
+// ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -17,9 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
-import com.android.tripbook.viewmodel.MockTripViewModel
+// import com.android.tripbook.viewmodel.MockTripViewModel // REMOVED: Not directly used for trip fetching
 import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.ui.components.MiniMap
+// import com.android.tripbook.viewmodel.MapViewModel // REMOVED: Not directly used by MiniMap for its display
+import com.android.tripbook.data.SampleTrips // Correctly used for enhanced trip data
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,11 +30,15 @@ fun TripDetailScreen(
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
-    val tripViewModel = remember { MockTripViewModel() }
-    val trip = remember { tripViewModel.getTripById(tripId) }
+    // Trip is directly fetched from SampleTrips, so MockTripViewModel is not needed here
+    val trip = remember { SampleTrips.get().find { it.id == tripId } }
+
     val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
     val reviewsForTrip = allReviews.filter { it.tripId == tripId }
+
+    // MapViewModel is not directly used by MiniMap in this screen, so it can be removed
+    // val mapViewModel = remember { MapViewModel() }
 
     Scaffold(
         topBar = {
@@ -110,7 +114,39 @@ fun TripDetailScreen(
                     modifier = Modifier.padding(16.dp)
                 )
 
-                Column(modifier = Modifier.padding(16.dp)) {
+                Spacer(modifier = Modifier.height(8.dp))
+                if (trip.latitude != 0.0 && trip.longitude != 0.0) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Location on Map",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        MiniMap(
+                            trip = trip,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "Location map not available for this trip.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

@@ -1,5 +1,4 @@
 package com.android.tripbook.ui.navigation
-
 import com.android.tripbook.ui.screens.DetailReviewScreen
 import AllReviewsScreen
 import androidx.compose.foundation.layout.Box
@@ -14,19 +13,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.android.tripbook.ViewModel.MainViewModel
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
 
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.android.tripbook.viewmodel.MainViewModel
 
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
     mainViewModel: MainViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
     NavHost(
         navController = navController,
@@ -35,30 +34,51 @@ fun MainNavGraph(
     ) {
         composable("home") {
             HomeScreenWrapper(
-                navController = navController,
+               navController=navController,
                 mainViewModel = mainViewModel
             )
-        }
+
+            }
 
         composable("schedule") {
-            ScheduleScreen(navController = navController)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Schedule Trips Screen",
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
-        composable("catalog") {
+        composable("catalog") { // Or whatever your route name is
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onNavigateToAddPlace = {navController.navigate("addPlace/{tripId}")}
             )
         }
 
         composable("profile") {
-            ProfileScreen(navController = navController)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Profile Screen",
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
-
-        composable("detail/{tripId}") { backStackEntry ->
-            val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
+        composable("detail/{tripId}") {
+            val tripId = it.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
                 navController = navController,
@@ -84,8 +104,9 @@ fun MainNavGraph(
                     println("Flagged review ID: $reviewId")
                 }
             )
-        }
 
+
+    }
         composable("detailReview/{reviewId}/{tripId}") { backStackEntry ->
             val reviewId = backStackEntry.arguments?.getString("reviewId")?.toIntOrNull() ?: return@composable
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
@@ -98,6 +119,7 @@ fun MainNavGraph(
                 onBack = { navController.popBackStack() }
             )
         }
+
 
         composable("booking/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: return@composable
@@ -115,43 +137,16 @@ fun MainNavGraph(
             )
         }
 
+
+
+        // Ensure you have a composable route defined for "addPlaceRoute" that shows his AddPlaceScreen
         composable(
-            route = "addPlace/{tripId}",
+            route = "addPlace/{tripId}", // This route expects a tripId argument
             arguments = listOf(navArgument("tripId") { type = NavType.StringType })
-        ) { backStackEntry ->
+        ) {
             AddPlaceScreen(
                 onBack = { navController.popBackStack() }
             )
         }
-    }
-}
-
-@Composable
-private fun ScheduleScreen(navController: NavHostController) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Schedule Trips Screen",
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-private fun ProfileScreen(navController: NavHostController) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Profile Screen",
-            color = Color.Gray,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
-        )
     }
 }
