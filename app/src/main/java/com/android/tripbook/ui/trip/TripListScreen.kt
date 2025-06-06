@@ -33,35 +33,43 @@ fun TripListScreen(
     // Add sample data if no trips exist
     LaunchedEffect(currentTrips) {
         if (currentTrips.isEmpty()) {
-            // Create sample trips for testing
+            // Create sample trips for Cameroonian destinations
             val sampleTrip1 = Trip(
                 id = "sample_trip_123",
-                destination = "Paris, France",
+                destination = "Kribi Beach, Littoral Region",
                 startDate = LocalDate.now().plusDays(7), // 7 days from now
                 endDate = LocalDate.now().plusDays(14), // 14 days from now
-                budget = 2500
+                budget = 150000 // 150,000 CFA Franc (~$250 USD)
             )
             val sampleTrip2 = Trip(
-                id = "sample_trip_456",
-                destination = "Tokyo, Japan",
+                id = "sample_trip_456", 
+                destination = "Waza National Park, Far North",
                 startDate = LocalDate.now().plusDays(30), // 30 days from now
                 endDate = LocalDate.now().plusDays(45), // 45 days from now
-                budget = 3000
+                budget = 200000 // 200,000 CFA Franc (~$330 USD)
+            )
+            val sampleTrip3 = Trip(
+                id = "sample_trip_789",
+                destination = "Douala Business District",
+                startDate = LocalDate.now().plusDays(3), // 3 days from now
+                endDate = LocalDate.now().plusDays(5), // 5 days from now
+                budget = 75000 // 75,000 CFA Franc (~$125 USD)
             )
             tripViewModel.insert(sampleTrip1)
             tripViewModel.insert(sampleTrip2)
+            tripViewModel.insert(sampleTrip3)
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Trips") }
+                title = { Text("Mes Voyages") }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToCreateTrip) {
-                Icon(Icons.Filled.Add, contentDescription = "Test Budget Screen")
+                Icon(Icons.Filled.Add, contentDescription = "Tester le Suivi Budget")
             }
         }
     ) { paddingValues ->
@@ -73,9 +81,9 @@ fun TripListScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Loading sample trips...")
+                    Text("Chargement des voyages d'exemple...")
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("Tip: Click the + button to test Budget Tracker!")
+                    Text("Astuce: Cliquez sur le + pour tester le Suivi Budget!")
                 }
             }
         } else {

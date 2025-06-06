@@ -9,6 +9,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.android.tripbook.model.BudgetCategory
+import com.android.tripbook.utils.CurrencyUtils
 import com.android.tripbook.viewmodel.BudgetViewModel
 
 @Composable
@@ -35,14 +36,14 @@ fun AddEditBudgetCategoryDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = if (existingCategory == null) "Add Budget Category" else "Edit Budget Category",
+                    text = if (existingCategory == null) "Ajouter Catégorie Budget" else "Modifier Catégorie Budget",
                     style = MaterialTheme.typography.titleLarge
                 )
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Category Name") },
+                    label = { Text("Nom de la catégorie (ex: Transport, Hébergement)") },
                     isError = nameError != null,
                     supportingText = { nameError?.let { Text(it) } }
                 )
@@ -50,7 +51,8 @@ fun AddEditBudgetCategoryDialog(
                 OutlinedTextField(
                     value = plannedAmount,
                     onValueChange = { plannedAmount = it },
-                    label = { Text("Planned Amount") },
+                    label = { Text("Budget prévu (CFA)") },
+                    placeholder = { Text("ex: 50000") },
                     isError = amountError != null,
                     supportingText = { amountError?.let { Text(it) } },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -61,13 +63,13 @@ fun AddEditBudgetCategoryDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text("Cancel")
+                        Text("Annuler")
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(onClick = {
-                        nameError = if (name.isBlank()) "Name cannot be empty" else null
+                        nameError = if (name.isBlank()) "Le nom ne peut pas être vide" else null
                         val amount = plannedAmount.toDoubleOrNull()
-                        amountError = if (amount == null || amount < 0) "Invalid amount" else null
+                        amountError = if (amount == null || amount < 0) "Montant invalide" else null
 
                         if (nameError == null && amountError == null) {
                             if (existingCategory == null) {
@@ -80,7 +82,7 @@ fun AddEditBudgetCategoryDialog(
                             onDismiss()
                         }
                     }) {
-                        Text(if (existingCategory == null) "Add" else "Save")
+                        Text(if (existingCategory == null) "Ajouter" else "Sauvegarder")
                     }
                 }
             }

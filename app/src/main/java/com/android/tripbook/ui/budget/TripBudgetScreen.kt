@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.android.tripbook.model.BudgetCategory
 import com.android.tripbook.model.Expense
+import com.android.tripbook.utils.CurrencyUtils
 import com.android.tripbook.viewmodel.BudgetViewModel
 
 @Composable
@@ -49,25 +50,25 @@ fun BudgetCategoryCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             val totalSpent = expenses.sumOf { it.amount }
-            Text("Planned: ${category.plannedAmount} | Spent: $totalSpent")
+            Text("Budget: ${CurrencyUtils.formatCFA(category.plannedAmount)} | Dépensé: ${CurrencyUtils.formatCFA(totalSpent)}")
             LinearProgressIndicator(
                 progress = (totalSpent / category.plannedAmount).toFloat(),
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Expenses:", style = MaterialTheme.typography.titleMedium)
+            Text("Dépenses:", style = MaterialTheme.typography.titleMedium)
             expenses.forEach { expense ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(expense.description)
-                    Text(expense.amount.toString())
+                    Text(CurrencyUtils.formatCFA(expense.amount))
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = onAddExpenseClick, modifier = Modifier.align(Alignment.End)) {
-                Text("Add Expense")
+                Text("Ajouter Dépense")
             }
         }
     }
@@ -131,10 +132,10 @@ fun TripBudgetScreen(
                     onClick = { showAddCategoryDialog = true },
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Budget Category")
+                    Icon(Icons.Filled.Add, contentDescription = "Ajouter Catégorie Budget")
                 }
                 FloatingActionButton(onClick = { showAddExpenseDialog = true }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Expense")
+                    Icon(Icons.Filled.Add, contentDescription = "Ajouter Dépense")
                 }
             }
         }
@@ -146,7 +147,7 @@ fun TripBudgetScreen(
             if (categories.isEmpty()) {
                 item {
                     Text(
-                        "No budget categories yet.",
+                        "Aucune catégorie de budget pour le moment.\nCommencez par créer des catégories comme Transport, Hébergement, Nourriture...",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
