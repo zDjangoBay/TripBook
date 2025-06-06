@@ -264,9 +264,9 @@ fun EnhancedItineraryTab(
                 onClick = { viewModel.toggleMapViewMode() },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (uiState.mapViewMode == MapViewMode.MAP)
-                        TripBookColors.Primary else Color.White,
+                        TripBookColors.Primary else TripBookColors.Surface,
                     contentColor = if (uiState.mapViewMode == MapViewMode.MAP)
-                        Color.White else TripBookColors.Primary
+                        TripBookColors.TextOnPrimary else TripBookColors.Primary
                 ),
                 border = if (uiState.mapViewMode == MapViewMode.LIST)
                     BorderStroke(1.dp, TripBookColors.Primary) else null,
