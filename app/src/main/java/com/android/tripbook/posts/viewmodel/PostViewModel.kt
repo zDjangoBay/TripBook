@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.posts.model.Category
 import com.android.tripbook.posts.model.ImageModel
-import com.android.tripbook.posts.model.Location // L'import de la classe Location locale
-import com.android.tripbook.posts.model.Coordinates // L'import de la classe Coordinates locale
+
+import com.android.tripbook.data.model.LocationSearchItem // <-- NOUVEL IMPORT
+import com.android.tripbook.data.model.CoordinatesPayload // <-- NOUVEL IMPORT
+
 import com.android.tripbook.posts.model.TagModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,15 +80,14 @@ class PostViewModel : ViewModel() {
             val results = if (query.isBlank()) {
                 emptyList()
             } else {
-                // CORRECTION ICI : Assurez-vous que city, country et Coordinates sont toujours non-null.
-                // Si les coordonnées sont nulles, passez 'null' explicitement au paramètre 'coordinates'
+                // CORRECTION ICI : Utiliser LocationSearchItem et CoordinatesPayload
                 listOf(
-                    Location("loc1", "Eiffel Tower", "Paris", "France", Coordinates(48.8584, 2.2945)),
-                    Location("loc2", "Louvre Museum", "Paris", "France", Coordinates(48.8606, 2.3376)),
-                    Location("loc3", "Central Park", "New York", "USA", Coordinates(40.7829, -73.9654)),
-                    Location("loc4", "Big Ben", "London", "UK", Coordinates(51.5007, -0.1246)),
-                    Location("loc5", "Mount Cameroon", "Buea", "Cameroon", Coordinates(4.1667, 9.2500)),
-                    Location("loc6", "Limbe Botanic Garden", "Limbe", "Cameroon", Coordinates(4.0200, 9.2200))
+                    LocationSearchItem("loc1", "Eiffel Tower", "Paris", "France", CoordinatesPayload(48.8584, 2.2945)),
+                    LocationSearchItem("loc2", "Louvre Museum", "Paris", "France", CoordinatesPayload(48.8606, 2.3376)),
+                    LocationSearchItem("loc3", "Central Park", "New York", "USA", CoordinatesPayload(40.7829, -73.9654)),
+                    LocationSearchItem("loc4", "Big Ben", "London", "UK", CoordinatesPayload(51.5007, -0.1246)),
+                    LocationSearchItem("loc5", "Mount Cameroon", "Buea", "Cameroon", CoordinatesPayload(4.1667, 9.2500)),
+                    LocationSearchItem("loc6", "Limbe Botanic Garden", "Limbe", "Cameroon", CoordinatesPayload(4.0200, 9.2200))
                 ).filter {
                     it.name.contains(query, ignoreCase = true) ||
                             it.city.contains(query, ignoreCase = true) ||
