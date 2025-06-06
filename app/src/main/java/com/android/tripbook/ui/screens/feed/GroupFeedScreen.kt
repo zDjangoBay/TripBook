@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.PostModel
-import com.android.tripbook.posts.model.Location
+// Import des modèles canoniques
+import com.android.tripbook.data.model.TravelLocation
+import com.android.tripbook.data.model.Comment
 import com.android.tripbook.posts.model.ImageModel
 import com.android.tripbook.posts.model.PostVisibility
 import com.android.tripbook.posts.ui.components.PostCard
@@ -29,11 +31,11 @@ fun GroupFeedScreen(groupName: String, groupPosts: List<PostModel>, onPostClick:
                 title = { Text("Group: $groupName") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {  }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "Group Options")
                     }
                 }
@@ -84,7 +86,7 @@ fun PreviewGroupFeedScreen() {
                 title = "Family Trip to Seychelles",
                 description = "An amazing family vacation with the kids. Crystal clear waters and stunning beaches!",
                 images = listOf(ImageModel("img1_fam", Uri.parse("https://via.placeholder.com/300/FF00FF/FFFFFF?text=Seychelles"))),
-                location = Location("loc_sey", "Seychelles", "Mahe", "Seychelles", null),
+                location = TravelLocation(id = "loc_sey", name = "Seychelles", latitude = -4.6796, longitude = 55.4920, description = "Mahe, Seychelles", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(86400 * 7),
                 lastEditedAt = null,
@@ -93,7 +95,7 @@ fun PreviewGroupFeedScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = emptyList(),
-                comments = emptyList()
+                comments = emptyList<Comment>() // Utilise la classe Comment canonique
             ),
             PostModel(
                 id = "group_p2",
@@ -104,7 +106,7 @@ fun PreviewGroupFeedScreen() {
                 title = "Tips for Budget Travel",
                 description = "How to save money while exploring the world. Share your own tips!",
                 images = emptyList(),
-                location = Location("loc_virtual", "Anywhere", "", "Global", null),
+                location = TravelLocation(id = "loc_virtual", name = "Anywhere", latitude = 0.0, longitude = 0.0, description = "Global", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(86400 * 12),
                 lastEditedAt = null,
@@ -113,7 +115,7 @@ fun PreviewGroupFeedScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = emptyList(),
-                comments = emptyList()
+                comments = emptyList<Comment>() // Utilise la classe Comment canonique
             )
         )
         GroupFeedScreen(groupName = "Adventure Seekers", groupPosts = sampleGroupPosts, onPostClick = {}, onBack = {})
