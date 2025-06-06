@@ -10,6 +10,7 @@ import com.android.tripbook.model.Location
 import com.android.tripbook.model.Trip
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
 import com.google.maps.android.compose.*
 
 @Composable
@@ -18,7 +19,6 @@ fun TripMapView(
     modifier: Modifier = Modifier,
     showRoute: Boolean = true
 ) {
-    // Default center point (you can customize this)
     val defaultCenter = LatLng(0.0, 0.0)
     val mapCenter = trip.mapCenter?.let {
         LatLng(it.latitude, it.longitude)
@@ -30,6 +30,20 @@ fun TripMapView(
         position = CameraPosition.fromLatLngZoom(mapCenter, 12f)
     }
 
+    // Safely decode all polylines outside the composable rendering
+    val allRoutes = remember(trip.itinerary) {
+        trip.itinerary.mapNotNull { item ->
+            try {
+                item.routeToNext?.polyline?.let { encoded ->
+                    PolyUtil.decode(encoded)
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
@@ -39,7 +53,6 @@ fun TripMapView(
             myLocationButtonEnabled = true
         )
     ) {
-        // Add markers for itinerary items
         trip.itinerary.forEach { item ->
             item.coordinates?.let { location ->
                 Marker(
@@ -52,7 +65,6 @@ fun TripMapView(
             }
         }
 
-        // Add destination marker if available
         trip.destinationCoordinates?.let { destination ->
             Marker(
                 state = MarkerState(
@@ -63,13 +75,13 @@ fun TripMapView(
             )
         }
 
-        // Add route polylines if requested
         if (showRoute) {
-            trip.itinerary.forEachIndexed { index, item ->
-                item.routeToNext?.let { route ->
-                    // You would decode the polyline here and add it as a Polyline
-                    // This requires the GoogleMapsService.decodePolyline function
-                }
+            allRoutes.forEach { path ->
+                Polyline(
+                    points = path,
+                    color = Color.Blue,
+                    width = 5f
+                )
             }
         }
     }
@@ -127,11 +139,12 @@ fun LocationPicker(
 
 @Composable
 fun PlaceSearchField(
-    onPlaceSelected: (String, String) -> Unit, // placeName, placeId
-    modifier: Modifier = Modifier
+    onPlaceSelected: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
+    searchPlaces: suspend (String) -> List<Pair<String, String>> = { emptyList() }
 ) {
     var searchText by remember { mutableStateOf("") }
-    var suggestions by remember { mutableStateOf<List<String>>(emptyList()) }
+    var suggestions by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var showSuggestions by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -140,14 +153,14 @@ fun PlaceSearchField(
             onValueChange = { newText ->
                 searchText = newText
                 showSuggestions = newText.isNotEmpty()
-                // Here you would call your GoogleMapsService to get suggestions
-                // For now, we'll use mock data
+
                 if (newText.isNotEmpty()) {
+                    // Replace with real Google Places API logic in production
                     suggestions = listOf(
-                        "Search result 1",
-                        "Search result 2",
-                        "Search result 3"
-                    ).filter { it.contains(newText, ignoreCase = true) }
+                        "Search result 1" to "id1",
+                        "Search result 2" to "id2",
+                        "Search result 3" to "id3"
+                    ).filter { it.first.contains(newText, ignoreCase = true) }
                 }
             },
             label = { Text("Search for places") },
@@ -159,17 +172,17 @@ fun PlaceSearchField(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
-                    suggestions.forEach { suggestion ->
+                    suggestions.forEach { (name, placeId) ->
                         TextButton(
                             onClick = {
-                                searchText = suggestion
+                                searchText = name
                                 showSuggestions = false
-                                onPlaceSelected(suggestion, "mock_place_id")
+                                onPlaceSelected(name, placeId)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = suggestion,
+                                text = name,
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
