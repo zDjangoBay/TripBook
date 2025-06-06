@@ -19,20 +19,12 @@ data class Trip(
     val country: String,
     val latitude: Double,
     val longitude: Double,
-    val imageUrl: List<String>, // Assuming you want to support multiple images
+    val imageUrl: List<String>,
 
     // Optional fields or fields with common defaults
     val caption: String = "", // Optional caption, defaults to empty
     val region: String? = null, // Optional region, defaults to null
-   // val rating: Float = 0.0f, // Default rating
-   // val reviewCount: Int = 0, // Default review count
-   // val duration: String = "N/A", // Default duration, or could be more structured
 
-    // You might have other fields, for example:
-    // val price: Double? = null,
-    // val category: String = "Adventure",
-    // val tags: List<String> = emptyList(),
-    // val isFeatured: Boolean = false
 ): Serializable
 
 

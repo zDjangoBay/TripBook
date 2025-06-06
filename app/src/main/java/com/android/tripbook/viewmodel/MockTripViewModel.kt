@@ -34,16 +34,13 @@ class MockTripViewModel : ViewModel() {
     fun addNewTrip(
         title: String,
         description: String,
-        city: String,          // Added
-        country: String,       // Added
-        latitude: Double,      // Added
-        longitude: Double,     // Added
-        imageUrl: String,      // Assuming a single main image URL string is passed here
-        caption: String = "",  // Uses default from Trip model if not overridden by caller
-        region: String? = null // Uses default from Trip model if not overridden by caller
-        // Add other fields like rating, reviewCount, duration if they are not
-        // meant to always use the defaults from the Trip model when calling this function.
-        // For now, they will use defaults from Trip model (e.g., 0.0f for rating if defined there)
+        city: String,
+        country: String,
+        latitude: Double,
+        longitude: Double,
+        imageUrl: String,
+        caption: String = "",
+        region: String? = null
     ) {
         viewModelScope.launch {
             _trips.update { currentTrips ->
@@ -56,15 +53,10 @@ class MockTripViewModel : ViewModel() {
                     country = country,
                     latitude = latitude,
                     longitude = longitude,
-                    imageUrl = listOf(imageUrl), // Convert single URL string to a list
-                    caption = caption,           // Pass along caption
-                    region = region              // Pass along region
-                    // rating, reviewCount, duration etc., will use defaults from Trip model
-                    // if your Trip model defines them and they are not passed here.
-                    // Based on your provided Trip model, rating, reviewCount, duration were commented out,
-                    // so they are not parameters here. If you uncomment them in Trip model
-                    // and they don't have defaults, they'd need to be added here too.
-                )
+                    imageUrl = listOf(imageUrl),
+                    caption = caption,
+                    region = region
+                     )
             }
         }
     }

@@ -1,4 +1,4 @@
-// app/src/main/java/com/android/tripbook/ui/components/TripCard.kt (Ensure it uses UNIFIED Trip model)
+
 package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.Image
@@ -12,8 +12,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.model.Trip // <<<< IMPORT YOUR UNIFIED TRIP MODEL
-import com.android.tripbook.model.User // If MiniProfileContent is called from here with users from Trip object
+import com.android.tripbook.model.Trip
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,18 +37,18 @@ fun TripCard(
             Image(
                 painter = rememberAsyncImagePainter(
                     model = imageUrl,
-                    // Consider adding placeholder/error for Coil
+
                 ),
                 contentDescription = trip.title, // Good for accessibility
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(180.dp)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) // Clip only top corners of image
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
             )
 
-            Column(Modifier.padding(12.dp)) { // Padding for text content below image
-                miniProfileContent?.invoke() // Call the passed-in composable
+            Column(Modifier.padding(12.dp)) {
+                miniProfileContent?.invoke()
 
                 if (miniProfileContent != null) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -62,16 +62,16 @@ fun TripCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = trip.caption, // Assuming caption is a brief summary
+                    text = trip.caption,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                // Display other fields from the unified Trip model as needed
+
                 Spacer(modifier = Modifier.height(6.dp))
 
-                // Optionally display rating, duration, etc.
+
             }
         }
     }

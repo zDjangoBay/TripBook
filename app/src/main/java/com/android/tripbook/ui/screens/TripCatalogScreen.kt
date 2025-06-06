@@ -1,4 +1,4 @@
-// file: com/android/tripbook/ui/screens/TripCatalogScreen.kt
+
 package com.android.tripbook.ui.screens
 
 import android.annotation.SuppressLint
@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 // import androidx.compose.ui.graphics.Color // Replaced with MaterialTheme colors
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -203,7 +202,7 @@ fun TripCatalogScreen(
                             onSearchQueryChange = { searchFieldValue = it },
                             suggestions = filteredSuggestions,
                             onSuggestionClick = { suggestion ->
-                                searchFieldValue = TextFieldValue(suggestion, TextRange(suggestion.length))
+                                searchFieldValue = TextFieldValue(suggestion)
                                 mapViewModel.updateSearchQuery(suggestion)
                                 currentPage = 1
                                 showAdvancedFilters = false
@@ -494,8 +493,8 @@ fun TripCatalogScreen(
                             }
                         }
                     }
-                } // End main content Box
-            } // End Column inside Scaffold
-        } // End Scaffold's content lambda
-    } // End LocationPermissionHandler lambda
-} // End TripCatalogScreen Composable
+                }
+            }
+        }
+    }
+}

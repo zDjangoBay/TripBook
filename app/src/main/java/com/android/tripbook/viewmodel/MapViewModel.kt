@@ -1,4 +1,4 @@
-// file: com/android/tripbook/viewmodel/MapViewModel.kt
+
 package com.android.tripbook.viewmodel
 
 import android.app.Application
@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.MapRegion
-import com.android.tripbook.data.SampleTrips // Ensure this is your UPDATED SampleTrips
+import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.utils.LocationUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,10 +27,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _userLocationAddress = mutableStateOf<String?>(null)
     val userLocationAddress: State<String?> = _userLocationAddress
 
-    private val _allTrips = mutableStateListOf<Trip>() // Initialize empty
-    val allTrips: List<Trip> get() = _allTrips // Expose as immutable but observable List
+    private val _allTrips = mutableStateListOf<Trip>()
+    val allTrips: List<Trip> get() = _allTrips
 
-    private val _filteredTrips = mutableStateOf<List<Trip>>(emptyList()) // Start empty
+    private val _filteredTrips = mutableStateOf<List<Trip>>(emptyList())
     val filteredTrips: State<List<Trip>> = _filteredTrips
 
     private val _mapRegion = mutableStateOf(MapRegion.defaultRegion())
@@ -45,26 +45,24 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
-    // --- ADD INIT BLOCK TO LOAD TRIPS ---
+
     init {
         loadInitialTrips()
     }
 
     private fun loadInitialTrips() {
         viewModelScope.launch {
-            // In a real app, this would be from a repository (network/database)
-            val tripsFromSource = SampleTrips.get() // Get trips from your sample data
+            //could be fetched from a real db
+            val tripsFromSource = SampleTrips.get() // Get trips from my sample data
             _allTrips.clear()
             _allTrips.addAll(tripsFromSource)
-            // After loading all trips, apply the initial (empty) filter
-            // which will populate _filteredTrips with all trips.
-            filterTrips(_searchQuery.value) // Or simply filterTrips("")
+
+            filterTrips(_searchQuery.value)
         }
     }
-    // --- END INIT BLOCK ---
+
 
     fun generateNewTripId(): Int {
-        // Find the highest existing ID from the current list and add 1
         val maxId = allTrips.maxOfOrNull { it.id } ?: 0
         return maxId + 1
     }
@@ -94,11 +92,11 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
-        filterTrips(query) // This will update _filteredTrips
+        filterTrips(query)
     }
 
     private fun filterTrips(query: String) {
-        val sourceTrips = _allTrips.toList() // Work with a stable copy for filtering
+        val sourceTrips = _allTrips.toList()
 
         val result = if (query.isEmpty()) {
             sourceTrips
@@ -129,13 +127,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addTrip(newTrip: Trip) {
-        // Ensure unique ID or handle updates if ID exists
         if (_allTrips.none { it.id == newTrip.id }) {
-            _allTrips.add(newTrip) // Add to the observable list
-            // Re-apply current filter to see if the new trip should be in filteredTrips
+            _allTrips.add(newTrip)
+
             filterTrips(_searchQuery.value)
         } else {
-            // Handle case where trip ID already exists (e.g., update it or log warning)
+
             println("Warning: Trip with ID ${newTrip.id} already exists.")
         }
     }
@@ -144,10 +141,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     fun selectTrip(trip: Trip?) {
         _selectedTrip.value = trip
         trip?.let {
-            _mapRegion.value = MapRegion( // Using your MapRegion constructor
+            _mapRegion.value = MapRegion(
                 centerLatitude = it.latitude,
                 centerLongitude = it.longitude,
-                latitudeDelta = 0.05, // Smaller delta for closer zoom on selected trip
+                latitudeDelta = 0.05,
                 longitudeDelta = 0.05,
                 zoomLevel = 14f // Closer zoom
             )
@@ -164,12 +161,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         // and updateMapRegionForTrips will be called internally.
         filterTrips("")
         _selectedTrip.value = null
-        // No need to call updateMapRegionForTrips explicitly here if filterTrips does it.
+
     }
 
     // This function determines the map region based on a list of trips
     private fun updateMapRegionForTrips(tripsForRegion: List<Trip>) {
-        _mapRegion.value = MapRegion.fromTrips(tripsForRegion) // Uses your static method
+        _mapRegion.value = MapRegion.fromTrips(tripsForRegion)
     }
 
 
@@ -185,7 +182,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         )
     }
 
-    // These now operate on the ViewModel's _allTrips
     fun getTripsByRegion(): Map<String, List<Trip>> {
         return _allTrips.groupBy { it.region ?: "Other" }
     }
@@ -197,14 +193,10 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             .sortedByDescending { it.second }
     }
 
-    // This is called by MapView when the user manually pans/zooms
+
     fun updateMapRegion(newMapRegionFromView: MapRegion) {
-        // Here, newMapRegionFromView is the one constructed by MapView
-        // based on its current camera state (center, zoom, deltas).
+
         _mapRegion.value = newMapRegionFromView
-        // Optional: If you want manual map navigation to also re-filter trips
-        // shown in the list below the map (not just what's visible on map),
-        // you could trigger a filter based on the new bounds.
-        // For now, it just updates the map's state.
+
     }
 }

@@ -1,17 +1,13 @@
-// app/src/main/java/com/android/tripbook/data/SampleTrips.kt (RESOLVED VERSION)
+
 package com.android.tripbook.data
 
-import com.android.tripbook.model.Trip // Import your definitive Trip model
+import com.android.tripbook.model.Trip
 
 object SampleTrips {
     // Making 'trips' private to enforce usage of get() for read-only access from outside
     // and addTrip() for modification, which can also handle ID generation.
     private val internalTrips = mutableListOf<Trip>()
 
-    // Initialize with your sample data
-    // You provided the structure but not the full data for all fields for each trip.
-    // I will add placeholders for price, rating, etc. and lat/lon.
-    // YOU MUST FILL THESE IN WITH ACCURATE DATA.
     init {
         internalTrips.addAll(listOf(
             Trip(
@@ -93,8 +89,6 @@ object SampleTrips {
     fun get(): List<Trip> = internalTrips.toList() // Return an immutable copy
 
     fun addTrip(trip: Trip) {
-        // Basic add, assuming ID is managed correctly or unique
-        // For a more robust system, check for ID conflicts or ensure trip.id is new
         internalTrips.add(trip)
     }
 

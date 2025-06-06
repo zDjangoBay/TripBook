@@ -1,4 +1,4 @@
-// ui/components/LocationSearchBar.kt
+
 package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.layout.*

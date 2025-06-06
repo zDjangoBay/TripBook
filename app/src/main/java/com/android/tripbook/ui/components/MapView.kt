@@ -1,16 +1,15 @@
-// file: com.android.tripbook/ui/components/MapView.kt
+
 package com.android.tripbook.ui.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.android.tripbook.model.MapRegion // YOUR MapRegion model
-import com.android.tripbook.model.Trip    // Your unified Trip model
+import com.android.tripbook.model.MapRegion
+import com.android.tripbook.model.Trip
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.*
 
 private const val MAP_VIEW_TAG = "MapView"
@@ -128,11 +127,11 @@ fun MapView(
         }
 
         trips.forEach { trip ->
-            // Using the corrected TripMapPin which is now a Google Maps Marker
-            TripMapPin( // This is the Composable Marker we defined
+          //my custom trp marker
+            TripMapPin(
                 trip = trip,
                 isSelected = (trip.id == selectedTrip?.id),
-                onClick = { clickedTrip -> // Renamed for clarity from onMarkerClick
+                onClick = { clickedTrip ->
                     Log.d(MAP_VIEW_TAG, "Marker clicked: ${clickedTrip.title}")
                     onTripMarkerClick(clickedTrip)
                 }

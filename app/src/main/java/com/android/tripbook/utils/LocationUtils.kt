@@ -1,5 +1,4 @@
 
-// utils/LocationUtils.kt
 package com.android.tripbook.utils
 
 import android.annotation.SuppressLint

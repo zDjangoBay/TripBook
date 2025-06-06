@@ -1,4 +1,4 @@
-// ui/components/LocationPermissionHandler.kt
+
 package com.android.tripbook.ui.components
 
 import android.Manifest
