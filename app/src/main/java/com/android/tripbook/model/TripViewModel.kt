@@ -1,13 +1,17 @@
 package com.android.tripbook.model
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
@@ -20,24 +24,16 @@ enum class TripStatus {
     PLANNED, ACTIVE, COMPLETED
 }
 class TripViewModel : ViewModel() {
-    private val _tripList = mutableStateListOf<Trip>()
-    val tripList: List<Trip> = _tripList
-
-    private val _List = mutableStateListOf<Activity>()
-    val List: List<Activity> = _List
 
     var tripInfo by mutableStateOf(
         Trip(
-//            id = "",
             name = "",
-            startDate = LocalDate.now(),
-//            endDate =  LocalDate.now(),
+            startDate = LocalDate.now().toString(),
             destination = "",
             travelers = 1,
             budget = 0,
-//            status = TripStatus.PLANNED,
-//            type = "",
-//            description = "",
+            status = TripStatus.PLANNED,
+            time = LocalTime.now().toString()
         )
     )
 
@@ -45,7 +41,6 @@ class TripViewModel : ViewModel() {
         Activity(
             time = LocalTime.now(),
             date = LocalDate.now(),
-            status = TripStatus.PLANNED,
             title = "",
             location = "",
             description = ""
@@ -71,72 +66,102 @@ class TripViewModel : ViewModel() {
         }
     }
 
-    fun retrieveData(
-        name: String,
-        context: Context,
-        data: (Trip) -> Unit
-    ) = CoroutineScope(Dispatchers.IO).launch {
-        val fireStoreRef = Firebase.firestore
-            .collection("Trip")
-            .document(name)
+    private val _tripList = mutableStateOf<List<Trip>>(emptyList())
+    var tripList: State<List<Trip>> = _tripList
 
-        try{
-            fireStoreRef.get()
-                .addOnSuccessListener{
-                    if(it.exists()){
-                        val Trip = it.toObject<Trip>()!!
-                        data(Trip)
-                    }else{
-                        Toast.makeText(context,"No Trip Data Found", Toast.LENGTH_SHORT).show()
-                    }
+    var isLoading by mutableStateOf(true)
+    var errorMessage by mutableStateOf<String?>(null)
+
+//    init {
+//        retrieveData()
+//    }
+//
+//    fun retrieveData() {
+//        Firebase.firestore.collection("Trip")
+//            .get()
+//            .addOnSuccessListener { result ->
+//                val trips = result.documents.mapNotNull { it.toObject(Trip::class.java) }
+//                _tripList.value = trips
+//            }
+//            .addOnFailureListener { exception ->
+//                // Log error or handle it via another state
+//                Log.e("TripViewModel", "Error fetching trips", exception)
+//            }
+//    }
+
+    init {
+        listenToTrips()
+    }
+
+    private fun listenToTrips() {
+        Firebase.firestore.collection("Trip")
+            .addSnapshotListener { snapshot: QuerySnapshot?, error: FirebaseFirestoreException? ->
+                isLoading = false
+                if (error != null) {
+                    errorMessage = "Failed to load trips: ${error.message}"
+                    return@addSnapshotListener
                 }
 
-        }catch (e: Exception) {
-            Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+                snapshot?.let {
+                    try {
+                        it.documents.mapNotNull { doc ->
+                            doc.toObject(Trip::class.java)
+                        }.also { tripList }
+                    } catch (e: Exception) {
+                        errorMessage = "Parsing error: ${e.message}"
+                    }
+                }
+            }
+    }
+
+    var travelersInput by mutableStateOf("1") // default as string
+        private set
+
+    fun updateTravelers(value: String) {
+        travelersInput = value
+        tripInfo = tripInfo.copy(travelers = value.toIntOrNull() ?: 1)
+    }
+
+    fun updateName(value: String) {
+        tripInfo = tripInfo.copy(name = value)
+    }
+
+    fun updateDestination(value: String) {
+        tripInfo = tripInfo.copy(destination = value)
+    }
+
+    var budgetInput by mutableStateOf("1") // default as string
+        private set
+
+    fun updateBudget(value: String) {
+        budgetInput = value
+        tripInfo = tripInfo.copy(budget = value.toIntOrNull() ?: 0)
+    }
+
+    fun updateTime(localTime: LocalTime) {
+        tripInfo = tripInfo.copy(time = localTime.toString())
+    }
+
+    fun updateDate(localDate: LocalDate) {
+        tripInfo = tripInfo.copy(startDate = localDate.toString())
+    }
+
+    fun getLocalDate(): LocalDate {
+        return try {
+            LocalDate.parse(tripInfo.startDate)
+        } catch (e: Exception) {
+            LocalDate.now()
         }
     }
-//
-//    fun addTrip() {
-//        updateStatus()
-//        _tripList.add(tripInfo)
-//    }
-//
-//    var travelersInput by mutableStateOf("1") // default as string
-//        private set
-//
-//    fun updateTravelers(value: String) {
-//        travelersInput = value
-//        tripInfo = tripInfo.copy(travelers = value.toIntOrNull() ?: 1)
-//    }
-//
-//    fun updateName(value: String) {
-//        tripInfo = tripInfo.copy(name = value)
-//    }
-//
-//    fun updateDestination(value: String) {
-//        tripInfo = tripInfo.copy(destination = value)
-//    }
-//
-//    fun updateDescription(value: String) {
-//        tripInfo = tripInfo.copy(description = value)
-//    }
-//
-//    var budgetInput by mutableStateOf("1") // default as string
-//        private set
-//
-//    fun updateBudget(value: String) {
-//        budgetInput = value
-//        tripInfo = tripInfo.copy(budget = value.toIntOrNull() ?: 0)
-//    }
-//
-//    fun updateTime(value: LocalTime) {
-//        tripTime = tripTime.copy(time = value)
-//    }
-//
-//    fun updateDate(value: LocalDate) {
-//        tripInfo = tripInfo.copy(startDate = value)
-//    }
-//
+
+    fun getLocalTime(): LocalTime {
+        return try {
+            LocalTime.parse(tripInfo.time)
+        } catch (e: Exception) {
+            LocalTime.now()
+        }
+    }
+
 //    private fun updateStatus() {
 //        val now = LocalDate.now()
 //        tripInfo = tripInfo.copy(
