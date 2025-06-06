@@ -2,4 +2,9 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+    <string name="title_activity_login">login</string>
+    <string name="title_activity_feedscreen">Feedscreen</string>
+    <string name="title_activity_profilescreen">Profilescreen</string>
+    <string name="title_activity_post">PostActivity</string>
+    <string name="title_activity_feed">FeedActivity</string>
 </resources>
