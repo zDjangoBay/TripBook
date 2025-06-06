@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
 import com.android.tripbook.data.SampleTrips
-import com.android.tripbook.model.User
+import com.android.tripbook.Model.User
 import com.android.tripbook.ui.components.MiniProfileTruncated
 
 import androidx.compose.ui.graphics.Color

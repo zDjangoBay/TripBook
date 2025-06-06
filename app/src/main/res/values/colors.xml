@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Missing colors that need to be defined -->
+    <color name="Light_Blue">#ADD8E6</color>
+    <color name="Light_green">#90EE90</color>
+    <color name="Light_orange">#FFD580</color>
+    <color name="Light_purple">#DDA0DD</color>
+    <color name="Light_belge">#F5F5DC</color>
+    <color name="grey">#808080</color>
+    <color name="dark_blue">#003366</color>
+    <color name="midnight_blue">#191970</color>
+    <color name="Blue">#0000FF</color>
+
+    <!-- Material Design Theme Colors (Missing) -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
+    <!-- Common colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="very_light_bluish_gray">#B2F2BB</color>
-    <color name="Light_orange">#FFD8A8</color>
-    <color name="Light_green">#B2F2BB</color>
-    <color name="Light_purple">#D0BFFF</color>
-    <color name="Light_Blue">#A5D8FF</color>
-    <color name="Light_belge">#F5F5DC</color>
-    <color name="Blue">#166CB1</color>
-    <color name="dark_blue">#00008B</color>
-    <color name="navy_blue">#000080</color>
-    <color name="midnight_blue">#191970</color>
-    <color name="grey">#808080</color>
+    <color name="primary">#6200EE</color>
+    <color name="primary_variant">#3700B3</color>
+    <color name="secondary">#03DAC5</color>
 </resources>

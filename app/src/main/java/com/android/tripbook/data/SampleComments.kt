@@ -1,6 +1,6 @@
 package com.android.tripbook.data
 
-import com.android.tripbook.model.Comment
+import com.android.tripbook.Model.Comment
 import java.text.SimpleDateFormat
 import java.util.*
 

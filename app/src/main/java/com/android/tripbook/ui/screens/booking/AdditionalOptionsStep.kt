@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.model.TripOption
+import com.android.tripbook.Model.TripOption
 
 @Composable
 fun AdditionalOptionsStep(

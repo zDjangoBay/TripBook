@@ -12,7 +12,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 //import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.R
-import com.android.tripbook.viewmodel.MockTripViewModel
+import com.android.tripbook.ViewModel.MockTripViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.foundation.rememberScrollState
@@ -29,7 +29,7 @@ import androidx.compose.ui.layout.ContentScale
 import android.net.Uri
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.platform.LocalContext
-import com.android.tripbook.model.Trip
+import com.android.tripbook.Model.Trip
 import com.android.tripbook.data.SampleTrips
 
 

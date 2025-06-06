@@ -1,13 +1,13 @@
 package com.android.tripbook.ui.screens
 
-
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -88,10 +89,10 @@ fun HomeScreen(
                     .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TransportOption(R.drawable.bus, R.string.Bus, Color(0xFFE0BBE4))
-                TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2))
-                TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC))
-                TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9))
+                TransportOption(R.drawable.bus, R.string.Bus, Color(0xFFE0BBE4), onClick = {navController.navigate("bus_companies")})
+                TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2), onClick = {navController.navigate("boat_companies")})
+                TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC), onClick = {navController.navigate("airline_companies")})
+                TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9), onClick = {navController.navigate("train_companies")})
             }
         }
 
@@ -161,5 +162,43 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+@Composable
+fun TransportOption(
+    iconRes: Int,
+    labelRes: Int,
+    backgroundColor: Color,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(12.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(iconRes),
+                contentDescription = stringResource(labelRes),
+                modifier = Modifier.size(32.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(labelRes),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Black
+        )
     }
 }
