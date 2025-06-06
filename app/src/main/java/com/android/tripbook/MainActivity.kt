@@ -86,7 +86,7 @@ fun TripBookApp() {
                 PlanNewTripScreen(
                     viewModel = viewModel,
                     onBackClick = {
-                        navController.navigateUp()
+                        navController.navigate(BottomNavItem.MyTrips.route)
                     }
                 )
             }
