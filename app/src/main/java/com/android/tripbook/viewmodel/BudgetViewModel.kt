@@ -38,7 +38,7 @@ class BudgetViewModel(application: Application, private val tripId: String) : An
         repository.deleteBudgetCategory(budgetCategory)
     }
 
-    fun getBudgetCategoryById(id: Long): LiveData<BudgetCategory> {
+    fun getBudgetCategoryById(id: Long): LiveData<BudgetCategory?> {
         return repository.getBudgetCategoryById(id)
     }
 
@@ -66,7 +66,7 @@ class BudgetViewModel(application: Application, private val tripId: String) : An
         repository.deleteExpense(expense)
     }
 
-    fun getExpenseById(id: Long): LiveData<Expense> {
+    fun getExpenseById(id: Long): LiveData<Expense?> {
         return repository.getExpenseById(id)
     }
 }

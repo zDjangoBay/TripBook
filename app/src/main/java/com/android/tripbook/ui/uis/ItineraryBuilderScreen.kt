@@ -28,18 +28,18 @@ import com.android.tripbook.model.Trip
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
+import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-
-
-
+import com.android.tripbook.viewmodel.TripViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItineraryBuilderScreen(
+    tripViewModel: TripViewModel,
     trip: Trip,
     onBackClick: () -> Unit,
     onItineraryUpdated: (List<ItineraryItem>) -> Unit,
@@ -691,4 +691,21 @@ private fun validateItineraryItem(
     }
 
     return isValid
+}
+
+@Composable
+fun PlaceAutocompleteField(
+    onPlaceSelected: (Place) -> Unit,
+    onSearch: (String) -> Unit
+) {
+    // This is a simplified version. A real implementation would use the Places SDK to fetch predictions.
+    var text by remember { mutableStateOf("") }
+    TextField(
+        value = text,
+        onValueChange = {
+            text = it
+            onSearch(it)
+        },
+        label = { Text("Search for a place") }
+    )
 }

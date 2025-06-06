@@ -2,8 +2,9 @@ plugins {
     id("com.android.application")
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
     id("androidx.navigation.safeargs.kotlin")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -38,90 +39,67 @@ android {
     }
     buildFeatures {
         compose = true
-        dataBinding = true // Enable Data Binding
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
     }
 }
 
 dependencies {
-    constraints {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0") {
-            because("Aligning Kotlin version with KSP and Kotlin Gradle Plugin (1.9.0)")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0") {
-            because("Aligning Kotlin version with KSP and Kotlin Gradle Plugin (1.9.0)")
-        }
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0") {
-            because("Aligning Kotlin version with KSP and Kotlin Gradle Plugin (1.9.0)")
-        }
-    }
-
     // Compose BOM
-    val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
-    // Compose Dependencies
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.foundation:foundation") // Often needed with UI elements
-    implementation("androidx.compose.material:material") // For Material 2 components (like Card)
-    implementation("androidx.compose.material3:material3") // For Material 3 components
-    implementation("androidx.activity:activity-compose:1.9.0") // For ComponentActivity.setContent
+    // Core Android
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
 
-    val room_version = "2.7.1"
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
+    // Compose
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Lifecycle dependencies
-    val lifecycle_version = "2.9.1"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
-    // Google Maps and Places (KTX and Compose parts temporarily removed to simplify build)
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.android.libraries.places:places:3.5.0") // Requires Kotlin 1.8.0+
-    // implementation("com.google.maps.android:maps-compose:4.4.1") // Temporarily removed
-    // implementation("com.google.maps.android:maps-ktx:5.1.1") // Temporarily removed
-    // implementation("com.google.maps.android:places-ktx:3.3.1") // Temporarily removed
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    // Navigation
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Google Maps
+    implementation(libs.google.places)
+    implementation(libs.maps.compose)
+    implementation(libs.maps.compose.utils)
+    implementation(libs.maps.compose.widgets)
 
     // Networking
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.gson)
 
-    // Kotlinx Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3") // Downgraded from 1.7.1
+    // Kotlinx Serialization/DateTime
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
-    // Kotlinx DateTime
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    // TODO: Add your application's dependencies here
-    // Example:
-    // implementation("androidx.core:core-ktx:1.9.0")
-    // implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    // implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    // testImplementation("junit:junit:4.13.2")
-    // androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    // androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    val nav_version = "2.7.7" // Use the latest stable version
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 } 

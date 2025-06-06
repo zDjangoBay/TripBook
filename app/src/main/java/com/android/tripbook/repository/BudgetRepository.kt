@@ -16,7 +16,7 @@ class BudgetRepository(
     // --- BudgetCategory Operations ---
 
     fun getBudgetCategoriesForTrip(tripId: String): LiveData<List<BudgetCategory>> {
-        return budgetCategoryDao.getBudgetCategoriesForTrip(tripId)
+        return budgetCategoryDao.getCategoriesForTrip(tripId)
     }
 
     suspend fun insertBudgetCategory(budgetCategory: BudgetCategory) {
@@ -37,8 +37,8 @@ class BudgetRepository(
         }
     }
 
-    fun getBudgetCategoryById(id: Long): LiveData<BudgetCategory> {
-        return budgetCategoryDao.getBudgetCategoryById(id)
+    fun getBudgetCategoryById(id: Long): LiveData<BudgetCategory?> {
+        return budgetCategoryDao.getCategoryById(id)
     }
 
     // --- Expense Operations ---
@@ -52,7 +52,7 @@ class BudgetRepository(
     }
     
     fun getExpensesForTripAndCategory(tripId: String, categoryId: Long): LiveData<List<Expense>> {
-        return expenseDao.getExpensesForTripAndCategory(tripId, categoryId)
+        return expenseDao.getExpensesByTripAndCategory(tripId, categoryId)
     }
 
     suspend fun insertExpense(expense: Expense) {
@@ -73,7 +73,7 @@ class BudgetRepository(
         }
     }
     
-    fun getExpenseById(id: Long): LiveData<Expense> {
+    fun getExpenseById(id: Long): LiveData<Expense?> {
         return expenseDao.getExpenseById(id)
     }
 }

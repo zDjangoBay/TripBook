@@ -27,6 +27,9 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE categoryId = :categoryId ORDER BY date DESC")
     fun getExpensesForCategory(categoryId: Long): LiveData<List<Expense>>
 
+    @Query("SELECT * FROM expenses WHERE tripId = :tripId AND categoryId = :categoryId ORDER BY date DESC")
+    fun getExpensesByTripAndCategory(tripId: String, categoryId: Long): LiveData<List<Expense>>
+
     @Query("SELECT * FROM expenses WHERE id = :expenseId LIMIT 1")
     fun getExpenseById(expenseId: Long): LiveData<Expense?>
 

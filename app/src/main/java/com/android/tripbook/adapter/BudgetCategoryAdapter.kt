@@ -92,7 +92,7 @@ class BudgetCategoryAdapter(
 
             // Observe expenses for this specific category
             // and update the expense list and the actual amount spent
-            budgetViewModel.getExpensesForTripAndCategory(budgetCategory.tripId, budgetCategory.id)
+            budgetViewModel.getExpensesForTripAndCategory(budgetCategory.id)
                 .observe(lifecycleOwner) { expenses ->
                     expenses?.let {
                         expenseAdapter.submitList(it)

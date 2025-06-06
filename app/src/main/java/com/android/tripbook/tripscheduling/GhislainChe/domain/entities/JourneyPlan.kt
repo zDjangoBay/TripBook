@@ -1,6 +1,6 @@
 package com.android.tripbook.tripscheduling.GhislainChe.domain.entities
 
-import kotlinx.datetime.Duration
+import kotlin.time.Duration
 
 data class JourneyPlan(
     val routeId: String,

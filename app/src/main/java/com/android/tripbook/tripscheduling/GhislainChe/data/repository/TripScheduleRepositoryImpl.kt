@@ -24,8 +24,8 @@ class TripScheduleRepositoryImpl : TripScheduleRepository {
         // Dummy implementation: filter schedules based on criteria
         // In a real app, this would fetch from a local database or remote API
         return schedules.filter {
-            it.origin.equals(origin, ignoreCase = true) &&
-            it.destination.equals(destination, ignoreCase = true) &&
+            // it.origin.equals(origin, ignoreCase = true) &&
+            // it.destination.equals(destination, ignoreCase = true) &&
             // it.departureTime.date == date && // Assuming DepartureSchedule has a LocalDateTime for departureTime
             (serviceCategory == null || it.serviceCategory == serviceCategory) &&
             it.status == DepartureStatus.SCHEDULED
@@ -40,8 +40,9 @@ class TripScheduleRepositoryImpl : TripScheduleRepository {
     override suspend fun observeScheduleCapacity(scheduleId: String): Flow<VehicleCapacity> {
         // Dummy implementation: return a flow for capacity updates
         // In a real app, this would observe changes from a reactive data source
-        return capacityFlows.getOrPut(scheduleId) { 
-            MutableStateFlow(VehicleCapacity(scheduleId, 0, 50, 0, com.android.tripbook.tripscheduling.GhislainChe.domain.entities.ReservationStatus.ACTIVE)) 
+        return capacityFlows.getOrPut(scheduleId) {
+            val schedule = schedules.find { it.scheduleId == scheduleId }
+            MutableStateFlow(VehicleCapacity(schedule?.vehicleId ?: "", schedule?.totalSeats ?: 0, schedule?.availableSeats ?: 0, 0, com.android.tripbook.tripscheduling.GhislainChe.domain.entities.ReservationStatus.ACTIVE))
         }.asStateFlow()
     }
 
@@ -49,12 +50,12 @@ class TripScheduleRepositoryImpl : TripScheduleRepository {
         // Dummy implementation: simulate seat reservation
         val schedule = schedules.find { it.scheduleId == scheduleId }
         val capacity = capacityFlows[scheduleId]?.value
-        
+
         if (schedule != null && capacity != null && (capacity.availableSeats - seatCount) >= 0) {
-            val newBookedSeats = capacity.bookedSeats + seatCount
-            val newAvailableSeats = capacity.totalSeats - newBookedSeats
+            val newReservedSeats = capacity.reservedSeats + seatCount
+            val newAvailableSeats = capacity.totalSeats - newReservedSeats
             capacityFlows[scheduleId]?.value = capacity.copy(
-                bookedSeats = newBookedSeats,
+                reservedSeats = newReservedSeats,
                 availableSeats = newAvailableSeats
             )
             return SeatReservation(
@@ -86,8 +87,8 @@ class TripScheduleRepositoryImpl : TripScheduleRepository {
     // Helper to add some dummy data for testing
     fun addDummySchedule(schedule: DepartureSchedule) {
         schedules.add(schedule)
-        capacityFlows.getOrPut(schedule.scheduleId) { 
-            MutableStateFlow(VehicleCapacity(schedule.scheduleId, 0, schedule.vehicleTotalCapacity, schedule.vehicleTotalCapacity, com.android.tripbook.tripscheduling.GhislainChe.domain.entities.ReservationStatus.ACTIVE)) 
+        capacityFlows.getOrPut(schedule.scheduleId) {
+            MutableStateFlow(VehicleCapacity(schedule.vehicleId, schedule.totalSeats, schedule.availableSeats, 0, com.android.tripbook.tripscheduling.GhislainChe.domain.entities.ReservationStatus.ACTIVE))
         }
     }
 }
