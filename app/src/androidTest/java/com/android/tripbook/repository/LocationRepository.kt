@@ -51,5 +51,5 @@ class LocationRepository {
 
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return earthRadius * c
-    }
+       }
 }

@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-}
+    id("com.google.gms.google-services") // 👈 here
+    }
 
 android {
     namespace = "com.android.tripbook"
@@ -76,4 +77,8 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 }

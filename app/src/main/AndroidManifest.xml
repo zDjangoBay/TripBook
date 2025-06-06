@@ -22,6 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+    <permissions>
+        <uses-permission android:name="android.permission.INTERNET"/>
+    </permissions>
     </application>
-
 </manifest>
