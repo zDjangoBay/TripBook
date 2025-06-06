@@ -56,6 +56,8 @@ import android.Manifest
 import android.app.Activity
 import androidx.core.app.ActivityCompat
 import com.android.tripbook.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun TripDetailsScreen(
@@ -71,6 +73,7 @@ fun TripDetailsScreen(
     val coroutineScope = rememberCoroutineScope()
     var showCalendarPicker by remember { mutableStateOf(false) }
     var selectedCalendarId by remember { mutableStateOf<Long?>(null) }
+    var isSyncing by remember { mutableStateOf(false) }
 
     val activity = context as? Activity
 
@@ -140,7 +143,9 @@ fun TripDetailsScreen(
                                 showCalendarPicker = showCalendarPicker,
                                 onShowCalendarPicker = { showCalendarPicker = it },
                                 selectedCalendarId = selectedCalendarId,
-                                onCalendarSelected = { selectedCalendarId = it }
+                                onCalendarSelected = { selectedCalendarId = it },
+                                isSyncing = isSyncing,
+                                onSyncingChange = { isSyncing = it }
                             )
                             "Map" -> EnhancedMapTab(
                                 trip = currentTrip,
@@ -181,16 +186,19 @@ fun TripDetailsScreen(
                 context = context,
                 onCalendarSelected = { calendarId ->
                     selectedCalendarId = calendarId
-                    val results = CalendarIntegrationService.syncTripToCalendar(
-                        context,
-                        currentTrip.itinerary,
-                        calendarId
-                    )
                     coroutineScope.launch {
-                        scaffoldState.showSnackbar(
-                            if (results.any { it != null }) "Trip synced to calendar"
-                            else "Trip already synced"
-                        )
+                        val results = withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            CalendarIntegrationService.syncTripToCalendar(
+                                context,
+                                currentTrip.itinerary,
+                                calendarId
+                            )
+                        }
+                        if (results.any { it != null }) {
+                            scaffoldState.showSnackbar("Saved to calendar")
+                        } else {
+                            scaffoldState.showSnackbar("Trip already synced")
+                        }
                     }
                     showCalendarPicker = false
                 },
@@ -279,7 +287,9 @@ fun EnhancedItineraryTab(
     showCalendarPicker: Boolean,
     onShowCalendarPicker: (Boolean) -> Unit,
     selectedCalendarId: Long?,
-    onCalendarSelected: (Long) -> Unit
+    onCalendarSelected: (Long) -> Unit,
+    isSyncing: Boolean,
+    onSyncingChange: (Boolean) -> Unit
 ) {
     val scaffoldState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -291,11 +301,14 @@ fun EnhancedItineraryTab(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(
                 onClick = { viewModel.toggleMapViewMode() },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (uiState.mapViewMode == MapViewMode.MAP)
                         TripBookColors.Primary else Color.White,
@@ -306,20 +319,30 @@ fun EnhancedItineraryTab(
                     BorderStroke(1.dp, TripBookColors.Primary) else null,
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Icon(
-                    imageVector = if (uiState.mapViewMode == MapViewMode.MAP)
-                        Icons.Default.List else Icons.Default.Map,
-                    contentDescription = "Toggle View",
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = if (uiState.mapViewMode == MapViewMode.MAP) "List View" else "Map View",
-                    fontSize = 14.sp
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = if (uiState.mapViewMode == MapViewMode.MAP)
+                            Icons.Default.List else Icons.Default.Map,
+                        contentDescription = "Toggle View",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (uiState.mapViewMode == MapViewMode.MAP) "List View" else "Map View",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
+
             Button(
                 onClick = onEditItineraryClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = TripBookColors.Primary
                 ),
@@ -327,61 +350,77 @@ fun EnhancedItineraryTab(
             ) {
                 Text(
                     text = "Edit Itinerary",
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
                 )
             }
+
             Button(
                 onClick = {
-                    if (CalendarIntegrationService.hasCalendarPermission(context)) {
-                        if (selectedCalendarId != null) {
-                            val results = CalendarIntegrationService.syncTripToCalendar(
-                                context,
-                                trip.itinerary,
-                                selectedCalendarId
-                            )
-                            coroutineScope.launch {
-                                scaffoldState.showSnackbar(
-                                    if (results.any { it != null }) "Trip synced to calendar"
-                                    else "Trip already synced"
-                                )
-                            }
-                        } else {
-                            onShowCalendarPicker(true)
-                        }
-                    } else {
-                        val activity = context as? Activity
-                        activity?.let {
-                            ActivityCompat.requestPermissions(
-                                it,
-                                arrayOf(
-                                    Manifest.permission.READ_CALENDAR,
-                                    Manifest.permission.WRITE_CALENDAR
-                                ),
-                                MainActivity.CALENDAR_PERMISSION_REQUEST_CODE
-                            )
-                        }
+                    if (!isSyncing) {
+                        onSyncingChange(true)
                         coroutineScope.launch {
-                            scaffoldState.showSnackbar("Calendar permission required")
+                            try {
+                                if (CalendarIntegrationService.hasCalendarPermission(context)) {
+                                    if (selectedCalendarId != null) {
+                                        val results = withContext(Dispatchers.IO) {
+                                            CalendarIntegrationService.syncTripToCalendar(
+                                                context,
+                                                trip.itinerary,
+                                                selectedCalendarId
+                                            )
+                                        }
+                                        scaffoldState.showSnackbar(
+                                            if (results.any { it != null }) "Saved to calendar"
+                                            else "Trip already synced"
+                                        )
+                                    } else {
+                                        onShowCalendarPicker(true)
+                                    }
+                                } else {
+                                    val activity = context as? Activity
+                                    activity?.let { requestCalendarPermissions(it) }
+                                    scaffoldState.showSnackbar("Calendar permission required")
+                                }
+                            } catch (e: Exception) {
+                                scaffoldState.showSnackbar("Error syncing to calendar: ${e.message}")
+                            } finally {
+                                onSyncingChange(false)
+                            }
                         }
                     }
                 },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF4CAF50)
+                    containerColor = Color(0xFF667EEA)
                 ),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                enabled = !isSyncing
             ) {
-                Icon(
-                    imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Sync to Calendar",
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Sync",
-                    fontSize = 14.sp
-                )
+                if (isSyncing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = "Sync to Calendar",
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Sync",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                }
             }
         }
         when (uiState.mapViewMode) {
@@ -878,4 +917,16 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
     ) {
         content()
     }
+}
+
+// Helper function for permission request
+private fun requestCalendarPermissions(activity: Activity) {
+    ActivityCompat.requestPermissions(
+        activity,
+        arrayOf(
+            Manifest.permission.READ_CALENDAR,
+            Manifest.permission.WRITE_CALENDAR
+        ),
+        MainActivity.CALENDAR_PERMISSION_REQUEST_CODE
+    )
 }

@@ -41,6 +41,9 @@ import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.filled.CalendarToday
 import com.android.tripbook.service.CalendarIntegrationService
+import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 
@@ -468,8 +471,21 @@ fun ItineraryBuilderScreen(
                         Button(
                             onClick = {
                                 if (!CalendarIntegrationService.hasCalendarPermission(context)) {
-                                    // Show rationale and request permission
-                                    // (You may need to pass the Activity context for request)
+                                    // Request permissions if needed
+                                    val activity = context as? android.app.Activity
+                                    activity?.let {
+                                        ActivityCompat.requestPermissions(
+                                            it,
+                                            arrayOf(
+                                                android.Manifest.permission.READ_CALENDAR,
+                                                android.Manifest.permission.WRITE_CALENDAR
+                                            ),
+                                            com.android.tripbook.MainActivity.CALENDAR_PERMISSION_REQUEST_CODE
+                                        )
+                                    }
+                                    coroutineScope.launch {
+                                        scaffoldState.showSnackbar("Calendar permissions required")
+                                    }
                                 } else {
                                     showCalendarPicker = true
                                 }
@@ -479,14 +495,15 @@ fun ItineraryBuilderScreen(
                                 .height(48.dp)
                                 .padding(top = 8.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF4CAF50)
+                                containerColor = Color(0xFF667EEA)
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Default.CalendarToday,
                                 contentDescription = "Calendar",
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
+                                tint = Color.White
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
@@ -541,16 +558,19 @@ fun ItineraryBuilderScreen(
             context = context,
             onCalendarSelected = { calendarId ->
                 selectedCalendarId = calendarId
-                val results = CalendarIntegrationService.syncTripToCalendar(
-                    context,
-                    itineraryItems,
-                    calendarId
-                )
                 coroutineScope.launch {
-                    scaffoldState.showSnackbar(
-                        if (results.any { it != null }) "Trip synced to calendar"
-                        else "Trip already synced"
-                    )
+                    val results = withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        CalendarIntegrationService.syncTripToCalendar(
+                            context,
+                            itineraryItems,
+                            calendarId
+                        )
+                    }
+                    if (results.any { it != null }) {
+                        scaffoldState.showSnackbar("Saved to calendar")
+                    } else {
+                        scaffoldState.showSnackbar("Trip already synced")
+                    }
                 }
                 showCalendarPicker = false
             },

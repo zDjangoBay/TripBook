@@ -68,15 +68,21 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    // Optionally, handle the result if you want to show a message or trigger a callback
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CALENDAR_PERMISSION_REQUEST_CODE) {
-            // You can notify your Compose UI via a shared ViewModel or state
+        when (requestCode) {
+            CALENDAR_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, you might want to refresh the UI
+                } else {
+                    // Permission denied
+                }
+            }
         }
     }
 

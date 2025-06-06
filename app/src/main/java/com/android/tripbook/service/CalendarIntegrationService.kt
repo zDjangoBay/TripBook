@@ -50,13 +50,25 @@ object CalendarIntegrationService {
     fun isEventAlreadySynced(context: Context, item: ItineraryItem, calendarId: Long): Boolean {
         val projection = arrayOf(CalendarContract.Events._ID)
         val selection = ("(${CalendarContract.Events.TITLE} = ?) AND " +
-                "(${CalendarContract.Events.DTSTART} = ?) AND " +
+                "(${CalendarContract.Events.DTSTART} BETWEEN ? AND ?) AND " +
                 "(${CalendarContract.Events.CALENDAR_ID} = ?)")
-        val selectionArgs = arrayOf(item.title, item.date.atStartOfDay().toEpochSecond(TimeZone.getDefault().toZoneId().rules.getOffset(item.date.atStartOfDay())).toString(), calendarId.toString())
-        val cursor = context.contentResolver.query(
-            CalendarContract.Events.CONTENT_URI, projection, selection, selectionArgs, null
+        // Calculate time range (1 hour window)
+        val startTime = convertToEpochMillis(item.date, item.time)
+        val endTime = startTime + 3600000 // 1 hour later
+        val selectionArgs = arrayOf(
+            item.title,
+            startTime.toString(),
+            endTime.toString(),
+            calendarId.toString()
         )
-        val exists = cursor?.moveToFirst() == true
+        val cursor = context.contentResolver.query(
+            CalendarContract.Events.CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            null
+        )
+        val exists = cursor?.moveToFirst() ?: false
         cursor?.close()
         return exists
     }
@@ -68,28 +80,35 @@ object CalendarIntegrationService {
         durationMinutes: Int = 60,
         reminderMinutes: Int? = null
     ): Long? {
-        val startMillis = item.date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val endMillis = startMillis + durationMinutes * 60 * 1000
-        val values = ContentValues().apply {
-            put(CalendarContract.Events.DTSTART, startMillis)
-            put(CalendarContract.Events.DTEND, endMillis)
-            put(CalendarContract.Events.TITLE, item.title)
-            put(CalendarContract.Events.DESCRIPTION, item.notes)
-            put(CalendarContract.Events.CALENDAR_ID, calendarId)
-            put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
-            put(CalendarContract.Events.EVENT_LOCATION, item.location)
-        }
-        val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
-        val eventId = uri?.lastPathSegment?.toLongOrNull()
-        if (eventId != null && reminderMinutes != null) {
-            val reminderValues = ContentValues().apply {
-                put(CalendarContract.Reminders.EVENT_ID, eventId)
-                put(CalendarContract.Reminders.MINUTES, reminderMinutes)
-                put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+        try {
+            // Convert date and time to milliseconds
+            val startMillis = convertToEpochMillis(item.date, item.time)
+            val endMillis = startMillis + durationMinutes * 60 * 1000
+            val values = ContentValues().apply {
+                put(CalendarContract.Events.DTSTART, startMillis)
+                put(CalendarContract.Events.DTEND, endMillis)
+                put(CalendarContract.Events.TITLE, item.title)
+                put(CalendarContract.Events.DESCRIPTION, buildEventDescription(item))
+                put(CalendarContract.Events.CALENDAR_ID, calendarId)
+                put(CalendarContract.Events.EVENT_TIMEZONE, TimeZone.getDefault().id)
+                put(CalendarContract.Events.EVENT_LOCATION, item.location)
             }
-            context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
+            val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
+            val eventId = uri?.lastPathSegment?.toLongOrNull()
+            // Add reminder if specified
+            if (eventId != null && reminderMinutes != null) {
+                val reminderValues = ContentValues().apply {
+                    put(CalendarContract.Reminders.EVENT_ID, eventId)
+                    put(CalendarContract.Reminders.MINUTES, reminderMinutes)
+                    put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
+                }
+                context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
+            }
+            return eventId
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
-        return eventId
     }
 
     fun syncTripToCalendar(
@@ -150,13 +169,21 @@ object CalendarIntegrationService {
     }
 
     private fun convertToEpochMillis(date: LocalDate, timeString: String): Long {
-        val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
-        val time = LocalTime.parse(timeString, timeFormatter)
-
-        return date.atTime(time)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+        try {
+            // Parse time string (assuming format like "10:00 AM")
+            val timeFormatter = DateTimeFormatter.ofPattern("h:mm a")
+            val time = LocalTime.parse(timeString, timeFormatter)
+            return date.atTime(time)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        } catch (e: Exception) {
+            // Fallback to noon if time parsing fails
+            return date.atTime(12, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        }
     }
 
     private fun buildEventDescription(item: ItineraryItem): String {

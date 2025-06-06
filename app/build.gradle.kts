@@ -52,7 +52,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -124,4 +124,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+
+    //---------------------------------------------------------
+    //      Vico Charts (NEWLY ADDED)
+    //---------------------------------------------------------
+    implementation("com.patrykandpatrick.vico:compose:1.12.0")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.12.0")
 }
