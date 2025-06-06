@@ -8,14 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import com.android.tripbook.ui.theme.TripBookColors
 
 @Composable
 fun CircularBudgetChart(
-    progress: Float,
-    label: String,
+    progress: Float = 0.65f,
+    label: String = "₣ 25,000",
     modifier: Modifier = Modifier,
-    progressColor: Color = MaterialTheme.colorScheme.primary,
-    trackColor: Color = MaterialTheme.colorScheme.surfaceVariant
+    progressColor: Color = TripBookColors.ButtonPrimary,
+    trackColor: Color = TripBookColors.ChipBackground
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -28,17 +30,21 @@ fun CircularBudgetChart(
             strokeWidth = 10.dp,
             modifier = Modifier.fillMaxSize()
         )
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = "${(progress * 100).toInt()}%",
-                style = MaterialTheme.typography.headlineSmall,
-                color = progressColor,
-                fontSize = 24.sp
-            )
+        
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = TripBookColors.TextPrimary
+            )
+            Text(
+                text = "Total Budget",
+                style = MaterialTheme.typography.bodySmall,
+                color = TripBookColors.TextSecondary
             )
         }
     }

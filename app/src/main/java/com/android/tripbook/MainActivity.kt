@@ -25,6 +25,7 @@ import com.android.tripbook.viewmodel.TripViewModel
 import com.android.tripbook.viewmodel.AgencyViewModel
 import com.android.tripbook.ui.statistics.StatisticsScreen
 import com.android.tripbook.ui.transactions.AllTransactionsScreen
+import com.android.tripbook.ui.comparison.ComparisonGraphScreen
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
@@ -276,14 +277,28 @@ class MainActivity : ComponentActivity() {
 
                     "BudgetScreen" -> StatisticsScreen(
                         onMonthSelect = { /* Handle month selection */ },
-                        onStatisticsCardClick = { /* Handle statistics card click */ },
+                        onStatisticsCardClick = { 
+                            // Navigate to Comparison Graph screen when statistics cards are clicked
+                            currentScreen = "ComparisonGraph" 
+                        },
                         onViewAllBudgetPlan = { /* Handle view all budget plan */ },
                         onAddCategory = { /* Handle add category */ },
-                        onViewAllTransactions = { currentScreen = "AllTransactions" }
+                        onViewAllTransactions = { 
+                            // Navigate to All Transactions screen when View All is clicked
+                            currentScreen = "AllTransactions" 
+                        }
                     )
 
                     "AllTransactions" -> AllTransactionsScreen(
                         onBack = {
+                            // Return to Budget/Statistics screen
+                            currentScreen = "BudgetScreen"
+                        }
+                    )
+
+                    "ComparisonGraph" -> ComparisonGraphScreen(
+                        onBack = {
+                            // Return to Budget/Statistics screen
                             currentScreen = "BudgetScreen"
                         }
                     )
