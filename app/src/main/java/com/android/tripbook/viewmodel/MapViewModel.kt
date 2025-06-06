@@ -52,12 +52,11 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun refreshTrips() {
         viewModelScope.launch {
-            // This re-fetches the (now updated) list from your sample data
+
             val tripsFromSource = SampleTrips.get()
             _allTrips.clear()
             _allTrips.addAll(tripsFromSource)
 
-            // This existing line will automatically update the UI state
             filterTrips(_searchQuery.value)
         }
     }
@@ -111,7 +110,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                 val userLat = _userLocation.value!!.latitude
                 val userLon = _userLocation.value!!.longitude
                 sourceTrips.filter { trip ->
-                    locationUtils.calculateDistance(userLat, userLon, trip.latitude, trip.longitude) <= 50 // 50km radius
+                    locationUtils.calculateDistance(userLat, userLon, trip.latitude, trip.longitude) <= 50
                 }
             } else {
                 sourceTrips.filter { trip ->
@@ -119,12 +118,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                             trip.description.contains(query, ignoreCase = true) ||
                             trip.city.contains(query, ignoreCase = true) ||
                             trip.country.contains(query, ignoreCase = true) ||
-                            (trip.region?.contains(query, ignoreCase = true) == true) // Also search in region
+                            (trip.region?.contains(query, ignoreCase = true) == true)
                 }
             }
         }
-        _filteredTrips.value = result // Update the state
-        updateMapRegionForTrips(result) // Update map region based on filtered results
+        _filteredTrips.value = result
+        updateMapRegionForTrips(result)
     }
 
     fun addTrip(newTrip: Trip) {
@@ -158,27 +157,23 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
     fun resetFilters() {
         _searchQuery.value = ""
-        // filterTrips("") will repopulate _filteredTrips with all trips
-        // and updateMapRegionForTrips will be called internally.
         filterTrips("")
         _selectedTrip.value = null
 
     }
 
-    // This function determines the map region based on a list of trips
+
     private fun updateMapRegionForTrips(tripsForRegion: List<Trip>) {
         _mapRegion.value = MapRegion.fromTrips(tripsForRegion)
     }
 
 
     fun moveMapToRegion(latitude: Double, longitude: Double, zoom: Float = 10f) {
-        _mapRegion.value = MapRegion( // Using your MapRegion constructor
+        _mapRegion.value = MapRegion(
             centerLatitude = latitude,
             centerLongitude = longitude,
-            // Provide some default deltas if your MapRegion needs them,
-            // otherwise zoomLevel might be sufficient for CameraPosition.
-            latitudeDelta = 1.0, // Example default delta
-            longitudeDelta = 1.0, // Example default delta
+            latitudeDelta = 1.0,
+            longitudeDelta = 1.0,
             zoomLevel = zoom
         )
     }

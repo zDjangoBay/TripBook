@@ -14,12 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
-// import com.android.tripbook.viewmodel.MockTripViewModel // REMOVED: Not directly used for trip fetching
 import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
 import com.android.tripbook.ui.components.MiniMap
-// import com.android.tripbook.viewmodel.MapViewModel // REMOVED: Not directly used by MiniMap for its display
-import com.android.tripbook.data.SampleTrips // Correctly used for enhanced trip data
+import com.android.tripbook.data.SampleTrips
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,15 +28,14 @@ fun TripDetailScreen(
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
-    // Trip is directly fetched from SampleTrips, so MockTripViewModel is not needed here
+
     val trip = remember { SampleTrips.get().find { it.id == tripId } }
 
     val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
     val reviewsForTrip = allReviews.filter { it.tripId == tripId }
 
-    // MapViewModel is not directly used by MiniMap in this screen, so it can be removed
-    // val mapViewModel = remember { MapViewModel() }
+
 
     Scaffold(
         topBar = {

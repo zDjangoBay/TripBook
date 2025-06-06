@@ -91,44 +91,37 @@ fun TripCatalogScreen(
         return
     }
 
-    // ViewModel states
-    val currentAllTrips = mapViewModel.allTrips // Directly use the observable List<Trip>
-    val filteredTrips by mapViewModel.filteredTrips // State<List<Trip>>
-    val mapRegion by mapViewModel.mapRegion // State<MapRegion>
-    val selectedTrip by mapViewModel.selectedTrip // State<Trip?>
-    val isMapView by mapViewModel.isMapView // State<Boolean>
-    val searchQueryFromViewModel by mapViewModel.searchQuery // State<String>
-    val userLocationAddress by mapViewModel.userLocationAddress // State<String?>
+    //  my ViewModel states
+    val currentAllTrips = mapViewModel.allTrips
+    val filteredTrips by mapViewModel.filteredTrips
+    val mapRegion by mapViewModel.mapRegion
+    val selectedTrip by mapViewModel.selectedTrip
+    val isMapView by mapViewModel.isMapView
+    val userLocationAddress by mapViewModel.userLocationAddress
 
-    var searchFieldValue by remember(searchQueryFromViewModel) { // Sync with VM
-        mutableStateOf(TextFieldValue(searchQueryFromViewModel))
-    }
-    var isLoading by remember { mutableStateOf(false) } // For list pagination
+
+    var searchFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+
+    var isLoading by remember { mutableStateOf(false) }
     var currentPage by remember { mutableIntStateOf(1) }
     val pageSize = 5
     var showAdvancedFilters by remember { mutableStateOf(false) }
 
     val locationUtils = remember { LocationUtils(context) }
 
-     val popularDestinations = remember(currentAllTrips) {
-        mapViewModel.getPopularDestinations() // Uses VM's internal list
+    val popularDestinations = remember(currentAllTrips) {
+        mapViewModel.getPopularDestinations()
             .take(5)
             .filter { it.first.isNotBlank() && it.second > 0 }
     }
     val regions = remember(currentAllTrips) {
-        mapViewModel.getTripsByRegion().keys.toList().sorted() // Uses VM's internal list
+        mapViewModel.getTripsByRegion().keys.toList().sorted()
     }
 
     var showRegionDropdown by remember { mutableStateOf(false) }
-    var selectedRegionFilter by remember(searchQueryFromViewModel) { // Sync with ViewModel's query
-        mutableStateOf(
-            if (searchQueryFromViewModel.startsWith("region:")) {
-                searchQueryFromViewModel.substringAfter("region:")
-            } else {
-                "All Regions"
-            }
-        )
-    }
+    // This state is now also locally controlled
+    var selectedRegionFilter by remember { mutableStateOf("All Regions") }
+
 
     val allSearchableLocations = remember(currentAllTrips) {
         val cities = currentAllTrips.map { "${it.city}, ${it.country}" }.distinct()
@@ -152,34 +145,31 @@ fun TripCatalogScreen(
         }
     }
 
+
     LaunchedEffect(searchFieldValue.text) {
-        delay(300) // Debounce
-        if (searchFieldValue.text != searchQueryFromViewModel) {
-            mapViewModel.updateSearchQuery(searchFieldValue.text)
-            currentPage = 1
+
+        if (searchFieldValue.text != mapViewModel.searchQuery.value) {
+            delay(300) // Debounce
         }
+
+        mapViewModel.updateSearchQuery(searchFieldValue.text)
+        currentPage = 1
     }
 
-    LaunchedEffect(searchQueryFromViewModel) {
-        if (searchFieldValue.text != searchQueryFromViewModel) {
-            searchFieldValue = TextFieldValue(searchQueryFromViewModel)
-        }
-    }
 
     LocationPermissionHandler(
         onPermissionGranted = {
             coroutineScope.launch {
-                val location: android.location.Location? = locationUtils.getCurrentLocation() // Ensure this returns Location?
+                val location: android.location.Location? = locationUtils.getCurrentLocation()
                 mapViewModel.updateUserLocation(location)
             }
         },
-        onPermissionDenied = { /* Handle denial if necessary */ }
+        onPermissionDenied = {  }
     ) { requestPermissionLambda, hasPermission ->
 
         Scaffold(
             floatingActionButton = {
                 FloatingActionButton(
-
                     onClick = { onNavigateToAddPlace() },
                     modifier = Modifier.padding(16.dp),
                     shape = CircleShape,
@@ -212,15 +202,12 @@ fun TripCatalogScreen(
                             onSearchQueryChange = { searchFieldValue = it },
                             suggestions = filteredSuggestions,
                             onSuggestionClick = { suggestion ->
+
                                 searchFieldValue = TextFieldValue(suggestion)
-                                mapViewModel.updateSearchQuery(suggestion)
-                                currentPage = 1
                                 showAdvancedFilters = false
                             },
                             onClearClick = {
                                 searchFieldValue = TextFieldValue("")
-                                mapViewModel.resetFilters()
-                                currentPage = 1
                                 showAdvancedFilters = false
                             },
                             placeholder = "Search destinations, cities..."
@@ -247,11 +234,8 @@ fun TripCatalogScreen(
                                             mapViewModel.updateUserLocation(location)
                                             location?.let { androidLocation ->
                                                 mapViewModel.moveMapToRegion(androidLocation.latitude, androidLocation.longitude, 12f)
-                                                val nearMeUserQuery = "Trips near you"
-                                                val nearMeInternalQuery = "near_me" // For VM logic
-                                                searchFieldValue = TextFieldValue(nearMeUserQuery) // Update UI
-                                                mapViewModel.updateSearchQuery(nearMeInternalQuery) // Trigger VM filter
-                                                currentPage = 1
+
+                                                searchFieldValue = TextFieldValue("near_me")
                                                 showAdvancedFilters = false
                                             }
                                         }
@@ -272,7 +256,7 @@ fun TripCatalogScreen(
                                 "${filteredTrips.size} trips found",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.weight(if (userLocationAddress != null) 0.6f else 1f) // Adjust weight
+                                modifier = Modifier.weight(if (userLocationAddress != null) 0.6f else 1f)
                             )
                             userLocationAddress?.let { address ->
                                 Text(
@@ -280,7 +264,7 @@ fun TripCatalogScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textAlign = TextAlign.End,
-                                    modifier = Modifier.weight(0.4f), // Adjust weight
+                                    modifier = Modifier.weight(0.4f),
                                     maxLines = 1, overflow = TextOverflow.Ellipsis
                                 )
                             }
@@ -304,16 +288,14 @@ fun TripCatalogScreen(
                                     Column(Modifier.padding(top = 8.dp)) {
                                         Text("Popular Destinations", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(bottom = 4.dp))
                                         LazyRow(
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp), // Correct named parameter
-                                            // contentPadding = PaddingValues(horizontal = 0.dp), // Optional, if you had it
-                                            modifier = Modifier.fillMaxWidth() // Correct named parameter
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            modifier = Modifier.fillMaxWidth()
                                         ) {
                                             items(popularDestinations) { (dest, count) ->
                                                 AssistChip(
                                                     onClick = {
+
                                                         searchFieldValue = TextFieldValue(dest)
-                                                        mapViewModel.updateSearchQuery(dest)
-                                                        currentPage = 1
                                                         showAdvancedFilters = false
                                                     },
                                                     label = { Text("$dest ($count)") },
@@ -324,7 +306,7 @@ fun TripCatalogScreen(
                                     }
                                 }
                                 if (regions.isNotEmpty()) {
-                                    Column(Modifier.padding(top = 12.dp)) { // Increased top padding
+                                    Column(Modifier.padding(top = 12.dp)) {
                                         Text("Filter by Region:", style = MaterialTheme.typography.labelMedium)
                                         Spacer(Modifier.height(4.dp))
                                         ExposedDropdownMenuBox(showRegionDropdown, { showRegionDropdown = !it }, Modifier.fillMaxWidth()) {
@@ -341,20 +323,19 @@ fun TripCatalogScreen(
                                                     text = { Text("All Regions") },
                                                     onClick = {
                                                         selectedRegionFilter = "All Regions"
-                                                        mapViewModel.resetFilters()
-                                                        searchFieldValue = TextFieldValue("") // Clear search field
-                                                        currentPage = 1; showRegionDropdown = false; showAdvancedFilters = false
+                                                        searchFieldValue = TextFieldValue("")
+                                                        showRegionDropdown = false
+                                                        showAdvancedFilters = false
                                                     }
                                                 )
                                                 regions.forEach { region ->
                                                     DropdownMenuItem(
                                                         text = { Text(region) },
                                                         onClick = {
-                                                            val regionQuery = "region:$region"
                                                             selectedRegionFilter = region
-                                                            searchFieldValue = TextFieldValue(regionQuery) // Update field
-                                                            mapViewModel.updateSearchQuery(regionQuery)   // Update VM
-                                                            currentPage = 1; showRegionDropdown = false; showAdvancedFilters = false
+                                                            searchFieldValue = TextFieldValue("region:$region")
+                                                            showRegionDropdown = false
+                                                            showAdvancedFilters = false
                                                         }
                                                     )
                                                 }
@@ -367,15 +348,16 @@ fun TripCatalogScreen(
                     }
                 }
 
-                Box(Modifier.fillMaxWidth().weight(1f)) { // Main content area for Map or List
+
+                Box(Modifier.fillMaxWidth().weight(1f)) {
                     if (isMapView) {
                         Card(
-                            Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp), // Consistent padding
+                            Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 8.dp),
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             MapView(
-                                trips = filteredTrips, // Pass the filtered list
+                                trips = filteredTrips,
                                 mapRegion = mapRegion,
                                 selectedTrip = selectedTrip,
                                 onTripMarkerClick = { mapViewModel.selectTrip(it) },
@@ -386,9 +368,9 @@ fun TripCatalogScreen(
                     } else {
                         LazyColumn(
                             Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                            contentPadding = PaddingValues(top = 8.dp, bottom = 72.dp) // Space for FAB
+                            contentPadding = PaddingValues(top = 8.dp, bottom = 72.dp)
                         ) {
-                            if (displayedTripsForList.isEmpty() && !isLoading && searchQueryFromViewModel.isNotEmpty()) {
+                            if (displayedTripsForList.isEmpty() && !isLoading && mapViewModel.searchQuery.value.isNotEmpty()) {
                                 item {
                                     Card(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
                                         Column(
@@ -417,7 +399,7 @@ fun TripCatalogScreen(
                                         }
                                     }
                                 }
-                            } else if (displayedTripsForList.isEmpty() && !isLoading && searchQueryFromViewModel.isEmpty()) {
+                            } else if (displayedTripsForList.isEmpty() && !isLoading && mapViewModel.searchQuery.value.isEmpty()) {
                                 item {
                                     Box(modifier = Modifier.fillParentMaxSize(), contentAlignment = Alignment.Center) {
                                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -441,7 +423,7 @@ fun TripCatalogScreen(
                                     )
                                     // Pagination logic
                                     if (index == displayedTripsForList.lastIndex && !isLoading && displayedTripsForList.size < filteredTrips.size) {
-                                        LaunchedEffect(index, filteredTrips.size) { // Keyed for safety
+                                        LaunchedEffect(index, filteredTrips.size) {
                                             isLoading = true; delay(1000); currentPage += 1; isLoading = false
                                         }
                                     }
@@ -458,20 +440,19 @@ fun TripCatalogScreen(
                         }
                     }
 
-                    // Selected Trip Info Card (Overlay for Map View) - Appears at the bottom
                     androidx.compose.animation.AnimatedVisibility(
                         visible = selectedTrip != null && isMapView,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
-                        enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(), // Slide up from half height
-                        exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut() // Slide down to half height
+                        enter = slideInVertically(initialOffsetY = { it / 2 }) + fadeIn(),
+                        exit = slideOutVertically(targetOffsetY = { it / 2 }) + fadeOut()
                     ) {
-                        selectedTrip?.let { trip -> // Safe call, though visibility condition already checks for null
+                        selectedTrip?.let { trip ->
                             Card(
                                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp), // Standard elevation
+                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                                 shape = RoundedCornerShape(16.dp)
                             ) {
                                 Column(Modifier.padding(16.dp)) {
@@ -494,7 +475,7 @@ fun TripCatalogScreen(
                                             modifier = Modifier.weight(1f).height(48.dp)
                                         ) { Text("View Details") }
                                         OutlinedButton(
-                                            onClick = { mapViewModel.selectTrip(null) }, // Deselect trip
+                                            onClick = { mapViewModel.selectTrip(null) },
                                             modifier = Modifier.weight(1f).height(48.dp),
                                             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                                         ) { Text("Close") }

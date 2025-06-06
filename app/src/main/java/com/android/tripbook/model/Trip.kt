@@ -1,14 +1,13 @@
 package com.android.tripbook.model
 import java.io.Serializable
 
-
-
 /**
  * Represents a travel trip entry in the Trip Catalog.
  * @param id Unique identifier for the trip
  * @param title The name of the trip or destination
  * @param description A brief summary of the trip
  * @param imageUrl Optional image to show for the trip
+ * extension  for map related fields
  */
 
 data class Trip(
@@ -21,9 +20,8 @@ data class Trip(
     val longitude: Double,
     val imageUrl: List<String>,
 
-    // Optional fields or fields with common defaults
-    val caption: String = "", // Optional caption, defaults to empty
-    val region: String? = null, // Optional region, defaults to null
+    val caption: String = "",
+    val region: String? = null,
 
 ): Serializable
 

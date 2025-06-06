@@ -4,8 +4,6 @@ package com.android.tripbook.data
 import com.android.tripbook.model.Trip
 
 object SampleTrips {
-    // Making 'trips' private to enforce usage of get() for read-only access from outside
-    // and addTrip() for modification, which can also handle ID generation.
     private val internalTrips = mutableListOf<Trip>()
 
     init {
@@ -21,9 +19,9 @@ object SampleTrips {
                     "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48=",
                     "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k="
                 ),
-                                  // Placeholder
-                latitude = 3.8480,                  // Yaoundé
-                longitude = 11.5021,                 // Yaoundé
+
+                latitude = 3.8480,
+                longitude = 11.5021,
                 city = "Yaoundé",
                 country = "Cameroon",
                 region = "Centre"
@@ -41,8 +39,8 @@ object SampleTrips {
                     "https://source.unsplash.com/800x600/?mountains"
                 ),
 
-                latitude = 4.1651,                  // Buea
-                longitude = 9.2921,                 // Buea
+                latitude = 4.1651,
+                longitude = 9.2921,
                 city = "Buea",
                 country = "Cameroon",
                 region = "Southwest"
@@ -58,8 +56,8 @@ object SampleTrips {
                     "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48=",
                     "https://media.gettyimages.com/id/141863081/fr/photo/kribi-cameroon-africa.jpg?s=1024x1024&w=gi&k=20&c=Pf5obkANbwDIJfAnkEEGf99sv4ykjtrB9PiYHY2LJ4k="
                 ),
-                latitude = 2.9407,                  // Kribi
-                longitude = 9.9098,                 // Kribi
+                latitude = 2.9407,
+                longitude = 9.9098,
                 city = "Kribi",
                 country = "Cameroon",
                 region = "South"
@@ -77,8 +75,8 @@ object SampleTrips {
                     "https://source.unsplash.com/800x600/?mountains"
                 ),
 
-                latitude = 5.9639,                  // Bamenda
-                longitude = 10.1591,                 // Bamenda
+                latitude = 5.9639,
+                longitude = 10.1591,
                 city = "Bamenda",
                 country = "Cameroon",
                 region = "Northwest"
@@ -86,7 +84,7 @@ object SampleTrips {
         ))
     }
 
-    fun get(): List<Trip> = internalTrips.toList() // Return an immutable copy
+    fun get(): List<Trip> = internalTrips.toList()
 
     fun addTrip(trip: Trip) {
         internalTrips.add(trip)

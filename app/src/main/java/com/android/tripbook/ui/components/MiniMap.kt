@@ -1,4 +1,3 @@
-
 package com.android.tripbook.ui.components
 
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,7 @@ fun MiniMap(
     modifier: Modifier = Modifier,
     height: Int = 200
 ) {
-    val context = LocalContext.current
+    LocalContext.current
 
     AndroidView(
         factory = { ctx ->

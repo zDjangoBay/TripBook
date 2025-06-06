@@ -8,7 +8,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.tasks.await
 
-class LocationUtils(private val context: Context) {
+class LocationUtils(context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
@@ -27,6 +27,6 @@ class LocationUtils(private val context: Context) {
     ): Float {
         val results = FloatArray(1)
         Location.distanceBetween(lat1, lon1, lat2, lon2, results)
-        return results[0] / 1000 // Convert to kilometers
+        return results[0] / 1000
     }
 }

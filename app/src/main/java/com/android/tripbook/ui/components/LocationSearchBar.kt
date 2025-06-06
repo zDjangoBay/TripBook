@@ -15,7 +15,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun LocationSearchBar(
     searchQuery: TextFieldValue,
@@ -60,7 +60,7 @@ fun LocationSearchBar(
             singleLine = true
         )
 
-        // Suggestions dropdown
+
         if (isExpanded && suggestions.isNotEmpty()) {
             Card(
                 modifier = Modifier

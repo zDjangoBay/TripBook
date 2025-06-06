@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 
 class MockTripViewModel : ViewModel() {
 
-    // Initialize with SampleTrips or an empty list if SampleTrips isn't used for initial state here
     private val _trips = MutableStateFlow<List<Trip>>(SampleTrips.get())
     val trips: StateFlow<List<Trip>> = _trips
 
@@ -21,9 +20,7 @@ class MockTripViewModel : ViewModel() {
         _trips.value.find { it.id == id }
 
     fun addReview(review: Review) {
-        // Placeholder: Implement review adding logic
-        // For example, find the trip and add the review to it, then update _trips
-        // This is complex and depends on how reviews are associated with trips
+
         Log.d("MockTripViewModel", "addReview called with: $review (Not yet implemented)")
     }
 

@@ -139,7 +139,7 @@ fun MainNavGraph(
 
 
 
-        // Ensure you have a composable route defined for "addPlaceRoute" that shows his AddPlaceScreen
+
         composable(
             route = "addPlace/{tripId}", // This route expects a tripId argument
             arguments = listOf(navArgument("tripId") { type = NavType.StringType })

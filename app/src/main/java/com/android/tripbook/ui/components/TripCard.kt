@@ -15,7 +15,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Trip
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun TripCard(
     trip: Trip, // <<<< THIS MUST BE YOUR UNIFIED TRIP MODEL

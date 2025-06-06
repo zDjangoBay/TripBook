@@ -48,7 +48,7 @@ fun AddPlaceScreen(
     var region by remember { mutableStateOf("") }
 
     var selectedImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(false) } // For geocoding loading state
+    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -90,7 +90,7 @@ fun AddPlaceScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Trip Title / Specific Place Name*") }, // Clarified label
+                label = { Text("Trip Title / Specific Place Name*") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
