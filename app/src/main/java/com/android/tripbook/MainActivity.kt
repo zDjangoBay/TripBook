@@ -13,12 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.ui.UserProfileScreen // Import the UserProfileScreen function
+//import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            //UserProfileNdeDilanEntryPoint( )
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     // Calling the UserProfileScreen composable
@@ -33,6 +35,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     TripBookTheme {
-        Text(text = "Hello Android")
+        //Greeting("Android")
     }
 }

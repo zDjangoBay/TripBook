@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
     //id("org.jetbrains.kotlin.kapt") // Direct ID to avoid classpath conflict
     alias(libs.plugins.ksp) // Replaced kapt with ksp
 }
@@ -88,4 +89,33 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.material)
+
+
+    // Compose
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.material3)
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // SavedState -
+    implementation(libs.androidx.savedstate)
+    implementation(libs.androidx.savedstate.ktx)
+
+    implementation(libs.androidx.datastore.preferences)
+
+    // Coil for image loading
+    implementation(libs.coil.compose)
+
+    // Date picker
+    implementation(libs.androidx.compose.material3.material3)
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(project(":userprofile"))
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-auth-ktx")
 }
