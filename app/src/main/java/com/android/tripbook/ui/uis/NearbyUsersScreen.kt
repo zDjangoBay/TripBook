@@ -235,11 +235,16 @@ fun NearbyUsersScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(users.filter { user ->
-                        searchText.isEmpty() ||
-                                user.name.contains(searchText, ignoreCase = true) ||
-                                user.destination.contains(searchText, ignoreCase = true)
-                    }) { user ->
+                    items(
+                        users.filter { user ->
+                            if (searchText.isEmpty()) true
+                            else user.name.contains(searchText, ignoreCase = true) ||
+                                    user.destination.contains(searchText, ignoreCase = true)
+                        }.takeIf { searchText.isEmpty() }?.take(4) ?: users.filter { user ->
+                            user.name.contains(searchText, ignoreCase = true) ||
+                                    user.destination.contains(searchText, ignoreCase = true)
+                        }
+                    ) { user ->
                         UserCard(user = user)
                     }
                 }
@@ -266,7 +271,6 @@ fun UserCard(user: User) {
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
-
             Text(
                 text = user.name,
                 fontSize = 18.sp,
