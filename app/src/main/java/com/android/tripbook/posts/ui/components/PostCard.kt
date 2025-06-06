@@ -13,40 +13,36 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material3.*
+import androidx.compose.material3.* // Pour MaterialTheme, Card, Column, Text, etc.
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.painterResource // Pour painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview // Pour @Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.AsyncImage // Pour AsyncImage
+
 import com.android.tripbook.posts.model.PostModel
 import com.android.tripbook.posts.model.ImageModel
-import com.android.tripbook.posts.model.Comment
+import com.android.tripbook.data.model.TravelLocation // Import canonique pour TravelLocation
+import com.android.tripbook.data.model.Comment // Import canonique pour Comment
+import com.android.tripbook.posts.model.PostVisibility // Import pour PostVisibility
 
-import com.android.tripbook.data.model.TravelLocation
-import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.theme.TripBookTheme // Import pour le thème de la Preview
+
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import android.net.Uri
-import com.android.tripbook.posts.model.PostVisibility
+import android.net.Uri // Pour ImageModel Uri
 
 
-object R {
-    object drawable {
-        const val ic_avatar_placeholder = android.R.drawable.sym_def_app_icon
-    }
-}
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCard(
     post: PostModel,
@@ -78,9 +74,9 @@ fun PostCard(
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentScale = ContentScale.Crop,
+                    // Utilise R.drawable de notre projet TripBook
                     error = painterResource(id = com.android.tripbook.R.drawable.ic_avatar_placeholder),
                     placeholder = painterResource(id = com.android.tripbook.R.drawable.ic_avatar_placeholder)
-
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -130,7 +126,24 @@ fun PostCard(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-
+            if (post.location.name.isNotBlank() || post.location.description?.isNotBlank() == true) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = "Location",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        // Affiche le nom et la description de TravelLocation
+                        text = "${post.location.name}" + (post.location.description?.let { ", $it" } ?: ""),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
             if (post.images.isNotEmpty()) {
                 LazyRow(
@@ -169,7 +182,7 @@ fun PostCard(
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-            Divider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+            HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)) // Renommé Divider
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -220,11 +233,6 @@ fun PostCard(
         }
     }
 }
-
-fun <TextStyle> Text(style: TextStyle, color: androidx.compose.ui.graphics.Color) {
-
-}
-
 
 
 
