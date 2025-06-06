@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,11 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Agency
 import com.android.tripbook.viewmodel.AgencyViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun AllAgenciesScreen(
@@ -39,6 +44,7 @@ fun AllAgenciesScreen(
     val agencies by agencyViewModel.agencies.collectAsState()
     val isLoading by agencyViewModel.isLoading.collectAsState()
     val error by agencyViewModel.error.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
 
     var searchQuery by remember { mutableStateOf("") }
 
@@ -130,56 +136,128 @@ fun AllAgenciesScreen(
                 )
             )
 
-            if (isLoading) {
+            if (!error.isNullOrEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "Connection Error",
+                            tint = Color(0xFFDC2626),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Connection Lost",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1F2937),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = error!!,
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = {
+                                coroutineScope.launch {
+                                    delay(500)
+                                    agencyViewModel.loadAgencies()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF667EEA)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retrying...",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retry",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            } else if (isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = Color.White)
                 }
-            }
-
-            error?.let { errorMessage ->
-                Column(
+            } else if (filteredAgencies.isEmpty() && searchQuery.isNotEmpty()) {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
                 ) {
-                    Text(
-                        text = if (errorMessage.contains("Unable to resolve host", ignoreCase = true) ||
-                            errorMessage.contains("Network error", ignoreCase = true)) {
-                            "Connection lost. Please check your internet and try again."
-                        } else {
-                            errorMessage
-                        },
-                        color = Color.Red,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    Button(
-                        onClick = { agencyViewModel.loadAgencies() },
+                    Column(
                         modifier = Modifier
-                            .width(160.dp)
-                            .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF667EEA)
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "No Agencies Found",
+                            tint = Color(0xFFDC2626),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Retry Connection",
+                            text = "No Agencies Found",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1F2937),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "No agencies match your search for \"$searchQuery\".",
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
                 }
-            }
-
-            if (error == null && !isLoading) {
+            } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -224,14 +302,14 @@ fun AgencyCard(
                 text = agency.agencyName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C)
+                color = Color(0xFF1F2937)
             )
 
             agency.agencyDescription?.let { description ->
                 Text(
                     text = description,
                     fontSize = 14.sp,
-                    color = Color(0xFF64748B),
+                    color = Color(0xFF6B7280),
                     modifier = Modifier.padding(top = 8.dp),
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -258,7 +336,7 @@ fun AgencyCard(
                         Text(
                             text = address,
                             fontSize = 14.sp,
-                            color = Color(0xFF64748B),
+                            color = Color(0xFF6B7280),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -286,7 +364,7 @@ fun AgencyCard(
                         Text(
                             text = phone,
                             fontSize = 14.sp,
-                            color = Color(0xFF64748B),
+                            color = Color(0xFF6B7280),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
