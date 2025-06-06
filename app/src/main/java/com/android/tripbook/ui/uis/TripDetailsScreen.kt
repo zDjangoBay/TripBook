@@ -839,13 +839,16 @@ private fun JournalTab(trip: Trip) {
     var journalEntries by remember { mutableStateOf(trip.journalEntries ?: emptyList()) }
     var showAddEntryDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    var filteredEntries by remember(journalEntries, searchQuery) { 
+    var selectedMoodFilter by remember { mutableStateOf<Mood?>(null) }
+    
+    var filteredEntries by remember(journalEntries, searchQuery, selectedMoodFilter) { 
         mutableStateOf(
-            if (searchQuery.isEmpty()) journalEntries
-            else journalEntries.filter { entry ->
-                entry.title.contains(searchQuery, ignoreCase = true) ||
-                entry.content.contains(searchQuery, ignoreCase = true) ||
-                entry.tags.any { it.contains(searchQuery, ignoreCase = true) }
+            journalEntries.filter { entry ->
+                (searchQuery.isEmpty() || 
+                 entry.title.contains(searchQuery, ignoreCase = true) ||
+                 entry.content.contains(searchQuery, ignoreCase = true) ||
+                 entry.tags.any { it.contains(searchQuery, ignoreCase = true) }) &&
+                (selectedMoodFilter == null || entry.mood == selectedMoodFilter)
             }
         )
     }
@@ -918,6 +921,63 @@ private fun JournalTab(trip: Trip) {
                 cursorColor = Color(0xFF667EEA)
             )
         )
+        
+        // Mood filter
+        if (journalEntries.isNotEmpty()) {
+            Text(
+                text = "Filter by mood:",
+                fontSize = 14.sp,
+                color = Color(0xFF64748B),
+                modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
+            )
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // "All" option
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.clickable { selectedMoodFilter = null }
+                ) {
+                    Text(
+                        text = "🔍",
+                        fontSize = 24.sp,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
+                    Text(
+                        text = "All",
+                        fontSize = 12.sp,
+                        color = if (selectedMoodFilter == null) Color(0xFF667EEA) else Color(0xFF64748B),
+                        fontWeight = if (selectedMoodFilter == null) FontWeight.Bold else FontWeight.Normal
+                    )
+                }
+                
+                // Mood options
+                Mood.values().forEach { mood ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.clickable { 
+                            selectedMoodFilter = if (selectedMoodFilter == mood) null else mood
+                        }
+                    ) {
+                        Text(
+                            text = mood.icon,
+                            fontSize = 24.sp,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        Text(
+                            text = mood.name.lowercase().capitalize(),
+                            fontSize = 12.sp,
+                            color = if (selectedMoodFilter == mood) Color(0xFF667EEA) else Color(0xFF64748B),
+                            fontWeight = if (selectedMoodFilter == mood) FontWeight.Bold else FontWeight.Normal
+                        )
+                    }
+                }
+            }
+        }
         
         // Journal entries list
         if (filteredEntries.isEmpty()) {
@@ -1127,7 +1187,23 @@ private fun JournalEntryCard(entry: JournalEntry) {
                         tint = Color(0xFF94A3B8),
                         modifier = Modifier
                             .size(20.dp)
-                            .clickable { /* Share functionality */ }
+                            .clickable { 
+                                // Share functionality
+                                val shareIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_SUBJECT, entry.title)
+                                    putExtra(Intent.EXTRA_TEXT, 
+                                        "Travel Journal: ${entry.title}\n\n" +
+                                        "${entry.date.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}\n\n" +
+                                        "${entry.content}\n\n" +
+                                        "Mood: ${entry.mood.icon}\n" +
+                                        if (entry.tags.isNotEmpty()) "Tags: ${entry.tags.joinToString(", ") { "#$it" }}" else ""
+                                    )
+                                    type = "text/plain"
+                                }
+                                // This will be handled by the Activity
+                                // context.startActivity(Intent.createChooser(shareIntent, "Share Journal Entry"))
+                            }
                     )
                 }
             }
@@ -1149,6 +1225,15 @@ private fun JournalEntryDialog(
     var tags by remember { mutableStateOf("") }
     var photos by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var showTagInput by remember { mutableStateOf(false) }
+    
+    // Photo picker launcher
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            photos = photos + uris
+        }
+    }
     
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -1319,9 +1404,9 @@ private fun JournalEntryDialog(
                     }
                 }
                 
-                // Photo upload button
+                // Photo upload button - now functional
                 Button(
-                    onClick = { /* Photo upload functionality */ },
+                    onClick = { photoPickerLauncher.launch("image/*") },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
@@ -1336,7 +1421,46 @@ private fun JournalEntryDialog(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Photos")
+                    Text("Add Photos (${photos.size})")
+                }
+                
+                // Display selected photos
+                if (photos.isNotEmpty()) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        items(photos) { photoUri ->
+                            Box(
+                                modifier = Modifier.size(60.dp)
+                            ) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(photoUri),
+                                    contentDescription = "Selected photo",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                                
+                                // Remove photo button
+                                IconButton(
+                                    onClick = { photos = photos - photoUri },
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .align(Alignment.TopEnd)
+                                        .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Remove photo",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
                 
                 // Action buttons
