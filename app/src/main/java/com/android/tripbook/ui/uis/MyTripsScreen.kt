@@ -52,6 +52,23 @@ fun MyTripsScreen(
     val error by tripViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("All") }
+    var filterStartDate by remember { mutableStateOf<LocalDate?>(null) }
+    var filterEndDate by remember { mutableStateOf<LocalDate?>(null) }
+    var filterMinBudget by remember { mutableStateOf("") }
+    var filterMaxBudget by remember { mutableStateOf("") }
+    var filterDestination by remember { mutableStateOf("") }
+    var filterMinTravelers by remember { mutableStateOf("") }
+    var filterMaxTravelers by remember { mutableStateOf("") }
+    var filterStatus by remember { mutableStateOf("Any") }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    // Add DatePickerState for start and end
+    val startDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = filterStartDate?.atStartOfDay(TimeZone.getDefault().toZoneId())?.toEpochSecond()?.times(1000)
+    )
+    val endDatePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = filterEndDate?.atStartOfDay(TimeZone.getDefault().toZoneId())?.toEpochSecond()?.times(1000)
+    )
 
     Box(
         modifier = Modifier
