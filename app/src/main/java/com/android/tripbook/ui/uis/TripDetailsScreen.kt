@@ -31,6 +31,28 @@ import com.google.maps.android.compose.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.material3.Chip
+import androidx.compose.material3.ChipDefaults
+import androidx.compose.material3.Dialog
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import coil.compose.rememberAsyncImagePainter
+import com.android.tripbook.model.JournalEntry
+import com.android.tripbook.model.Mood
+import com.android.tripbook.model.Privacy
+import java.util.UUID
+import androidx.compose.ui.layout.ContentScale
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.content.Intent
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 
 @Composable
@@ -120,7 +142,7 @@ fun TripDetailsScreen(
                             .padding(top = 20.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        listOf("Overview", "Itinerary", "Map", "Expenses").forEach { tab ->
+                        listOf("Overview", "Itinerary", "Map", "Expenses", "Journal").forEach { tab ->
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
@@ -166,6 +188,7 @@ fun TripDetailsScreen(
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
                             "Map" -> MapTab(trip) // New Map tab
                             "Expenses" -> ExpensesTab(trip)
+                            "Journal" -> JournalTab(trip)
                         }
                     }
                 }
@@ -810,3 +833,550 @@ private data class ExpenseItem(
     val description: String,
     val amount: String
 )
+
+@Composable
+private fun JournalTab(trip: Trip) {
+    var journalEntries by remember { mutableStateOf(trip.journalEntries ?: emptyList()) }
+    var showAddEntryDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    var filteredEntries by remember(journalEntries, searchQuery) { 
+        mutableStateOf(
+            if (searchQuery.isEmpty()) journalEntries
+            else journalEntries.filter { entry ->
+                entry.title.contains(searchQuery, ignoreCase = true) ||
+                entry.content.contains(searchQuery, ignoreCase = true) ||
+                entry.tags.any { it.contains(searchQuery, ignoreCase = true) }
+            }
+        )
+    }
+    
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Journal header with add button
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Travel Journal",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A202C)
+            )
+            
+            Button(
+                onClick = { showAddEntryDialog = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF667EEA)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Add Entry",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
+            }
+        }
+        
+        // Search bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            placeholder = { Text("Search journal entries...") },
+            leadingIcon = { 
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = Color(0xFF94A3B8)
+                )
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear search",
+                            tint = Color(0xFF94A3B8)
+                        )
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF667EEA),
+                unfocusedBorderColor = Color(0xFFE2E8F0),
+                cursorColor = Color(0xFF667EEA)
+            )
+        )
+        
+        // Journal entries list
+        if (filteredEntries.isEmpty()) {
+            if (searchQuery.isNotEmpty()) {
+                // No search results
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.SearchOff,
+                        contentDescription = "No results",
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(bottom = 8.dp),
+                        tint = Color(0xFFCBD5E0)
+                    )
+                    Text(
+                        text = "No entries found",
+                        fontSize = 16.sp,
+                        color = Color(0xFF64748B)
+                    )
+                }
+            } else {
+                // Empty journal
+                EmptyJournalView()
+            }
+        } else {
+            JournalEntriesList(filteredEntries)
+        }
+    }
+    
+    // Add entry dialog
+    if (showAddEntryDialog) {
+        JournalEntryDialog(
+            onDismiss = { showAddEntryDialog = false },
+            onSave = { newEntry ->
+                journalEntries = journalEntries + newEntry
+                showAddEntryDialog = false
+            },
+            trip = trip
+        )
+    }
+}
+
+@Composable
+private fun EmptyJournalView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Book,
+            contentDescription = "Empty Journal",
+            modifier = Modifier
+                .size(80.dp)
+                .padding(bottom = 16.dp),
+            tint = Color(0xFFCBD5E0)
+        )
+        Text(
+            text = "Your journal is empty",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF64748B),
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "Start documenting your adventure by adding your first entry",
+            fontSize = 14.sp,
+            color = Color(0xFF94A3B8),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp, start = 32.dp, end = 32.dp)
+        )
+    }
+}
+
+@Composable
+private fun JournalEntriesList(entries: List<JournalEntry>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(entries) { entry ->
+            JournalEntryCard(entry)
+        }
+    }
+}
+
+@Composable
+private fun JournalEntryCard(entry: JournalEntry) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Header with date and mood
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = entry.date.format(DateTimeFormatter.ofPattern("MMM d, yyyy")),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF667EEA)
+                )
+                
+                Text(
+                    text = entry.mood.icon,
+                    fontSize = 20.sp
+                )
+            }
+            
+            // Title
+            Text(
+                text = entry.title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A202C),
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            
+            // Content
+            Text(
+                text = entry.content,
+                fontSize = 14.sp,
+                color = Color(0xFF4A5568),
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
+            
+            // Photos if available
+            if (entry.photos.isNotEmpty()) {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    items(entry.photos) { photoUri ->
+                        Image(
+                            painter = rememberAsyncImagePainter(photoUri),
+                            contentDescription = "Journal photo",
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+            
+            // Tags and privacy
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Tags
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    items(entry.tags) { tag ->
+                        Chip(
+                            onClick = { },
+                            colors = ChipDefaults.chipColors(
+                                containerColor = Color(0xFFF1F5F9)
+                            ),
+                            label = {
+                                Text(
+                                    text = "#$tag",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFF64748B)
+                                )
+                            }
+                        )
+                    }
+                }
+                
+                // Privacy and share
+                Row {
+                    Icon(
+                        imageVector = when (entry.privacy) {
+                            Privacy.PUBLIC -> Icons.Default.Public
+                            Privacy.FRIENDS -> Icons.Default.Group
+                            Privacy.PRIVATE -> Icons.Default.Lock
+                        },
+                        contentDescription = "Privacy setting",
+                        tint = Color(0xFF94A3B8),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share entry",
+                        tint = Color(0xFF94A3B8),
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clickable { /* Share functionality */ }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun JournalEntryDialog(
+    onDismiss: () -> Unit,
+    onSave: (JournalEntry) -> Unit,
+    trip: Trip
+) {
+    var title by remember { mutableStateOf("") }
+    var content by remember { mutableStateOf("") }
+    var selectedMood by remember { mutableStateOf(Mood.HAPPY) }
+    var selectedPrivacy by remember { mutableStateOf(Privacy.PRIVATE) }
+    var tags by remember { mutableStateOf("") }
+    var photos by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var showTagInput by remember { mutableStateOf(false) }
+    
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Dialog header
+                Text(
+                    text = "New Journal Entry",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1A202C),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                // Date display
+                Text(
+                    text = "Date: ${LocalDate.now().format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                // Title input
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF667EEA),
+                        focusedLabelColor = Color(0xFF667EEA)
+                    )
+                )
+                
+                // Content input
+                OutlinedTextField(
+                    value = content,
+                    onValueChange = { content = it },
+                    label = { Text("What happened today?") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .padding(bottom = 12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFF667EEA),
+                        focusedLabelColor = Color(0xFF667EEA)
+                    )
+                )
+                
+                // Mood selection
+                Text(
+                    text = "How was your day?",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF4A5568),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Mood.values().forEach { mood ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable { selectedMood = mood }
+                        ) {
+                            Text(
+                                text = mood.icon,
+                                fontSize = 24.sp,
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            RadioButton(
+                                selected = selectedMood == mood,
+                                onClick = { selectedMood = mood },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = Color(0xFF667EEA)
+                                )
+                            )
+                        }
+                    }
+                }
+                
+                // Privacy setting
+                Text(
+                    text = "Privacy Setting",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF4A5568),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Privacy.values().forEach { privacy ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.clickable { selectedPrivacy = privacy }
+                        ) {
+                            Icon(
+                                imageVector = when (privacy) {
+                                    Privacy.PUBLIC -> Icons.Default.Public
+                                    Privacy.FRIENDS -> Icons.Default.Group
+                                    Privacy.PRIVATE -> Icons.Default.Lock
+                                },
+                                contentDescription = privacy.name,
+                                tint = if (selectedPrivacy == privacy) Color(0xFF667EEA) else Color(0xFF94A3B8),
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
+                            Text(
+                                text = privacy.name.lowercase().capitalize(),
+                                fontSize = 12.sp,
+                                color = if (selectedPrivacy == privacy) Color(0xFF667EEA) else Color(0xFF64748B)
+                            )
+                        }
+                    }
+                }
+                
+                // Tags input
+                if (showTagInput) {
+                    OutlinedTextField(
+                        value = tags,
+                        onValueChange = { tags = it },
+                        label = { Text("Tags (comma separated)") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color(0xFF667EEA),
+                            focusedLabelColor = Color(0xFF667EEA)
+                        )
+                    )
+                } else {
+                    TextButton(
+                        onClick = { showTagInput = true },
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Tag,
+                            contentDescription = "Add tags",
+                            tint = Color(0xFF667EEA),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Add tags",
+                            color = Color(0xFF667EEA),
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+                
+                // Photo upload button
+                Button(
+                    onClick = { /* Photo upload functionality */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF1F5F9),
+                        contentColor = Color(0xFF4A5568)
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AddAPhoto,
+                        contentDescription = "Add photos",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Add Photos")
+                }
+                
+                // Action buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = Color(0xFF64748B)
+                        )
+                    ) {
+                        Text("Cancel")
+                    }
+                    
+                    Button(
+                        onClick = {
+                            if (title.isNotBlank() && content.isNotBlank()) {
+                                val newEntry = JournalEntry(
+                                    id = UUID.randomUUID().toString(),
+                                    date = LocalDate.now(),
+                                    title = title,
+                                    content = content,
+                                    mood = selectedMood,
+                                    privacy = selectedPrivacy,
+                                    tags = if (tags.isBlank()) emptyList() else tags.split(",").map { it.trim() },
+                                    photos = photos
+                                )
+                                onSave(newEntry)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF667EEA)
+                        )
+                    ) {
+                        Text("Save")
+                    }
+                }
+            }
+        }
+    }
+}
