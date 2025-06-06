@@ -99,6 +99,7 @@ data class SupabaseItineraryItem(
     val time: String,
     val title: String,
     val location: String,
+    val type: String, // Added missing type property
     val notes: String = "",
     val description: String = "",
     val duration: String = "",
