@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.viewmodel.TripViewModel
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,16 +37,16 @@ fun TripListScreen(
             val sampleTrip1 = Trip(
                 id = "sample_trip_123",
                 destination = "Paris, France",
-                startDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
-                endDate = System.currentTimeMillis() + (14 * 24 * 60 * 60 * 1000), // 14 days from now
-                budget = 2500.0
+                startDate = LocalDate.now().plusDays(7), // 7 days from now
+                endDate = LocalDate.now().plusDays(14), // 14 days from now
+                budget = 2500
             )
             val sampleTrip2 = Trip(
                 id = "sample_trip_456",
                 destination = "Tokyo, Japan",
-                startDate = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000), // 30 days from now
-                endDate = System.currentTimeMillis() + (45 * 24 * 60 * 60 * 1000), // 45 days from now
-                budget = 3000.0
+                startDate = LocalDate.now().plusDays(30), // 30 days from now
+                endDate = LocalDate.now().plusDays(45), // 45 days from now
+                budget = 3000
             )
             tripViewModel.insert(sampleTrip1)
             tripViewModel.insert(sampleTrip2)
