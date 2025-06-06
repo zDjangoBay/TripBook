@@ -4,14 +4,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.PostModel
-import com.android.tripbook.posts.model.Location
+// Import des modèles canoniques
+import com.android.tripbook.data.model.TravelLocation
+import com.android.tripbook.data.model.Comment
 import com.android.tripbook.posts.model.ImageModel
 import com.android.tripbook.posts.model.PostVisibility
 import com.android.tripbook.posts.ui.components.PostCard
@@ -28,7 +30,7 @@ fun PinnedPostsScreen(pinnedPosts: List<PostModel>, onPostClick: (PostModel) -> 
                 title = { Text("Pinned Posts") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -78,7 +80,7 @@ fun PreviewPinnedPostsScreen() {
                 title = "My Dream Itinerary for Europe!",
                 description = "A comprehensive guide covering 10 countries in 30 days. Tips, tricks, and hidden gems included!",
                 images = listOf(ImageModel("img1_euro", Uri.parse("https://via.placeholder.com/300/FFFF00/000000?text=Europe"))),
-                location = Location("loc_euro", "Europe", "Multiple", "Europe", null),
+                location = TravelLocation(id = "loc_euro", name = "Europe", latitude = 0.0, longitude = 0.0, description = "Multiple countries, Europe", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(86400 * 30),
                 lastEditedAt = Instant.now().minusSeconds(86400 * 5),
@@ -87,7 +89,7 @@ fun PreviewPinnedPostsScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = listOf("user_a", "user_b", "user_c"),
-                comments = emptyList()
+                comments = emptyList<Comment>() // Utilise la classe Comment canonique
             )
         )
         PinnedPostsScreen(pinnedPosts = samplePinnedPosts, onPostClick = {}, onBack = {})
