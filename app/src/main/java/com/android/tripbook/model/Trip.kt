@@ -11,12 +11,11 @@ enum class ItineraryType {
     ACTIVITY, ACCOMMODATION, TRANSPORTATION
 }
 
-// Location data classes for Maps integration
 data class Location(
     val latitude: Double,
     val longitude: Double,
     val address: String = "",
-    val placeId: String = "" // For Places API
+    val placeId: String = ""
 )
 
 data class RouteInfo(
@@ -33,9 +32,8 @@ data class ItineraryItem(
     val type: ItineraryType,
     val notes: String = "",
     val agencyService: AgencyService? = null,
-    // New fields for Maps integration
     val coordinates: Location? = null,
-    val routeToNext: RouteInfo? = null // Route to next itinerary item
+    val routeToNext: RouteInfo? = null
 )
 
 data class Trip(
@@ -49,11 +47,13 @@ data class Trip(
     val status: TripStatus = TripStatus.PLANNED,
     val type: String = "",
     val description: String = "",
+
+    // TODO: Replace List<String> with proper models if needed
     val activities: List<String> = emptyList(),
     val expenses: List<String> = emptyList(),
     val travelersList: List<String> = emptyList(),
+
     val itinerary: List<ItineraryItem> = emptyList(),
-    // New fields for Maps integration
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null
 )

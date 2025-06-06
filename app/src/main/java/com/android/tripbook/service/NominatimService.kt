@@ -1,6 +1,5 @@
 package com.android.tripbook.service
 
-
 import com.google.gson.annotations.SerializedName
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,8 +23,7 @@ interface NominatimApi {
     suspend fun searchPlaces(
         @Query("q") query: String,
         @Query("format") format: String = "json",
-        @Query("limit") limit: Int = 5,
-        @Query("featuretype") featureType: String = "monument,viewpoint,tourist_attraction"
+        @Query("limit") limit: Int = 10
     ): List<NominatimPlace>
 }
 
@@ -39,11 +37,15 @@ class NominatimService {
 
     suspend fun getNearbyAttractions(query: String): List<Attraction> {
         return try {
-            val places = api.searchPlaces(query = "$query tourist attraction")
+            val places = api.searchPlaces(query = query)
             places.mapNotNull { place ->
                 val name = place.displayName.split(",")[0].trim()
                 val location = place.displayName
-                if (name.isNotEmpty() && location.isNotEmpty() && place.type in listOf("monument", "viewpoint", "tourist_attraction")) {
+                if (
+                    name.isNotEmpty() &&
+                    location.isNotEmpty() &&
+                    place.type in listOf("monument", "viewpoint", "tourist_attraction")
+                ) {
                     Attraction(name, location)
                 } else null
             }.distinctBy { it.name }.take(5)
