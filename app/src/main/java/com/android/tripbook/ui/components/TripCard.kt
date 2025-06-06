@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-//import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -13,6 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.User
 
 /**
  * Renders a single trip card with image, title, and description.
@@ -23,8 +23,17 @@ import com.android.tripbook.model.Trip
 fun TripCard(
     trip: Trip,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    miniProfileContent: @Composable (() -> Unit)? = null
 ) {
+    // For demo: create a mock list of users for each trip (replace with real user data in production)
+    val users = listOf(
+        User("alice", "https://randomuser.me/api/portraits/women/1.jpg", "Alice"),
+        User("bob", "https://randomuser.me/api/portraits/men/2.jpg", "Bob"),
+        User("carol", "https://randomuser.me/api/portraits/women/3.jpg", "Carol"),
+        User("dan", "https://randomuser.me/api/portraits/men/4.jpg", "Dan"),
+        User("eve", "https://randomuser.me/api/portraits/women/5.jpg", "Eve")
+    )
     Card(
         onClick = onClick,
         modifier = modifier
@@ -47,6 +56,8 @@ fun TripCard(
                     .clip(RoundedCornerShape(8.dp))
             )
             Spacer(modifier = Modifier.height(12.dp))
+            miniProfileContent?.invoke()
+            Spacer(modifier = Modifier.height(8.dp))
             Text(text = trip.title, style = MaterialTheme.typography.titleMedium)
             Text(
                 text = trip.caption,

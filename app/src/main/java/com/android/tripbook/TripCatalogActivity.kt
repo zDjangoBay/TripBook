@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.android.tripbook.ui.components.BaseScaffold
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class TripCatalogActivity : ComponentActivity() {
@@ -22,14 +21,28 @@ class TripCatalogActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                val navController = rememberNavController()
-                var isLoading by remember { mutableStateOf(false) }
-
-                BaseScaffold(
-                    navController = navController,
-                    isLoading = isLoading
-                ) { }
+                TripCatalogScreen()
             }
+        }
+    }
+}
+
+@Composable
+fun TripCatalogScreen() {
+    val navController = rememberNavController()
+    var isLoading by remember { mutableStateOf(false) }
+
+    Scaffold { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Trip Catalog",
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
     }
 }
