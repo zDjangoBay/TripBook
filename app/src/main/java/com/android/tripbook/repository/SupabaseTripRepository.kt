@@ -36,6 +36,7 @@ class SupabaseTripRepository {
             Log.d(TAG, "Loading trips from Supabase...")
             
             // Fetch trips from Supabase
+            // This fetch is not based on any cryteria becuase there are no users yet so no filtering is not needed
             val tripsResponse = supabase.from(TRIPS_TABLE)
                 .select()
                 .decodeList<SupabaseTrip>()
