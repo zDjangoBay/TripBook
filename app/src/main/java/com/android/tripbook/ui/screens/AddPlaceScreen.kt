@@ -19,7 +19,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -72,7 +71,7 @@ fun AddPlaceScreen(
             TopAppBar(
                 title = { Text("Add New Trip Destination") },
                 navigationIcon = {
-                    IconButton(onClick = { if (!isLoading) onBack() }) { // Prevent back while loading
+                    IconButton(onClick = { if (!isLoading) onBack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -192,14 +191,13 @@ fun AddPlaceScreen(
 
             Spacer(modifier = Modifier.weight(1f, fill = false))
 
+            // custom implementation of geolocations using some fields
             Button(
                 onClick = {
                     isLoading = true
                     CoroutineScope(Dispatchers.Main).launch {
                         var fetchedLatitude = 0.0
                         var fetchedLongitude = 0.0
-                        var geocodingAttempted = false
-                        var geocodingSuccess = false
 
                         // Construct a descriptive address string for better geocoding results
                         val addressParts = mutableListOf<String>()
@@ -210,7 +208,6 @@ fun AddPlaceScreen(
                         val addressString = addressParts.joinToString(", ")
 
                         if (addressString.isNotBlank()) {
-                            geocodingAttempted = true
                             if (Geocoder.isPresent()) {
                                 try {
                                     val geocoder = Geocoder(context)
@@ -218,10 +215,9 @@ fun AddPlaceScreen(
                                         Log.d("AddPlaceScreen", "Attempting to geocode: $addressString")
                                         geocoder.getFromLocationName(addressString, 1)
                                     }
-                                    if (addresses != null && addresses.isNotEmpty()) {
+                                    if (!addresses.isNullOrEmpty()) {
                                         fetchedLatitude = addresses[0].latitude
                                         fetchedLongitude = addresses[0].longitude
-                                        geocodingSuccess = true
                                         Log.i("AddPlaceScreen", "Geocoded '$addressString' to: Lat $fetchedLatitude, Lng $fetchedLongitude")
                                     } else {
                                         Log.w("AddPlaceScreen", "No location found for address: $addressString")
@@ -245,7 +241,7 @@ fun AddPlaceScreen(
 
                         // Only proceed to save if geocoding was successful or not attempted (though form validation should prevent blank address)
                         // Or if you decide to save with 0.0, 0.0 as a fallback
-                        // For now, we save regardless, but lat/lng might be 0.0
+                        // For now, we save regardless
 
                         val newTrip = Trip(
                             id = SampleTrips.generateId(),
@@ -268,12 +264,12 @@ fun AddPlaceScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                enabled = isFormValid && !isLoading // Disable button during form invalidity or loading
+                enabled = isFormValid && !isLoading
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary, // Or another contrasting color
+                        color = MaterialTheme.colorScheme.onPrimary,
                         strokeWidth = 2.dp
                     )
                 } else {

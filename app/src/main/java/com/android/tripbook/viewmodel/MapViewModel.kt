@@ -47,16 +47,17 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
 
 
     init {
-        loadInitialTrips()
+        refreshTrips()
     }
 
-    private fun loadInitialTrips() {
+    fun refreshTrips() {
         viewModelScope.launch {
-            //could be fetched from a real db
-            val tripsFromSource = SampleTrips.get() // Get trips from my sample data
+            // This re-fetches the (now updated) list from your sample data
+            val tripsFromSource = SampleTrips.get()
             _allTrips.clear()
             _allTrips.addAll(tripsFromSource)
 
+            // This existing line will automatically update the UI state
             filterTrips(_searchQuery.value)
         }
     }

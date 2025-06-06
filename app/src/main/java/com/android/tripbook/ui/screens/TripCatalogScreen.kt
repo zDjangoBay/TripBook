@@ -1,4 +1,3 @@
-
 package com.android.tripbook.ui.screens
 
 import android.annotation.SuppressLint
@@ -13,39 +12,39 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items // For LazyRow items
-import androidx.compose.foundation.lazy.itemsIndexed // For LazyColumn itemsIndexed
-import androidx.compose.foundation.shape.CircleShape // For FAB
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add // For FAB
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.List // For View Toggle
-import androidx.compose.material.icons.filled.Place // For View Toggle & My Location
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-// import androidx.compose.ui.graphics.Color // Replaced with MaterialTheme colors
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.User
-import com.android.tripbook.model.Trip
-import com.android.tripbook.ui.components.* // MapView, LocationSearchBar, TripCard etc.
+import com.android.tripbook.ui.components.*
 import com.android.tripbook.ui.components.MiniProfileTruncated
 import com.android.tripbook.utils.LocationUtils
 import com.android.tripbook.viewmodel.MapViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-fun mockUsersForTrip(tripId: Int): List<User> { // Keep or replace with real data
+fun mockUsersForTrip(tripId: Int): List<User> {
     return listOf(
         User("user1_for_trip_${tripId}", "https://randomuser.me/api/portraits/women/${tripId % 10}.jpg", "Alice T."),
         User("user2_for_trip_${tripId}", "https://randomuser.me/api/portraits/men/${tripId % 10}.jpg", "Bob M.")
@@ -64,10 +63,23 @@ fun TripCatalogScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    // State for controlling AddPlaceScreen visibility
+    // to refresh data on screen resume
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                mapViewModel.refreshTrips()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     var showAddScreen by remember { mutableStateOf(false) }
 
-    // If showing add screen, display it instead of catalog
+
     if (showAddScreen) {
         AddPlaceScreen(
             onBack = { showAddScreen = false },
@@ -98,9 +110,7 @@ fun TripCatalogScreen(
 
     val locationUtils = remember { LocationUtils(context) }
 
-    // These calculations are now based on `currentAllTrips` which is mapViewModel.allTrips
-    // The ViewModel methods getPopularDestinations() and getTripsByRegion() use their internal _allTrips
-    val popularDestinations = remember(currentAllTrips) {
+     val popularDestinations = remember(currentAllTrips) {
         mapViewModel.getPopularDestinations() // Uses VM's internal list
             .take(5)
             .filter { it.first.isNotBlank() && it.second > 0 }
@@ -193,7 +203,7 @@ fun TripCatalogScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp), // Softer elevation
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
