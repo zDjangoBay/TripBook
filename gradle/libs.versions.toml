@@ -1,7 +1,7 @@
 [versions]
 agp = "8.4.1"
+kotlin = "1.9.21"
 compose-material-icons-extended = "1.6.8"
-kotlin = "1.9.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -9,6 +9,7 @@ espressoCore = "3.5.1"
 appcompat = "1.7.0"
 material = "1.10.0"
 lifecycleRuntimeKtx = "2.8.7"
+lifecycleViewModelCompose = "2.6.1"              # Added lifecycle-viewmodel-compose version
 activityCompose = "1.8.0"
 composeBom = "2024.02.00"
 coreSplashscreen = "1.2.0-alpha02"
@@ -26,7 +27,6 @@ okhttp = "4.12.0"
 coil = "2.4.0"
 supabase = "2.5.0"
 
-
 [libraries]
 supabase-postgrest-kt = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
@@ -42,6 +42,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }  # Added lifecycle-viewmodel-compose
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
@@ -64,4 +65,4 @@ androidx-material3-android = { group = "androidx.compose.material3", name = "mat
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -210,14 +210,13 @@ class SupabaseAgencyRepository {
                 .select()
                 .decodeList<SupabaseDestination>()
 
-            Log.d(TAG, "Loaded ${allSupabaseDestinations.size} destinations from database")
+            Log.d(TAG, "Loaded ${allSupabaseDestinations?.size ?: 0} destinations from database")
             Log.d(TAG, "Raw Supabase destinations: $allSupabaseDestinations")
 
-            val filteredDestinations = allSupabaseDestinations?.let { list ->
-                list.map { it.toDestination() }
-                    .filter { it.agencyId == agencyId }
-                    .sortedBy { it.destinationName }
-            } ?: emptyList()
+            val filteredDestinations = allSupabaseDestinations?.map { it.toDestination() }
+                ?.filter { destination -> destination.agencyId == agencyId }
+                ?.sortedBy { it.destinationName }
+                ?: emptyList()
 
             Log.d(TAG, "Filtered ${filteredDestinations.size} destinations for agency $agencyId: $filteredDestinations")
 
