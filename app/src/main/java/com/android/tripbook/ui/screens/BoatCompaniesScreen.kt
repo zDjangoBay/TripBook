@@ -7,16 +7,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,20 +22,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.android.tripbook.Model.BusCompany
-import com.android.tripbook.Model.PopularDestination
+import com.android.tripbook.Model.BoatCompany
+import com.android.tripbook.Model.Destination
 import com.android.tripbook.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BusCompaniesScreen(
+fun BoatCompaniesScreen(
     navController: NavController,
-    busCompanies: List<BusCompany>,
-    popularDestinations: List<PopularDestination>,
-    isLoadingCompanies: Boolean,
-    isLoadingDestinations: Boolean,
-    onCompanyClick: (BusCompany) -> Unit,
-    onDestinationClick: (PopularDestination) -> Unit,
+    boatCompanies: List<BoatCompany>,
+    destinations: List<Destination>,
+    isLoadingCompanies: Boolean = false,
+    isLoadingDestinations: Boolean = false,
+    onCompanyClick: (BoatCompany) -> Unit = {},
+    onDestinationClick: (Destination) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -49,7 +47,7 @@ fun BusCompaniesScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = "Bus Travel",
+                    text = "Boat Travel",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
@@ -68,7 +66,6 @@ fun BusCompaniesScreen(
                 containerColor = Color.White
             )
         )
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 100.dp)
@@ -83,7 +80,6 @@ fun BusCompaniesScreen(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 )
             }
-
             item {
                 if (isLoadingDestinations) {
                     Box(
@@ -99,7 +95,7 @@ fun BusCompaniesScreen(
                         contentPadding = PaddingValues(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(popularDestinations) { destination ->
+                        items(destinations) { destination ->
                             DestinationCard(
                                 destination = destination,
                                 onClick = { onDestinationClick(destination) }
@@ -108,18 +104,16 @@ fun BusCompaniesScreen(
                     }
                 }
             }
-
-            // Bus Companies Section
+            // Boat Companies Section
             item {
                 Text(
-                    text = "Bus Companies",
+                    text = "Boat Companies",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
                 )
             }
-
             if (isLoadingCompanies) {
                 item {
                     Box(
@@ -132,8 +126,8 @@ fun BusCompaniesScreen(
                     }
                 }
             } else {
-                items(busCompanies) { company ->
-                    BusCompanyCard(
+                items(boatCompanies) { company ->
+                    BoatCompanyCard(
                         company = company,
                         onClick = { onCompanyClick(company) },
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -145,8 +139,8 @@ fun BusCompaniesScreen(
 }
 
 @Composable
-fun DestinationCard(
-    destination: PopularDestination,
+private fun DestinationCard(
+    destination: Destination,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -159,17 +153,29 @@ fun DestinationCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Box {
-            Image(
-                painter = painterResource(destination.imageRes),
-                contentDescription = destination.name,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            // Background image or placeholder
+            if (destination.imageRes != 0) {
+                Image(
+                    painter = painterResource(destination.imageRes),
+                    contentDescription = destination.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFE1F5FE))
+                )
+            }
+
+            // Overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.3f))
             )
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -191,10 +197,9 @@ fun DestinationCard(
         }
     }
 }
-
 @Composable
-fun BusCompanyCard(
-    company: BusCompany,
+private fun BoatCompanyCard(
+    company: BoatCompany,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -213,15 +218,21 @@ fun BusCompanyCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Company Logo
-            Image(
-                painter = painterResource(company.logoRes),
-                contentDescription = "${company.name} logo",
+            Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray.copy(alpha = 0.1f)),
-                contentScale = ContentScale.Crop
-            )
+                    .background(
+                        color = Color(0xFFE3F2FD),
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(if (company.logoRes != 0) company.logoRes else R.drawable.boat),
+                    contentDescription = "Company Logo",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -251,16 +262,18 @@ fun BusCompanyCard(
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "• ${company.totalTrips} trips",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
+                    if (company.totalTrips > 0) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "• ${company.totalTrips} trips",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "From ${company.startingPrice} FCFA",
+                    text = if (company.startingPrice.isNotEmpty()) "From ${company.startingPrice} FCFA" else company.priceRange,
                     fontSize = 14.sp,
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Medium
@@ -268,34 +281,35 @@ fun BusCompanyCard(
             }
 
             // Amenities
-            Column(
-                horizontalAlignment = Alignment.End
-            ) {
-                Row {
-                    company.amenities.take(3).forEach { amenity ->
-                        Icon(
-                            painter = painterResource(getAmenityIcon(amenity)),
-                            contentDescription = amenity,
-                            tint = Color(0xFF2196F3),
-                            modifier = Modifier
-                                .size(16.dp)
-                                .padding(horizontal = 2.dp)
+            if (company.amenities.isNotEmpty()) {
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Row {
+                        company.amenities.take(3).forEach { amenity ->
+                            Icon(
+                                painter = painterResource(getAmenityIcon(amenity)),
+                                contentDescription = amenity,
+                                tint = Color(0xFF2196F3),
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .padding(horizontal = 2.dp)
+                            )
+                        }
+                    }
+                    if (company.amenities.size > 3) {
+                        Text(
+                            text = "+${company.amenities.size - 3} more",
+                            fontSize = 12.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
-                }
-                if (company.amenities.size > 3) {
-                    Text(
-                        text = "+${company.amenities.size - 3} more",
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                 }
             }
         }
     }
 }
-
 
 private fun getAmenityIcon(amenity: String): Int {
     return when (amenity.lowercase()) {
@@ -303,8 +317,9 @@ private fun getAmenityIcon(amenity: String): Int {
         "ac" -> R.drawable.ic_ac
         "charging" -> R.drawable.ic_charging
         "entertainment" -> R.drawable.ic_entertainment
-        "snacks" -> R.drawable.ic_snacks
+        "snacks", "refreshments" -> R.drawable.ic_snacks
         "blanket" -> R.drawable.ic_blanket
+        "life jackets" -> R.drawable.ic_amenity_default
         else -> R.drawable.ic_amenity_default
     }
 }

@@ -90,9 +90,9 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 TransportOption(R.drawable.bus, R.string.Bus, Color(0xFFE0BBE4), onClick = {navController.navigate("bus_companies")})
-                TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2))
-                TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC))
-                TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9))
+                TransportOption(R.drawable.boat, R.string.Boats, Color(0xFFFFE0B2), onClick = {navController.navigate("boat_companies")})
+                TransportOption(R.drawable.airplane, R.string.flight, Color(0xFFB3E5FC), onClick = {navController.navigate("airline_companies")})
+                TransportOption(R.drawable.train, R.string.Trains, Color(0xFFC8E6C9), onClick = {navController.navigate("train_companies")})
             }
         }
 

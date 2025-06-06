@@ -1,10 +1,9 @@
-package com.android.tripbook.viewmodel
+package com.android.tripbook.ViewModel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleComments
-import com.android.tripbook.model.Comment
-import com.android.tripbook.model.CommentReaction
+import com.android.tripbook.Model.CommentReaction
 import com.android.tripbook.Model.Comment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
