@@ -1,15 +1,15 @@
 package com.android.tripbook.posts.viewmodel
 
-
 import com.android.tripbook.posts.model.ImageModel
-import com.android.tripbook.posts.model.Location
+import com.android.tripbook.data.model.LocationSearchItem // <-- Import canonique pour LocationSearchItem
+
 import com.android.tripbook.posts.model.TagModel
 
 data class PostUIState(
     val title: String = "",
     val description: String = "",
     val images: List<ImageModel> = emptyList(),
-    val selectedLocation: Location? = null,
+    val selectedLocation: LocationSearchItem? = null, // <-- Type mis à jour vers LocationSearchItem
     val selectedTags: List<TagModel> = emptyList(),
     val hashtagsInput: String = "",
     val isPublishing: Boolean = false,
@@ -19,6 +19,6 @@ data class PostUIState(
     val locationError: String? = null,
     val tagsError: String? = null,
     val isSearchingLocation: Boolean = false,
-    val locationSearchResults: List<Location> = emptyList(),
+    val locationSearchResults: List<LocationSearchItem> = emptyList(),
     val locationSearchError: String? = null
 )
