@@ -1,14 +1,19 @@
 package com.android.tripbook
 
+
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.tripbook.model.Agency
 import com.android.tripbook.model.ItineraryItem
@@ -38,6 +43,20 @@ class MainActivity : ComponentActivity() {
             .metaData.getString("com.google.android.geo.API_KEY") ?: ""
 
         val googleMapsService = GoogleMapsService(applicationContext, apiKey)
+
+        // Request calendar permissions
+        val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions.entries.all { it.value }
+            if (!granted) {
+                // Handle permission denial (e.g., show a dialog or disable calendar features)
+            }
+        }
+
+        // Check and request permissions
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            permissionLauncher.launch(arrayOf(Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR))
+        }
 
         enableEdgeToEdge()
 
@@ -164,7 +183,6 @@ class MainActivity : ComponentActivity() {
 
                     "Settings" -> SettingsScreen()
 
-                    // Detailed navigation screens (without bottom bar)
                     "PlanNewTrip" -> PlanNewTripScreen(
                         onBackClick = {
                             selectedTab = 1
@@ -281,4 +299,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-//conatains all the classes of the project

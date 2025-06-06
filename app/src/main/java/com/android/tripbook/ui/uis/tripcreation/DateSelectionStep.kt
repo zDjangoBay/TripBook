@@ -1,5 +1,10 @@
 package com.android.tripbook.ui.uis.tripcreation
 
+
+
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,14 +43,38 @@ fun DateSelectionStep(
 ) {
     var currentMonth by remember { mutableStateOf(YearMonth.now()) }
     var isSelectingStartDate by remember { mutableStateOf(true) }
-    
+
+    // Launcher for calendar intent
+    val calendarLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            result.data?.let { data ->
+                val beginTime = data.getLongExtra("beginTime", -1L)
+                if (beginTime != -1L) {
+                    val selectedDate = LocalDate.ofEpochDay(beginTime / (1000 * 60 * 60 * 24))
+                    if (isSelectingStartDate) {
+                        onStateChange(state.copy(startDate = selectedDate))
+                        if (state.endDate == null || selectedDate.isAfter(state.endDate)) {
+                            isSelectingStartDate = false
+                        }
+                    } else {
+                        if (state.startDate == null || selectedDate.isAfter(state.startDate)) {
+                            onStateChange(state.copy(endDate = selectedDate))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         StepHeader(
             title = "When?",
             subtitle = "Select your travel dates",
             modifier = Modifier.padding(bottom = 24.dp)
         )
-        
+
         Card(
             modifier = Modifier.fillMaxSize(),
             shape = RoundedCornerShape(16.dp),
@@ -56,6 +85,26 @@ fun DateSelectionStep(
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
+                // Button to open calendar app
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_INSERT)
+                            .setData(android.provider.CalendarContract.Events.CONTENT_URI)
+                            .putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME, System.currentTimeMillis())
+                            .putExtra(android.provider.CalendarContract.Events.TITLE, state.tripName.ifEmpty { "New Trip" })
+                            .putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION, state.destination)
+                        calendarLauncher.launch(intent)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B73FF))
+                ) {
+                    Icon(Icons.Default.CalendarToday, contentDescription = "Open Calendar")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Select Date from Calendar App")
+                }
+
                 // Date Selection Toggle
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -77,9 +126,9 @@ fun DateSelectionStep(
                         modifier = Modifier.weight(1f)
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(24.dp))
-                
+
                 // Calendar Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,14 +144,14 @@ fun DateSelectionStep(
                             tint = Color(0xFF6B73FF)
                         )
                     }
-                    
+
                     Text(
                         text = "${currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.year}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
-                    
+
                     IconButton(
                         onClick = { currentMonth = currentMonth.plusMonths(1) }
                     ) {
@@ -113,9 +162,9 @@ fun DateSelectionStep(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Days of Week Header
                 Row(modifier = Modifier.fillMaxWidth()) {
                     val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
@@ -130,9 +179,9 @@ fun DateSelectionStep(
                         )
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 // Calendar Grid
                 CalendarGrid(
                     currentMonth = currentMonth,
@@ -152,7 +201,7 @@ fun DateSelectionStep(
                         }
                     }
                 )
-                
+
                 // Selected Dates Summary
                 if (state.startDate != null || state.endDate != null) {
                     Spacer(modifier = Modifier.height(24.dp))
@@ -171,7 +220,7 @@ fun DateSelectionStep(
                                 color = Color.Black
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            
+
                             state.startDate?.let { startDate ->
                                 Text(
                                     text = "Start: ${startDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
@@ -253,13 +302,13 @@ private fun CalendarGrid(
     currentMonth: YearMonth,
     startDate: LocalDate?,
     endDate: LocalDate?,
-    @Suppress("UNUSED_PARAMETER") isSelectingStartDate: Boolean,
+    isSelectingStartDate: Boolean,
     onDateSelected: (LocalDate) -> Unit
 ) {
     val firstDayOfMonth = currentMonth.atDay(1)
     val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7
     val daysInMonth = currentMonth.lengthOfMonth()
-    
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         modifier = Modifier.height(240.dp)
@@ -268,17 +317,17 @@ private fun CalendarGrid(
         items(firstDayOfWeek) {
             Box(modifier = Modifier.size(40.dp))
         }
-        
+
         // Days of the month
         items(daysInMonth) { dayIndex ->
             val day = dayIndex + 1
             val date = currentMonth.atDay(day)
             val isToday = date == LocalDate.now()
             val isSelected = date == startDate || date == endDate
-            val isInRange = startDate != null && endDate != null && 
-                           date.isAfter(startDate) && date.isBefore(endDate)
+            val isInRange = startDate != null && endDate != null &&
+                    date.isAfter(startDate) && date.isBefore(endDate)
             val isPastDate = date.isBefore(LocalDate.now())
-            
+
             Box(
                 modifier = Modifier
                     .size(40.dp)
