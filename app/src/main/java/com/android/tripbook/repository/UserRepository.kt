@@ -1,4 +1,4 @@
-package com.android.tripbook
+package com.android.tripbook.repository
 
 
 import com.android.tripbook.data.models.uSERsUPERcONFIG

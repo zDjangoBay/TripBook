@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,9 +9,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -21,28 +25,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.tripbook.viewmodel.UserViewModel
 
-// Placeholder User data class
 data class User(
-    val id: String,
+    val id: Int,
     val name: String,
-    val location: String
+    val destination: String
 )
 
 @Composable
 fun NearbyUsersScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    userViewModel: UserViewModel = viewModel()
 ) {
-    // Sample user data for demonstration
-    val users = listOf(
-        User("1", "John Doe", "Lagos, Nigeria"),
-        User("2", "Jane Smith", "Nairobi, Kenya"),
-        User("3", "Ahmed Musa", "Accra, Ghana"),
-        User("4", "Sarah Johnson", "Cape Town, South Africa")
-    )
-
+    val users by userViewModel.users.collectAsState()
+    val isLoading by userViewModel.isLoading.collectAsState()
+    val error by userViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchUsers()
+    }
 
     Box(
         modifier = modifier
@@ -151,17 +156,92 @@ fun NearbyUsersScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // User List
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(users.filter { user ->
-                    searchText.isEmpty() ||
-                            user.name.contains(searchText, ignoreCase = true) ||
-                            user.location.contains(searchText, ignoreCase = true)
-                }) { user ->
-                    UserCard(user = user)
+            // Error State with Retry Button
+            if (!error.isNullOrEmpty()) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "Connection Error",
+                            tint = Color(0xFFDC2626),
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Connection Lost",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1F2937),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = error!!,
+                            fontSize = 14.sp,
+                            color = Color(0xFF6B7280),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Button(
+                            onClick = { userViewModel.fetchUsers() },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF667EEA)
+                            ),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            if (isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retrying...",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Retry",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                // User List
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(users.filter { user ->
+                        searchText.isEmpty() ||
+                                user.name.contains(searchText, ignoreCase = true) ||
+                                user.destination.contains(searchText, ignoreCase = true)
+                    }) { user ->
+                        UserCard(user = user)
+                    }
                 }
             }
         }
@@ -186,6 +266,7 @@ fun UserCard(user: User) {
                 .fillMaxWidth()
                 .padding(20.dp)
         ) {
+
             Text(
                 text = user.name,
                 fontSize = 18.sp,
@@ -203,7 +284,7 @@ fun UserCard(user: User) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = user.location,
+                    text = user.destination,
                     fontSize = 14.sp,
                     color = Color(0xFF64748B)
                 )

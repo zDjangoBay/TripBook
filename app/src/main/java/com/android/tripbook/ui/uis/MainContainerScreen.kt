@@ -1,7 +1,6 @@
 package com.android.tripbook.ui.uis
 
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +29,7 @@ fun MainContainerScreen(
 
     val tripViewModel: TripViewModel = viewModel()
     val agencyViewModel = remember { AgencyViewModel(agencyRepository) }
+    val userViewModel: UserViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         agencyRepository.loadAgencies()
@@ -235,7 +235,8 @@ fun MainContainerScreen(
                     onBackClick = {
                         selectedTab = 1
                         currentScreen = "MyTrips"
-                    }
+                    },
+                    userViewModel = userViewModel
                 )
             }
         }
