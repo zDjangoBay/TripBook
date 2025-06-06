@@ -11,10 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.PostModel
+// Import des modèles canoniques
 import com.android.tripbook.data.model.TravelLocation
+import com.android.tripbook.data.model.Comment
 import com.android.tripbook.posts.model.ImageModel
 import com.android.tripbook.posts.model.PostVisibility
-import com.android.tripbook.posts.model.Comment
 import com.android.tripbook.posts.ui.components.PostCard
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.Instant
@@ -29,10 +30,10 @@ fun HomeFeedScreen(
     // Ajoute de nouveaux callbacks pour la navigation vers les autres écrans
     onNavigateToSavedPosts: () -> Unit = {},
     onNavigateToPinnedPosts: () -> Unit = {},
-    onNavigateToGroupFeed: (String) -> Unit = {}, // Ajoute un paramètre pour le nom du groupe
+    onNavigateToGroupFeed: (String) -> Unit = {},
     onNavigateToReportedPosts: () -> Unit = {},
     onNavigateToLocationFeed: () -> Unit = {},
-    onNavigateToTripBooking: (String) -> Unit = {} // Ajoute un paramètre pour l'ID de la localisation
+    onNavigateToTripBooking: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -77,7 +78,7 @@ fun HomeFeedScreen(
                         Button(onClick = { onNavigateToTripBooking("loc1") }) { Text("Book Trip") } // Utilise un ID de localisation mock
                     }
                 }
-                Divider() // Séparateur visuel
+                HorizontalDivider() // <-- Renommé
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -107,7 +108,8 @@ fun PreviewHomeFeedScreen() {
                 title = "Adventure in Cameroon's Rainforest!",
                 description = "Explored the dense rainforest, met local communities, and witnessed incredible wildlife. A truly humbling experience.",
                 images = listOf(ImageModel("img1_cam", Uri.parse("https://via.placeholder.com/300/FF5733/FFFFFF?text=Rainforest"))),
-                location = TravelLocation("loc_cam", "Dja Faunal Reserve", 3.0, 13.0, "East Region, Cameroon", null),
+                // MODIFICATION ICI: Utilise TravelLocation du module data.model avec les bons paramètres
+                location = TravelLocation(id = "loc_cam", name = "Dja Faunal Reserve", latitude = 3.0, longitude = 13.0, description = "East Region, Cameroon", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(86400 * 2),
                 lastEditedAt = null,
@@ -116,7 +118,7 @@ fun PreviewHomeFeedScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = listOf("user_x", "user_y"),
-                comments = listOf(Comment("c1_cam", "1", "user_z", "Commenter", null, "Wow!", Instant.now()))
+                comments = listOf(Comment("c1_cam", "1", "user_z", "Commenter", null, "Wow!", Instant.now())) // Utilise Comment canonique
             ),
             PostModel(
                 id = "2",
@@ -127,7 +129,8 @@ fun PreviewHomeFeedScreen() {
                 title = "Relaxing on the Beaches of Senegal",
                 description = "Miles of golden sand and stunning sunsets. Perfect for unwinding and soaking up the sun.",
                 images = listOf(ImageModel("img1_sen", Uri.parse("https://via.placeholder.com/300/33FF57/FFFFFF?text=Beach"))),
-                location = TravelLocation("loc_sen", "Saly Portudal", 14.4173, -17.0396, "Thies Region, Senegal", null),
+                // MODIFICATION ICI: Utilise TravelLocation du module data.model avec les bons paramètres
+                location = TravelLocation("loc_sen", "Saly Portudal", latitude = 14.4173, longitude = -17.0396, description = "Thies Region, Senegal", imageUrl = null),
                 tags = emptyList(),
                 createdAt = Instant.now().minusSeconds(86400 * 5),
                 lastEditedAt = null,
@@ -136,7 +139,7 @@ fun PreviewHomeFeedScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = listOf("user_a"),
-                comments = emptyList()
+                comments = emptyList<Comment>() // Utilise Comment canonique
             )
         )
         HomeFeedScreen(posts = samplePosts, onPostClick = {})
