@@ -1,5 +1,6 @@
 package com.android.tripbook.posts.model
 
+
 import java.util.UUID
 
 data class PostModel(
