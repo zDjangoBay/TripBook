@@ -1,10 +1,16 @@
 package com.android.tripbook.viewmodel
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.repository.SupabaseTripRepository
+import com.android.tripbook.service.WeatherService
+import com.android.tripbook.model.WeatherData
+import com.android.tripbook.model.CurrentWeather
+import com.android.tripbook.model.HourlyForecast
+import com.android.tripbook.model.DailyForecast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +32,8 @@ enum class MapViewMode {
 }
 
 class TripDetailsViewModel(
-    private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance()
+    private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance(),
+    private val weatherService: WeatherService = WeatherService()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TripDetailsUiState())
@@ -35,14 +42,14 @@ class TripDetailsViewModel(
     fun loadTripDetails(tripId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             try {
                 // Load trip with full details including itinerary
                 val trip = repository.getTripWithDetails(tripId)
                 _uiState.value = _uiState.value.copy(
                     trip = trip,
                     isLoading = false,
-                    selectedDate = trip?.startDate
+                    selectedDate = trip?.startDate ?: LocalDate.now() // Fallback to current date
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -81,13 +88,21 @@ class TripDetailsViewModel(
     fun addItineraryItem(item: ItineraryItem) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             try {
                 val result = repository.addItineraryItem(item)
                 if (result.isSuccess) {
-                    // Reload trip details to get updated itinerary
+                    // Update the trip in the current state
                     _uiState.value.trip?.let { trip ->
-                        loadTripDetails(trip.id)
+                        val updatedItinerary = trip.itinerary + item
+                        val updatedTrip = trip.copy(itinerary = updatedItinerary)
+                        _uiState.value = _uiState.value.copy(
+                            trip = updatedTrip,
+                            isLoading = false
+                        )
+                    } ?: run {
+                        // If no trip is loaded, reload to ensure consistency
+                        loadTripDetails(item.tripId)
                     }
                 } else {
                     _uiState.value = _uiState.value.copy(
@@ -107,14 +122,14 @@ class TripDetailsViewModel(
     fun updateItineraryItem(item: ItineraryItem) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             try {
                 val result = repository.updateItineraryItem(item)
                 if (result.isSuccess) {
                     // Update the trip in the current state
                     _uiState.value.trip?.let { trip ->
-                        val updatedItinerary = trip.itinerary.map { 
-                            if (it.id == item.id) item else it 
+                        val updatedItinerary = trip.itinerary.map {
+                            if (it.id == item.id) item else it
                         }
                         val updatedTrip = trip.copy(itinerary = updatedItinerary)
                         _uiState.value = _uiState.value.copy(
@@ -140,7 +155,7 @@ class TripDetailsViewModel(
     fun deleteItineraryItem(itemId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
+
             try {
                 val result = repository.deleteItineraryItem(itemId)
                 if (result.isSuccess) {
@@ -174,12 +189,12 @@ class TripDetailsViewModel(
 
     fun getTripStatistics(): TripStatistics {
         val trip = _uiState.value.trip ?: return TripStatistics()
-        
+
         val totalDays = java.time.temporal.ChronoUnit.DAYS.between(trip.startDate, trip.endDate).toInt() + 1
         val activitiesCount = trip.itinerary.size
         val completedActivities = trip.itinerary.count { it.isCompleted }
         val totalCost = trip.itinerary.sumOf { it.cost }
-        
+
         return TripStatistics(
             totalDays = totalDays,
             activitiesCount = activitiesCount,
@@ -197,41 +212,21 @@ class TripDetailsViewModel(
         val trip = _uiState.value.trip ?: return emptyList()
         val dates = mutableListOf<LocalDate>()
         var currentDate = trip.startDate
-        
+
         while (!currentDate.isAfter(trip.endDate)) {
             dates.add(currentDate)
             currentDate = currentDate.plusDays(1)
         }
-        
+
         return dates
     }
 
-    fun getWeatherForecast(location: String): WeatherData? {
-        // In a real app, you would fetch this data from a weather API
-        // For now, we'll return mock data
-        return WeatherData(
-            current = CurrentWeather(
-                temperature = 27,
-                condition = "Partly Cloudy",
-                highTemp = 28,
-                lowTemp = 20,
-                feelsLike = 29,
-                alert = "Showers ending early. Low 20C."
-            ),
-            hourly = listOf(
-                HourlyForecast("5 PM", 26, "Partly Cloudy", 11),
-                HourlyForecast("6 PM", 25, "Partly Cloudy", 9),
-                HourlyForecast("6:23 PM", 25, "Sunset", 0),
-                HourlyForecast("7 PM", 24, "Cloudy", 7),
-                HourlyForecast("8 PM", 23, "Cloudy", 9),
-                HourlyForecast("9 PM", 23, "Cloudy", 14)
-            ),
-            daily = listOf(
-                DailyForecast("Yesterday", 28, 20, "Sunny", 0),
-                DailyForecast("Today", 28, 20, "Partly Cloudy", 11),
-                DailyForecast("Tomorrow", 27, 19, "Rainy", 40)
-            )
-        )
+    suspend fun getWeatherForecast(location: String): WeatherData {
+        return try {
+            weatherService.getWeatherForecast(location)
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }
 
@@ -243,33 +238,4 @@ data class TripStatistics(
     val remainingBudget: Double = 0.0
 )
 
-// Weather data classes
-data class WeatherData(
-    val current: CurrentWeather,
-    val hourly: List<HourlyForecast>,
-    val daily: List<DailyForecast>
-)
-
-data class CurrentWeather(
-    val temperature: Int,
-    val condition: String,
-    val highTemp: Int,
-    val lowTemp: Int,
-    val feelsLike: Int,
-    val alert: String = ""
-)
-
-data class HourlyForecast(
-    val time: String,
-    val temperature: Int,
-    val condition: String,
-    val precipitation: Int
-)
-
-data class DailyForecast(
-    val day: String,
-    val highTemp: Int,
-    val lowTemp: Int,
-    val condition: String,
-    val precipitation: Int
-)
+// Remove all weather data classes from here
