@@ -170,7 +170,7 @@ fun CommentItem(
                         },
                         enabled = replyText.isNotBlank()
                     ) {
-                        Icon(Icons.Filled.Send, contentDescription = "Send Reply") // <-- Icône AutoMirrored
+                        Icon(Icons.Filled.Send, contentDescription = "Send Reply") 
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
