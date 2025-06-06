@@ -76,7 +76,7 @@ data class SupabaseTrip(
     companion object {
         fun fromTrip(trip: Trip): SupabaseTrip {
             return SupabaseTrip(
-                id = trip.id.takeIf { it.isNotEmpty() },
+                id = trip.id?.takeIf { it.isNotEmpty() },
                 name = trip.name,
                 start_date = trip.startDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
                 end_date = trip.endDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
