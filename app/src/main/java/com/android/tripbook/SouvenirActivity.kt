@@ -1,120 +1,191 @@
 package com.android.tripbook
 
-import android.os.Bundle
-//import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-//import androidx.core.view.ViewCompat
-//import androidx.core.view.WindowInsetsCompat
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.widget.*
-import androidx.core.view.setPadding
-import android.graphics.Color
-//import androidx.compose.ui.graphics.Color
+import android.os.Build
+import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SouvenirActivity : AppCompatActivity() {
 
     private lateinit var imageView: ImageView
-    private lateinit var selectImageBtn: Button
-    private lateinit var descriptionEditText: EditText
-    private lateinit var saveButton: Button
-    private lateinit var savedSouvenirsLayout: LinearLayout
-    private lateinit var souvenirInstruction: TextView
-    private lateinit var souvenirHeading: TextView
-    private lateinit var appTitle: TextView
-
+    private lateinit var selectImageBtn: MaterialButton
+    private lateinit var descriptionEditText: TextInputEditText
+    private lateinit var saveButton: MaterialButton
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+    private lateinit var emptyStateLayout: View
+    private lateinit var repository: SouvenirRepository
+    private lateinit var adapter: SouvenirAdapter
     private var selectedImageUri: Uri? = null
-    private val IMAGE_PICK_CODE = 1001
+
+    // Permission launcher
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            pickImage()
+        } else {
+            Toast.makeText(this, "Permission denied. Cannot select image.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Image picker launcher
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            selectedImageUri = uri
+            imageView.setImageURI(uri)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_souvenir)
 
+        // Initialize views
         imageView = findViewById(R.id.imageView)
         selectImageBtn = findViewById(R.id.chooseImageButton)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         saveButton = findViewById(R.id.saveButton)
-        savedSouvenirsLayout = findViewById(R.id.savedSouvenirsLayout)
-        souvenirInstruction = findViewById(R.id.souvenirInstruction)
-        souvenirHeading  = findViewById(R.id.souvenirHeading)
-        appTitle = findViewById(R.id.souvenirHeading)
+        recyclerView = findViewById(R.id.savedSouvenirsRecyclerView)
+        emptyStateLayout = findViewById(R.id.emptyStateLayout)
 
-        selectImageBtn.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, IMAGE_PICK_CODE)
-        }
+        // Initialize Room
+        val database = AppDatabase.getDatabase(this)
+        repository = SouvenirRepository(database.souvenirDao())
 
-        saveButton.setOnClickListener {
-            if (selectedImageUri != null) {
-                val description = descriptionEditText.text.toString()
-
-                val context = this
-                val entryLayout = LinearLayout(context).apply {
-                    orientation = LinearLayout.HORIZONTAL
-                    setPadding(0, 20, 0, 20)
+        // Setup RecyclerView
+        adapter = SouvenirAdapter(
+            mutableListOf(),
+            onDeleteClick = { souvenir ->
+                lifecycleScope.launch {
+                    repository.delete(souvenir)
                 }
-
-                val savedImage = ImageView(context).apply {
-                    setImageURI(selectedImageUri)
-                    layoutParams = LinearLayout.LayoutParams(300, 300)
-                    scaleType = ImageView.ScaleType.CENTER_CROP
+            },
+            onImageClick = { uri ->
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "image/*")
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                 }
+                startActivity(intent)
+            }
+        )
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.setHasFixedSize(true)
 
-                val descriptionView = TextView(context).apply {
-                    text = description
-                    setTextColor(Color.BLACK)  // Ensures visibility
-                    textSize = 16f
-                    setPadding(16, 0, 0, 0)
-                    layoutParams = LinearLayout.LayoutParams(
-                        0,
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        1f
-                    )
-                }
-
-                entryLayout.addView(savedImage)
-                entryLayout.addView(descriptionView)
-                savedSouvenirsLayout.addView(entryLayout)
-
-                // Clear fields after saving
-                imageView.setImageDrawable(null)
-                descriptionEditText.text.clear()
-                selectedImageUri = null
-            } else {
-                Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+        // Observe souvenirs
+        lifecycleScope.launch {
+            repository.allSouvenirs.collect { souvenirs ->
+                adapter.updateSouvenirs(souvenirs)
+                emptyStateLayout.visibility = if (souvenirs.isEmpty()) View.VISIBLE else View.GONE
             }
         }
 
-    }
+        // Setup click listeners
+        selectImageBtn.setOnClickListener {
+            val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                android.Manifest.permission.READ_MEDIA_IMAGES
+            } else {
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+            if (checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                pickImage()
+            } else {
+                requestPermissionLauncher.launch(permission)
+            }
+        }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            selectedImageUri = data?.data
-            imageView.setImageURI(selectedImageUri)
+        saveButton.setOnClickListener {
+            val description = descriptionEditText.text.toString().trim()
+            if (selectedImageUri == null) {
+                Toast.makeText(this, R.string.select_image_prompt, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (description.isEmpty()) {
+                Toast.makeText(this, R.string.description_empty_prompt, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            lifecycleScope.launch {
+                val savedImageUri = saveImageToInternalStorage(selectedImageUri!!)
+                if (savedImageUri != null) {
+                    val souvenir = Souvenir(
+                        imageUri = savedImageUri.toString(),
+                        description = description,
+                        timestamp = System.currentTimeMillis()
+                    )
+                    repository.insert(souvenir)
+                    // Clear inputs
+                    imageView.setImageDrawable(null)
+                    descriptionEditText.text?.clear()
+                    selectedImageUri = null
+                } else {
+                    Toast.makeText(this@SouvenirActivity, "Failed to save image", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
-    private fun addSouvenirToLayout(imageUri: Uri, description: String) {
-        val container = LinearLayout(this)
-        container.orientation = LinearLayout.HORIZONTAL
-        container.setPadding(16)
+    private fun pickImage() {
+        imagePickerLauncher.launch("image/*")
+    }
 
-        val imageView = ImageView(this)
-        imageView.setImageURI(imageUri)
-        imageView.layoutParams = LinearLayout.LayoutParams(200, 200)
-        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+    private suspend fun saveImageToInternalStorage(uri: Uri): Uri? = withContext(Dispatchers.IO) {
+        try {
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            val compressedBitmap = compressBitmap(bitmap)
+            val file = File(filesDir, "souvenir_${System.currentTimeMillis()}.jpg")
+            FileOutputStream(file).use { out ->
+                compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
+            }
+            FileProvider.getUriForFile(
+                this@SouvenirActivity,
+                "${packageName}.fileprovider",
+                file
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
 
-        val textView = TextView(this)
-        textView.text = description
-        textView.setPadding(16, 0, 0, 0)
-        textView.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-
-        container.addView(imageView)
-        container.addView(textView)
-
-        savedSouvenirsLayout.addView(container)
+    private fun compressBitmap(bitmap: Bitmap): Bitmap {
+        val maxSize = 1024
+        var width = bitmap.width
+        var height = bitmap.height
+        val aspectRatio = width.toFloat() / height
+        if (width > height) {
+            if (width > maxSize) {
+                width = maxSize
+                height = (width / aspectRatio).toInt()
+            }
+        } else {
+            if (height > maxSize) {
+                height = maxSize
+                width = (height * aspectRatio).toInt()
+            }
+        }
+        return Bitmap.createScaledBitmap(bitmap, width, height, true)
     }
 }
