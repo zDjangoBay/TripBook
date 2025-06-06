@@ -127,13 +127,10 @@ dependencies {
     implementation(libs.coil.compose)
 
 
-
-
-
-
     // Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Layout
     implementation(libs.constraintlayout.compose)

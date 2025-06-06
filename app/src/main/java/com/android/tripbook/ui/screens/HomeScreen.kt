@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.android.tripbook.Model.Place
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Place
+import com.android.tripbook.model.Triphome
 import com.android.tripbook.R
 import com.android.tripbook.ui.components.*
 
