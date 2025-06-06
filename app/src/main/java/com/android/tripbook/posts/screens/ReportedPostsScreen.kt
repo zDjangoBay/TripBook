@@ -4,18 +4,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.PostModel
+import com.android.tripbook.data.model.TravelLocation // <-- Import canonique pour TravelLocation
 import com.android.tripbook.posts.model.PostVisibility
 import com.android.tripbook.posts.ui.components.PostCard
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.Instant
-import com.android.tripbook.posts.model.Comment
+import android.net.Uri // Nécessaire pour ImageModel dans PostModel
+import com.android.tripbook.data.model.Comment // <-- Import canonique pour Comment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,12 +50,13 @@ fun ReportedPostsScreen(reportedPosts: List<PostModel>, onResolveReport: (PostMo
                     .padding(horizontal = 8.dp)
             ) {
                 items(reportedPosts, key = { it.id }) { post ->
+                    // Le PostCard utilise `currentUserId` pour les likes, ici, il est juste un mock.
                     PostCard(
                         post = post,
                         onCardClick = { println("Clicked reported post: ${post.id}") },
                         onLikeClick = {  },
                         onCommentClick = {  },
-                        currentUserId = "moderator_id"
+                        currentUserId = "moderator_id" // Un ID utilisateur mock pour le contexte de la PostCard
                     )
                     Row(
                         modifier = Modifier
@@ -69,7 +72,7 @@ fun ReportedPostsScreen(reportedPosts: List<PostModel>, onResolveReport: (PostMo
                             Text("Delete")
                         }
                     }
-                    Divider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp)) // <-- Renommé
                 }
             }
         }
@@ -90,13 +93,12 @@ fun PreviewReportedPostsScreen() {
                 title = "Suspicious Ad",
                 description = "Earn €1000 per day traveling! Click here!",
                 images = emptyList(),
-                // Utilise TravelLocation de data.model
-                location = com.android.tripbook.posts.model.TravelLocation(
+                location = TravelLocation(
                     id = "loc_spam1",
                     name = "Internet",
                     latitude = 0.0,
                     longitude = 0.0,
-                    description = null,
+                    description = "Spam location", // Fournir une description pour correspondre au constructeur
                     imageUrl = null
                 ),
                 tags = emptyList(),
@@ -107,8 +109,7 @@ fun PreviewReportedPostsScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = emptyList(),
-                comments = emptyList<Comment>()
-                // Utilise la classe Comment du module posts
+                comments = emptyList<Comment>() // <-- Utilise la classe Comment canonique
             ),
             PostModel(
                 id = "rp2",
@@ -119,13 +120,12 @@ fun PreviewReportedPostsScreen() {
                 title = "Inappropriate Content",
                 description = "This post contains hateful remarks.",
                 images = emptyList(),
-                // Utilise TravelLocation de data.model
-                location = com.android.tripbook.posts.model.TravelLocation(
+                location = TravelLocation(
                     id = "loc_hate1",
                     name = "Online",
                     latitude = 0.0,
                     longitude = 0.0,
-                    description = null,
+                    description = "Hate speech origin", // Fournir une description pour correspondre au constructeur
                     imageUrl = null
                 ),
                 tags = emptyList(),
@@ -136,8 +136,7 @@ fun PreviewReportedPostsScreen() {
                 isEphemeral = false,
                 ephemeralDurationMillis = null,
                 likes = emptyList(),
-                comments = emptyList<Comment>()
-                // Utilise la classe Comment du module posts
+                comments = emptyList<Comment>() // <-- Utilise la classe Comment canonique
             )
         )
         ReportedPostsScreen(
