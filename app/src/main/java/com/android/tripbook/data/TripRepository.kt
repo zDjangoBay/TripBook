@@ -87,11 +87,11 @@ class TripRepository {
                 travelers = 2,
                 budget = 35000,
                 description = "A romantic getaway to the city of lights, exploring museums and enjoying French cuisine.",
-                status = TripStatus.UPCOMING,
+                status = TripStatus.PLANNED,
                 itinerary = listOf(
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("15/07/2024", formatter), "10:00 AM", "Flight to Paris", "CDG Airport", ItineraryType.TRAVEL, false),
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("15/07/2024", formatter), "02:00 PM", "Hotel Check-in", "Hotel Le Littré", ItineraryType.ACCOMMODATION, false),
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("16/07/2024", formatter), "09:00 AM", "Eiffel Tower Visit", "Champ de Mars", ItineraryType.ATTRACTION, false)
+                    ItineraryItem(LocalDate.parse("15/07/2024", formatter), "10:00 AM", "Flight to Paris", "CDG Airport", ItineraryType.TRANSPORTATION, ""),
+                    ItineraryItem(LocalDate.parse("15/07/2024", formatter), "02:00 PM", "Hotel Check-in", "Hotel Le Littré", ItineraryType.ACCOMMODATION, ""),
+                    ItineraryItem(LocalDate.parse("16/07/2024", formatter), "09:00 AM", "Eiffel Tower Visit", "Champ de Mars", ItineraryType.ACTIVITY, "")
                 )
             ),
             Trip(
@@ -103,7 +103,7 @@ class TripRepository {
                 travelers = 4,
                 budget = 60000,
                 description = "An adventurous trek through the stunning landscapes of Patagonia.",
-                status = TripStatus.UPCOMING,
+                status = TripStatus.PLANNED,
                 itinerary = emptyList() // No itinerary yet
             ),
             Trip(
@@ -130,7 +130,7 @@ class TripRepository {
                 travelers = 2,
                 budget = 40000,
                 description = "Relaxing beach vacation with cultural experiences in Bali.",
-                status = TripStatus.UPCOMING,
+                status = TripStatus.PLANNED,
                 itinerary = emptyList()
             ),
             // --- Additional Dummy Trips for Diverse Functionalities ---
@@ -143,10 +143,10 @@ class TripRepository {
                 travelers = 1,
                 budget = 55000,
                 description = "Attending the annual tech conference and networking events.",
-                status = TripStatus.UPCOMING,
+                status = TripStatus.PLANNED,
                 itinerary = listOf(
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("20/09/2025", formatter), "08:00 AM", "Conference Registration", "Tokyo Convention Center", ItineraryType.EVENT, false),
-                    ItineraryItem(UUID.randomUUID().toString(), LocalDate.parse("21/09/2025", formatter), "07:00 PM", "Networking Dinner", "Shinjuku Restaurant", ItineraryType.DINING, false)
+                    ItineraryItem(LocalDate.parse("20/09/2025", formatter), "08:00 AM", "Conference Registration", "Tokyo Convention Center", ItineraryType.ACTIVITY, ""),
+                    ItineraryItem(LocalDate.parse("21/09/2025", formatter), "07:00 PM", "Networking Dinner", "Shinjuku Restaurant", ItineraryType.ACTIVITY, "")
                 )
             ),
             Trip(
@@ -170,7 +170,7 @@ class TripRepository {
                 travelers = 3,
                 budget = 45000,
                 description = "Planned ski trip, but cancelled due to unforeseen circumstances.",
-                status = TripStatus.CANCELLED,
+                status = TripStatus.ACTIVE,
                 itinerary = emptyList()
             ),
             Trip(
@@ -182,7 +182,7 @@ class TripRepository {
                 travelers = 1,
                 budget = 2000,
                 description = "Exploring temples and street food in Southeast Asia.",
-                status = TripStatus.UPCOMING,
+                status = TripStatus.PLANNED,
                 itinerary = emptyList()
             )
         )
