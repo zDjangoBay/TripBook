@@ -1,3 +1,4 @@
+// SupabaseModels.kt
 package com.android.tripbook.data.models
 
 import com.android.tripbook.model.Trip
@@ -29,7 +30,7 @@ data class SupabaseTravelCompanion(
             phone = phone
         )
     }
-    
+
     companion object {
         fun fromTravelCompanion(companion: TravelCompanion, tripId: String): SupabaseTravelCompanion {
             return SupabaseTravelCompanion(
@@ -51,8 +52,8 @@ data class SupabaseTrip(
     val destination: String,
     val travelers: Int,
     val budget: Int,
-    val status: String,     // TripStatus as string
-    val category: String,   // TripCategory as string
+    val status: String,     // TripStatus as string (remains String)
+    val category: String,   // TripCategory as string (remains String)
     val description: String = "",
     val created_at: String? = null,
     val updated_at: String? = null
@@ -66,13 +67,13 @@ data class SupabaseTrip(
             destination = destination,
             travelers = travelers,
             budget = budget,
-            status = TripStatus.valueOf(status),
-            category = TripCategory.valueOf(category),
+            status = TripStatus.fromDbString(status), // Using fromDbString for safer conversion
+            category = TripCategory.fromDbString(category), // Using fromDbString for safer conversion
             description = description,
             companions = companions
         )
     }
-    
+
     companion object {
         fun fromTrip(trip: Trip): SupabaseTrip {
             return SupabaseTrip(
@@ -83,8 +84,8 @@ data class SupabaseTrip(
                 destination = trip.destination,
                 travelers = trip.travelers,
                 budget = trip.budget,
-                status = trip.status.name,
-                category = trip.category.name,
+                status = trip.status.dbString, // Using dbString to store in DB
+                category = trip.category.dbString, // Using dbString to store in DB
                 description = trip.description
             )
         }
@@ -99,7 +100,7 @@ data class SupabaseItineraryItem(
     val time: String,
     val title: String,
     val location: String,
-    val type: String, // ItineraryType as string
+    val type: String, // ItineraryType as string (remains String)
     val notes: String = "",
     val description: String = "",
     val duration: String = "",
@@ -120,7 +121,7 @@ data class SupabaseItineraryItem(
             time = time,
             title = title,
             location = location,
-            type = ItineraryType.valueOf(type),
+            type = ItineraryType.fromDbString(type), // Using fromDbString for safer conversion
             notes = notes,
             description = description,
             duration = duration,
@@ -141,7 +142,7 @@ data class SupabaseItineraryItem(
                 time = item.time,
                 title = item.title,
                 location = item.location,
-                type = item.type.name,
+                type = item.type.dbString, // Using dbString to store in DB
                 notes = item.notes,
                 description = item.description,
                 duration = item.duration,

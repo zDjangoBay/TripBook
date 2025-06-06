@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+
+import java.time.OffsetDateTime
+import java.time.format.DateTimeParseException
+import java.time.ZoneOffset // For providing a default offset if needed
 
 @Serializable
 data class SupabaseAgency(
@@ -61,15 +63,31 @@ data class SupabaseDestination(
 data class SupabaseBus(
     val bus_id: Int,
     val bus_name: String,
-    val time_of_departure: String, // ISO timestamp string
+    val time_of_departure: String, // String from Supabase. Still non-nullable here.
     val agency_id: Int,
     val destination_id: Int
 ) {
     fun toBus(destinationName: String = "", agencyName: String = ""): Bus {
+        val parsedTime: OffsetDateTime = try {
+            // Supabase's TIMESTAMP WITH TIME ZONE typically outputs ISO 8601 with offset/Z.
+            // The `replace` might still be needed if it uses spaces for some reason,
+            // but often OffsetDateTime.parse can handle it directly if it's truly ISO 8601.
+            OffsetDateTime.parse(time_of_departure.replace(" ", "T"))
+        } catch (e: DateTimeParseException) {
+            // Log the error
+            System.err.println("Error parsing timeOfDeparture string '$time_of_departure' for bus ID $bus_id. Error: ${e.message}")
+
+            // Fallback for OffsetDateTime:
+            // This assumes a default offset (e.g., UTC) or a specific known timezone.
+            // Using OffsetDateTime.now() with UTC offset as a safer fallback.
+            OffsetDateTime.now(ZoneOffset.UTC) // Better than just `now()`
+            // Or throw an exception if critical.
+        }
+
         return Bus(
             busId = bus_id,
             busName = bus_name,
-            timeOfDeparture = LocalDateTime.parse(time_of_departure.replace(" ", "T")),
+            timeOfDeparture = parsedTime,
             agencyId = agency_id,
             destinationId = destination_id,
             destinationName = destinationName,

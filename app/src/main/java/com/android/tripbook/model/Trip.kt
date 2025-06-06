@@ -1,18 +1,51 @@
+// Trip.kt
 package com.android.tripbook.model
 
 import com.android.tripbook.service.AgencyService
 import java.time.LocalDate
 
-enum class TripStatus {
-    PLANNED, ACTIVE, COMPLETED
+enum class TripStatus(val dbString: String) {
+    PLANNED("PLANNED"),
+    ACTIVE("ACTIVE"),
+    COMPLETED("COMPLETED");
+
+    // Safer lookup: Returns the enum or a default if the string doesn't match
+    companion object {
+        fun fromDbString(value: String): TripStatus {
+            return entries.firstOrNull { it.dbString == value } ?: PLANNED // Default to PLANNED if not found
+        }
+    }
 }
 
-enum class TripCategory {
-    CULTURAL, ADVENTURE, RELAXATION, BUSINESS, FAMILY, ROMANTIC, WILDLIFE, HISTORICAL
+enum class TripCategory(val dbString: String) {
+    CULTURAL("CULTURAL"),
+    ADVENTURE("ADVENTURE"),
+    RELAXATION("RELAXATION"),
+    BUSINESS("BUSINESS"),
+    FAMILY("FAMILY"),
+    ROMANTIC("ROMANTIC"),
+    WILDLIFE("WILDLIFE"),
+    HISTORICAL("HISTORICAL");
+
+    // Safer lookup: Returns the enum or a default if the string doesn't match
+    companion object {
+        fun fromDbString(value: String): TripCategory {
+            return entries.firstOrNull { it.dbString == value } ?: CULTURAL // Default to CULTURAL if not found
+        }
+    }
 }
 
-enum class ItineraryType {
-    ACTIVITY, ACCOMMODATION, TRANSPORTATION
+enum class ItineraryType(val dbString: String) {
+    ACTIVITY("ACTIVITY"),
+    ACCOMMODATION("ACCOMMODATION"),
+    TRANSPORTATION("TRANSPORTATION");
+
+    // Safer lookup: Returns the enum or a default if the string doesn't match
+    companion object {
+        fun fromDbString(value: String): ItineraryType {
+            return entries.firstOrNull { it.dbString == value } ?: ACTIVITY // Default to ACTIVITY if not found
+        }
+    }
 }
 
 // Location data classes for Maps integration
