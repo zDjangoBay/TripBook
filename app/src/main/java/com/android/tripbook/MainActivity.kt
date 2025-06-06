@@ -39,7 +39,10 @@ class MainActivity : ComponentActivity() {
                     onNavigateToTripDetail = { tripId ->
                         navController.navigate("trip_detail/$tripId")
                     },
-                    onNavigateToCreateTrip = { /* TODO */ }
+                    onNavigateToCreateTrip = { 
+                        // Navigate directly to budget screen for testing with sample data
+                        navController.navigate("trip_budget/sample_trip_123")
+                    }
                 )
             }
             composable("trip_detail/{tripId}") { backStackEntry ->

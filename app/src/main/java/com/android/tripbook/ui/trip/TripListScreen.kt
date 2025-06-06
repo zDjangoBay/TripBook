@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -28,6 +29,29 @@ fun TripListScreen(
     val trips by tripViewModel.allTrips.observeAsState(initial = emptyList())
     val currentTrips = trips
 
+    // Add sample data if no trips exist
+    LaunchedEffect(currentTrips) {
+        if (currentTrips.isEmpty()) {
+            // Create sample trips for testing
+            val sampleTrip1 = Trip(
+                id = "sample_trip_123",
+                destination = "Paris, France",
+                startDate = System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000), // 7 days from now
+                endDate = System.currentTimeMillis() + (14 * 24 * 60 * 60 * 1000), // 14 days from now
+                budget = 2500.0
+            )
+            val sampleTrip2 = Trip(
+                id = "sample_trip_456",
+                destination = "Tokyo, Japan",
+                startDate = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000), // 30 days from now
+                endDate = System.currentTimeMillis() + (45 * 24 * 60 * 60 * 1000), // 45 days from now
+                budget = 3000.0
+            )
+            tripViewModel.insert(sampleTrip1)
+            tripViewModel.insert(sampleTrip2)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -36,7 +60,7 @@ fun TripListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToCreateTrip) {
-                Icon(Icons.Filled.Add, contentDescription = "Create Trip")
+                Icon(Icons.Filled.Add, contentDescription = "Test Budget Screen")
             }
         }
     ) { paddingValues ->
@@ -45,7 +69,13 @@ fun TripListScreen(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No trips yet. Create one!")
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Loading sample trips...")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Tip: Click the + button to test Budget Tracker!")
+                }
             }
         } else {
             LazyColumn(
