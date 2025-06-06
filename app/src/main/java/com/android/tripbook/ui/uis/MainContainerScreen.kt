@@ -20,7 +20,7 @@ fun MainContainerScreen(
     googleMapsService: GoogleMapsService,
     agencyRepository: SupabaseAgencyRepository
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) } // Start with Home (index 0)//
+    var selectedTab by remember { mutableIntStateOf(1) } // Start with Trips (index 1)
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember { mutableStateOf<Trip?>(null) }
     var selectedDestination by remember { mutableStateOf<String?>(null) }
@@ -74,9 +74,11 @@ fun MainContainerScreen(
             }
         }
     ) { paddingValues ->
-        Box(
+        // Fixed: Use fillMaxWidth and fillMaxHeight instead of nested fillMaxSize
+        Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .fillMaxHeight()
                 .padding(paddingValues)
         ) {
             when (currentScreen) {
@@ -123,10 +125,16 @@ fun MainContainerScreen(
 
                 "Settings" -> SettingsScreen()
 
-                // Keep existing screens for detailed navigation
+                // Detailed navigation screens (without bottom bar)
                 "PlanNewTrip" -> PlanNewTripScreen(
-                    onBackClick = { currentScreen = "Home" },
-                    onTripCreated = { newTrip -> currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 1
+                        currentScreen = "MyTrips"
+                    },
+                    onTripCreated = { newTrip ->
+                        selectedTab = 1
+                        currentScreen = "MyTrips"
+                    },
                     nominatimService = nominatimService,
                     travelAgencyService = travelAgencyService,
                     googleMapsService = googleMapsService,
@@ -147,7 +155,10 @@ fun MainContainerScreen(
                         budget = 0,
                         status = TripStatus.PLANNED
                     ),
-                    onBackClick = { currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 1
+                        currentScreen = "MyTrips"
+                    },
                     onEditItineraryClick = { currentScreen = "ItineraryBuilder" }
                 )
 
@@ -203,7 +214,10 @@ fun MainContainerScreen(
                 )
 
                 "AllAgencies" -> AllAgenciesScreen(
-                    onBackClick = { currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 0
+                        currentScreen = "Home"
+                    },
                     agencyViewModel = agencyViewModel,
                     onAgencyClick = { agency ->
                         selectedAgency = agency
