@@ -38,6 +38,31 @@ data class ItineraryItem(
     val routeToNext: RouteInfo? = null // Route to next itinerary item
 )
 
+// Add these enums and data classes for the Journal feature
+enum class Mood(val icon: String) {
+    HAPPY("😊"),
+    NEUTRAL("😐"),
+    SAD("😔"),
+    EXCITED("🤩"),
+    TIRED("😴")
+}
+
+enum class Privacy {
+    PUBLIC, FRIENDS, PRIVATE
+}
+
+data class JournalEntry(
+    val id: String,
+    val date: LocalDate,
+    val title: String,
+    val content: String,
+    val mood: Mood = Mood.HAPPY,
+    val privacy: Privacy = Privacy.PRIVATE,
+    val tags: List<String> = emptyList(),
+    val photos: List<Uri> = emptyList()
+)
+
+// Update the Trip data class to include journal entries
 data class Trip(
     val id: String,
     val name: String,
@@ -53,7 +78,7 @@ data class Trip(
     val expenses: List<String> = emptyList(),
     val travelersList: List<String> = emptyList(),
     val itinerary: List<ItineraryItem> = emptyList(),
-    // New fields for Maps integration
     val destinationCoordinates: Location? = null,
-    val mapCenter: Location? = null // Center point for map display
+    val mapCenter: Location? = null,
+    val journalEntries: List<JournalEntry> = emptyList() // New field
 )
