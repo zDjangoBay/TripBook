@@ -76,4 +76,7 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Image loading library
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
