@@ -30,6 +30,12 @@ fun TripCatalogScreen(
     modifier: Modifier = Modifier,
     onTripClick: (Int) -> Unit
 ) {
+    // 🧪 DATABASE INTEGRATION - COMMENTED OUT FOR TEAM COLLABORATION
+    // 📝 INSTRUCTIONS: Uncomment the code below to activate Room database integration
+    // 🎯 PURPOSE: Allows team members to use only mock data without database interference
+    // 🚀 TO ACTIVATE: Remove the /* and */ comment blocks and comment out the simple mock data line
+
+    /*
     // 🧪 USE ROOM DATABASE INSTEAD OF MOCK DATA
     val context = LocalContext.current
     var allTrips by remember { mutableStateOf<List<Trip>>(emptyList()) }
@@ -65,6 +71,10 @@ fun TripCatalogScreen(
             allTrips = SampleTrips.get()
         }
     }
+    */
+
+    // 📍 SIMPLE MOCK DATA - Active for team collaboration
+    val allTrips = remember { SampleTrips.get() }
 
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 

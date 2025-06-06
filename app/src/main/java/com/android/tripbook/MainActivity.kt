@@ -23,6 +23,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // 🧪 DATABASE TEST - COMMENTED OUT FOR TEAM COLLABORATION
+        // 📝 INSTRUCTIONS: Uncomment the code below to activate database testing
+        // 🎯 PURPOSE: Allows team members to use mock data without database interference
+        // 🚀 TO ACTIVATE: Remove the /* and */ comment blocks around the database test code
+
+        /*
         // 🧪 DATABASE TEST - Force database test to run and add test data
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -45,6 +51,7 @@ class MainActivity : ComponentActivity() {
                 android.util.Log.e("DatabaseTest", "❌ Database test failed: ${e.message}")
             }
         }
+        */
         setContent {
             TripBookTheme {
                 val navController = rememberNavController()
