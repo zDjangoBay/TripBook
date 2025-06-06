@@ -21,7 +21,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.ui.components.TripMapView
 import com.android.tripbook.viewmodel.TripViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -61,7 +60,6 @@ fun TripDetailScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("End Date: ${currentTrip.endDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) }}")
                     Spacer(modifier = Modifier.height(16.dp))
-                    TripMapView(trip = currentTrip)
                 }
             }
         }
