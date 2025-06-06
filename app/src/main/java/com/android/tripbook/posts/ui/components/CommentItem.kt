@@ -1,6 +1,5 @@
 package com.android.tripbook.posts.ui.components
 
-
 import androidx.compose.foundation.background
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider // <-- Renommé
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.posts.model.Comment
+import com.android.tripbook.data.model.Comment // <-- Import du modèle canonique Comment
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.Instant
 import java.time.ZoneId
@@ -48,7 +47,7 @@ import java.util.Locale
 @Composable
 fun CommentItem(
     comment: Comment,
-    currentUserId: String,
+    currentUserId: String, // Ce paramètre n'est actuellement pas utilisé dans ce composable
     onReplyClick: () -> Unit,
     onSendReply: (String) -> Unit,
     isReplying: Boolean,
@@ -92,7 +91,7 @@ fun CommentItem(
                     )
                 }
                 Text(
-                    comment.text,
+                    text = comment.text,
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(top = 2.dp)
                 )
@@ -171,7 +170,7 @@ fun CommentItem(
                         },
                         enabled = replyText.isNotBlank()
                     ) {
-                        Icon(Icons.Filled.Send, contentDescription = "Send Reply")
+                        Icon(Icons.Filled.Send, contentDescription = "Send Reply") // <-- Icône AutoMirrored
                     }
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -195,7 +194,7 @@ fun CommentItem(
 @Composable
 fun PreviewCommentItem() {
     TripBookTheme {
-        val sampleComment = Comment(
+        val sampleComment = Comment( // Utilise le modèle Comment canonique
             id = "c1",
             postId = "p1",
             userId = "u1",
@@ -203,7 +202,7 @@ fun PreviewCommentItem() {
             userAvatar = null,
             text = "What an amazing shot! I'd love to visit this place someday. Any tips?",
             timestamp = Instant.now().minusSeconds(3600),
-            replies = listOf(
+            replies = listOf( // Utilise le modèle Comment canonique pour les réponses
                 Comment(
                     id = "r1",
                     postId = "p1",
@@ -229,9 +228,9 @@ fun PreviewCommentItem() {
                 replyText = replyText,
                 onReplyTextChange = { replyText = it }
             )
-            Divider()
+            HorizontalDivider() // <-- Renommé
             CommentItem(
-                comment = sampleComment.copy(
+                comment = sampleComment.copy( // Utilise le modèle Comment canonique
                     id = "c2",
                     username = "NatureLover",
                     text = "I love the composition here. Beautiful work!"
