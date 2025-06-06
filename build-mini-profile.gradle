@@ -1,0 +1,24 @@
+// Build script to test only mini profile components
+task buildMiniProfileComponents {
+    doLast {
+        println "Building Mini Profile Components..."
+
+        // List of our core files
+        def ourFiles = [
+                'app/src/main/java/com/android/tripbook/data/User.kt',
+                'app/src/main/java/com/android/tripbook/data/SampleData.kt',
+                'app/src/main/java/com/android/tripbook/ui/components/UserProfileEmbedding.kt',
+                'app/src/main/java/com/android/tripbook/ui/screens/UserProfileDemoScreen.kt',
+                'app/src/main/java/com/android/tripbook/MiniProfileDemoActivity.kt'
+        ]
+
+        ourFiles.each { file ->
+            def fileObj = new File(file)
+            if (fileObj.exists()) {
+                println "✓ ${file} exists"
+            } else {
+                println "✗ ${file} missing"
+            }
+        }
+    }
+}

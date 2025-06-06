@@ -51,7 +51,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -76,7 +76,4 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-
-    // Image loading library
-    implementation("io.coil-kt:coil-compose:2.5.0")
 }

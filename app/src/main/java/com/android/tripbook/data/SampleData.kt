@@ -5,22 +5,26 @@ object SampleData {
         User(
             id = "1",
             name = "Marie Nkomo",
-            destination = "Yaoundé, Cameroon"
+            destination = "Yaoundé, Cameroon",
+            profileImageRes = android.R.drawable.ic_menu_gallery
         ),
         User(
             id = "2",
             name = "Paul Essomba",
-            destination = "Douala, Cameroon"
+            destination = "Douala, Cameroon",
+            profileImageRes = android.R.drawable.ic_menu_camera
         ),
         User(
             id = "3",
             name = "Fatima Abba",
-            destination = "Maroua, Cameroon"
+            destination = "Maroua, Cameroon",
+            profileImageRes = android.R.drawable.ic_menu_gallery
         ),
         User(
             id = "4",
             name = "Jean Baptiste",
-            destination = "Kribi, Cameroon"
+            destination = "Kribi, Cameroon",
+            profileImageRes = android.R.drawable.ic_menu_camera
         )
     )
 }
