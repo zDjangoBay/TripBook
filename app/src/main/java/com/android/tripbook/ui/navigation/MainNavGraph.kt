@@ -20,7 +20,10 @@ import androidx.navigation.compose.composable
 import com.android.tripbook.ViewModel.MainViewModel
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
-import com.android.tripbook.ViewModel.BusCompaniesViewModel
+
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 
 @Composable
 fun MainNavGraph(
@@ -139,6 +142,15 @@ fun MainNavGraph(
                     // You can add navigation to destination details here
                     // navController.navigate("destination_details/${destination.id}")
                 }
+            )
+        }
+
+        composable(
+            route = "addPlace/{tripId}",
+            arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            AddPlaceScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }
