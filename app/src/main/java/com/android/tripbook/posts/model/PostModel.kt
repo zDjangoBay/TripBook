@@ -1,6 +1,7 @@
 package com.android.tripbook.posts.model
 
 
+import java.time.Instant
 import java.util.UUID
 
 data class PostModel(
