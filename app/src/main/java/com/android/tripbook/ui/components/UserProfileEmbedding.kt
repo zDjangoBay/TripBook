@@ -12,17 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.data.User
 
 @Composable
 fun UserProfileEmbedding(
     user: User,
-    modifier: Modifier = Modifier,
-    size: ProfileSize = ProfileSize.Medium
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.padding(8.dp),
@@ -32,14 +29,14 @@ fun UserProfileEmbedding(
         // Profile Picture (circular with initials)
         Box(
             modifier = Modifier
-                .size(size.imageSize)
+                .size(40.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = getInitials(user.name),
-                fontSize = (size.imageSize.value * 0.4).sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -52,7 +49,7 @@ fun UserProfileEmbedding(
             // User Name
             Text(
                 text = user.name,
-                fontSize = size.nameTextSize,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -68,11 +65,11 @@ fun UserProfileEmbedding(
                     imageVector = Icons.Default.LocationOn,
                     contentDescription = "Location",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(size.iconSize)
+                    modifier = Modifier.size(14.dp)
                 )
                 Text(
                     text = user.destination,
-                    fontSize = size.destinationTextSize,
+                    fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -87,15 +84,4 @@ private fun getInitials(name: String): String {
         .mapNotNull { it.firstOrNull()?.uppercase() }
         .take(2)
         .joinToString("")
-}
-
-enum class ProfileSize(
-    val imageSize: Dp,
-    val nameTextSize: TextUnit,
-    val destinationTextSize: TextUnit,
-    val iconSize: Dp
-) {
-    Small(28.dp, 14.sp, 12.sp, 12.dp),
-    Medium(40.dp, 16.sp, 14.sp, 14.dp),
-    Large(48.dp, 18.sp, 16.sp, 16.dp)
 }
