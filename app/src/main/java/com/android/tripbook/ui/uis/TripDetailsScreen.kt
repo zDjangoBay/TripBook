@@ -1,6 +1,5 @@
 package com.android.tripbook.ui.uis
 
-
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -115,11 +114,11 @@ fun TripDetailsScreen(
                                 trip = currentTrip,
                                 uiState = uiState,
                                 viewModel = viewModel,
-                                onUpdateActivityClick = { item: ItineraryItem -> // Explicitly define type
+                                onUpdateActivityClick = { item: ItineraryItem ->
                                     activityToEdit = item
                                     showEditActivityDialog = true
                                 },
-                                onDeleteActivityClick = { itemId: String -> // Explicitly define type
+                                onDeleteActivityClick = { itemId: String ->
                                     viewModel.deleteItineraryItem(itemId)
                                 }
                             )
@@ -157,12 +156,12 @@ fun TripDetailsScreen(
             EditActivityDialog(
                 item = item,
                 onDismiss = { showEditActivityDialog = false; activityToEdit = null },
-                onSave = { updatedItem: ItineraryItem -> // Explicitly define type
+                onSave = { updatedItem: ItineraryItem ->
                     viewModel.updateItineraryItem(updatedItem)
                     showEditActivityDialog = false
                     activityToEdit = null
                 },
-                onDelete = { itemId: String -> // Explicitly define type
+                onDelete = { itemId: String ->
                     viewModel.deleteItineraryItem(itemId)
                     showEditActivityDialog = false
                     activityToEdit = null
@@ -170,7 +169,6 @@ fun TripDetailsScreen(
             )
         }
     }
-
 
     // Error handling
     uiState.error?.let { error ->
@@ -888,7 +886,6 @@ private fun MapTab(trip: Trip) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ;
                 Switch(
                     checked = showRoutes,
                     onCheckedChange = { showRoutes = it },
@@ -1195,11 +1192,6 @@ private fun TripBookGradientBackground(content: @Composable () -> Unit) {
     }
 }
 
-// These are composables that were potentially misplaced or were intended to be
-// top-level. I'm moving them to the end of the file as top-level declarations
-// to resolve the "Expecting a top level declaration" error if they were
-// causing it by being inside another scope.
-// ItineraryTab was previously included and is now moved to the end as a top-level.
 @Composable
 private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
     Column(

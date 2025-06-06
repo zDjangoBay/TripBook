@@ -37,9 +37,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItineraryBuilderScreen(
@@ -78,7 +75,7 @@ fun ItineraryBuilderScreen(
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
         ) {
-            // Header with back button//
+            // Header with back button
             TripBookHeader(
                 title = "Build Itinerary: ${trip.name}",
                 onBackClick = onBackClick
@@ -91,11 +88,6 @@ fun ItineraryBuilderScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    // Browse Travel Agencies Button
-                    TripBookSecondaryButton(
-                        text = "Browse Travel Agencies",
-                        onClick = { onBrowseAgencies(trip.destination) }
-                    )
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // Date
