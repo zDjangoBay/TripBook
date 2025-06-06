@@ -12,7 +12,9 @@ import com.android.tripbook.ui.components.TripCard
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.navigation.NavHostController
 import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.ui.components.PopularDestinations
 
 /**
  * Main Trip Catalog Screen combining:
@@ -23,7 +25,8 @@ import com.android.tripbook.data.SampleTrips
 @Composable
 fun TripCatalogScreen(
     modifier: Modifier = Modifier,
-    onTripClick: (Int) -> Unit
+    onTripClick: (Int) -> Unit,
+    navController: NavHostController
 ) {
     val allTrips = remember { SampleTrips.get() } // Replace with real fetch
 
@@ -65,8 +68,22 @@ fun TripCatalogScreen(
                 .padding(16.dp),
             contentPadding = PaddingValues(bottom = 100.dp)
         ) {
+
+             item {
+                 PopularDestinations(
+                     trips = allTrips,
+                     onLocationClick = { location ->
+                         navController.navigate("location/${location}")
+                     },
+                     modifier = Modifier.padding(top = 16.dp)
+                 )
+                Divider(modifier = Modifier.padding(vertical = 16.dp))
+            }
+
             itemsIndexed(displayedTrips) { index, trip ->
-                TripCard(trip = trip, onClick = { onTripClick(trip.id) })
+                TripCard(trip = trip, onClick = { onTripClick(trip.id) },
+                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
 
                 // Trigger pagination when reaching the end
                 if (index == displayedTrips.lastIndex && !isLoading && displayedTrips.size < allTrips.size) {
