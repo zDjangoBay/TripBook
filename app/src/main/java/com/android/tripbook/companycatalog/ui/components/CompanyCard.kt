@@ -1,13 +1,26 @@
+
 package com.android.tripbook.companycatalog.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,8 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.R
 import com.android.tripbook.companycatalog.data.CompanyData
-import com.android.tripbook.ui.theme.TripbookTheme
-
+import com.android.tripbook.ui.theme.TripBookTheme
 
 @Composable
 fun CompanyCard(
@@ -78,7 +90,7 @@ fun CompanyCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
+                    Icon( // This Icon is now explicitly from Material 3
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.tertiary,
@@ -99,7 +111,7 @@ fun CompanyCard(
 @Preview(showBackground = true)
 @Composable
 fun CompanyCardPreview() {
-    TripbookTheme {
+    TripBookTheme {
         CompanyCard(
             company = CompanyData(
                 id = "prev_001",
