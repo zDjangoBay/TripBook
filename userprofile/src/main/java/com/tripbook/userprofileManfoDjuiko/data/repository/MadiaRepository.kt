@@ -108,4 +108,20 @@ class MediaRepository(private val context: Context) {
         }
         videos
     }
+
+    suspend fun deleteMediaItems(itemIds: Set<String>) {
+        // Implementation depends on your storage mechanism
+        // For example, if using ContentResolver for local storage:
+        itemIds.forEach { itemId ->
+            try {
+                val mediaItem = (getImages() + getVideos()).find { it.id == itemId }
+                mediaItem?.uri?.let { uri ->
+                    context.contentResolver.delete(uri, null, null)
+                }
+            } catch (e: Exception) {
+                // Handle deletion error
+                throw Exception("Failed to delete media item: ${e.message}")
+            }
+        }
+    }
 }

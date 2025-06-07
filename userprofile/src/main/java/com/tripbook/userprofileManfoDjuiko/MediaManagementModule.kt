@@ -64,16 +64,18 @@ fun MediaManagementScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showUploadScreen by remember { mutableStateOf(false) } // State to control upload screen visibility
+    val context = LocalContext.current // Get the current context
+
+    // Launcher for sharing content
+    val shareLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        // You can handle the result of the share intent here if needed
+    }
 
     if (showUploadScreen) {
         MediaUploadScreen(
             onNavigateBack = { showUploadScreen = false },
             onUploadComplete = { uris ->
-                // Handle the uploaded URIs here.
-                // In a real application, you'd likely pass these to your ViewModel
-                // to process and add them to your media list.
-                // For now, let's just close the upload screen.
-                viewModel.addMediaItems(uris) // Assuming you have a function in your ViewModel to add media
+                viewModel.addMediaItems(uris)
                 showUploadScreen = false
             }
         )
@@ -94,7 +96,7 @@ fun MediaManagementScreen(
                 },
                 actions = {
                     // Add media button
-                    IconButton(onClick = { showUploadScreen = true }) { // Toggle upload screen visibility
+                    IconButton(onClick = { showUploadScreen = true }) {
                         Icon(
                             Icons.Default.Add,
                             contentDescription = "Add Media",
@@ -112,10 +114,13 @@ fun MediaManagementScreen(
                         IconButton(onClick = { viewModel.clearSelection() }) {
                             Icon(Icons.Default.Clear, contentDescription = "Clear selection")
                         }
-                        IconButton(onClick = { /* Handle delete */ }) {
+                        IconButton(onClick = { viewModel.deleteSelectedItems() }) {
                             Icon(Icons.Default.Delete, contentDescription = "Delete")
                         }
-                        IconButton(onClick = { /* Handle share */ }) {
+                        IconButton(onClick = {
+                            // Call the share function from the ViewModel
+                            viewModel.shareSelectedMedia(context, shareLauncher)
+                        }) {
                             Icon(Icons.Default.Share, contentDescription = "Share")
                         }
                     }
@@ -234,7 +239,7 @@ fun MediaManagementScreen(
                         if (currentItems.isEmpty()) {
                             EmptyStateScreen(
                                 mediaType = uiState.currentTab,
-                                onAddMedia = { showUploadScreen = true } // Also connect this to the upload screen
+                                onAddMedia = { showUploadScreen = true }
                             )
                         } else {
                             MediaGrid(
@@ -254,7 +259,6 @@ fun MediaManagementScreen(
         }
     }
 }
-
 @Composable
 private fun CustomTab(
     text: String,
