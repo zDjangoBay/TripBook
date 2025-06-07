@@ -39,7 +39,6 @@ class CompanyCatalogServiceImpl(
             CompanyName = request.CompanyName,
             CompanyMain_id = request.CompanyMain_id,
             CompanyLocalisation = request.CompanyLocalisation,
-            // Assuming the typo "CompanyAgemcy" in your Company.kt is corrected to "CompanyAgency"
             CompanyAgency = request.CompanyAgency,
             CompanyStatus = request.CompanyStatus,
             CompanyScore = null
@@ -85,7 +84,7 @@ class CompanyCatalogServiceImpl(
         }
     }
 
-    // No changes in getCompanyByMainId, it looks correct.
+   
     override suspend fun getCompanyByMainId(mainId: String): Company? {
         val cacheKey = CompanyCacheKeys.companyByMainId(mainId)
         try {
@@ -204,7 +203,7 @@ class CompanyCatalogServiceImpl(
                 return currentCompany
             }
 
-            // Using updateOne to change a single field.
+            
             val updateResult = companiesCollection.updateOne(
                 Company::Company_Id eq companyId,
                 setValue(Company::CompanyStatus, newStatus)
