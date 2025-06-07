@@ -8,7 +8,7 @@ import org.litote.kmongo.serialization.LocalDateTimeSerializer
 @Serializable
 data class Reservation(
     val id: String = UUID.randomUUID().toString(),
-    val userId: String, // ADDED: To associate the reservation with a user
+    val userId: String, //  To associate the reservation with a user
     val title: String,
     val destination: String,
     @Serializable(with= LocalDateTimeSerializer::class)
@@ -25,7 +25,7 @@ data class Reservation(
     val accommodationAddress: String? = null,
     val transportInfo: String? = null,
     @Serializable(with= LocalDateTimeSerializer::class)
-    val createdAt: LocalDateTime = LocalDateTime.now(), // ADDED: Useful for tracking
+    val createdAt: LocalDateTime = LocalDateTime.now(),
     @Serializable(with= LocalDateTimeSerializer::class)
-    var updatedAt: LocalDateTime = LocalDateTime.now()  // ADDED: Useful for tracking updates
+    var updatedAt: LocalDateTime = LocalDateTime.now()  
 )
