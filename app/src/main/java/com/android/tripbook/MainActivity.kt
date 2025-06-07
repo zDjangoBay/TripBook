@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.ui.UserProfileScreen // Import the UserProfileScreen function
 import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
 
 class MainActivity : ComponentActivity() {
@@ -20,23 +21,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             UserProfileNdeDilanEntryPoint( )
+            TripBookTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    // Calling the UserProfileScreen composable
+                    UserProfileScreen(modifier = Modifier.padding(innerPadding))
+                }
+            }
         }
     }
-}
-
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
 
 @Preview
 @Composable
 fun GreetingPreview() {
     TripBookTheme {
-        Greeting("Android")
+        //Greeting("Android")
     }
 }

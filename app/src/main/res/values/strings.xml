@@ -1,5 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+
+    <string name="app_title">TRIPBOOK</string>
+    <string name="souvenir_heading">Souvenir</string>
+    <string name="souvenir_instruction">Capture pictures from your adventures and save them here as souvenirs.</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="description_hint">Write a short description</string>
+    <string name="save_souvenir">Save Souvenir</string>
+    <string name="image_preview">Selected image preview</string>
+    <string name="saved_image">Saved souvenir image</string>
+    <string name="delete">Delete</string>
+    <string name="empty_state_message">No souvenirs yet. Add your first adventure!</string>
+    <string name="empty_state_image">Empty state icon</string>
+    <string name="select_image_prompt">Please select an image</string>
+    <string name="description_empty_prompt">Please enter a description</string>
 </resources>
