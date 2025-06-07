@@ -1,6 +1,6 @@
-package com.android.Tripbook.Datamining.modules.data.reservations.routes
+package com.android.reservations.routes
 
-import com.android.Tripbook.Datamining.modules.data.reservations.model.* // Import models, DTOs, Service
+import com.android.Tripbook.Datamining.modules.data.reservations.model.* 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
