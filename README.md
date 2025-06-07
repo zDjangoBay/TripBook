@@ -1,192 +1,109 @@
-# TripBook
+TripBook - Application de Réservation de Vols:NotificationManager ✈️
 
-TripBook is a comprehensive mobile application for managing travel reservations and trip planning. Built with modern Android development practices using Kotlin and Jetpack Compose.
 
-## 🚀 Quick Start
+TripBook est une application Android moderne de réservation de vols avec système de notifications avancé, développée en Kotlin avec Jetpack Compose.
 
-### Prerequisites
-- **Java 11+** - [Download from Adoptium](https://adoptium.net/)
-- **Android Studio** - [Download from Google](https://developer.android.com/studio)
-- **Android SDK** (comes with Android Studio)
-- **Android Emulator or Physical Device**
+Quick Start
 
-### 🛠️ Setup & Run
-
-#### Option 1: Flutter-Style Development (Recommended)
-```bash
-# 1. First-time setup (run once)
+bash
 setup_dev_environment.bat
-
-# 2. Start development with live logs
 dev_runner.ps1
-# OR
-dev_runner.bat
-```
-
-#### Option 2: Simple Run
-```bash
-# Quick start with manual AVD selection
-simple_run.bat
-```
-
-#### Option 3: Traditional Android Development
-```bash
-# Build and install manually
-gradlew.bat installDebug
-
-# Or use Android Studio's Run button
-```
-
-### 🔥 Hot Reload Development
-```bash
-# Make code changes, then run:
 hot_reload.bat
-```
 
-## 📱 Features
+Fonctionnalités
 
-### Reservation Module
-- **Multi-step reservation flow**: Transport → Hotels → Activities → Payment
-- **Real-time booking status tracking** with live notifications
-- **Payment processing** with multiple payment methods (simulated)
-- **Location-based search** with automatic current location detection
-- **Tabbed reservation management**: Pending, Upcoming, Completed
+Notifications Avancées
+- Notifications temps réel (retards, annulations, changements de porte)
+- Rappels automatiques check-in
+- Actions rapides depuis notifications
+- Priorité adaptative selon urgence
 
-### User Interface
-- **Material 3 Design System** with purple-dominant theme
-- **Trip icons** instead of images for faster loading
-- **Location permissions** for current location search
-- **Responsive layouts** for different screen sizes
-- **Bottom navigation** with optimized short labels
+Réservations
+- Flux multi-étapes : Transport → Hôtels → Activités → Paiement
+- Suivi temps réel des réservations
+- Recherche basée sur localisation
+- Gestion : En attente, À venir, Terminées
 
-### Core Features
-- **Dashboard** with trip browsing and search
-- **Location Services** with permission handling
-- **Search functionality** by destination and current location
-- **Trip categorization** with visual icons
-- **Real-time development logs** (Flutter-style experience)
+Interface
+- Material 3 Design (thème violet)
+- Navigation bottom tabs
+- Icônes de voyage (💼🧭📍🧘👥)
+- Layouts responsives
 
-## 🎨 Design System
+Tech Stack
+- Langage : Kotlin
+- UI : Jetpack Compose + View Binding
+- Architecture : MVVM + Repository Pattern
+- Navigation : Navigation Compose
+- Async : Coroutines
+- Design : Material 3
 
-### Color Scheme
-- **Primary**: #6A1B9A (Deep Purple)
-- **Secondary**: #CE93D8 (Light Purple)
-- **Accent**: #512DA8 (Dark Purple)
+ Structure
 
-### Trip Categories & Icons
-- **Business** → 💼 Business icon
-- **Adventure** → 🧭 Explore icon
-- **Cultural** → 📍 Place icon
-- **Relaxation** → 🧘 Spa icon
-- **Family** → 👥 Groups icon
+app/src/main/java/com/android/tripbook/
+├── data/models/                 # Modèles de données
+├── notifications/               # Système notifications
+│   ├── models/                 # InAppNotification, ServiceNotification
+│   ├── services/               # NotificationService
+│   └── receivers/              # NotificationReceiver, BootReceiver
+├── ui/
+│   ├── screens/                # Dashboard, Réservations, Notifications
+│   ├── components/             # Composants réutilisables
+│   └── theme/                  # Material 3 theme
+└── MainActivity.kt
 
-## 🏗️ Project Structure
+Configuration
 
-```
-app/
-├── src/main/java/com/android/tripbook/
-│   ├── data/
-│   │   ├── models/          # Data models (Trip, Reservation, etc.)
-│   │   └── providers/       # Dummy data providers
-│   ├── ui/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── screens/         # Screen composables
-│   │   │   ├── dashboard/   # Dashboard and trip browsing
-│   │   │   ├── reservation/ # Multi-step reservation flow
-│   │   │   ├── notifications/ # Notification management
-│   │   │   └── profile/     # User profile
-│   │   └── theme/           # Material 3 theme
-│   └── MainActivity.kt      # App entry point
-├── Development Scripts/
-│   ├── dev_runner.ps1       # Flutter-style development (PowerShell)
-│   ├── dev_runner.bat       # Flutter-style development (Batch)
-│   ├── simple_run.bat       # Simple app runner
-│   ├── hot_reload.bat       # Quick hot reload
-│   └── setup_dev_environment.bat # First-time setup
-└── DEVELOPMENT_GUIDE.md     # Detailed development guide
-```
+Canaux Notifications
+- CRITICAL : Annulations, embarquement fermé
+- HIGH : Retards, changements de porte
+- MEDIUM : Check-in, rappels
+- LOW : Promotions, infos générales
 
-## 🔧 Development Environment
+Permissions
+xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-### Flutter-Style Experience
-This project includes a **Flutter-like development environment** with:
+Statut
 
-- **🔥 Live logs** showing real-time app interactions
-- **⚡ Hot reload** for instant code changes
-- **🎨 Colored output** for easy debugging
-- **📱 Automatic emulator management**
-- **🔍 Real-time crash detection**
+Terminé
+- Workflow réservation complet
+- Système notifications multi-canaux
+- Interface Material 3
+- Environnement dev style Flutter
 
-### Development Workflow
-1. **Run development server**: `dev_runner.ps1`
-2. **Make code changes** in Android Studio
-3. **Hot reload**: `hot_reload.bat`
-4. **See changes instantly** with live logs
+En cours
+- Intégration API backend
+- Authentification utilisateur
+- Base de données Room
 
-### Available Scripts
-- **`setup_dev_environment.bat`** - One-time environment setup
-- **`dev_runner.ps1`** - Main development server (PowerShell)
-- **`dev_runner.bat`** - Main development server (Batch)
-- **`simple_run.bat`** - Simple app launcher
-- **`hot_reload.bat`** - Quick code updates
-- **`debug_logs.bat`** - Debug crash issues
+ Tests
 
-## 🎯 Current Status
+bash
 
-### ✅ Completed Features
-- Complete reservation workflow with dummy data
-- Material 3 theming with purple color scheme
-- Location-based search functionality
-- Trip categorization with visual icons
-- Multi-step booking process (Transport → Hotels → Activities → Payment)
-- Payment simulation with notifications
-- Flutter-style development environment
-- Real-time logging and debugging tools
+./gradlew test
 
-### 🚧 In Development
-- Backend API integration
-- Real location services
-- User authentication
-- Data persistence with Room database
-- Push notifications
+./gradlew connectedAndroidTest
 
-## 🛠️ Technology Stack
+adb shell am broadcast -a com.tripbook.TEST_NOTIFICATION
 
-- **Language**: Kotlin
-- **UI Framework**: Jetpack Compose
-- **Architecture**: MVVM with Repository Pattern
-- **Navigation**: Navigation Compose
-- **State Management**: Compose State + DataStore
-- **Design System**: Material 3
-- **Image Loading**: Coil (replaced with icons for performance)
-- **Development Tools**: Custom Flutter-style runners
+Équipe
 
-## 📖 Documentation
+- **Notifications** : Tchinda Martin Kevin
+- **Réservations** : Équipe développement TripBook
 
-- **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)** - Comprehensive development guide
-- **[LICENCE.txt](LICENCE.txt)** - MIT License details
+ Installation
 
-## 🤝 Contributing
+bash
+git clone [URL_PROJET]
+cd tripbook-reservation
+# Ouvrir dans Android Studio
 
-1. **Setup development environment**: Run `setup_dev_environment.bat`
-2. **Start development server**: Run `dev_runner.ps1`
-3. **Make changes** and test with hot reload
-4. **Follow Material 3 design guidelines**
-5. **Test on multiple screen sizes**
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENCE.txt](LICENCE.txt) file for details.
-
----
-
-## 🎉 Ready to Start?
-
-```bash
-# Get started in 3 steps:
-1. setup_dev_environment.bat
-2. dev_runner.ps1
-3. Start coding with live feedback!
-```
-
-**Experience Flutter-style development for Android!** 🚀
+Prêt en 3 étapes :
+1. `setup_dev_environment.bat`
+2. `dev_runner.ps1`
+3. Start coding! 🚀

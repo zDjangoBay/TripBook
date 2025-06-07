@@ -1,16 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.TripBook" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/orange_200</item>
-        <item name="colorSecondaryVariant">@color/orange_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+    <!-- Thème principal de l'application -->
+    <style name="Theme.TripBookReservation" parent="Theme.Material3.DayNight">
+        <!-- Couleurs primaires -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <!-- ... reste de votre thème complet -->
+    </style>
+    <!-- Thème pour les activités sans ActionBar -->
+    <style name="Theme.TripBookReservation.NoActionBar" parent="Theme.TripBookReservation">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <!-- Thème pour les activités de notification -->
+    <style name="Theme.TripBookReservation.Notification" parent="Theme.TripBookReservation">
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="android:windowIsTranslucent">false</item>
     </style>
 </resources>
