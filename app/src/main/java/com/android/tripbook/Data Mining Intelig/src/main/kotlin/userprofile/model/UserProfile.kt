@@ -1,5 +1,5 @@
 // UserProfileModel.kt
-package com.android.Tripbook.Datamining.modules.data.userprofile.model
+package com.android.tripbook.src.main.kotlin.userprofile.model
 
 data class UserProfile(
     val id: String,

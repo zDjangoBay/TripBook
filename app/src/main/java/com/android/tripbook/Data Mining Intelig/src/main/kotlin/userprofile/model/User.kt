@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.userprofile.model
+package com.android.tripbook.src.main.kotlin.userprofile.model
 
 import java.util.UUID
 

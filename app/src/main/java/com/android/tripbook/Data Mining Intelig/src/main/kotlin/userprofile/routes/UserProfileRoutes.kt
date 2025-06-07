@@ -1,7 +1,7 @@
 // UserProfileRoutes.kt
-package com.tripbook.routes
+package com.android.tripbook.src.main.kotlin.userprofile.routes
 
-import com.tripbook.models.UserProfile
+import com.android.tripbook.src.main.kotlin.userprofile.model.UserProfile
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -49,6 +49,44 @@ fun Route.userProfileRoutes() {
             } else {
                 call.respondText("User not found", status = io.ktor.http.HttpStatusCode.NotFound)
             }
+        }
+    }
+}
+
+fun Route.userProfileRoutes(service: UserProfileService) {
+
+    route("/userprofiles") {
+
+        post {
+            val request = call.receive<CreateUserProfileRequest>()
+            val result = service.createUserProfile(request)
+            call.respond(result ?: HttpStatusCode.BadRequest)
+        }
+
+        get("/{user_id}") {
+            val userId = call.parameters["user_id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val result = service.getUserProfileById(userId)
+            call.respond(result ?: HttpStatusCode.NotFound)
+        }
+
+        put("/{user_id}") {
+            val userId = call.parameters["user_id"] ?: return@put call.respond(HttpStatusCode.BadRequest)
+            val request = call.receive<UpdateUserProfileRequest>()
+            val result = service.updateUserProfile(userId, request)
+            call.respond(result ?: HttpStatusCode.NotFound)
+        }
+
+        delete("/{user_id}") {
+            val userId = call.parameters["user_id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
+            val success = service.deleteUserProfile(userId)
+            if (success) call.respond(HttpStatusCode.OK) else call.respond(HttpStatusCode.NotFound)
+        }
+
+        get {
+            val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+            val size = call.request.queryParameters["size"]?.toIntOrNull() ?: 20
+            val results = service.getAllUserProfiles(page, size)
+            call.respond(results)
         }
     }
 }
