@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.reservations.model
+package com.android.reservations.model
 
 import java.time.LocalDateTime
 import java.util.UUID
