@@ -192,24 +192,28 @@ dependencies {
 
     // Hilt (Dependency Injection)
     implementation("com.google.dagger:hilt-android:2.51")
-    kapt("com.google.dagger:hilt-compiler:2.51")
+    kapt(libs.hilt.compiler)
     kapt("androidx.hilt:hilt-compiler:1.2.0") // For Hilt integration with Android components
 
     // Retrofit & Gson (Networking and JSON Parsing)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.converter.gson)
     implementation("com.squareup.okhttp3:okhttp:4.12.0") // Core HTTP client
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") // For network request logging
+    implementation(libs.logging.interceptor) // For network request logging
+    implementation (libs.material.v1xx) // Use the latest stable version
 
     // Coil (Image Loading Library)
-    implementation("io.coil-kt:coil-compose:2.6.0") // Latest stable version for Compose
+    implementation(libs.coil.compose.v260) // Latest stable version for Compose
 
     // Testing Dependencies
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2024.04.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit.v121)
+    androidTestImplementation(libs.androidx.espresso.core.v361)
+    androidTestImplementation(libs.compose.bom.v20240400)
+    androidTestImplementation(libs.androidx.compose.ui.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.ui.test.manifest)
+
+    implementation (libs.androidx.constraintlayout.v2xx) // Use the latest stable version
+
 }

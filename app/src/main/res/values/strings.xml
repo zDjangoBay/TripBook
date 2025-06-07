@@ -2,4 +2,37 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+
+
+    <string name="search_hint">Search for flights, hotels, tours...</string>
+    <string name="button_search">Search</string>
+    <string name="welcome_message">Discover Your Next Adventure!</string>
+    <string name="popular_categories_title">Popular Categories</string>
+    <string name="button_flights">Flights</string>
+    <string name="button_hotels">Hotels</string>
+    <string name="button_tours">Tours</string>
+    <string name="button_car_rentals">Car Rentals</string>
+    <string name="button_filter">Filter</string>
+    <string name="button_sort">Sort</string>
+    <string name="default_filter_status">Showing all services</string>
+    <string name="button_book_now">Book Now</string>
+    <string name="confirmation_title">Booking Successful!</string>
+    <string name="default_booking_id">Booking ID: N/A</string>
+    <string name="button_go_to_home">Go to Home</string>
+    <string name="profile_title">My Profile</string>
+    <string name="button_my_bookings">My Bookings</string>
+    <string name="button_settings">Settings</string>
+    <string name="button_logout">Logout</string>
+
+    <string name="placeholder_service_name">Service Name</string>
+    <string name="placeholder_agency_name">Travel Agency</string>
+    <string name="placeholder_price">$0.00</string>
+    <string name="placeholder_rating">0.0 ★</string>
+    <string name="service_image_description">Service Image</string>
+
+    <string name="detail_agency_prefix">Agency: %s</string>
+    <string name="detail_price_prefix">Price: %s</string>
+    <string name="detail_rating_prefix">Rating: %s</string>
+    <string name="detail_description_placeholder">Detailed description of the service goes here. This can include itinerary, inclusions, exclusions, terms and conditions, etc.</string>
+
 </resources>

@@ -9,8 +9,8 @@
 // build.gradle.kts (Project level)
 plugins {
     // Updates the Android Gradle Plugin version to 8.9.0
-    id("com.android.application") version "8.9.0" apply false
-    id("com.android.library") version "8.9.0" apply false // Include if you have library modules
+    id("com.android.application") version "8.9.3" apply false
+    id("com.android.library") version "8.9.3" apply false // Include if you have library modules
 
     // Recommended Kotlin version for AGP 8.9.0 and Compose
     id("org.jetbrains.kotlin.android") version "1.9.0" apply false

@@ -35,7 +35,7 @@ class ServiceListingFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.service_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        serviceAdapter = ServiceAdapter { service ->
+        serviceAdapter = ServiceAdapter { service
             // Handle service item click
             val action = ServiceListingFragmentDirections.actionServiceListingFragmentToServiceDetailFragment(service.id)
             findNavController().navigate(action)
