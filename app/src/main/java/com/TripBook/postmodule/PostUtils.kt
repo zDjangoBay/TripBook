@@ -291,7 +291,7 @@ object PostUtils {
         val minutes = seconds / 60
         val hours = minutes / 60
         val days = hours / 24
-        
+
         return when {
             days > 0 -> "${days}d ${hours % 24}h"
             hours > 0 -> "${hours}h ${minutes % 60}m"
@@ -299,4 +299,208 @@ object PostUtils {
             else -> "${seconds}s"
         }
     }
+
+    /**
+     * Generates a summary of PostEvent activity
+     */
+    fun generateEventSummary(events: List<PostEvent>): EventSummary {
+        val eventCounts = events.groupBy { it::class.simpleName }.mapValues { it.value.size }
+        val totalEvents = events.size
+        val uniqueEventTypes = eventCounts.size
+
+        val contentEvents = events.count { it.isContentModifyingEvent() }
+        val actionEvents = events.count { it.isFormActionEvent() }
+        val feedbackEvents = events.count { it.isFeedbackEvent() }
+
+        return EventSummary(
+            totalEvents = totalEvents,
+            uniqueEventTypes = uniqueEventTypes,
+            contentModifyingEvents = contentEvents,
+            formActionEvents = actionEvents,
+            feedbackEvents = feedbackEvents,
+            eventCounts = eventCounts,
+            mostFrequentEvent = eventCounts.maxByOrNull { it.value }?.key,
+            timeSpan = if (events.isNotEmpty()) System.currentTimeMillis() else 0L
+        )
+    }
+
+    /**
+     * Calculates form completion percentage based on events
+     */
+    fun calculateFormCompletion(events: List<PostEvent>): FormCompletionStats {
+        val hasTitle = events.any { it is PostEvent.TitleChanged }
+        val hasDescription = events.any { it is PostEvent.DescriptionChanged }
+        val hasImages = events.any { it is PostEvent.ImageAdded }
+        val hasLocation = events.any { it is PostEvent.LocationAdded }
+        val hasCategory = events.any { it is PostEvent.CategoryChanged }
+        val hasTags = events.any { it is PostEvent.TagAdded }
+        val hasVisibility = events.any { it is PostEvent.VisibilityChanged }
+
+        val completedFields = listOf(hasTitle, hasDescription, hasImages, hasLocation, hasCategory, hasTags, hasVisibility)
+        val completedCount = completedFields.count { it }
+        val totalFields = completedFields.size
+        val completionPercentage = (completedCount.toDouble() / totalFields * 100).toInt()
+
+        return FormCompletionStats(
+            completedFields = completedCount,
+            totalFields = totalFields,
+            completionPercentage = completionPercentage,
+            hasTitle = hasTitle,
+            hasDescription = hasDescription,
+            hasImages = hasImages,
+            hasLocation = hasLocation,
+            hasCategory = hasCategory,
+            hasTags = hasTags,
+            hasVisibility = hasVisibility
+        )
+    }
+
+    /**
+     * Finds patterns in event sequences
+     */
+    fun findEventPatterns(events: List<PostEvent>): List<EventPattern> {
+        val patterns = mutableListOf<EventPattern>()
+
+        // Find rapid consecutive events of same type
+        var currentType: String? = null
+        var consecutiveCount = 0
+        var startIndex = 0
+
+        events.forEachIndexed { index, event ->
+            val eventType = event::class.simpleName
+            if (eventType == currentType) {
+                consecutiveCount++
+            } else {
+                if (consecutiveCount >= 3) {
+                    patterns.add(EventPattern(
+                        type = "consecutive_same_type",
+                        description = "Rapid $currentType events",
+                        count = consecutiveCount,
+                        startIndex = startIndex,
+                        endIndex = index - 1
+                    ))
+                }
+                currentType = eventType
+                consecutiveCount = 1
+                startIndex = index
+            }
+        }
+
+        // Check final sequence
+        if (consecutiveCount >= 3) {
+            patterns.add(EventPattern(
+                type = "consecutive_same_type",
+                description = "Rapid $currentType events",
+                count = consecutiveCount,
+                startIndex = startIndex,
+                endIndex = events.size - 1
+            ))
+        }
+
+        // Find form abandonment patterns
+        val lastContentEvent = events.indexOfLast { it.isContentModifyingEvent() }
+        val hasSubmission = events.any { it is PostEvent.SubmitPost }
+
+        if (lastContentEvent >= 0 && !hasSubmission && events.size > lastContentEvent + 5) {
+            patterns.add(EventPattern(
+                type = "potential_abandonment",
+                description = "Form activity stopped without submission",
+                count = events.size - lastContentEvent,
+                startIndex = lastContentEvent,
+                endIndex = events.size - 1
+            ))
+        }
+
+        return patterns
+    }
+
+    /**
+     * Validates event sequence for logical consistency
+     */
+    fun validateEventSequence(events: List<PostEvent>): SequenceValidation {
+        val issues = mutableListOf<String>()
+        val warnings = mutableListOf<String>()
+
+        // Check for submission without content
+        val hasSubmission = events.any { it is PostEvent.SubmitPost }
+        val hasContent = events.any { it is PostEvent.TitleChanged || it is PostEvent.DescriptionChanged }
+
+        if (hasSubmission && !hasContent) {
+            issues.add("Submission attempted without title or description")
+        }
+
+        // Check for excessive clearing
+        val clearEvents = events.count {
+            it is PostEvent.ClearForm || it is PostEvent.ClearAllImages || it is PostEvent.ClearLocation
+        }
+        if (clearEvents > events.size * 0.3) {
+            warnings.add("High number of clear operations may indicate user confusion")
+        }
+
+        // Check for error patterns
+        val errorEvents = events.filterIsInstance<PostEvent.ShowError>()
+        if (errorEvents.size > 3) {
+            warnings.add("Multiple errors occurred - may indicate usability issues")
+        }
+
+        return SequenceValidation(
+            isValid = issues.isEmpty(),
+            issues = issues,
+            warnings = warnings,
+            totalEvents = events.size,
+            analysisTimestamp = System.currentTimeMillis()
+        )
+    }
 }
+
+/**
+ * Data class representing event activity summary
+ */
+data class EventSummary(
+    val totalEvents: Int,
+    val uniqueEventTypes: Int,
+    val contentModifyingEvents: Int,
+    val formActionEvents: Int,
+    val feedbackEvents: Int,
+    val eventCounts: Map<String?, Int>,
+    val mostFrequentEvent: String?,
+    val timeSpan: Long
+)
+
+/**
+ * Data class representing form completion statistics
+ */
+data class FormCompletionStats(
+    val completedFields: Int,
+    val totalFields: Int,
+    val completionPercentage: Int,
+    val hasTitle: Boolean,
+    val hasDescription: Boolean,
+    val hasImages: Boolean,
+    val hasLocation: Boolean,
+    val hasCategory: Boolean,
+    val hasTags: Boolean,
+    val hasVisibility: Boolean
+)
+
+/**
+ * Data class representing an event pattern
+ */
+data class EventPattern(
+    val type: String,
+    val description: String,
+    val count: Int,
+    val startIndex: Int,
+    val endIndex: Int
+)
+
+/**
+ * Data class representing sequence validation results
+ */
+data class SequenceValidation(
+    val isValid: Boolean,
+    val issues: List<String>,
+    val warnings: List<String>,
+    val totalEvents: Int,
+    val analysisTimestamp: Long
+)
