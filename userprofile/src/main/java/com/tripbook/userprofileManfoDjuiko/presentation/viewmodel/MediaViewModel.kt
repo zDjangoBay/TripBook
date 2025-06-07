@@ -116,6 +116,10 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         return cr.getType(uri)
     }
 
+    fun updateItemName(){
+       // TDOD
+    }
+
     fun deleteSelectedItems() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)

@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +32,7 @@ import coil.request.ImageRequest
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaItem
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaType
 import com.tripbook.userprofileManfoDjuiko.presentation.screens.MediaUploadScreen
+import com.tripbook.userprofileManfoDjuiko.presentation.viewmodel.MediaUiState
 import com.tripbook.userprofileManfoDjuiko.presentation.viewmodel.MediaViewModel
 import com.tripbook.userprofileManfoDjuiko.utils.PermissionHandler
 import com.tripbook.userprofileManfoDjuiko.utils.formatDuration
@@ -62,13 +64,33 @@ fun MediaManagementModule() {
 fun MediaManagementScreen(
     viewModel: MediaViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    var showUploadScreen by remember { mutableStateOf(false) } // State to control upload screen visibility
-    val context = LocalContext.current // Get the current context
+    // Explicitly specify the type for uiState
+    val uiState by viewModel.uiState.collectAsState(initial = MediaUiState())
+    var showUploadScreen by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var itemToEdit by remember { mutableStateOf<MediaItem?>(null) }
+    val context = LocalContext.current
 
     // Launcher for sharing content
     val shareLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         // You can handle the result of the share intent here if needed
+    }
+
+    // Edit Name Dialog
+    if (showEditDialog && itemToEdit != null) {
+        EditNameDialog(
+            currentName = itemToEdit!!.name,
+            onDismiss = {
+                showEditDialog = false
+                itemToEdit = null
+            },
+            onConfirm = { newName ->
+                // TODO: Implement name change logic here
+                // For now, just close the dialog
+                showEditDialog = false
+                itemToEdit = null
+            }
+        )
     }
 
     if (showUploadScreen) {
@@ -248,8 +270,12 @@ fun MediaManagementScreen(
                                 onItemClick = { item ->
                                     viewModel.toggleItemSelection(item.id)
                                 },
-                                onItemLongClick = { item ->
+                                onItemLongClick = {
                                     // Handle long click for detail view
+                                },
+                                onEditClick = { item ->
+                                    itemToEdit = item
+                                    showEditDialog = true
                                 }
                             )
                         }
@@ -258,6 +284,128 @@ fun MediaManagementScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EditNameDialog(
+    currentName: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var textValue by remember { mutableStateOf(currentName) }
+    var isError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp),
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Modifier le nom",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Saisissez un nouveau nom pour ce média :",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = textValue,
+                    onValueChange = {
+                        textValue = it
+                        isError = it.isBlank()
+                    },
+                    label = {
+                        Text(
+                            "Nom du média",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            "Entrez le nom...",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    },
+                    isError = isError,
+                    supportingText = if (isError) {
+                        {
+                            Text(
+                                "Le nom ne peut pas être vide",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    } else null,
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        errorBorderColor = MaterialTheme.colorScheme.error
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (textValue.isNotBlank()) {
+                        onConfirm(textValue.trim())
+                    } else {
+                        isError = true
+                    }
+                },
+                enabled = textValue.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    "Confirmer",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            ) {
+                Text(
+                    "Annuler",
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+    )
 }
 @Composable
 private fun CustomTab(
@@ -290,13 +438,14 @@ private fun MediaGrid(
     items: List<MediaItem>,
     selectedItems: Set<String>,
     onItemClick: (MediaItem) -> Unit,
-    onItemLongClick: (MediaItem) -> Unit
+    onItemLongClick: (MediaItem) -> Unit,
+    onEditClick: (MediaItem) -> Unit // New lambda for edit functionality
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(2), // Changed from 3 to 2 for larger grid items
         contentPadding = PaddingValues(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp), // Increased spacing
+        verticalArrangement = Arrangement.spacedBy(8.dp), // Increased spacing
         modifier = Modifier.fillMaxSize()
     ) {
         items(items) { item ->
@@ -304,7 +453,8 @@ private fun MediaGrid(
                 item = item,
                 isSelected = selectedItems.contains(item.id),
                 onClick = { onItemClick(item) },
-                onLongClick = { onItemLongClick(item) }
+                onLongClick = { onItemLongClick(item) },
+                onEditClick = { onEditClick(item) } // Pass the new lambda
             )
         }
     }
@@ -315,7 +465,8 @@ private fun MediaGridItem(
     item: MediaItem,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    onEditClick: () -> Unit // New lambda for edit icon click
 ) {
     Box(
         modifier = Modifier
@@ -333,6 +484,7 @@ private fun MediaGridItem(
                     Modifier
                 }
             )
+            // .onLongClick { onLongClick() } // Added onLongClick modifier
     ) {
         // Media Image/Thumbnail
         AsyncImage(
@@ -351,10 +503,10 @@ private fun MediaGridItem(
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(32.dp)
+                    .size(48.dp) // Increased size
                     .background(
                         Color.Black.copy(alpha = 0.6f),
-                        shape = androidx.compose.foundation.shape.CircleShape
+                        shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -362,7 +514,7 @@ private fun MediaGridItem(
                     Icons.Default.PlayArrow,
                     contentDescription = "Play",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(32.dp) // Increased size
                 )
             }
 
@@ -393,10 +545,10 @@ private fun MediaGridItem(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(4.dp)
-                    .size(24.dp)
+                    .size(28.dp) // Slightly increased size
                     .background(
                         MaterialTheme.colorScheme.primary,
-                        shape = androidx.compose.foundation.shape.CircleShape
+                        shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -404,29 +556,55 @@ private fun MediaGridItem(
                     Icons.Default.Check,
                     contentDescription = "Selected",
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(20.dp) // Slightly increased size
                 )
             }
         }
 
-        // Gradient overlay for better text visibility
-        Box(
+        // Gradient overlay for better text visibility and label/edit icon
+        Column(
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .height(24.dp)
                 .background(
-                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                    Brush.verticalGradient(
                         colors = listOf(
                             Color.Transparent,
-                            Color.Black.copy(alpha = 0.3f)
+                            Color.Black.copy(alpha = 0.6f) // Increased alpha for better contrast
                         )
                     )
                 )
-        )
+                .padding(horizontal = 8.dp, vertical = 4.dp) // Added padding
+        ) {
+            // Item Name and Edit Icon
+            if (item.name.isNotBlank()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween // Space out text and icon
+                ) {
+                    Text(
+                        text = item.name,
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium, // Adjusted typography
+                        maxLines = 1,
+                        modifier = Modifier.weight(1f) // Allow text to take available space
+                    )
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier.size(24.dp) // Size of the icon button
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit Label",
+                            tint = Color.White
+                        )
+                    }
+                }
+            }
+        }
     }
 }
-
 @Composable
 private fun LoadingScreen() {
     Box(
