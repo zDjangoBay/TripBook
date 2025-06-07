@@ -1,6 +1,6 @@
-package com.android.Tripbook.Datamining.modules.data.companycatalog.routes
+package com.android.companycatalog.routes
 
-import com.android.Tripbook.Datamining.modules.data.companycatalog.model.* // Importer Company, DTOs, Service
+import com.android.companycatalog.model.* // Importer Company, DTOs, Service
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -93,7 +93,7 @@ fun Route.CompanyCatalogRoutes(companyCatalogService: CompanyCatalogService) { /
                 }
                 else -> {
 
-                    companyCatalogService.getCompaniesByStatus(CompanyStatus.RUNNING, page, pageSize)
+                    companyCatalogService.getCompaniesByStatus(CompanyStatus.RUN, page, pageSize)
                 }
             }
             call.respond(HttpStatusCode.OK, companies)
