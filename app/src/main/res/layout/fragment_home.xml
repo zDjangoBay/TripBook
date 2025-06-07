@@ -87,5 +87,4 @@
                 android:layout_marginEnd="8dp"/>
             </LinearLayout>
     </HorizontalScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
