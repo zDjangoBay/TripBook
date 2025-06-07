@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.tripcatalog.models
+package com.android.tripcatalog.models
 import kotlinx.serialization.*
 
 @Serializable
