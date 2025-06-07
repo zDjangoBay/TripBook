@@ -1,4 +1,4 @@
-package app.src.main.java.com.android.tripbook.`Database Design`
+package app.src.main.java.com.android.tripbook.`userprofileBogningZambouJunior-Database Design`
 
 import Agency
 import Trip
