@@ -41,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     packaging {
         resources {
@@ -104,6 +104,6 @@ dependencies {
     implementation(project(":userprofile"))
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+   implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
 }

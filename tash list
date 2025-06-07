@@ -1,0 +1,16 @@
+[33m40c2cd8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32muserprofile-Wongiberaoul[m[33m)[m Merge branch 'userprofile' of https://github.com/zDjangoBay/TripBook into userprofile-Wongiberaoul
+[33m4712c46[m[33m ([m[1;31morigin/userprofile[m[33m)[m Merge pull request #114 from zDjangoBay/userprofile-fonchrisbright
+[33m9800f8f[m[33m ([m[1;31morigin/userprofile-fonchrisbright-ictu20222969-registrationLogicImplementation[m[33m)[m Added RegistrationViewModel, RegistrationRepository, and RegistrationApi for Firebase Authentication Implemented form validation logic Ensured registration flow uses existing UI/screens by ndedilan Added custom Application class for Firebase initialization Updated Gradle configs for Firebase and Google Services plugin Documented registration logic and integration steps
+[33m63480dc[m[33m ([m[1;31morigin/userprofile-WongibeRaoul[m[33m)[m Implemented M1 Media Gallery Module: - Designed responsive grid and list view for media items using RecyclerView-like Compose components - Integrated full-screen media viewer with swipe, zoom, and video playback - Added media filtering (images/videos) and sorting (by name and date) - Enabled toggle between grid and list views - Fetched real images and videos from device storage using MediaStore - Integrated pull-to-refresh for reloading media gallery
+[33m8e68e6f[m[33m ([m[1;31morigin/userprofile-bradleynyuyki-ICU20223399-S5PostCreationSystem[m[33m, [m[1;31morigin/userprofile-Ndzengueantoinette-ictu20222988-feature/activity-feed-logic[m[33m, [m[1;31morigin/userprofile-EkwogeEhabePanje-ICTU20223003-F1MVVM-Architecture-Setup[m[33m, [m[1;31morigin/userprofile-Afise-Pride[m[33m)[m Merge pull request #20 from sas-bergson/revert-19-userprofile-fonchris
+[33mf792b7f[m Revert "Userprofile fonchris"
+[33me098126[m Merge pull request #19 from sas-bergson/userprofile-fonchris
+[33m88503b3[m pulled changes from main userprofile , resolved conflicts,updated mediagrid, mediaactiondialog, added google service dependencies to build.gradle file , added firebase dependency, auth repository interface and media organization components and dinally updated compose compiler version to match my kotlin version
+[33m9ee2b49[m merge resolution
+[33m7a673e2[m Merge pull request #18 from sas-bergson/userprofile-ndedilan
+[33ma76b6ba[m  Adding functionnality of sharing Media through specifics applications
+[33maed6f6a[m  Adding components for the media organization screen
+[33m85ecf9c[m ÃAdding MediaviewModel and MediaOrganization screenÃÃÃ
+[33m2ad8d5e[m Adding folder structure for my package with starting files
+[33me48a967[m[33m ([m[1;31morigin/userprofile-ndehurichdilan-ictu20223351-registration-view-model-and-validation[m[33m, [m[1;31morigin/userprofile-BOGNEFOUSSOM-ICTU20241354-profileeditui[m[33m)[m Adding the correct(I think) folder structure: Userprofile Module --> my.package --> my files
+[33m2c4a528[m created a  firebase authentication repository , tripbook application class to initialise firebase app, removing the fun tion to register users on firebase from the view model and rather passing it to the auth repositories for best practice
