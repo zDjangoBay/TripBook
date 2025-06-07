@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.comments.model
+package com.android.comments.model
 
 import kotlinx.serialization.*
 

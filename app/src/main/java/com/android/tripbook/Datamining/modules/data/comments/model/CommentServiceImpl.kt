@@ -1,15 +1,14 @@
-package com.android.Tripbook.Datamining.modules.data.comments.model;
+package com.android.comments.model
 
-import com.android.Tripbook.Datamining.modules.data.comments.model.Comment
-import com.android.Tripbook.Datamining.modules.data.comments.model.CreateCommentRequest
-import com.android.Tripbook.Datamining.modules.data.comments.model.UpdateCommentRequest
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
+import org.litote.kmongo.and
 import org.litote.kmongo.setValue
 import org.litote.kmongo.inc
+import org.bson.conversions.Bson
 import redis.clients.jedis.Jedis
 import java.time.LocalDateTime
 import java.util.UUID
@@ -49,12 +48,11 @@ class CommentServiceImpl(
         try {
 
             if (newComment.Parent_Comment_id != null) {
-                val parentUpdated = commentsCollection.updateOne(
-                    Comment::Comment_Id eq newComment.Parent_Comment_id,
-                    inc(Comment::repliesCount, 1)
-                )
-                if (parentUpdated.modifiedCount > 0) {
-
+                val parentFilter = Comment::Comment_Id eq newComment.Parent_Comment_id
+                val parentUpdate = inc(Comment::repliesCount, 1)
+                
+                val parentUpdated = commentsCollection.updateOne(parentFilter, parentUpdate)
+                if (parentUpdated.wasAcknowledged()) {
                     redis.del(CommentCacheKeys.commentById(newComment.Parent_Comment_id))
                 }
             }
@@ -206,25 +204,24 @@ class CommentServiceImpl(
         }
     }
 
-    override suspend fun updateComment(commentId: String, userId: String, request: UpdateCommentRequest): Comment? {
+    override suspend fun updateComment(commentId: String, request: UpdateCommentRequest): Comment? {
         try {
             val existingComment = commentsCollection.findOne(
-                Comment::Comment_Id eq commentId,
-                Comment::User_id eq userId,
-                Comment::isDeleted eq false
+                Comment::Comment_Id eq request.comment_id
             )
             if (existingComment == null) {
                 return null
             }
 
-
+            // Create a simple update with just the value field
+            val update = setValue(Comment::value, request.value)
+            
             val updateResult = commentsCollection.updateOne(
                 Comment::Comment_Id eq commentId,
-                setValue(Comment::value, request.value),
-                setValue(Comment::UpdatedAt, LocalDateTime.now())
+                update
             )
 
-            if (updateResult.modifiedCount == 0L) {
+            if (!updateResult.wasAcknowledged()) {
                 return null
             }
 
@@ -246,24 +243,25 @@ class CommentServiceImpl(
         }
     }
 
-    override suspend fun deleteComment(commentId: String, userId: String): Boolean {
+    override suspend fun deleteComment(commentId: String): Boolean {
         try {
             val comment = commentsCollection.findOne(
                 Comment::Comment_Id eq commentId,
-                Comment::User_id eq userId,
                 Comment::isDeleted eq false
             )
             if (comment == null) {
                 return false
             }
 
+            // Simple update to mark as deleted
+            val update = setValue(Comment::isDeleted, true)
+            
             val updateResult = commentsCollection.updateOne(
                 Comment::Comment_Id eq commentId,
-                setValue(Comment::isDeleted, true),
-                setValue(Comment::DeletedAt, LocalDateTime.now())
+                update
             )
 
-            if (updateResult.modifiedCount == 0L) return false
+            if (!updateResult.wasAcknowledged()) return false
 
             redis.del(CommentCacheKeys.commentById(commentId))
 
@@ -289,14 +287,15 @@ class CommentServiceImpl(
 
     override suspend fun likeComment(commentId: String, likingUserId: String): Comment? {
         try {
-
-            val updateResult = commentsCollection.updateOne(
-                Comment::Comment_Id eq commentId,
-                Comment::isDeleted eq false,
-                inc(Comment::likesCount, 1)
+            val filter = and(
+                Comment::Comment_Id eq commentId
             )
 
-            if (updateResult.modifiedCount == 0L) {
+            val update = inc(Comment::likesCount, 1)
+            
+            val updateResult = commentsCollection.updateOne(filter, update)
+
+            if (!updateResult.wasAcknowledged()) {
                 return null
             }
 
@@ -319,18 +318,24 @@ class CommentServiceImpl(
 
     override suspend fun unlikeComment(commentId: String, unlikingUserId: String): Comment? {
         try {
-
-            val updateResult = commentsCollection.updateOne(
+            // First check if likes > 0
+            val comment = commentsCollection.findOne(
                 Comment::Comment_Id eq commentId,
-                Comment::isDeleted eq false,
-                Comment::likesCount gt 0,
-                inc(Comment::likesCount, -1)
+                Comment::isDeleted eq false
             )
-
-            if (updateResult.modifiedCount == 0L) {
+            
+            if (comment == null || comment.likesCount <= 0) {
                 return null
             }
+            
+            val filter = Comment::Comment_Id eq commentId
+            val update = inc(Comment::likesCount, -1)
+            
+            val updateResult = commentsCollection.updateOne(filter, update)
 
+            if (!updateResult.wasAcknowledged()) {
+                return null
+            }
 
             val updatedComment = commentsCollection.findOne(Comment::Comment_Id eq commentId)
             if (updatedComment != null) {

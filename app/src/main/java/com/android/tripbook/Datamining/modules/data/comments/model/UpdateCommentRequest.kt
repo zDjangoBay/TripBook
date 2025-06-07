@@ -1,8 +1,9 @@
-package com.android.Tripbook.Datamining.modules.data.comments.model
+package com.android.comments.model
 
 import kotlinx.serialization.*
 
 @kotlinx.serialization.Serializable
 data class UpdateCommentRequest(
+    val comment_id:String,
     val value: String
 )
