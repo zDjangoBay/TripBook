@@ -80,4 +80,5 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.material.icons.extended)
 }
