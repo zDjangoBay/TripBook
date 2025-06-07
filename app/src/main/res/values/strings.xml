@@ -2,4 +2,18 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+
+    <!-- Data Mining Feature -->
+    <string name="data_mining_title">Travel Insights</string>
+    <string name="data_mining_description">Discover patterns and trends in your travel data</string>
+    <string name="trending_destinations">Trending Destinations</string>
+    <string name="trending_destinations_description">Popular places travelers are visiting right now</string>
+    <string name="personalized_recommendations">Personalized For You</string>
+    <string name="personalized_recommendations_description">Recommendations based on your preferences and travel history</string>
+    <string name="seasonal_trends">Seasonal Travel Trends</string>
+    <string name="travel_profile">Your Travel Profile</string>
+    <string name="travel_profile_description">Insights based on your travel history and preferences</string>
+    <string name="travel_patterns">Travel Patterns</string>
+    <string name="preferences">Your Preferences</string>
+    <string name="explore_insights">Explore Travel Insights</string>
 </resources>
