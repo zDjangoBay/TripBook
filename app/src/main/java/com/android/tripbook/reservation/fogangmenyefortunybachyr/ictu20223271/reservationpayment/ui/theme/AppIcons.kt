@@ -1,4 +1,8 @@
+<<<<<<< HEAD:app/src/main/java/com/android/tripbook/reservation/fogangmenyefortunybachyr/ictu20223271/reservationpayment/ui/theme/AppIcons.kt
 package com.android.tripbook.reservation.fogangmenyefortunybachyr.ictu20223271.reservationpayment.ui.theme
+=======
+package com.android.tripbook.ui.theme
+>>>>>>> 12242288031572a75e23f42979d5f32ce1058d8c:app/src/main/java/com/android/tripbook/ui/theme/AppIcons.kt
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
