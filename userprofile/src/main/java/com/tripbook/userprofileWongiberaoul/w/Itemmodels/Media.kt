@@ -1,7 +1,5 @@
 package com.tripbook.userprofileWongiberaoul.w.Itemmodels
 
-
-
 import java.util.Date
 
 data class MediaItem(
