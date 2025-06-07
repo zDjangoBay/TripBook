@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.companycatalog.model
+package com.android.companycatalog.model
 
 
 
