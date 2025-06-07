@@ -1,4 +1,3 @@
 package com.android.tripbook.companycatalog.data
 
-class ReviewData {
-}
+import androidx.annotation.DrawableRes
