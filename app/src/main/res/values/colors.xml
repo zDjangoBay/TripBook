@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Material Design default colors -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +8,36 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Your existing primary colors (keeping your original values) -->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- Additional primary colors -->
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryLight">#C5CAE9</color>
+
+    <!-- Chat specific colors -->
+    <color name="chat_background">#F5F5F5</color>
+    <color name="message_input_background">#FFFFFF</color>
+    <color name="message_received_background">#FFFFFF</color>
+    <color name="message_sent_background">#3F51B5</color>
+    <color name="message_border">#E0E0E0</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_timestamp">#999999</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- Additional utility colors -->
+    <color name="divider">#BDBDBD</color>
+    <color name="error">#F44336</color>
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+
+    <!-- Status colors -->
+    <color name="online">#4CAF50</color>
+    <color name="offline">#9E9E9E</color>
+    <color name="typing">#FF4081</color>
 </resources>
