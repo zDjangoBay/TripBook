@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.comments.routes
+package com.android.comments.routes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
