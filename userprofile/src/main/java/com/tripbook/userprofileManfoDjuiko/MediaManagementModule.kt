@@ -1,4 +1,3 @@
-// Updated MediaManagementModule.kt
 package com.tripbook.userprofileManfoDjuiko
 
 import android.Manifest
@@ -32,6 +31,7 @@ import com.tripbook.userprofileManfoDjuiko.data.model.MediaItem
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaType
 import com.tripbook.userprofileManfoDjuiko.presentation.viewmodel.MediaViewModel
 import com.tripbook.userprofileManfoDjuiko.utils.PermissionHandler
+import com.tripbook.userprofileManfoDjuiko.utils.formatDuration
 
 @Composable
 fun MediaManagementModule() {
@@ -106,13 +106,18 @@ fun MediaManagementScreen(
             }
         )
 
-        // Tab Row for Images and Videos
+        // Tab Row for Images, Videos, and All
         TabRow(
-            selectedTabIndex = if (uiState.currentTab == MediaType.IMAGE) 0 else 1,
+            selectedTabIndex = when (uiState.currentTab) {
+                MediaType.IMAGE -> 0
+                MediaType.VIDEO -> 1
+                MediaType.ALL -> 2
+            },
             modifier = Modifier.fillMaxWidth(),
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
+            // Images Tab
             Tab(
                 selected = uiState.currentTab == MediaType.IMAGE,
                 onClick = { viewModel.selectTab(MediaType.IMAGE) },
@@ -141,6 +146,7 @@ fun MediaManagementScreen(
                 }
             }
 
+            // Videos Tab
             Tab(
                 selected = uiState.currentTab == MediaType.VIDEO,
                 onClick = { viewModel.selectTab(MediaType.VIDEO) },
@@ -168,6 +174,35 @@ fun MediaManagementScreen(
                     )
                 }
             }
+
+            // All Tab
+            Tab(
+                selected = uiState.currentTab == MediaType.ALL,
+                onClick = { viewModel.selectTab(MediaType.ALL) },
+                modifier = Modifier.padding(vertical = 12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        Icons.Default.Collections,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "All",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "(${uiState.images.size + uiState.videos.size})",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
 
         // Content Area
@@ -185,10 +220,10 @@ fun MediaManagementScreen(
                 }
 
                 else -> {
-                    val currentItems = if (uiState.currentTab == MediaType.IMAGE) {
-                        uiState.images
-                    } else {
-                        uiState.videos
+                    val currentItems = when (uiState.currentTab) {
+                        MediaType.ALL -> uiState.images + uiState.videos
+                        MediaType.IMAGE -> uiState.images
+                        MediaType.VIDEO -> uiState.videos
                     }
 
                     if (currentItems.isEmpty()) {
@@ -448,21 +483,33 @@ private fun EmptyStateScreen(
             modifier = Modifier.padding(32.dp)
         ) {
             Icon(
-                if (mediaType == MediaType.IMAGE) Icons.Default.Image else Icons.Default.VideoLibrary,
+                when (mediaType) {
+                    MediaType.ALL -> Icons.Default.Collections
+                    MediaType.IMAGE -> Icons.Default.Image
+                    MediaType.VIDEO -> Icons.Default.VideoLibrary
+                },
                 contentDescription = null,
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "No ${if (mediaType == MediaType.IMAGE) "Images" else "Videos"} Found",
+                text = when (mediaType) {
+                    MediaType.ALL -> "No Media Found"
+                    MediaType.IMAGE -> "No Images Found"
+                    MediaType.VIDEO -> "No Videos Found"
+                },
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Start by adding some ${if (mediaType == MediaType.IMAGE) "photos" else "videos"} to your gallery",
+                text = when (mediaType) {
+                    MediaType.ALL -> "Start by adding some photos or videos to your gallery"
+                    MediaType.IMAGE -> "Start by adding some photos to your gallery"
+                    MediaType.VIDEO -> "Start by adding some videos to your gallery"
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 textAlign = TextAlign.Center
@@ -542,12 +589,4 @@ private fun PermissionRequestScreen(
             }
         }
     }
-}
-
-// Helper function for formatting video duration
-private fun formatDuration(durationMs: Long): String {
-    val seconds = durationMs / 1000
-    val minutes = seconds / 60
-    val remainingSeconds = seconds % 60
-    return "%d:%02d".format(minutes, remainingSeconds)
 }

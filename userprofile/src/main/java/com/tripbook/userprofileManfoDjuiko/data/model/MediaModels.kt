@@ -4,7 +4,7 @@ import android.net.Uri
 import java.util.Date
 
 enum class MediaType {
-    IMAGE, VIDEO
+    IMAGE, VIDEO, ALL
 }
 
 data class MediaItem(
