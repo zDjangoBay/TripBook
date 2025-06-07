@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.travelapp.ui.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_serviceListingFragment"
+            app:destination="@id/serviceListingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/serviceListingFragment"
+        android:name="com.example.travelapp.ui.listing.ServiceListingFragment"
+        android:label="Services"
+        tools:layout="@layout/fragment_service_listing" >
+        <argument
+            android:name="searchQuery"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_serviceListingFragment_to_serviceDetailFragment"
+            app:destination="@id/serviceDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/serviceDetailFragment"
+        android:name="com.example.travelapp.ui.detail.ServiceDetailFragment"
+        android:label="Service Details"
+        tools:layout="@layout/fragment_service_detail" >
+        <argument
+            android:name="serviceId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_serviceDetailFragment_to_bookingConfirmationFragment"
+            app:destination="@id/bookingConfirmationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookingConfirmationFragment"
+        android:name="com.example.travelapp.ui.booking.BookingConfirmationFragment"
+        android:label="Booking Confirmation"
+        tools:layout="@layout/fragment_booking_confirmation" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.travelapp.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>

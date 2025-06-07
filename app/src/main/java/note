@@ -1,0 +1,37 @@
+home/
+│       │   │   │   ├── HomeFragment.kt
+│       │   │   │   └── HomeViewModel.kt 
+listing/
+│       │   │   │   ├── ServiceListingFragment.kt
+│       │   │   │   ├── ServiceListingViewModel.kt
+│       │   │   │   └── ServiceAdapter.kt (RecyclerView adapter)
+── detail/
+│       │   │   │   ├── ServiceDetailFragment.kt
+│         │   │   │   └── ServiceDetailViewModel.kt
+│       │   │   ├── booking/
+│       │   │   │   ├── BookingConfirmationFragment.kt
+│       │   │   │   └── BookingConfirmationViewModel.kt
+│       │   │   └── profile/ (Optional)
+│       │   │       └── ProfileFragment.kt
+│       │   └── data/ (Even without a database, you'll have mock data models)
+│       │       ├── models/
+│       │       │   ├── TravelAgency.kt
+│       │       │   └── TravelService.kt
+│       │       └── repositories/
+│       │           └── MockServiceRepository.kt (for static data)
+ res/
+│           ├── layout/
+│           │   ├── activity_main.xml
+│           │   ├── fragment_home.xml
+│           │   ├── fragment_service_listing.xml
+│           │   ├── item_service.xml (for RecyclerView row)
+│           │   ├── fragment_service_detail.xml
+│           │   ├── fragment_booking_confirmation.xml
+│           │   └── fragment_profile.xml (Optional)
+│           ├── navigation/
+│           │   └── mobile_navigation.xml (Jetpack Navigation Graph)
+│           ├── drawable/
+│           ├── values/
+│           │   ├── themes.xml
+│           │   └── strings.xml
+│           └── mipmap/
