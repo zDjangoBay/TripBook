@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.tripbook.manager.NotificationManager
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import java.time.LocalDate
@@ -30,7 +31,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MyTripsScreen(
     trips: List<Trip>,
+    notificationManager: NotificationManager,
     onPlanNewTripClick: () -> Unit,
+    onNotificationsClick: () -> Unit,
+    onTestNotificationsClick: () -> Unit = {},
     onTripClick: (Trip) -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -53,24 +57,71 @@ fun MyTripsScreen(
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            // Header
-            Text(
-                text = "My Trips",
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                modifier = Modifier.padding(top = 16.dp)
-            )
-            Text(
-                text = "Plan your African adventure",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    color = Color.White.copy(alpha = 0.9f)
-                ),
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
+            // Header with notifications
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = "My Trips",
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                    Text(
+                        text = "Plan your African adventure",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color.White.copy(alpha = 0.9f)
+                        )
+                    )
+                }
+
+                // Notifications button
+                Box {
+                    val unreadCount by notificationManager.unreadCount.collectAsState()
+
+                    IconButton(
+                        onClick = onNotificationsClick,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(
+                                Color.White.copy(alpha = 0.2f),
+                                CircleShape
+                            )
+                    ) {
+                        Box {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notifications",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+
+                            if (unreadCount > 0) {
+                                Badge(
+                                    modifier = Modifier.align(Alignment.TopEnd),
+                                    containerColor = Color(0xFFFF4444)
+                                ) {
+                                    Text(
+                                        text = if (unreadCount > 9) "9+" else unreadCount.toString(),
+                                        color = Color.White,
+                                        fontSize = 10.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Search Bar
             Box(
@@ -169,21 +220,41 @@ fun MyTripsScreen(
             }
         }
 
-        // Floating Action Button
-        FloatingActionButton(
-            onClick = onPlanNewTripClick,
+        // Floating Action Buttons
+        Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
-            containerColor = Color.White,
-            contentColor = Color(0xFF667EEA),
-            shape = CircleShape
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Trip",
-                modifier = Modifier.size(24.dp)
-            )
+            // Test Notifications FAB (for demo purposes)
+            FloatingActionButton(
+                onClick = onTestNotificationsClick,
+                modifier = Modifier.size(48.dp),
+                containerColor = Color(0xFFFF9800),
+                contentColor = Color.White,
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.BugReport,
+                    contentDescription = "Test Notifications",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            // Plan New Trip FAB
+            FloatingActionButton(
+                onClick = onPlanNewTripClick,
+                containerColor = Color.White,
+                contentColor = Color(0xFF667EEA),
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Trip",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }
