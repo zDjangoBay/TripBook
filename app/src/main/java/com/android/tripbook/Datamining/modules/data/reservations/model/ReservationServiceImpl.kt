@@ -16,7 +16,7 @@ import java.util.UUID
 
 object ReservationCacheKeys {
     fun reservationById(reservationId: String) = "reservation:$reservationId"
-    /
+    
     fun userReservationsPage(userId: String, page: Int, pageSize: Int) = "reservations:user:$userId:page:$page:size:$pageSize"
 
 }
@@ -52,15 +52,21 @@ class ReservationServiceImpl(
 
         val newReservation = Reservation(
             userId = userId,
+            
             title = request.title,
+
+            
             destination = request.destination,
             startDate = startDate,
             endDate = endDate,
+            
             status = request.status,
             imageUrl = request.imageUrl,
             price = request.price,
-            currency = request.currency ?: "USD",
+            currency = request.currency ?: "FCFA", // Ou should we put Dollars since it is acknowledged globally ?
+            
             bookingReference = request.bookingReference,
+            
             notes = request.notes,
             accommodationName = request.accommodationName,
             accommodationAddress = request.accommodationAddress,
@@ -186,16 +192,24 @@ class ReservationServiceImpl(
             // Build updates selectively
             val updates = mutableListOf<Bson>()
             request.title?.let { updates.add(setValue(Reservation::title, it)) }
+            
             request.destination?.let { updates.add(setValue(Reservation::destination, it)) }
+            
             parseDateTime(request.startDate)?.let { updates.add(setValue(Reservation::startDate, it)) }
+            
             parseDateTime(request.endDate)?.let { updates.add(setValue(Reservation::endDate, it)) }
+            
             request.status?.let { updates.add(setValue(Reservation::status, it)) }
+            
             request.imageUrl?.let { updates.add(setValue(Reservation::imageUrl, it)) }
+            
             request.price?.let { updates.add(setValue(Reservation::price, it)) }
             request.currency?.let { updates.add(setValue(Reservation::currency, it)) }
+            
             request.bookingReference?.let { updates.add(setValue(Reservation::bookingReference, it)) }
             request.notes?.let { updates.add(setValue(Reservation::notes, it)) }
             request.accommodationName?.let { updates.add(setValue(Reservation::accommodationName, it)) }
+            
             request.accommodationAddress?.let { updates.add(setValue(Reservation::accommodationAddress, it)) }
             request.transportInfo?.let { updates.add(setValue(Reservation::transportInfo, it)) }
 
@@ -205,7 +219,8 @@ class ReservationServiceImpl(
 
             val updateResult = reservationsCollection.updateOne(
                 Reservation::id eq reservationId,
-                combine(updates)
+                
+                    combine(updates)
             )
 
             if (updateResult.modifiedCount == 0L) {
@@ -216,11 +231,13 @@ class ReservationServiceImpl(
             val updatedReservation = reservationsCollection.findOne(Reservation::id eq reservationId)
             if (updatedReservation != null) {
                 redis.setex(
+                    
                     ReservationCacheKeys.reservationById(reservationId),
-                    RESERVATION_CACHE_TTL_SECONDS,
+                            RESERVATION_CACHE_TTL_SECONDS,
+                    
                     jsonMapper.encodeToString(updatedReservation)
                 )
-                // Invalidate list caches
+                // Supposed to invalidate list caches 
                 redis.del(ReservationCacheKeys.userReservationsPage(userId, 1, 20))
             }
             return updatedReservation
@@ -254,10 +271,16 @@ class ReservationServiceImpl(
             }
 
             val updatedReservation = reservationsCollection.findOne(Reservation::id eq reservationId)
+            
             if (updatedReservation != null) {
                 redis.setex(
+                    
                     ReservationCacheKeys.reservationById(reservationId),
+                    
                     RESERVATION_CACHE_TTL_SECONDS,
+                    
+                    
+                    
                     jsonMapper.encodeToString(updatedReservation)
                 )
 
@@ -271,14 +294,17 @@ class ReservationServiceImpl(
     }
 
     override suspend fun deleteReservation(reservationId: String, userId: String): Boolean {
-        try {
-            val deleteResult = reservationsCollection.deleteOne(
+        try {    
+                val deleteResult = reservationsCollection.deleteOne(
                 and(
                     Reservation::id eq reservationId,
-                    Reservation::userId eq userId
+                        Reservation::userId eq userId
                 )
-            )
-            if (deleteResult.deletedCount > 0) {
+                
+    )
+            if (deleteResult.deletedCount > 0)
+            {
+                
                 redis.del(ReservationCacheKeys.reservationById(reservationId))
 
                 redis.del(ReservationCacheKeys.userReservationsPage(userId, 1, 20))
