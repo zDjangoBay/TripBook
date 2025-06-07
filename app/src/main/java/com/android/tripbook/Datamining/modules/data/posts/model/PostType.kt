@@ -1,4 +1,4 @@
-package com.android.Tripbook.Datamining.modules.data.posts.model
+package com.android.posts.model
 
 import kotlinx.serialization.*
 
