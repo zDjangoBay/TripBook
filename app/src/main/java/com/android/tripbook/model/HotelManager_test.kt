@@ -97,7 +97,7 @@ class HotelManagerTest {
     @Test
     fun `calculateRate should return correct price for room without add-ons`() {
         val checkIn = LocalDate.of(2025, 8, 1)
-        val checkOut = LocalDate.of(2025, 8, 4) // 3 nights
+        val checkOut = LocalDate.of(2025, 8, 4) // 3 
 
         val totalRate =
             hotelManager.calculateRate(room201, checkIn, checkOut)
