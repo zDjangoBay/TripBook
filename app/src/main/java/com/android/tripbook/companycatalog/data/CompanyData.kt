@@ -3,9 +3,10 @@ package com.android.tripbook.companycatalog.data
 
 import androidx.annotation.DrawableRes
 
-/**
+/*
  * A data class representing a company listed in the catalog.
  */
+
 data class CompanyData(
     val id: String,
     val name: String,
