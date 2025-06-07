@@ -1,170 +1,114 @@
-# TripBook
-# TripBook - Application de Réservation de Vols ✈️
+TripBook - Application de Réservation de Vols-NotificationManager ✈️
 
-## Description
-TripBook est une application Android moderne de réservation de vols développée en Kotlin. L'application offre un système de notifications avancé pour tenir les utilisateurs informés de tous les aspects de leur voyage.
+Description
+TripBook est une application Android moderne de réservation de vols avec système de notifications avancé, développée en Kotlin avec Jetpack Compose.
 
-##  Fonctionnalités Principales
+Quick Start
 
-### Système de Notifications Avancé
-- **Notifications en temps réel** pour les vols (retards, annulations, changements de porte)
-- **Rappels automatiques** pour le check-in et les documents de voyage
-- **Notifications push** et **notifications in-app**
-- **Actions rapides** directement depuis les notifications
-- **Priorité adaptative** selon l'urgence de l'information
+bash
+setup_dev_environment.bat
 
-### Types de Notifications Supportées
-- ✅ Confirmation et modification de réservation
-- ✅ Statut des vols (retards, annulations, reprogrammation)
-- ✅ Changements d'embarquement (porte, terminal)
-- ✅ Rappels de check-in et attribution de sièges
-- ✅ Informations météo et conseils de voyage
-- ✅ Offres de surclassement et services additionnels
+dev_runner.ps1
 
-##  Stack Technique
+hot_reload.bat
 
-### Technologies Utilisées
-- **Langage** : Kotlin
-- **Architecture** : MVVM avec LiveData
-- **UI** : View Binding + Material Design
-- **Asynchrone** : Coroutines Kotlin
-- **Navigation** : Android Navigation Component
 
-### Dépendances Principales
-```gradle
-// Core Android
-androidx.core:core-ktx:1.12.0
-androidx.appcompat:appcompat:1.6.1
-com.google.android.material:material:1.11.0
+Fonctionnalités
 
-// Architecture Components
-androidx.lifecycle:lifecycle-livedata-ktx:2.7.0
-androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0
+Notifications Avancées
+- Notifications temps réel (retards, annulations, changements de porte)
+- Rappels automatiques check-in
+- Actions rapides depuis notifications
+- Priorité adaptative selon urgence
 
-// Coroutines
-org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3
+Réservations
+- Flux multi-étapes : Transport → Hôtels → Activités → Paiement
+- Suivi temps réel des réservations
+- Recherche basée sur localisation
+- Gestion : En attente, À venir, Terminées
 
-// Navigation
-androidx.navigation:navigation-fragment-ktx:2.7.6
-```
+Interface
+- Material 3 Design (thème violet)
+- Navigation bottom tabs
+- Icônes de voyage (💼🧭📍🧘👥)
+- Layouts responsives
 
-##  Configuration Minimale
-- **API Level minimum** : 24 (Android 7.0)
-- **API Level cible** : 34 (Android 14)
-- **Version de compilation** : 34
+Tech Stack
 
-##  Architecture du Projet
+- Langage: Kotlin
+- UI : Jetpack Compose + View Binding
+- Architecture : MVVM + Repository Pattern
+- Navigation : Navigation Compose
+- Async : Coroutines
+- Design : Material 3
 
-```
-com.tripbook.reservation/
-├── notifications/
-│   ├── models/
-│   │   ├── InAppNotification.kt        # Modèle de notification in-app
-│   │   ├── ServiceNotification.kt      # Modèle de communication service
-│   │   └── NotificationEnums.kt        # Types et priorités
-│   ├── bridge/
-│   │   └── NotificationBridge.kt       # Interface de communication
-│   ├── services/
-│   │   └── NotificationService.kt      # Service de notifications
-│   └── receivers/
-│       ├── NotificationReceiver.kt     # Gestionnaire d'actions
-│       └── BootReceiver.kt            # Redémarrage automatique
+Structure
+
+app/src/main/java/com/android/tripbook/
+├── data/models/                 # Modèles de données
+├── notifications/               # Système notifications
+│   ├── models/                 # InAppNotification, ServiceNotification
+│   ├── services/               # NotificationService
+│   └── receivers/              # NotificationReceiver, BootReceiver
 ├── ui/
-│   ├── activities/
-│   ├── fragments/
-│   └── viewmodels/
-└── utils/
-```
+│   ├── screens/                # Dashboard, Réservations, Notifications
+│   ├── components/             # Composants réutilisables
+│   └── theme/                  # Material 3 theme
+└── MainActivity.kt
 
-##  Installation et Configuration
 
-### Prérequis
-- Android Studio Arctic Fox ou plus récent
-- JDK 8 ou supérieur
-- SDK Android 34
+Configuration
 
-### Étapes d'installation
-1. **Cloner le projet**
-   ```bash
-   git clone [URL_DU_PROJET]
-   cd tripbook-reservation
-   ```
+Canaux Notifications
+- CRITICAL : Annulations, embarquement fermé
+- HIGH : Retards, changements de porte
+- MEDIUM : Check-in, rappels
+- LOW : Promotions, infos générales
 
-2. **Ouvrir dans Android Studio**
-    - File → Open → Sélectionner le dossier du projet
+Permissions
+xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-3. **Synchroniser les dépendances**
-    - Android Studio synchronisera automatiquement les dépendances Gradle
+Statut
 
-4. **Configurer les permissions**
-    - Les permissions sont déjà configurées dans le AndroidManifest.xml
-    - Pour Android 13+, demander la permission POST_NOTIFICATIONS à l'utilisateur
+Terminé
+- Workflow réservation complet
+- Système notifications multi-canaux
+- Interface Material 3
+- Environnement dev style Flutter
 
-##  Configuration des Notifications
+En cours
+- Intégration API backend
+- Authentification utilisateur
+- Base de données Room
+Tests
 
-### Canaux de Notifications
-L'application utilise plusieurs canaux de notifications :
-- **CRITICAL** : Vols annulés, embarquement fermé
-- **HIGH** : Retards, changements de porte
-- **MEDIUM** : Check-in, rappels
-- **LOW** : Promotions, informations générales
-- **INFO** : Météo, points de fidélité
-
-### Actions Disponibles
-- Voir la réservation
-- S'enregistrer maintenant
-- Voir le statut du vol
-- Contacter le support
-- Choisir un siège
-- Et bien d'autres...
-
-##  Tests
-
-### Tests Unitaires
-```bash
+bash
+ Tests unitaires
 ./gradlew test
-```
 
-### Tests d'Interface
-```bash
+ Tests UI
 ./gradlew connectedAndroidTest
-```
 
-##  Permissions Requises
+ Test notifications
+adb shell am broadcast -a com.tripbook.TEST_NOTIFICATION
 
-### Permissions Essentielles
-- `INTERNET` : Communication avec les serveurs
-- `ACCESS_NETWORK_STATE` : Vérification de la connectivité
-- `POST_NOTIFICATIONS` : Affichage des notifications (Android 13+)
-- `WAKE_LOCK` : Maintien de l'activité pour les notifications critiques
-- `VIBRATE` : Notifications avec vibration
+ Équipe
 
-### Permissions Optionnelles
-- `RECEIVE_BOOT_COMPLETED` : Redémarrage automatique du service
-- `FOREGROUND_SERVICE` : Service de notifications en arrière-plan
+- Notifications : Tchinda Martin Kevin
+- Réservations : Équipe développement TripBook
 
-##  Configuration Personnalisée
+ Installation
 
-### Personnaliser les Notifications
-1. Modifier les types dans `NotificationEnums.kt`
-2. Adapter les modèles dans `InAppNotification.kt`
-3. Configurer les actions dans `NotificationAction`
+bash
+git clone [URL_PROJET]
+cd tripbook-reservation
 
-### Ajouter de Nouveaux Types de Vols
-1. Étendre l'enum `NotificationType`
-2. Ajouter les champs nécessaires dans `ServiceNotification`
-3. Implémenter la logique dans le service
 
-##  Développeur
-**Responsable** : Tchinda Martin Kevin
-
-##  Licence
-Ce projet est développé pour TripBook. Tous droits réservés.
-
-##  Support
-Pour toute question ou problème :
-- Créer une issue dans le repository
-- Contacter l'équipe de développement TripBook
-
----
-*Application développée avec amour pour améliorer l'expérience de voyage des utilisateurs*
+Prêt en 3 étapes :
+1. `setup_dev_environment.bat`
+2. `dev_runner.ps1`
+3. Start coding! 

@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Couleurs principales de l'application TripBook -->
-
+    
     <!-- Palette principale (bleu aviation) -->
     <color name="primary">#1976D2</color>
     <color name="on_primary">#FFFFFF</color>
     <color name="primary_container">#D3E3FD</color>
     <color name="on_primary_container">#001C38</color>
-
+    
     <!-- Palette secondaire (orange réservation) -->
     <color name="secondary">#FF9800</color>
     <color name="on_secondary">#FFFFFF</color>
     <color name="secondary_container">#FFE0B2</color>
     <color name="on_secondary_container">#4A2C00</color>
-
+    
     <!-- Palette tertiaire (vert succès) -->
     <color name="tertiary">#4CAF50</color>
     <color name="on_tertiary">#FFFFFF</color>
     <color name="tertiary_container">#C8E6C9</color>
     <color name="on_tertiary_container">#1B5E20</color>
-
+    
     <!-- Couleurs d'erreur -->
     <color name="error">#F44336</color>
     <color name="on_error">#FFFFFF</color>
     <color name="error_container">#FFCDD2</color>
     <color name="on_error_container">#B71C1C</color>
-
+    
     <!-- Couleurs de surface -->
     <color name="surface">#FEFBFF</color>
     <color name="on_surface">#1C1B1F</color>
     <color name="surface_variant">#E7E0EC</color>
     <color name="on_surface_variant">#49454F</color>
-
+    
     <!-- Couleurs d'arrière-plan -->
     <color name="background">#FEFBFF</color>
     <color name="on_background">#1C1B1F</color>
-
+    
     <!-- Couleurs de contour -->
     <color name="outline">#79747E</color>
     <color name="outline_variant">#CAC4D0</color>
-
+    
     <!-- Couleurs spécifiques aux notifications -->
     <color name="notification_color">#1976D2</color>
     <color name="notification_urgent">#F44336</color>
     <color name="notification_success">#4CAF50</color>
     <color name="notification_warning">#FF9800</color>
     <color name="notification_info">#2196F3</color>
-
+    
     <!-- Couleurs pour les statuts de vol -->
     <color name="flight_on_time">#4CAF50</color>
     <color name="flight_delayed">#FF9800</color>
     <color name="flight_cancelled">#F44336</color>
     <color name="flight_boarding">#2196F3</color>
-
+    
     <!-- Couleurs d'état -->
     <color name="status_confirmed">#4CAF50</color>
     <color name="status_pending">#FF9800</color>
     <color name="status_cancelled">#F44336</color>
-
-    <!-- Couleurs supplémentaires -->
+    
+    <!-- Couleurs legacy (pour compatibilité si nécessaire) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="orange_200">#FFFF8800</color>
+    <color name="orange_700">#FFE65100</color>
+    
+    <!-- Couleurs de base -->
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
@@ -66,4 +73,3 @@
     <color name="gray_medium">#9E9E9E</color>
     <color name="gray_dark">#424242</color>
 </resources>
-
