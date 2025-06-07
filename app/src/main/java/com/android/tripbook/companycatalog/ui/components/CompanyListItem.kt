@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.R
 import com.android.tripbook.companycatalog.data.CompanyData
-import com.android.tripbook.ui.theme.TripbookTheme
+import com.android.tripbook.ui.theme.TripBookTheme
 
 @Composable
 fun CompanyListItem(
@@ -54,8 +55,9 @@ fun CompanyListItem(
             ) {
                 Text(
                     text = company.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -64,10 +66,11 @@ fun CompanyListItem(
 
                 Text(
                     text = company.description,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Spacer(modifier = Modifier.height(2.dp))
@@ -82,14 +85,15 @@ fun CompanyListItem(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${company.averageRating} (${company.numberOfReviews})",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Medium
+                        )
                     )
                 }
             }
         }
 
-        HorizontalDivider(
+        Divider(
             modifier = Modifier.padding(horizontal = 16.dp),
             thickness = 0.5.dp,
             color = MaterialTheme.colorScheme.outlineVariant
@@ -100,7 +104,7 @@ fun CompanyListItem(
 @Preview(showBackground = true)
 @Composable
 fun CompanyListItemPreview() {
-    TripbookTheme {
+    TripBookTheme {
         CompanyListItem(
             company = CompanyData(
                 id = "prev_002",
