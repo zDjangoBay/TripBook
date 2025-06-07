@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class UpdateCompanyRequest(
     val CompanyName: String? = null,
     val CompanyLocalisation: String? = null,
-    val CompanyAgency: String? = null, // ou List<String>
+    val CompanyAgency: String? = null, 
     val CompanyStatus: CompanyStatus? = null,
-    val CompanyScore: Int? = null // Le score pourrait être mis à jour par un autre module
+    val CompanyScore: Int? = null // The company score is bound to change
 )
