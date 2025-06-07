@@ -234,8 +234,10 @@ fun PostEvent.toMap(): Map<String, Any?> {
 /**
  * Creates a copy of this event with modified timestamp (for testing)
  */
+@Suppress("UNUSED_PARAMETER")
 fun PostEvent.withTimestamp(timestamp: Long): PostEvent {
     // Since PostEvent doesn't have timestamp, this is for future extension
+    // The timestamp parameter is reserved for future implementation
     return this
 }
 

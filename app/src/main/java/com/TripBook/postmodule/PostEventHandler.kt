@@ -182,8 +182,8 @@ class PostEventHandler {
     /**
      * Gets events of a specific type
      */
-    inline fun <reified T : PostEvent> getEventsOfType(): List<T> {
-        return _eventHistory.filterIsInstance<T>()
+    fun <T : PostEvent> getEventsOfType(eventClass: Class<T>): List<T> {
+        return eventHistory.filterIsInstance(eventClass)
     }
 }
 

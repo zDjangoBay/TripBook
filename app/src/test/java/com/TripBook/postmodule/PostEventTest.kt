@@ -1,5 +1,6 @@
 package com.TripBook.postmodule
 
+import android.net.Uri
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -151,6 +152,8 @@ class PostEventTest {
         val events = listOf(
             PostEvent.TitleChanged("Test"),
             PostEvent.DescriptionChanged("Test"),
+            PostEvent.ImageAdded(Uri.parse("test://uri")),
+            PostEvent.ImageRemoved(Uri.parse("test://uri")),
             PostEvent.LocationAdded(0.0, 0.0, null),
             PostEvent.CategoryChanged("Test"),
             PostEvent.TagAdded("test"),
@@ -177,6 +180,8 @@ class PostEventTest {
                 is PostEvent.VisibilityChanged -> "visibility"
                 is PostEvent.ShowError -> "error"
                 is PostEvent.PostCreated -> "created"
+                is PostEvent.ImageAdded -> "image_add"
+                is PostEvent.ImageRemoved -> "image_remove"
                 is PostEvent.ClearAllImages -> "clear_images"
                 is PostEvent.ClearLocation -> "clear_location"
                 is PostEvent.SubmitPost -> "submit"

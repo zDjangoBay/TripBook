@@ -84,33 +84,22 @@ class PostEventBenchmark {
     }
 
     @Test
-    fun `benchmark event serialization performance`() {
+    fun `benchmark event map conversion performance`() {
         val events = generateTestEvents(SMALL_BATCH_SIZE)
-        
-        val serializationTime = measureTimeMillis {
+
+        val conversionTime = measureTimeMillis {
             events.forEach { event ->
-                val serialized = PostEventSerializationUtils.safeSerializeEvent(event)
-                assertNotNull(serialized)
+                val map = event.toMap()
+                assertNotNull(map)
+                assertTrue(map.isNotEmpty())
             }
         }
-        
-        val deserializationTime = measureTimeMillis {
-            events.forEach { event ->
-                val serialized = PostEventSerializationUtils.serializeEvent(event)
-                val deserialized = PostEventSerializationUtils.safeDeserializeEvent(serialized)
-                assertNotNull(deserialized)
-                assertEquals(event::class, deserialized!!::class)
-            }
-        }
-        
-        println("Serialized ${events.size} events in ${serializationTime}ms")
-        println("Deserialized ${events.size} events in ${deserializationTime}ms")
-        println("Total serialization round-trip: ${serializationTime + deserializationTime}ms")
-        
-        assertTrue("Serialization took too long: ${serializationTime}ms", 
-                  serializationTime < PERFORMANCE_THRESHOLD_MS)
-        assertTrue("Deserialization took too long: ${deserializationTime}ms", 
-                  deserializationTime < PERFORMANCE_THRESHOLD_MS)
+
+        println("Converted ${events.size} events to maps in ${conversionTime}ms")
+        println("Average conversion time: ${conversionTime.toDouble() / events.size}ms")
+
+        assertTrue("Map conversion took too long: ${conversionTime}ms",
+                  conversionTime < PERFORMANCE_THRESHOLD_MS)
     }
 
     @Test

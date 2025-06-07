@@ -8,6 +8,8 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.random.Random
 
 /**
@@ -307,8 +309,8 @@ class PostSecurityManager(private val context: Context) {
     }
     
     private fun roundCoordinate(coordinate: Double): Double {
-        val factor = kotlin.math.pow(10.0, MAX_LOCATION_PRECISION.toDouble())
-        return kotlin.math.round(coordinate * factor) / factor
+        val factor = 10.0.pow(MAX_LOCATION_PRECISION.toDouble())
+        return round(coordinate * factor) / factor
     }
     
     private fun generateSecretKey(): SecretKey {

@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color // Import Color
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.posts.model.Location
-import com.android.tripbook.posts.viewmodel.PostEvent
-import com.android.tripbook.posts.viewmodel.PostUIState
-import com.android.tripbook.posts.viewmodel.PostViewModel
+import com.android.tripbook.posts.ViewModel.PostEvent
+import com.android.tripbook.posts.ViewModel.PostUIState
+import com.android.tripbook.posts.ViewModel.PostViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -206,11 +206,11 @@ private fun LocationSelectionDialog(
                                             style = MaterialTheme.typography.bodyLarge
                                         )
                                         val cityCountryInfo = mutableListOf<String>()
-                                        if (location.city.isNotEmpty() && location.city.lowercase() != location.name.lowercase()) {
-                                            cityCountryInfo.add(location.city)
+                                        if (!location.city.isNullOrEmpty() && location.city?.lowercase() != location.name.lowercase()) {
+                                            cityCountryInfo.add(location.city!!)
                                         }
-                                        if (location.country.isNotEmpty()) {
-                                            cityCountryInfo.add(location.country)
+                                        if (!location.country.isNullOrEmpty()) {
+                                            cityCountryInfo.add(location.country!!)
                                         }
                                         if (cityCountryInfo.isNotEmpty()) {
                                             Text(

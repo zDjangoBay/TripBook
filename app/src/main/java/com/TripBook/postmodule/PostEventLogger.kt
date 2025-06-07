@@ -36,7 +36,7 @@ class PostEventLogger(private val context: Context) {
         event: PostEvent,
         sessionId: String? = null,
         userId: String? = null,
-        additionalData: Map<String, Any>? = null
+        additionalData: Map<String, Any?>? = null
     ) = withContext(Dispatchers.IO) {
         val timestamp = System.currentTimeMillis()
         val formattedTime = dateFormatter.format(Date(timestamp))
@@ -81,9 +81,9 @@ class PostEventLogger(private val context: Context) {
         val formattedTime = dateFormatter.format(Date(timestamp))
         
         val errorData = mapOf(
-            "error_type" to error::class.simpleName,
-            "error_message" to error.message,
-            "error_context" to context,
+            "error_type" to (error::class.simpleName ?: "Unknown"),
+            "error_message" to (error.message ?: "No message"),
+            "error_context" to (context as Any? ?: "No context"),
             "stack_trace" to error.stackTraceToString()
         )
         
@@ -218,7 +218,7 @@ class PostEventLogger(private val context: Context) {
         formattedTime: String,
         sessionId: String? = null,
         userId: String? = null,
-        additionalData: Map<String, Any>? = null
+        additionalData: Map<String, Any?>? = null
     ): String {
         val eventData = event.toMap().toMutableMap()
         
