@@ -1,7 +1,7 @@
 package com.android.tripbook.data
 
-import com.android.tripbook.Model.BoatCompany
-import com.android.tripbook.Model.Destination
+import com.android.tripbook.model.BoatCompany
+import com.android.tripbook.model.Destination
 import com.android.tripbook.R
 
 object BoatMockData {

@@ -1,8 +1,7 @@
 package com.android.tripbook.data
 
-import com.android.tripbook.Model.TrainCompany
-import com.android.tripbook.Model.TrainDestination
-import com.android.tripbook.R
+import com.android.tripbook.model.TrainCompany
+import com.android.tripbook.model.TrainDestination
 
 object TrainMockData {
 

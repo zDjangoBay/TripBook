@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.Model.User
+import com.android.tripbook.model.User
 
 @Composable
 fun MiniProfile(user: User, modifier: Modifier = Modifier) {

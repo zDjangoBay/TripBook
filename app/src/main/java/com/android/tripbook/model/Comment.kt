@@ -1,4 +1,4 @@
-package com.android.tripbook.Model
+package com.android.tripbook.model
 
 import java.text.SimpleDateFormat
 import java.util.*

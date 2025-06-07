@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.android.tripbook.Model.AirlineCompany
-import com.android.tripbook.Model.FlightDestination
+import com.android.tripbook.model.AirlineCompany
+import com.android.tripbook.model.FlightDestination
 import com.android.tripbook.data.AirlineMockData
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.android.tripbook.Model.BoatCompany
-import com.android.tripbook.Model.Destination
+import com.android.tripbook.model.BoatCompany
+import com.android.tripbook.model.Destination
 import com.android.tripbook.R
 
 @OptIn(ExperimentalMaterial3Api::class)

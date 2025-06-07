@@ -1,5 +1,4 @@
-package com.android.tripbook.Model
-import androidx.annotation.DrawableRes
+package com.android.tripbook.model
 
 data class BoatCompany(
     val id: Int,

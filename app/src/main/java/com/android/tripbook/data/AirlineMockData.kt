@@ -1,8 +1,7 @@
 package com.android.tripbook.data
 
-import com.android.tripbook.Model.AirlineCompany
-import com.android.tripbook.Model.FlightDestination
-import com.android.tripbook.R
+import com.android.tripbook.model.AirlineCompany
+import com.android.tripbook.model.FlightDestination
 
 object AirlineMockData {
 

@@ -1,4 +1,4 @@
-package com.android.tripbook.Model
+package com.android.tripbook.model
 
 data class AirlineCompany(
     val id: Int,

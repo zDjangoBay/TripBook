@@ -1,7 +1,7 @@
 
 package com.android.tripbook.data
 
-import com.android.tripbook.Model.Review
+import com.android.tripbook.model.Review
 
 object SampleReviews {
     fun get(): List<Review>  = listOf(
