@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,7 +51,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -76,8 +76,10 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    implementation(libs.androidx.foundation)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
+    implementation (libs.androidx.navigation.compose.v277) // instead of 2.9.0
+    implementation (libs.androidx.lifecycle.runtime.compose) // instead of 2.9.0
+    implementation (libs.androidx.activity.compose)
+    implementation (libs.androidx.compose.ui.ui) // instead of 1.8.2
+    implementation(libs.androidx.material.icons.extended)
+
 }
