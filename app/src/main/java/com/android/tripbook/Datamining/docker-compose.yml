@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  TripBook-MongoDb:
+    image: bitnami/mongodb:latest
+    container_name: TripBook-MongoDb-Container
+    restart: unless-stopped
+    environment:
+      MONGODB_ROOT_PASSWORD: *********** #<- TODO : you should replace those stars with your actual secure credentials and change the mongodb uri for the connection to be successful
+      MONGODB_USERNAME: **********   
+      MONGODB_PASSWORD: ***********
+      MONGODB_DATABASE: tripbook
+    volumes:
+      - ./src/main/resources/Mongodb:/bitnami/mongodb
+    ports:
+      - "27017:27017"
+
+  TripBook-Cache:
+    image: redis
+    container_name: TripBook-Cache-Container
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./src/main/resources/Redis:/data
+
+  TripBook-MinIO:
+    image: minio/minio
+    container_name: TripBook-MinIO-Container
+    restart: unless-stopped
+    environment:
+      - MINIO_ROOT_USER=MiltonJ23
+      - MINIO_ROOT_PASSWORD=SpGJx*i6*4vXfwsL
+      - MINIO_DEFAULT_BUCKETS=tripbook
+    ports:
+      - "6500:6500"
+      - "9090:9090"
+    volumes:
+      - ./src/main/resources/Minio:/data
+    command: server /data --console-address ":6500"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:7000/minio/health/live" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
