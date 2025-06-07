@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
 }
 
 android {
@@ -76,4 +77,29 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Extended Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
+    // Calendar
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
+
+    // Room Database
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    // repositories
+    implementation ("com.google.code.gson:gson:2.10.1")
 }
