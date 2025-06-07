@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.uis
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -150,21 +153,59 @@ fun MyTripsScreen(
                 }
             }
 
-            // Trip List
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(trips.filter { trip ->
-                    (selectedTab == "All" ||
-                            (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
-                            (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
-                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
-                            (searchText.isEmpty() ||
-                                    trip.name.contains(searchText, ignoreCase = true) ||
-                                    trip.destination.contains(searchText, ignoreCase = true))
-                }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick(trip) })
+            // Trip List or Empty State
+            val filteredTrips = trips.filter { trip ->
+                (selectedTab == "All" ||
+                        (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
+                        (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
+                        (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
+                        (searchText.isEmpty() ||
+                                trip.name.contains(searchText, ignoreCase = true) ||
+                                trip.destination.contains(searchText, ignoreCase = true))
+            }
+
+            if (filteredTrips.isEmpty()) {
+                // Empty State
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = if (trips.isEmpty()) Icons.Default.Add else Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = if (trips.isEmpty()) "No trips yet" else "No trips found",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = if (trips.isEmpty())
+                            "Start planning your African adventure!"
+                        else
+                            "Try adjusting your search or filters",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredTrips) { trip ->
+                        TripCard(trip = trip, onClick = { onTripClick(trip) })
+                    }
                 }
             }
         }
@@ -188,6 +229,7 @@ fun MyTripsScreen(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun TripCard(
     trip: Trip,
@@ -207,7 +249,11 @@ fun TripCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                indication = rememberRipple(color = Color(0xFF667EEA)),
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -227,91 +273,69 @@ fun TripCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = trip.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
-                    )
-                    Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
-                        fontSize = 14.sp,
-                        color = Color(0xFF667EEA),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(statusBgColor)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = trip.status.name.uppercase(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = statusColor
-                    )
-                }
-            }
+                    // First row: Location and Travelers
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        // Location
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Location",
+                                tint = Color(0xFF64748B),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = trip.destination,
+                                fontSize = 14.sp,
+                                color = Color(0xFF64748B),
+                                maxLines = 1
+                            )
+                        }
 
-            Spacer(modifier = Modifier.height(12.dp))
+                        // Travelers
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Travelers",
+                                tint = Color(0xFF64748B),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${trip.travelers} travelers",
+                                fontSize = 14.sp,
+                                color = Color(0xFF64748B)
+                            )
+                        }
+                    }
 
-            // Details row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // Location
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "📍",
-                        fontSize = 14.sp,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = trip.destination,
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
+                    // Second row: Budget (full width)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.AttachMoney,
+                            contentDescription = "Budget",
+                            tint = Color(0xFF64748B),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "FCFA ${String.format("%,d", trip.budget)}",
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
                 }
-
-                // Travelers
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "👥",
-                        fontSize = 14.sp,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "${trip.travelers} travelers",
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-
-                // Budget
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "💰",
-                        fontSize = 14.sp,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "$${trip.budget}",
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-            }
         }
     }
-}
+}}
