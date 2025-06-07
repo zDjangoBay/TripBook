@@ -6,9 +6,9 @@ services:
     container_name: TripBook-MongoDb-Container
     restart: unless-stopped
     environment:
-      MONGODB_ROOT_PASSWORD: SpGJx*i6*4vXfwsL
-      MONGODB_USERNAME: MiltonJ23
-      MONGODB_PASSWORD: SpGJx*i6*4vXfwsL
+      MONGODB_ROOT_PASSWORD: *********** #<- TODO : you should replace those stars with your actual secure credentials and change the mongodb uri for the connection to be successful
+      MONGODB_USERNAME: **********   
+      MONGODB_PASSWORD: ***********
       MONGODB_DATABASE: tripbook
     volumes:
       - ./src/main/resources/Mongodb:/bitnami/mongodb
