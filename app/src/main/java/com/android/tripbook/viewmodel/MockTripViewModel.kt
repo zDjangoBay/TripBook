@@ -1,11 +1,16 @@
-package com.android.tripbook.viewmodel
 
+package com.android.tripbook.viewmodel
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.model.Review
 import com.android.tripbook.model.Trip
+
+import androidx.lifecycle.viewModelScope // Ensure this import is present
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MockTripViewModel : ViewModel() {
 
@@ -16,7 +21,41 @@ class MockTripViewModel : ViewModel() {
         _trips.value.find { it.id == id }
 
     fun addReview(review: Review) {
-        // Add to a mutable list or API call
+
+        Log.d("MockTripViewModel", "addReview called with: $review (Not yet implemented)")
+    }
+
+    /**
+     * Adds a new trip to the list.
+     * This function now requires all necessary fields to construct a valid Trip object.
+     */
+    fun addNewTrip(
+        title: String,
+        description: String,
+        city: String,
+        country: String,
+        latitude: Double,
+        longitude: Double,
+        imageUrl: String,
+        caption: String = "",
+        region: String? = null
+    ) {
+        viewModelScope.launch {
+            _trips.update { currentTrips ->
+                val newId = currentTrips.maxOfOrNull { it.id }?.plus(1) ?: 0
+                currentTrips + Trip(
+                    id = newId,
+                    title = title,
+                    description = description,
+                    city = city,
+                    country = country,
+                    latitude = latitude,
+                    longitude = longitude,
+                    imageUrl = listOf(imageUrl),
+                    caption = caption,
+                    region = region
+                     )
+            }
+        }
     }
 }
-
