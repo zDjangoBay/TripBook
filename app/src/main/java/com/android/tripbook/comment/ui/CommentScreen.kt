@@ -24,7 +24,29 @@ fun CommentScreen(
     onBack: () -> Unit,
     currentUserId: String = "u1",
     currentUsername: String = "You",
-    currentAvatar: String? = null
+    currentAvatar: String? = null,
+    availableUsers: List<String> = listOf(
+        "Alice",
+        "Bob",
+        "Charlie",
+        "David",
+        "Eve",
+        "Frank",
+        "Grace",
+        "Hannah",
+        "Ivan",
+        "Julia",
+        "Kevin",
+        "Liam",
+        "Mia",
+        "Noah",
+        "Olivia",
+        "Paul",
+        "Quinn",
+        "Rachel",
+        "Sam",
+        "Taylor"
+    )
 ) {
     var replyingToComment by remember { mutableStateOf<Comment?>(null) }
     var showDeleteDialog by remember { mutableStateOf<Comment?>(null) }
@@ -89,27 +111,29 @@ fun CommentScreen(
                     },
                     onCancel = {
                         replyingToComment = null
-                    }
+                    },
+                    availableUsers = availableUsers
                 )
             } else {
-                CommentInput(onPost = { text, imageUri ->
-                    val comment = Comment(
-                        id = UUID.randomUUID().toString(),
-                        userId = currentUserId,
-                        username = currentUsername,
-                        avatarUrl = currentAvatar,
-                        text = text,
-                        timestamp = System.currentTimeMillis(),
-                        imageUri = imageUri
-                    )
-                    onPost(comment)
-                })
-
+                CommentInput(
+                    onPost = { text, imageUri ->
+                        val comment = Comment(
+                            id = UUID.randomUUID().toString(),
+                            userId = currentUserId,
+                            username = currentUsername,
+                            avatarUrl = currentAvatar,
+                            text = text,
+                            timestamp = System.currentTimeMillis(),
+                            imageUri = imageUri
+                        )
+                        onPost(comment)
+                    },
+                    availableUsers = availableUsers
+                )
             }
         }
     }
 
-    // Delete confirmation dialog
     if (showDeleteDialog != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = null },
@@ -141,7 +165,8 @@ fun CommentScreen(
 fun PreviewCommentScreen() {
     val mockComments = listOf(
         Comment("1", "u1", "Alice", null, "Nice view!", System.currentTimeMillis()),
-        Comment("2", "u2", "Bob", null, "Love this place!", System.currentTimeMillis())
+        Comment("2", "u2", "Bob", null, "Love this place!", System.currentTimeMillis()),
+        Comment("3", "u3", "Charlie", null, "Amazing photo!", System.currentTimeMillis())
     )
 
     CommentScreen(
@@ -150,6 +175,28 @@ fun PreviewCommentScreen() {
         onBack = {},
         onReply = { _, _, _ -> },
         onLike = {},
-        onDelete = {}
+        onDelete = {},
+        availableUsers = listOf(
+            "Alice",
+            "Bob",
+            "Charlie",
+            "David",
+            "Eve",
+            "Frank",
+            "Grace",
+            "Hannah",
+            "Ivan",
+            "Julia",
+            "Kevin",
+            "Liam",
+            "Mia",
+            "Noah",
+            "Olivia",
+            "Paul",
+            "Quinn",
+            "Rachel",
+            "Sam",
+            "Taylor"
+        )
     )
 }
