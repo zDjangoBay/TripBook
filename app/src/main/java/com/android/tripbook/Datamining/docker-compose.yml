@@ -33,11 +33,11 @@ services:
       - MINIO_ROOT_PASSWORD=SpGJx*i6*4vXfwsL
       - MINIO_DEFAULT_BUCKETS=tripbook
     ports:
-      - "7000:7000"
+      - "6500:6500"
       - "9090:9090"
     volumes:
       - ./src/main/resources/Minio:/data
-    command: server /data --console-address ":7000"
+    command: server /data --console-address ":6500"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:7000/minio/health/live" ]
       interval: 30s

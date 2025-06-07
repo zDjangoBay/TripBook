@@ -11,7 +11,7 @@ fun main() {
 }
 
 fun Application.module() {
-    // The order matters here - install serialization first
+
     configureSerialization()
     configureRouting()
 }

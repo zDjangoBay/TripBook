@@ -34,17 +34,11 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
-
-    // MongoDB (KMongo)
     implementation("org.litote.kmongo:kmongo-coroutine:4.11.0")
     implementation("org.litote.kmongo:kmongo-serialization:4.11.0")
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.11.0")
     implementation("org.mongodb:bson-kotlin:4.11.0")
-
-    // Redis (Jedis)
     implementation("redis.clients:jedis:5.1.0")
-
-    // MINIO
     implementation("io.minio:minio:8.5.10")
 }
 

@@ -3,6 +3,10 @@ package com.android
 import com.android.comments.model.CommentService
 import com.android.comments.model.CommentServiceImpl
 import com.android.comments.model.CommentRoutes
+import com.android.companycatalog.model.*
+import com.android.companycatalog.routes.*
+import com.android.posts.model.PostServiceImpl
+import com.android.posts.routes.PostRoutes
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -36,30 +40,30 @@ fun Application.configureRouting() {
         environment.config.propertyOrNull("redis.port")?.getString()?.toInt() ?: 6379
     )
     
-    // Initialize services
+
     val jsonConfig = Json { 
         ignoreUnknownKeys = true
         encodeDefaults = true 
     }
     
     val commentService: CommentService = CommentServiceImpl(database, jedis, jsonConfig)
+    val companyCatalogService:CompanyCatalogServiceImpl = CompanyCatalogServiceImpl(database,jedis,jsonConfig)
+    val postService : PostServiceImpl = PostServiceImpl(database,jedis,jsonConfig)
     
-    // Configure routes
+
     routing {
         // Basic routes
         get("/") {
             call.respondText("Welcome to TripBook API!")
         }
-        
-        route("/articles") {
-            get {
-                val sort = call.request.queryParameters["sort"] ?: "new"
-                call.respond("List of articles sorted starting from $sort")
-            }
-        }
+
         
         // Module routes
         CommentRoutes(commentService)
+        CompanyCatalogRoutes(companyCatalogService)
+        PostRoutes(postService)
+
+
     }
 }
 
