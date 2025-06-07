@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
 import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.*
@@ -66,10 +67,10 @@ fun TripBookApp(
             listOf(
                 Trip(
                     id = "1",
-                    name = "Safari Adventure",
+                    name = "seme beach",
                     startDate = LocalDate.of(2024, 12, 15),
                     endDate = LocalDate.of(2024, 12, 22),
-                    destination = "Kenya, Tanzania",
+                    destination = "limbe , Yaounde",
                     travelers = 4,
                     budget = 2400,
                     status = TripStatus.PLANNED,
@@ -79,10 +80,10 @@ fun TripBookApp(
                 ),
                 Trip(
                     id = "2",
-                    name = "Morocco Discovery",
+                    name = "Sanaga beach",
                     startDate = LocalDate.of(2025, 1, 10),
                     endDate = LocalDate.of(2025, 1, 18),
-                    destination = "Marrakech, Morocco",
+                    destination = "Bandjock Cameroon",
                     travelers = 2,
                     budget = 1800,
                     status = TripStatus.ACTIVE,
@@ -90,10 +91,10 @@ fun TripBookApp(
                 ),
                 Trip(
                     id = "3",
-                    name = "Cape Town Explorer",
+                    name = "Mount Cameroon",
                     startDate = LocalDate.of(2024, 9, 5),
                     endDate = LocalDate.of(2024, 9, 12),
-                    destination = "Cape Town, South Africa",
+                    destination = "limbe, Cammeroon",
                     travelers = 6,
                     budget = 3200,
                     status = TripStatus.COMPLETED,
@@ -175,26 +176,35 @@ fun TripBookApp(
             onBackClick = {
                 currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
             },
-            onServiceSelected = { service, type ->
-                selectedTrip?.let { trip ->
-                    val newItem = ItineraryItem(
-                        date = trip.startDate,
-                        time = "10:00 AM",
-                        title = service.name,
-                        location = service.location,
-                        type = type,
-                        agencyService = service
-                    )
+            onServiceSelected = { service ->
+                val typeResult = runCatching {
+                    ItineraryType.valueOf(service.type.uppercase())
+                }
 
-                    selectedTrip = trip.copy(
-                        itinerary = trip.itinerary + newItem
-                    )
+                if (typeResult.isSuccess) {
+                    val itineraryType = typeResult.getOrNull()
 
-                    trips = trips.map {
-                        if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
-                        else it
+                    selectedTrip?.let { trip ->
+                        val newItem = ItineraryItem(
+                            date = trip.startDate,
+                            time = "10:00 AM",
+                            title = service.name,
+                            location = service.location,
+                            type = itineraryType!!,
+                            agencyService = null
+                        )
+
+                        selectedTrip = trip.copy(
+                            itinerary = trip.itinerary + newItem
+                        )
+
+                        trips = trips.map {
+                            if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
+                            else it
+                        }
                     }
                 }
+
                 currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
             }
         )
