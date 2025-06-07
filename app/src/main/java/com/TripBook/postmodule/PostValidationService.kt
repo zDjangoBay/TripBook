@@ -215,15 +215,76 @@ class PostValidationService {
         val hashtagPattern = Pattern.compile("#\\w+")
         val matcher = hashtagPattern.matcher(text)
         val hashtags = mutableListOf<String>()
-        
+
         while (matcher.find()) {
             val hashtag = matcher.group()
             if (validateHashtag(hashtag)) {
                 hashtags.add(hashtag)
             }
         }
-        
+
         return hashtags.distinct()
+    }
+
+    /**
+     * Validates a complete PostEvent for processing
+     */
+    fun validatePostEvent(event: PostEvent): EventValidationResult {
+        return when (event) {
+            is PostEvent.TitleChanged -> EventValidationResult(
+                isValid = validateTitle(event.newTitle).isValid,
+                eventType = "TitleChanged",
+                validationResult = validateTitle(event.newTitle)
+            )
+            is PostEvent.DescriptionChanged -> EventValidationResult(
+                isValid = validateDescription(event.newDescription).isValid,
+                eventType = "DescriptionChanged",
+                validationResult = validateDescription(event.newDescription)
+            )
+            is PostEvent.LocationAdded -> EventValidationResult(
+                isValid = validateLocation(event.latitude, event.longitude, event.locationName).isValid,
+                eventType = "LocationAdded",
+                validationResult = validateLocation(event.latitude, event.longitude, event.locationName)
+            )
+            is PostEvent.TagAdded -> EventValidationResult(
+                isValid = validateTag(event.tag).isValid,
+                eventType = "TagAdded",
+                validationResult = validateTag(event.tag)
+            )
+            is PostEvent.CategoryChanged -> EventValidationResult(
+                isValid = validateCategory(event.category).isValid,
+                eventType = "CategoryChanged",
+                validationResult = validateCategory(event.category)
+            )
+            is PostEvent.VisibilityChanged -> EventValidationResult(
+                isValid = validateVisibility(event.visibility).isValid,
+                eventType = "VisibilityChanged",
+                validationResult = validateVisibility(event.visibility)
+            )
+            else -> EventValidationResult(
+                isValid = true,
+                eventType = event::class.simpleName ?: "Unknown",
+                validationResult = FieldValidationResult.valid()
+            )
+        }
+    }
+
+    /**
+     * Validates multiple events in sequence
+     */
+    fun validateEventSequence(events: List<PostEvent>): SequenceValidationResult {
+        val results = events.map { validatePostEvent(it) }
+        val errors = results.filter { !it.isValid }
+        val warnings = results.filter { it.validationResult.isWarning }
+
+        return SequenceValidationResult(
+            isValid = errors.isEmpty(),
+            totalEvents = events.size,
+            validEvents = results.count { it.isValid },
+            invalidEvents = errors.size,
+            warningEvents = warnings.size,
+            results = results
+        )
     }
 }
 
@@ -250,4 +311,25 @@ data class CompleteValidationResult(
     val errors: List<String>,
     val warnings: List<String>,
     val canSubmit: Boolean
+)
+
+/**
+ * Represents the result of PostEvent validation
+ */
+data class EventValidationResult(
+    val isValid: Boolean,
+    val eventType: String,
+    val validationResult: FieldValidationResult
+)
+
+/**
+ * Represents the result of validating multiple events
+ */
+data class SequenceValidationResult(
+    val isValid: Boolean,
+    val totalEvents: Int,
+    val validEvents: Int,
+    val invalidEvents: Int,
+    val warningEvents: Int,
+    val results: List<EventValidationResult>
 )
