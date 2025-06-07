@@ -28,6 +28,7 @@ import com.android.tripbook.model.TripStatus
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTripsScreen(
     trips: List<Trip>,

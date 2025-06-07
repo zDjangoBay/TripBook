@@ -80,7 +80,7 @@ dependencies {
     //---------------------------------------------------------
 
     // Firebase for Push Notifications
-    implementation("com.google.firebase:firebase-bom:32.7.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
 

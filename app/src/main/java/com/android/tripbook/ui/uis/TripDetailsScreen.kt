@@ -189,10 +189,23 @@ private fun OverviewTab(trip: Trip) {
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
-                    DetailItem(icon = "📅", text = "8 days, 7 nights")
-                    DetailItem(icon = "🏨", text = "Safari Lodge, Luxury Tents")
-                    DetailItem(icon = "🚌", text = "4x4 Safari Vehicle")
-                    DetailItem(icon = "🍽️", text = "All meals included")
+                    val duration = trip.endDate.toEpochDay() - trip.startDate.toEpochDay()
+                    DetailItem(icon = "📅", text = "${duration + 1} days, ${duration} nights")
+                    DetailItem(icon = "📍", text = trip.destination)
+                    DetailItem(icon = "👥", text = "${trip.travelers} travelers")
+                    DetailItem(icon = "💰", text = "$${trip.budget} budget")
+                    if (trip.type.isNotEmpty()) {
+                        DetailItem(icon = "🎯", text = "${trip.type} trip")
+                    }
+                    if (trip.description.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = trip.description,
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B),
+                            lineHeight = 20.sp
+                        )
+                    }
                 }
             }
         }
@@ -216,17 +229,27 @@ private fun OverviewTab(trip: Trip) {
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
-                    TravelerItem(
-                        initials = "JD",
-                        name = "John Doe (Trip Leader)",
-                        color = Color(0xFF667EEA)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TravelerItem(
-                        initials = "JS",
-                        name = "Jane Smith",
-                        color = Color(0xFF764BA2)
-                    )
+                    if (trip.travelersList.isNotEmpty()) {
+                        trip.travelersList.forEachIndexed { index, traveler ->
+                            TravelerItem(
+                                initials = traveler.name.split(" ").map { it.first() }.joinToString(""),
+                                name = "${traveler.name}${if (traveler.isLeader) " (Trip Leader)" else ""}",
+                                color = if (traveler.isLeader) Color(0xFF667EEA) else Color(0xFF764BA2)
+                            )
+                            if (index < trip.travelersList.size - 1) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
+                    } else {
+                        Text(
+                            text = "No travelers added yet",
+                            fontSize = 14.sp,
+                            color = Color(0xFF64748B),
+                            style = androidx.compose.ui.text.TextStyle(
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic
+                            )
+                        )
+                    }
                 }
             }
         }
@@ -235,12 +258,19 @@ private fun OverviewTab(trip: Trip) {
 
 @Composable
 private fun ItineraryTab(trip: Trip) {
-    val activities = listOf(
-        ActivityItem("Dec 15 - 9:00 AM", "Arrival in Nairobi", "Jomo Kenyatta International Airport"),
-        ActivityItem("Dec 16 - 6:00 AM", "Masai Mara Game Drive", "Masai Mara National Reserve"),
-        ActivityItem("Dec 17 - 5:30 AM", "Hot Air Balloon Safari", "Masai Mara National Reserve"),
-        ActivityItem("Dec 18 - 8:00 AM", "Travel to Serengeti", "Border crossing to Tanzania")
-    )
+    val activities = if (trip.activities.isNotEmpty()) {
+        trip.activities.map { activity ->
+            ActivityItem(
+                "${activity.date.format(DateTimeFormatter.ofPattern("MMM d"))} - ${activity.time}",
+                activity.title,
+                activity.location
+            )
+        }
+    } else {
+        listOf(
+            ActivityItem("No activities", "No activities planned yet", "Add activities to your itinerary")
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -342,9 +372,12 @@ private fun ExpensesTab(trip: Trip) {
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
+                    val totalSpent = trip.expenses.sumOf { it.amount }
+                    val remaining = trip.budget - totalSpent
+
                     BudgetRow("Total Budget:", "$${trip.budget}", Color(0xFF667EEA))
-                    BudgetRow("Spent:", "$1680", Color(0xFFDC2626))
-                    BudgetRow("Remaining:", "$720", Color(0xFF059669))
+                    BudgetRow("Spent:", "$${totalSpent}", Color(0xFFDC2626))
+                    BudgetRow("Remaining:", "$${remaining}", if (remaining >= 0) Color(0xFF059669) else Color(0xFFDC2626))
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -355,22 +388,28 @@ private fun ExpensesTab(trip: Trip) {
                             .height(8.dp)
                             .background(Color(0xFFF1F5F9), RoundedCornerShape(4.dp))
                     ) {
+                        val progressPercentage = if (trip.budget > 0) (totalSpent.toFloat() / trip.budget.toFloat()).coerceAtMost(1f) else 0f
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth(0.7f)
+                                .fillMaxWidth(progressPercentage)
                                 .height(8.dp)
-                                .background(Color(0xFF667EEA), RoundedCornerShape(4.dp))
+                                .background(
+                                    if (progressPercentage <= 0.8f) Color(0xFF667EEA) else Color(0xFFDC2626),
+                                    RoundedCornerShape(4.dp)
+                                )
                         )
                     }
                 }
             }
         }
 
-        items(listOf(
-            ExpenseItem("Accommodation", "Safari Lodge (4 nights)", "$960"),
-            ExpenseItem("Transportation", "4x4 Vehicle rental", "$480"),
-            ExpenseItem("Activities", "Game drives & balloon safari", "$320")
-        )) { expense ->
+        items(if (trip.expenses.isNotEmpty()) {
+            trip.expenses.map { expense ->
+                ExpenseItem(expense.category, expense.description, "$${expense.amount}")
+            }
+        } else {
+            listOf(ExpenseItem("No expenses", "No expenses recorded yet", "$0"))
+        }) { expense ->
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
