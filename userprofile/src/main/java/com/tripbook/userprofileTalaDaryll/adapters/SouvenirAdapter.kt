@@ -1,4 +1,4 @@
-package com.android.tripbook
+package com.tripbook.userprofileTalaDaryll.adapters
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -10,6 +10,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import java.text.SimpleDateFormat
+import com.tripbook.userprofileTalaDaryll.models.Souvenir
+import com.tripbook.userprofilendedilan.R
+
 import java.util.*
 
 class SouvenirAdapter(

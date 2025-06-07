@@ -1,4 +1,4 @@
-package com.android.tripbook
+package com.tripbook.userprofileTalaDaryll.models
 
 import android.net.Uri
 import androidx.room.Entity

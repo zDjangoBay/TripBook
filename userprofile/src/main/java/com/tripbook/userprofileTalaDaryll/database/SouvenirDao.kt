@@ -1,10 +1,11 @@
-package com.android.tripbook
+package com.tripbook.userprofileTalaDaryll.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Delete
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import com.tripbook.userprofileTalaDaryll.models.Souvenir
 
 @Dao
 interface SouvenirDao {

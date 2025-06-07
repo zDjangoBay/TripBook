@@ -1,18 +1,26 @@
-package com.android.tripbook
+package com.tripbook.userprofileTalaDaryll.activities
 
+import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.tripbook.userprofilendedilan.R
+import com.tripbook.userprofileTalaDaryll.adapters.SouvenirAdapter
+import com.tripbook.userprofileTalaDaryll.database.SouvenirRepository
+import com.tripbook.userprofileTalaDaryll.database.AppDatabase
+import com.tripbook.userprofileTalaDaryll.models.Souvenir
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +33,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.activity.enableEdgeToEdge
 
 class SouvenirActivity : AppCompatActivity() {
 
@@ -34,8 +43,8 @@ class SouvenirActivity : AppCompatActivity() {
     private lateinit var saveButton: MaterialButton
     private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
     private lateinit var emptyStateLayout: View
-    private lateinit var repository: SouvenirRepository
-    private lateinit var adapter: SouvenirAdapter
+    private lateinit var repository: com.tripbook.userprofileTalaDaryll.database.SouvenirRepository
+    private lateinit var adapter: com.tripbook.userprofileTalaDaryll.adapters.SouvenirAdapter
     private var selectedImageUri: Uri? = null
 
     // Permission launcher
@@ -72,7 +81,7 @@ class SouvenirActivity : AppCompatActivity() {
         emptyStateLayout = findViewById(R.id.emptyStateLayout)
 
         // Initialize Room
-        val database = AppDatabase.getDatabase(this)
+        val database = com.tripbook.userprofileTalaDaryll.database.AppDatabase.getDatabase(this)
         repository = SouvenirRepository(database.souvenirDao())
 
         // Setup RecyclerView
