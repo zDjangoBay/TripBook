@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -29,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaItem
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaType
+import com.tripbook.userprofileManfoDjuiko.presentation.screens.MediaUploadScreen
 import com.tripbook.userprofileManfoDjuiko.presentation.viewmodel.MediaViewModel
 import com.tripbook.userprofileManfoDjuiko.utils.PermissionHandler
 import com.tripbook.userprofileManfoDjuiko.utils.formatDuration
@@ -61,191 +63,221 @@ fun MediaManagementScreen(
     viewModel: MediaViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showUploadScreen by remember { mutableStateOf(false) } // State to control upload screen visibility
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        // Top App Bar
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Media Gallery",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            actions = {
-                // Add media button
-                IconButton(onClick = { /* Handle add media */ }) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = "Add Media",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                // Selection actions
-                if (uiState.selectedItems.isNotEmpty()) {
-                    Text(
-                        text = "${uiState.selectedItems.size}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                    IconButton(onClick = { viewModel.clearSelection() }) {
-                        Icon(Icons.Default.Clear, contentDescription = "Clear selection")
-                    }
-                    IconButton(onClick = { /* Handle delete */ }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete")
-                    }
-                    IconButton(onClick = { /* Handle share */ }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
-                    }
-                }
+    if (showUploadScreen) {
+        MediaUploadScreen(
+            onNavigateBack = { showUploadScreen = false },
+            onUploadComplete = { uris ->
+                // Handle the uploaded URIs here.
+                // In a real application, you'd likely pass these to your ViewModel
+                // to process and add them to your media list.
+                // For now, let's just close the upload screen.
+                viewModel.addMediaItems(uris) // Assuming you have a function in your ViewModel to add media
+                showUploadScreen = false
             }
         )
-
-        // Tab Row for Images, Videos, and All
-        TabRow(
-            selectedTabIndex = when (uiState.currentTab) {
-                MediaType.IMAGE -> 0
-                MediaType.VIDEO -> 1
-                MediaType.ALL -> 2
-            },
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            // Images Tab
-            Tab(
-                selected = uiState.currentTab == MediaType.IMAGE,
-                onClick = { viewModel.selectTab(MediaType.IMAGE) },
-                modifier = Modifier.padding(vertical = 12.dp)
+            // Top App Bar
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Tripbook Gallery",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    // Add media button
+                    IconButton(onClick = { showUploadScreen = true }) { // Toggle upload screen visibility
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Add Media",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    // Selection actions
+                    if (uiState.selectedItems.isNotEmpty()) {
+                        Text(
+                            text = "${uiState.selectedItems.size}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        IconButton(onClick = { viewModel.clearSelection() }) {
+                            Icon(Icons.Default.Clear, contentDescription = "Clear selection")
+                        }
+                        IconButton(onClick = { /* Handle delete */ }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                        }
+                        IconButton(onClick = { /* Handle share */ }) {
+                            Icon(Icons.Default.Share, contentDescription = "Share")
+                        }
+                    }
+                }
+            )
+
+            // User Account Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        Icons.Default.Image,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    // User Avatar Placeholder
+                    Box(
+                        modifier = Modifier
+                            .size(96.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                            .clickable { /* Handle profile picture click */ },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "User Avatar",
+                            tint = Color.White,
+                            modifier = Modifier.size(64.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // User Name Placeholder
                     Text(
-                        text = "Images",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "(${uiState.images.size})",
-                        style = MaterialTheme.typography.bodySmall,
+                        text = "John Doe", // Replace with actual user name
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    // User Subtitle Placeholder
+                    Text(
+                        text = "Mes Médias", // Replace with actual subtitle
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             }
 
-            // Videos Tab
-            Tab(
-                selected = uiState.currentTab == MediaType.VIDEO,
-                onClick = { viewModel.selectTab(MediaType.VIDEO) },
-                modifier = Modifier.padding(vertical = 12.dp)
+            // Custom Tab Row with rounded design
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .background(
+                        Color(0xFFF5F5F5),
+                        shape = RoundedCornerShape(24.dp)
+                    )
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        Icons.Default.VideoLibrary,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Videos",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "(${uiState.videos.size})",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                // Tous Tab
+                CustomTab(
+                    text = "Tous",
+                    isSelected = uiState.currentTab == MediaType.ALL,
+                    onClick = { viewModel.selectTab(MediaType.ALL) },
+                    modifier = Modifier.weight(1f)
+                )
+
+                // Photos Tab
+                CustomTab(
+                    text = "Photos",
+                    isSelected = uiState.currentTab == MediaType.IMAGE,
+                    onClick = { viewModel.selectTab(MediaType.IMAGE) },
+                    modifier = Modifier.weight(1f)
+                )
+
+                // Vidéos Tab
+                CustomTab(
+                    text = "Vidéos",
+                    isSelected = uiState.currentTab == MediaType.VIDEO,
+                    onClick = { viewModel.selectTab(MediaType.VIDEO) },
+                    modifier = Modifier.weight(1f)
+                )
             }
 
-            // All Tab
-            Tab(
-                selected = uiState.currentTab == MediaType.ALL,
-                onClick = { viewModel.selectTab(MediaType.ALL) },
-                modifier = Modifier.padding(vertical = 12.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        Icons.Default.Collections,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "All",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "(${uiState.images.size + uiState.videos.size})",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            // Content Area
+            Box(modifier = Modifier.fillMaxSize()) {
+                when {
+                    uiState.isLoading -> {
+                        LoadingScreen()
+                    }
+
+                    uiState.error != null -> {
+                        ErrorScreen(
+                            error = uiState.error!!,
+                            onRetry = { viewModel.loadMedia() }
+                        )
+                    }
+
+                    else -> {
+                        val currentItems = when (uiState.currentTab) {
+                            MediaType.ALL -> uiState.images + uiState.videos
+                            MediaType.IMAGE -> uiState.images
+                            MediaType.VIDEO -> uiState.videos
+                        }
+
+                        if (currentItems.isEmpty()) {
+                            EmptyStateScreen(
+                                mediaType = uiState.currentTab,
+                                onAddMedia = { showUploadScreen = true } // Also connect this to the upload screen
+                            )
+                        } else {
+                            MediaGrid(
+                                items = currentItems,
+                                selectedItems = uiState.selectedItems,
+                                onItemClick = { item ->
+                                    viewModel.toggleItemSelection(item.id)
+                                },
+                                onItemLongClick = { item ->
+                                    // Handle long click for detail view
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
+    }
+}
 
-        // Content Area
-        Box(modifier = Modifier.fillMaxSize()) {
-            when {
-                uiState.isLoading -> {
-                    LoadingScreen()
-                }
-
-                uiState.error != null -> {
-                    ErrorScreen(
-                        error = uiState.error!!,
-                        onRetry = { viewModel.loadMedia() }
-                    )
-                }
-
-                else -> {
-                    val currentItems = when (uiState.currentTab) {
-                        MediaType.ALL -> uiState.images + uiState.videos
-                        MediaType.IMAGE -> uiState.images
-                        MediaType.VIDEO -> uiState.videos
-                    }
-
-                    if (currentItems.isEmpty()) {
-                        EmptyStateScreen(
-                            mediaType = uiState.currentTab,
-                            onAddMedia = { /* Handle add media */ }
-                        )
-                    } else {
-                        MediaGrid(
-                            items = currentItems,
-                            selectedItems = uiState.selectedItems,
-                            onItemClick = { item ->
-                                viewModel.toggleItemSelection(item.id)
-                            },
-                            onItemLongClick = { item ->
-                                // Handle long click for detail view
-                            }
-                        )
-                    }
-                }
-            }
-        }
+@Composable
+private fun CustomTab(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                if (isSelected) Color(0xFF6366F1) else Color.Transparent
+            )
+            .clickable { onClick() }
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
+            color = if (isSelected) Color.White else Color(0xFF6B7280)
+        )
     }
 }
 

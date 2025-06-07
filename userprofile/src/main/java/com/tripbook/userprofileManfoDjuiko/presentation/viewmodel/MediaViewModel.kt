@@ -70,4 +70,8 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     fun clearSelection() {
         _uiState.value = _uiState.value.copy(selectedItems = emptySet())
     }
+
+    fun addMediaItems(uris: Any) {
+
+    }
 }
