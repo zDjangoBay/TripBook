@@ -65,3 +65,29 @@ fun Application.configureRouting() {
 
 @Serializable
 class Articles(val sort: String? = "new")
+
+fun Route.loginRoutes() {
+    route("/auth") {
+        post("/login") {
+            val request = call.receive<LoginRequest>()
+
+            // Simulate user lookup
+            if (request.username == "admin" && request.password == "admin123") {
+                val token = JwtConfig.generateToken("admin-id-001")
+                call.respond(LoginResponse(token))
+            } else {
+                call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
+            }
+        }
+    }
+}
+
+fun Route.protectedRoutes() {
+    authenticate("auth-jwt") {
+        get("/profile") {
+            val principal = call.principal<JWTPrincipal>()
+            val userId = principal!!.payload.getClaim("userId").asString()
+            call.respondText("Welcome, user with ID: $userId")
+        }
+    }
+}

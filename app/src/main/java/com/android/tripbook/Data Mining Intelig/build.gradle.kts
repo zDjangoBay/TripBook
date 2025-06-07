@@ -46,6 +46,11 @@ dependencies {
 
     // MINIO
     implementation("io.minio:minio:8.5.10")
+    
+    implementation("io.ktor:ktor-server-auth:2.3.4")
+    implementation("io.ktor:ktor-server-auth-jwt:2.3.4")
+    implementation("com.auth0:java-jwt:4.2.1")
+
 }
 
 
