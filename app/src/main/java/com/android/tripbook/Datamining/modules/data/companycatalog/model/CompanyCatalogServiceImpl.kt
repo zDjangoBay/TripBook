@@ -29,10 +29,10 @@ class CompanyCatalogServiceImpl(
     private val jsonMapper: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true; prettyPrint = false }
 ) : CompanyCatalogService {
 
-    // CORRECTED: The collection name should be a string literal.
+    
     private val companiesCollection: CoroutineCollection<Company> = mongoDb.getCollection("CompanyCatalog")
 
-    // No changes in createCompany, it looks correct.
+   
     override suspend fun createCompany(request: CreateCompanyRequest): Company? {
         val newCompany = Company(
             Company_Id = UUID.randomUUID().toString(),
@@ -65,7 +65,7 @@ class CompanyCatalogServiceImpl(
         }
     }
 
-    // No changes in getCompanyById, it looks correct.
+   
     override suspend fun getCompanyById(companyId: String): Company? {
         val cacheKey = CompanyCacheKeys.companyById(companyId)
         try {
@@ -106,8 +106,7 @@ class CompanyCatalogServiceImpl(
         }
     }
 
-    // No changes needed for getCompaniesByStatus. The error "Unresolved reference: skip" is likely a symptom
-    // of the other errors or a build configuration issue. The syntax itself is correct.
+
     override suspend fun getCompaniesByStatus(status: CompanyStatus, page: Int, pageSize: Int): List<Company> {
         val cacheKey = CompanyCacheKeys.companiesByStatus(status, page, pageSize)
         try {
@@ -169,11 +168,10 @@ class CompanyCatalogServiceImpl(
                 CompanyScore = request.CompanyScore ?: currentCompany.CompanyScore
             )
 
-            // Using replaceOne to update the document.
+            // I used replaceOne to update the document 
             val updateResult = companiesCollection.replaceOne(Company::Company_Id eq companyId, updatedCompany)
 
-            // CORRECTED: The check for the upserted ID had a typo and incorrect logic.
-            // It should check if the 'upsertedId' property is null or not.
+           
             if (updateResult.modifiedCount == 0L && updateResult.upsertedId == null) {
                 if (currentCompany == updatedCompany) return currentCompany
                 println("Company update failed or no changes for ID $companyId")
