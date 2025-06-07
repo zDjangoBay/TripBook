@@ -9,20 +9,13 @@ import io.minio.MinioClient
 import io.minio.http.Method
 import java.util.concurrent.TimeUnit
 
-// --- MinIO Client Configuration ---
-// IMPORTANT: Securely manage your MinIO credentials.
-// Consider using environment variables, Ktor's application.conf, or a secret management system.
-// Avoid hardcoding credentials directly in your code for production environments.
 
-// Example: Initialize MinioClient (ideally as a singleton or injected)
-// You might want to initialize this in your Ktor application module or a dedicated config class.
 val minioClient: MinioClient = MinioClient.builder()
-    .endpoint("http://localhost:9000") // TODO: Replace with your MinIO server endpoint
-    .credentials("YOUR_MINIO_ACCESS_KEY", "YOUR_MINIO_SECRET_KEY") // TODO: Replace with your MinIO access key and secret key
+    .endpoint("http://localhost:9000") // This is on my computer but it is to be replaced with an actual minio secure endpoint 
+    .credentials("YOUR_MINIO_ACCESS_KEY", "YOUR_MINIO_SECRET_KEY") 
     .build()
 
-const val BUCKET_NAME = "your-tripbook-bucket" // TODO: Replace with your desired bucket name
-
+const val BUCKET_NAME = "tripbook" 
 /**
  * Generates a presigned URL for uploading a file to MinIO.
  * The client requesting this URL will then use it to perform a PUT request
@@ -30,8 +23,6 @@ const val BUCKET_NAME = "your-tripbook-bucket" // TODO: Replace with your desire
  */
 fun Route.generatePresignedUploadUrlRoute() {
     get("/generate-upload-url") {
-        // The 'objectName' should be the full path within the bucket where the file will be stored.
-        // e.g., "posts/image123.jpg", "userprofile/user456/avatar.png"
         val objectName = call.request.queryParameters["objectName"]
 
         if (objectName.isNullOrBlank()) {
@@ -40,26 +31,24 @@ fun Route.generatePresignedUploadUrlRoute() {
         }
 
         try {
-            // Define the duration for which the presigned URL will be valid
+          
             val expiryDuration = 15 // minutes
             val expiryInSeconds = TimeUnit.MINUTES.toSeconds(expiryDuration.toLong()).toInt()
 
             val presignedUrlArgs = GetPresignedObjectUrlArgs.builder()
-                .method(Method.PUT) // We want to generate a URL for uploading (PUT operation)
+                .method(Method.PUT) //  This is to generate a Url during the PUT Operation
                 .bucket(BUCKET_NAME)
-                .objectName(objectName) // The full path, including any "folders" and the filename
+                .objectName(objectName) 
                 .expiry(expiryInSeconds)
                 .build()
 
             val presignedUrl = minioClient.getPresignedObjectUrl(presignedUrlArgs)
 
-            // Log successful generation if needed
-            // application.log.info("Generated presigned PUT URL for $objectName in bucket $BUCKET_NAME")
 
             call.respond(HttpStatusCode.OK, mapOf("url" to presignedUrl, "objectName" to objectName, "method" to "PUT"))
 
         } catch (e: Exception) {
-            // It's good practice to log the actual exception on the server side
+            
             application.log.error("Error generating presigned URL for object '$objectName' in bucket '$BUCKET_NAME': ${e.message}", e)
             call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Could not generate upload URL. ${e.localizedMessage}"))
         }
@@ -69,29 +58,19 @@ fun Route.generatePresignedUploadUrlRoute() {
 // This is the mechanic of file uploading using Minio
 fun Route.UploadFilesRoutes() {
     route("/uploadfiles") {
-        // Register the route for generating presigned URLs
+        
         generatePresignedUploadUrlRoute()
-
-        // Your existing route structure can remain for organization
-        // or to potentially handle metadata after upload.
         route("/posts") {
-            // Example:
-            // If a client successfully uploads a file using a presigned URL
-            // (e.g., to "posts/some-post-id/image.jpg"),
-            // it would then call another endpoint here, perhaps:
-            // post("/metadata") {
-            //    val uploadedFileUrl = call.receive<String>() // The final public/cdn URL of the file
-            //    // ... save this URL and other metadata to your database ...
-            // }
+            generatePresignedUploadUrlRoute()
         }
         route("/userprofile") {
-            // Similar logic might apply
+            generatePresignedUploadUrlRoute()
         }
         route("/companycatalog") {
-            // If there's a need
+            generatePresignedUploadUrlRoute()
         }
         route("/tripcatalog") {
-            //
+            generatePresignedUploadUrlRoute()
         }
     }
 }
