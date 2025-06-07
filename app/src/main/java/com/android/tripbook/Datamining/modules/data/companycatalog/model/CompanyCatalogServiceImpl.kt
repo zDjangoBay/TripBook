@@ -13,7 +13,7 @@ import org.litote.kmongo.updateOne
 import redis.clients.jedis.Jedis
 import java.util.UUID
 
-// Clés de Cache et TTL (No changes here)
+// Keys and Cache TTL , no need to change anything here when testing it 
 object CompanyCacheKeys {
     fun companyById(companyId: String) = "company:$companyId"
     fun companyByMainId(mainId: String) = "company_main:$mainId"
