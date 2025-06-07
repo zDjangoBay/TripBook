@@ -11,7 +11,7 @@ import com.android.tripbook.posts.model.ImageModel
 import com.android.tripbook.posts.model.Location
 import com.android.tripbook.posts.model.PostModel
 import com.android.tripbook.posts.model.TagModel
-import com.android.tripbook.posts.repository.PostRepository
+import com.android.tripbook.repository.PostRepository
 import com.android.tripbook.posts.utils.PostValidator
 // Make sure PostUIState and PostEvent are imported from here if they are in the same package
 // If they are in a different sub-package, the import will reflect that, e.g.:
@@ -174,13 +174,16 @@ class PostViewModel(
 
     private fun validateForm() {
         val currentState = _uiState.value
-        val isValid = validator.validatePost(
+        val tempPost = PostModel(
+            userId = currentUserId,
+            username = "temp",
             title = currentState.title,
             description = currentState.description,
-            location = currentState.selectedLocation,
+            location = currentState.selectedLocation ?: Location("", "", ""),
             images = currentState.selectedImages
         )
-        _uiState.update { it.copy(isFormValid = isValid) }
+        val validationResult = validator.validatePost(tempPost)
+        _uiState.update { it.copy(isFormValid = validationResult.isValid) }
     }
 
     private fun submitPost() {
@@ -237,10 +240,20 @@ class PostViewModel(
                 Category.CULTURE -> listOf("museum", "festival", "local arts", "temple", "history")
                 Category.FOOD -> listOf("restaurant", "street food", "cooking class", "cafe", "local market")
                 Category.NATURE -> listOf("wildlife", "national park", "waterfall", "forest", "botanical garden")
-                Category.URBAN -> listOf("city walk", "architecture", "nightlife", "shopping", "public art")
+                Category.CITY -> listOf("city walk", "architecture", "nightlife", "shopping", "public art")
                 Category.BEACH -> listOf("surfing", "sunbathing", "snorkeling", "beachcombing", "volleyball")
-                Category.MOUNTAINS -> listOf("trekking", "skiing", "mountain biking", "peak bagging", "scenic drive")
-                Category.HISTORICAL -> listOf("ancient ruins", "monuments", "heritage sites", "castle", "battlefield")
+                Category.MOUNTAIN -> listOf("trekking", "skiing", "mountain biking", "peak bagging", "scenic drive")
+                Category.HISTORY -> listOf("ancient ruins", "monuments", "heritage sites", "castle", "battlefield")
+                Category.WILDLIFE -> listOf("safari", "bird watching", "marine life", "conservation", "photography")
+                Category.PHOTOGRAPHY -> listOf("landscape", "portrait", "street", "macro", "night")
+                Category.BUDGET -> listOf("hostels", "free activities", "local transport", "street food", "walking tours")
+                Category.LUXURY -> listOf("5-star", "spa", "fine dining", "private tours", "premium")
+                Category.SOLO -> listOf("solo travel", "safety", "meeting people", "independence", "self-discovery")
+                Category.FAMILY -> listOf("kid-friendly", "family activities", "safety", "education", "fun")
+                Category.COUPLE -> listOf("romantic", "honeymoon", "date ideas", "couples activities", "intimate")
+                Category.BACKPACKING -> listOf("budget travel", "hostels", "hiking", "adventure", "minimalist")
+                Category.ROAD_TRIP -> listOf("driving", "scenic routes", "stops", "car rental", "navigation")
+                Category.OTHER -> listOf("miscellaneous", "unique", "special", "custom", "general")
             }
             tagNames.map { tagName -> TagModel(id = "${cat.name.lowercase()}_${tagName.replace(" ", "_")}", name = tagName, category = cat) }
         }
@@ -262,14 +275,14 @@ class PostViewModel(
     private fun addComment(postId: String, text: String) {
         if (text.isBlank()) return
         viewModelScope.launch {
-            try { val comment = Comment(userId = currentUserId, username = "Commenter User", text = text.trim()); repository.addComment(postId, comment) }
+            try { val comment = Comment(id = "temp_${System.currentTimeMillis()}", userId = currentUserId, username = "Commenter User", content = text.trim()); repository.addComment(postId, comment) }
             catch (e: Exception) { Log.e("PostViewModel", "Error adding comment to post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to add comment") } }
         }
     }
     private fun addReply(postId: String, commentId: String, text: String) {
         if (text.isBlank()) return
         viewModelScope.launch {
-            try { val reply = Comment(userId = currentUserId, username = "Reply User", text = text.trim()); repository.addReply(postId, commentId, reply) }
+            try { val reply = Comment(id = "temp_${System.currentTimeMillis()}", userId = currentUserId, username = "Reply User", content = text.trim()); repository.addReply(postId, commentId, reply) }
             catch (e: Exception) { Log.e("PostViewModel", "Error adding reply to comment $commentId on post $postId", e); _uiState.update { it.copy(error = e.message ?: "Failed to add reply") } }
         }
     }

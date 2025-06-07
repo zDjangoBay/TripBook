@@ -1,3 +1,5 @@
+package com.android.tripbook.repository
+
 import com.android.tripbook.posts.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -113,14 +115,14 @@ class FakePostRepository : PostRepository {
                     id = "c1",
                     userId = "user2",
                     username = "Mike Traveler",
-                    text = "Absolutely stunning! How long did you wait for this shot?",
+                    content = "Absolutely stunning! How long did you wait for this shot?",
                     timestamp = Instant.now().minusSeconds(3600),
                     replies = listOf(
                         Comment(
                             id = "r1",
                             userId = "user1",
                             username = "Sarah Explorer",
-                            text = "About 2 hours, but totally worth it!",
+                            content = "About 2 hours, but totally worth it!",
                             timestamp = Instant.now().minusSeconds(3000)
                         )
                     )
