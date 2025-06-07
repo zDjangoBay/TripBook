@@ -4,429 +4,177 @@
  */
 package com.android.tripbook.companycatalog.ui.catalog
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
+importandroidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.*
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.*
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.android.tripbook.companycatalog.model.Company
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompanyListCard(
     company: Company,
     onClick: () -> Unit,
-    onFavoriteClick: (Boolean) -> Unit = {},
-    onShareClick: () -> Unit = {},
-    onBookmarkClick: () -> Unit = {},
-    onReportClick: () -> Unit = {},
-    onFollowClick: (Boolean) -> Unit = {},
-    isBookmarked: Boolean = false,
+    onLikeClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var isFavorite by remember { mutableStateOf(false) }
-    var isFollowing by remember { mutableStateOf(false) }
-    var scale by remember { mutableStateOf(1f) }
-    var rotation by remember { mutableStateOf(0f) }
-    var showQRCode by remember { mutableStateOf(false) }
-    var showMetrics by remember { mutableStateOf(true) }
-    var showFullDescription by remember { mutableStateOf(false) }
-    var currentImageIndex by remember { mutableStateOf(0) }
-    
-    val haptics = LocalHapticFeedback.current
-    val scope = rememberCoroutineScope()
-    val interactionSource = remember { MutableInteractionSource() }
-    val context = LocalContext.current
-    
-    // Animation states
-    val rotationAnimation by animateFloatAsState(
-        targetValue = rotation,
-        animationSpec = spring(dampingRatio = 0.3f, stiffness = 300f)
-    )
-    
-    val likeAnimation = remember { Animatable(1f) }
-    val cardColor = remember { Animatable(Color.White.toArgb().toFloat()) }
-    
-    // Custom metrics
-    val engagementScore = remember(company) {
-        (company.likes * 0.4 + company.views * 0.3 + company.stars * 0.3).toInt()
-    }
-
     Card(
         modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 6.dp)
             .fillMaxWidth()
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick,
-                onLongClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                    showQRCode = !showQRCode
-                },
-                onDoubleClick = {
-                    scope.launch {
-                        rotation += 360f
-                        likeAnimation.animateTo(1.2f)
-                        likeAnimation.animateTo(1f)
-                    }
-                }
-            )
-            .scale(scale)
-            .graphicsLayer {
-                rotationY = rotationAnimation
-            }
-            .animateContentSize(),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 8.dp,
-            focusedElevation = 6.dp,
-            hoveredElevation = 5.dp
-        )
+            .clickable { onClick() },
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Column {
-            // Premium badge
-            if (company.isPremium) {
-                PremiumBadge()
-            }
-
-            // Image carousel
-            Box(
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Company Image
+            AsyncImage(
+                model = company.imageUrl,
+                contentDescription = "${company.name} image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-            ) {
-                company.imageResIds.forEachIndexed { index, imageResId ->
-                    if (index == currentImageIndex) {
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-                
-                // Image carousel controls
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(8.dp)
-                ) {
-                    company.imageResIds.indices.forEach { index ->
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .padding(2.dp)
-                                .background(
-                                    color = if (currentImageIndex == index) Color.White else Color.Gray,
-                                    shape = CircleShape
-                                )
-                                .clickable { currentImageIndex = index }
-                        )
-                    }
-                }
-            }
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
 
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Company Details
             Column(
-                modifier = Modifier.padding(12.dp)
+                modifier = Modifier.weight(1f)
             ) {
-                // Header section with company info
+                // Company Name
+                Text(
+                    text = company.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Category
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(
+                        text = company.category,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Location
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = company.name,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        
-                        // Company status chips
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            StatusChip(
-                                icon = Icons.Filled.Verified,
-                                text = if (company.isVerified) "Verified" else "Pending",
-                                color = if (company.isVerified) Color.Green else Color.Gray
-                            )
-                            
-                            if (company.isTopRated) {
-                                StatusChip(
-                                    icon = Icons.Filled.Star,
-                                    text = "Top Rated",
-                                    color = Color(0xFFFFD700)
-                                )
-                            }
-                        }
-                    }
-
-                    // Quick action buttons
-                    Row {
-                        IconButton(
-                            onClick = {
-                                isFollowing = !isFollowing
-                                onFollowClick(isFollowing)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = if (isFollowing) Icons.Filled.PersonAdd else Icons.Outlined.PersonAdd,
-                                contentDescription = "Follow",
-                                tint = if (isFollowing) MaterialTheme.colorScheme.primary else Color.Gray
-                            )
-                        }
-                        
-                        IconButton(
-                            onClick = {
-                                isFavorite = !isFavorite
-                                onFavoriteClick(isFavorite)
-                            }
-                        ) {
-                            Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                contentDescription = "Favorite",
-                                tint = if (isFavorite) Color.Red else Color.Gray,
-                                modifier = Modifier.scale(likeAnimation.value)
-                            )
-                        }
-                    }
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = company.location,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
-                // Expandable description
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Rating and Reviews
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Rating",
+                        modifier = Modifier.size(14.dp),
+                        tint = Color(0xFFFFD700)
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Text(
+                        text = String.format("%.1f", company.rating),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = " (${company.reviewCount} reviews)",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Description
                 Text(
                     text = company.description,
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = if (showFullDescription) Int.MAX_VALUE else 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.clickable { showFullDescription = !showFullDescription }
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
+            }
 
-                // Metrics section
-                if (showMetrics) {
-                    CompanyMetrics(company, engagementScore)
-                }
+            Spacer(modifier = Modifier.width(8.dp))
 
-                // Action buttons
-                AnimatedVisibility(
-                    visible = isExpanded,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically()
-                ) {
-                    Column {
-                        Divider()
-                        
-                        // Extended actions
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            ActionButton(Icons.Default.Share, "Share", onShareClick)
-                            ActionButton(
-                                if (isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                                "Bookmark",
-                                onBookmarkClick
-                            )
-                            ActionButton(Icons.Default.Report, "Report", onReportClick)
-                            ActionButton(Icons.Default.Info, "Info") {
-                                showMetrics = !showMetrics
-                            }
-                        }
-
-                        // Company details
-                        CompanyDetails(company)
-                    }
-                }
-
-                // Expand/collapse button
-                TextButton(
-                    onClick = { isExpanded = !isExpanded },
-                    modifier = Modifier.fillMaxWidth()
+            // Price and Like Button
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Like Button
+                IconButton(
+                    onClick = onLikeClick,
+                    modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                        contentDescription = if (isExpanded) "Collapse" else "Expand"
+                        imageVector = if (company.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = if (company.isLiked) "Unlike" else "Like",
+                        tint = if (company.isLiked) Color.Red else Color.Gray,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Price Range
+                Text(
+                    text = company.priceRange,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
-    }
-}
-
-@Composable
-private fun PremiumBadge() {
-    Surface(
-        color = Color(0xFFFFD700),
-        shape = RoundedCornerShape(bottomEnd = 8.dp),
-        modifier = Modifier.padding(start = 8.dp)
-    ) {
-        Text(
-            text = "PREMIUM",
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-        )
-    }
-}
-
-@Composable
-private fun StatusChip(
-    icon: ImageVector,
-    text: String,
-    color: Color
-) {
-    Surface(
-        color = color.copy(alpha = 0.1f),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(12.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelSmall,
-                color = color
-            )
-        }
-    }
-}
-
-@Composable
-private fun CompanyMetrics(
-    company: Company,
-    engagementScore: Int
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        MetricItem(Icons.Default.ThumbUp, "${company.likes}", "Likes")
-        MetricItem(Icons.Default.RemoveRedEye, "${company.views}", "Views")
-        MetricItem(Icons.Default.Star, "${company.stars}/5", "Rating")
-        MetricItem(Icons.Default.Trending, "$engagementScore", "Engagement")
-    }
-}
-
-@Composable
-private fun MetricItem(
-    icon: ImageVector,
-    value: String,
-    label: String
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(20.dp)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = Color.Gray
-        )
-    }
-}
-
-@Composable
-private fun ActionButton(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit
-) {
-    IconButton(onClick = onClick) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(icon, contentDescription = label)
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-private fun CompanyDetails(company: Company) {
-    Column(
-        modifier = Modifier.padding(8.dp)
-    ) {
-        DetailItem("Founded", company.foundedDate?.let {
-            SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(it)
-        } ?: "N/A")
-        DetailItem("Location", company.location)
-        DetailItem("Industry", company.industry)
-        DetailItem("Size", "${company.employeeCount} employees")
-    }
-}
-
-@Composable
-private fun DetailItem(
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium
-        )
     }
 }
