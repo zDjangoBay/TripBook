@@ -1,13 +1,13 @@
-package com.android.Tripbook.Datamining.modules.data.posts.model
+package com.android.posts.model
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.CoroutineCollection
 import org.litote.kmongo.eq
-import org.litote.kmongo.setValue // Pour les mises à jour de champs spécifiques
-import org.litote.kmongo.inc // Pour incrémenter les compteurs
-import org.litote.kmongo.descendingSort // Pour trier
+import org.litote.kmongo.setValue 
+import org.litote.kmongo.inc 
+import org.litote.kmongo.descendingSort // this is to sort 
 import redis.clients.jedis.Jedis
 import java.time.LocalDateTime
 import java.util.UUID
