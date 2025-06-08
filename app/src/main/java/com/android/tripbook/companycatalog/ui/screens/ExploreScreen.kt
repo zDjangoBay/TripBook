@@ -1,5 +1,6 @@
 package com.android.tripbook.companycatalog.ui.screens
 
+import android.Manifest
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,55 +10,75 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.tripbook.companycatalog.data.MockCompanyData
 import com.android.tripbook.companycatalog.ui.components.NearbyCompanyCard
 import kotlin.math.roundToInt
+import org.osmdroid.util.GeoPoint
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.PermissionStatus
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun ExploreScreen(navController: NavHostController) {
-    var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Near Me", "Map View")
+    val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Top App Bar
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Explore",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Explore",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                actions = {
+                    Button(
+                        onClick = { navController.navigate("map") },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Map,
+                                contentDescription = "View Map",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = "Map View",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    }
+                }
             )
-        )
-
-        // Tab Row
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = MaterialTheme.colorScheme.surface
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { Text(title) }
-                )
-            }
         }
-
-        // Content based on selected tab
-        when (selectedTab) {
-            0 -> NearMeContent(navController)
-            1 -> MapViewContent()
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            NearMeContent(navController)
         }
     }
 }
@@ -111,19 +132,6 @@ private fun NearMeContent(navController: NavHostController) {
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun MapViewContent() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Map View Coming Soon",
-            style = MaterialTheme.typography.bodyLarge
-        )
     }
 }
 

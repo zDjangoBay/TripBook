@@ -85,4 +85,12 @@ dependencies {
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+
+    // Maps Compose (OpenStreetMap)
+    implementation("org.osmdroid:osmdroid-android:6.1.16")
+    implementation("org.osmdroid:osmdroid-wms:6.1.16")
+    implementation("org.osmdroid:osmdroid-mapsforge:6.1.16")
+
+    // Permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 }
