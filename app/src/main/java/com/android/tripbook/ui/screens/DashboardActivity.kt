@@ -17,6 +17,10 @@ import com.android.tripbook.ui.screens.notifications.NotificationScreen
 import com.android.tripbook.ui.screens.profile.ProfileScreen
 import com.android.tripbook.ui.screens.reservation.ReservationFlowActivity
 import com.android.tripbook.ui.screens.PaymentScreen
+import com.android.tripbook.ui.screens.preferences.TravelPreferencesScreen
+import androidx.navigation.NavController
+import com.android.tripbook.ui.screens.profile.ProfileScreen
+
 
 /**
  * Main Dashboard Activity with bottom navigation
@@ -64,6 +68,14 @@ fun DashboardActivity() {
                 NotificationScreen()
             }
             composable("profile") {
+                ProfileScreen(navController)
+            }
+            composable("travel_preferences") {
+                TravelPreferencesScreen(
+
+                    onBack = { navController.popBackStack() }
+                )
+
                 ProfileScreen()
             }
             composable("payment/{reservationId}") { backStackEntry ->

@@ -1,3 +1,10 @@
+
+package com.android.tripbook.ui.screens.profile
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 package com.android.tripbook.ui.screens.profile
 
 import androidx.compose.foundation.layout.*
@@ -6,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +22,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+
+@Composable
+fun ProfileScreen(navController: NavController) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+
 import coil.compose.AsyncImage
 
 @Composable
@@ -30,6 +50,7 @@ fun ProfileScreen() {
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 24.dp)
         )
+
         
         // Profile Header
         Card(
@@ -41,6 +62,7 @@ fun ProfileScreen() {
                 modifier = Modifier.padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 // Profile Picture
                 AsyncImage(
                     model = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
@@ -50,6 +72,10 @@ fun ProfileScreen() {
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -58,12 +84,28 @@ fun ProfileScreen() {
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
+
+
                 
                 Text(
                     text = "john.traveler@email.com",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    ProfileStat("12", "Trips")
+                    ProfileStat("8", "Countries")
+                    ProfileStat("4.8", "Rating")
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -98,6 +140,17 @@ fun ProfileScreen() {
             ProfileOption("About", Icons.Default.Info),
             ProfileOption("Sign Out", Icons.Default.ExitToApp)
         )
+
+        profileOptions.forEach { option ->
+            ProfileOptionCard(
+                option = option,
+                onClick = {
+                    when (option.title) {
+                        "Travel Preferences" -> navController.navigate("travel_preferences")
+                        else -> {}
+                    }
+                }
+
         
         profileOptions.forEach { option ->
             ProfileOptionCard(
@@ -110,6 +163,9 @@ fun ProfileScreen() {
 }
 
 @Composable
+fun ProfileStat(value: String, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
 fun ProfileStat(
     value: String,
     label: String
@@ -133,6 +189,8 @@ fun ProfileStat(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun ProfileOptionCard(option: ProfileOption, onClick: () -> Unit) {
+
 fun ProfileOptionCard(
     option: ProfileOption,
     onClick: () -> Unit
@@ -158,6 +216,10 @@ fun ProfileOptionCard(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+
             
             Spacer(modifier = Modifier.width(16.dp))
             
@@ -166,6 +228,8 @@ fun ProfileOptionCard(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )
+
+
             
             Icon(
                 imageVector = Icons.Default.ChevronRight,
@@ -176,6 +240,8 @@ fun ProfileOptionCard(
         }
     }
 }
+
+data class ProfileOption(val title: String, val icon: ImageVector)
 
 data class ProfileOption(
     val title: String,
