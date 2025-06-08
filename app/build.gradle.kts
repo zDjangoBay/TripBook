@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
 android {
@@ -9,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -77,4 +78,18 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Firebase for Push Notifications
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    // WorkManager for Background Tasks
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Notification Support
+    implementation("androidx.core:core-ktx:1.12.0")
+
+    // Date/Time utilities
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
 }
