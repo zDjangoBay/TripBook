@@ -41,17 +41,12 @@ fun MainNavGraph(
             }
 
         composable("schedule") {
-            Box(
+            com.android.tripbook.ui.screens.TripCalendarScreen(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Schedule Trips Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
+                onAddTripClick = {
+                    navController.navigate("catalog")
+                }
+            )
         }
 
         composable("catalog") { // Or whatever your route name is

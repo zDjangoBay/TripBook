@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -183,9 +185,10 @@ fun TripCalendarScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Simple date display (replacing CalendarView for now)
+            // Interactive calendar section
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -196,11 +199,71 @@ fun TripCalendarScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
+
                     Text(
                         text = dateFormat.format(selectedDate),
                         fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 8.dp)
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
+
+                    // Date navigation buttons
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = {
+                                val calendar = Calendar.getInstance()
+                                calendar.time = selectedDate
+                                calendar.add(Calendar.DAY_OF_MONTH, -1)
+                                onDateSelected(calendar.time)
+                            }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowLeft,
+                                    contentDescription = "Previous day"
+                                )
+                                Text(
+                                    text = "Previous",
+                                    modifier = Modifier.padding(start = 4.dp)
+                                )
+                            }
+                        }
+
+                        Button(
+                            onClick = {
+                                onDateSelected(Date()) // Today
+                            }
+                        ) {
+                            Text("Today")
+                        }
+
+                        Button(
+                            onClick = {
+                                val calendar = Calendar.getInstance()
+                                calendar.time = selectedDate
+                                calendar.add(Calendar.DAY_OF_MONTH, 1)
+                                onDateSelected(calendar.time)
+                            }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "Next",
+                                    modifier = Modifier.padding(end = 4.dp)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowRight,
+                                    contentDescription = "Next day"
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
