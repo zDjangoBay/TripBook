@@ -220,4 +220,88 @@ fun TrendingTagsSection() {
     }
 }
 
+@Composable
+fun QuoteOfTheDaySection() {
+    val quotes = listOf(
+        "Innovation distinguishes between a leader and a follower.",
+        "The best way to predict the future is to create it."
+    )
+    val todayQuote = quotes[LocalDate.now().dayOfYear % quotes.size]
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Text(
+            "💡 $todayQuote",
+            Modifier.padding(16.dp),
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
 
+@Composable
+fun LastVisitedCompanySection(context: Context) {
+    val sharedPrefs: SharedPreferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+    val lastVisited = sharedPrefs.getString("lastCompany", "None")
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                "📌 Last Visited Company",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                "🏢 $lastVisited",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun BookmarkedCompaniesSection() {
+    val bookmarked = listOf("TechNova", "FinServe")
+    Column {
+        Text(
+            "⭐ Bookmarked Companies",
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        bookmarked.forEach {
+            Text(
+                "• $it",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsButtonSection() {
+    Button(
+        onClick = { /* Navigate to settings */ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+    ) {
+        Text(
+            "⚙️ Settings & Preferences",
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
