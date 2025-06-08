@@ -6,6 +6,8 @@ import com.android.comments.model.CommentRoutes
 import com.android.companycatalog.model.*
 import com.android.companycatalog.routes.*
 import com.android.posts.model.PostServiceImpl
+import com.android.reservations.model.*
+import com.android.reservations.routes.*
 import com.android.posts.routes.PostRoutes
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -49,6 +51,7 @@ fun Application.configureRouting() {
     val commentService: CommentService = CommentServiceImpl(database, jedis, jsonConfig)
     val companyCatalogService:CompanyCatalogServiceImpl = CompanyCatalogServiceImpl(database,jedis,jsonConfig)
     val postService : PostServiceImpl = PostServiceImpl(database,jedis,jsonConfig)
+    val reservationService : ReservationServiceImpl = ReservationServiceImpl(database,jedis,jsonconfig)
     
 
     routing {
@@ -62,6 +65,7 @@ fun Application.configureRouting() {
         CommentRoutes(commentService)
         CompanyCatalogRoutes(companyCatalogService)
         PostRoutes(postService)
+        ReservationsRoutes(reservationService)
 
 
     }
