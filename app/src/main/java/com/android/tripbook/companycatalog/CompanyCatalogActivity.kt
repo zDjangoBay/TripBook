@@ -104,7 +104,7 @@ fun AppRootNavHost() {
                 HomeScreen()
             }
             composable(MainAppScreen.Explore.route) {
-                ExploreScreen()
+                ExploreScreen(navController = navController)
             }
             composable(MainAppScreen.Catalog.route) {
                 CatalogScreen(navController = navController)
