@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 object SupabaseConfig {
     // TODO: Replace with your actual Supabase project URL and anon key
     // You can get these from your Supabase project dashboard
+    //supabase configuration for the online database
     private const val SUPABASE_URL = "https://hkezrzapmoufaxainxcs.supabase.co"
     private const val SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZXpyemFwbW91ZmF4YWlueGNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4MDY5NjcsImV4cCI6MjA2NDM4Mjk2N30.UljI1Stn3KDSKZEcCd-cpwuTNLRff4mhm0PVcrBkGv8"
     
