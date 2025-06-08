@@ -1,213 +1,276 @@
-# TripBook - Android App with Nodemailer Email System
+# TripBook - Android App with Complete Password Recovery System
 
-A complete authentication system for Android with **real email functionality** using Nodemailer
-backend.
+A comprehensive Android authentication system with **real JavaMail email functionality** and modular
+architecture featuring multiple team implementations.
 
+## 🎯 Key Features
 
-## 🎯 Features
+### ✅ Complete Password Recovery System
 
-### ✅ Complete Auth System
+- **Real Email Sending** - JavaMail integration with SMTP
+- **6-Digit OTP Verification** - Time-based security codes
+- **Professional Email Templates** - Beautiful HTML email design
+- **10-Minute Expiration** - Secure token lifecycle
+- **Password Strength Validation** - Enforced security requirements
 
-- **User Registration** with email validation
-- **Login/Logout** with secure session management
-- **Password Recovery** with real email sending
-- **Modern UI** with Material Design 3
+### ✅ Multiple Team Implementations
 
-### ✅ Real Email Functionality
+- **userprofilesunjo** - 🆕 Complete password recovery with JavaMail
+- **userprofilendedilan** - Registration and basic auth flow
+- **userprofileManfoIngrid** - User profile management
+- **passwordrecoverysunjo** - Dedicated password recovery module
 
-- **Password Reset Emails** - Professional HTML templates
-- **Welcome Emails** - Sent automatically on registration
-- **Nodemailer Backend** - Node.js server with Express
-- **Gmail Integration** - Secure SMTP email delivery
+### ✅ Modern Architecture
 
-### ✅ Production Ready
-
-- **Error Handling** - Graceful fallbacks for network issues
-- **Professional Templates** - Beautiful, responsive emails
-- **Scalable Architecture** - Easy to deploy and extend
-- **Security** - App passwords and secure connections
+- **Clean Architecture** - Domain/Data/Presentation layers
+- **MVVM with Compose** - Reactive UI state management
+- **Material Design 3** - Latest Android design system
+- **Modular Structure** - Independent team modules
 
 ## 🚀 Quick Start
 
-### 1. Android App
+### 1. Clone and Build
 
 ```bash
-# Build and install
-./gradlew installDebug
-
-# The app will work with in-memory auth
-# Email functionality requires backend setup
+git clone <repository-url>
+cd Sunjo
+./gradlew :app:assembleDebug
 ```
 
-### 2. Email Backend (Optional)
+### 2. Test Password Recovery
 
 ```bash
-# Setup Nodemailer backend for real emails
-cd backend
-npm install
-cp .env.example .env
+# Run the app
+./gradlew :app:installDebug
 
-# Configure your Gmail credentials in .env
-# Follow NODEMAILER_SETUP.md for details
-
-npm start
+# Navigate to:
+# Login → "Forgot Password?" → Enter real email → Check inbox
 ```
+
+## 📧 Password Recovery Demo
+
+### Email Configuration
+
+- **SMTP Server**: Gmail (smtp.gmail.com:587)
+- **Authentication**: App-specific password
+- **Security**: TLS encryption
+
+### Demo Flow
+
+1. **Enter Email** - Any valid email address
+2. **Receive Code** - Check inbox for 6-digit OTP
+3. **Verify Code** - Enter received code (expires in 10 minutes)
+4. **Reset Password** - Set new password with requirements:
+    - Minimum 8 characters
+    - Uppercase & lowercase letters
+    - At least one number
+    - At least one special character
 
 ## 📁 Project Structure
 
 ```
-TripBook/
-├── app/                          # Android app
+Sunjo/
+├── app/                          # Main Android application
 │   ├── src/main/java/com/android/tripbook/
-│   │   ├── auth/                # Authentication system
-│   │   │   ├── AuthViewModel.kt # Auth logic + API calls
-│   │   │   ├── LoginScreen.kt   # Login interface
-│   │   │   ├── RegisterScreen.kt# Registration interface
-│   │   │   └── ...             # Other auth screens
-│   │   └── MainActivity.kt      # Main app entry
-│   └── build.gradle.kts         # Android dependencies
-├── backend/                      # Node.js email server
-│   ├── server.js               # Express + Nodemailer server
-│   ├── package.json            # Node.js dependencies
-│   └── .env.example            # Email configuration
-├── NODEMAILER_SETUP.md          # Complete setup guide
-└── README.md                    # This file
+│   │   └── auth/                # Authentication screens
+│   └── build.gradle.kts         # App dependencies with JavaMail
+├── userprofile/                  # User profile module
+│   ├── src/main/java/com/tripbook/
+│   │   ├── userprofilesunjo/    # 🆕 Password recovery system
+│   │   │   ├── data/            # Repository implementation
+│   │   │   ├── domain/          # Use cases and models
+│   │   │   ├── presentation/    # Compose UI screens
+│   │   │   └── util/            # OTP storage utility
+│   │   ├── userprofilendedilan/ # Registration system
+│   │   └── userprofileManfoIngrid/ # Profile management
+│   └── build.gradle.kts         # JavaMail dependencies
+├── passwordrecovery/             # Dedicated password recovery
+│   └── src/main/java/com/tripbook/passwordrecoverysunjo/
+└── backend/                      # Node.js email server (alternative)
 ```
 
 ## 🎮 How to Use
 
-### First Time Setup
+### UserProfile Sunjo Password Recovery
 
-1. **Register** - Create account with real email address
-2. **Check Email** - Receive welcome email via Nodemailer
-3. **Login** - Access your account
-4. **Test Recovery** - Try "Forgot Password" feature
+```kotlin
+// Navigation integration
+UserProfileSunjoEntryPoint()
 
-### With Backend Running
-
-- **Real Emails** - Password reset emails sent to inbox
-- **Welcome Messages** - Professional onboarding emails
-- **Production Ready** - Scalable email infrastructure
-
-### Without Backend
-
-- **In-Memory Auth** - Registration and login work locally
-- **Mock Emails** - Success messages without actual sending
-- **Perfect for Testing** - Full UI flow available
-
-## 📧 Email Examples
-
-### Password Reset Email
-
-```
-Subject: Password Reset Request - TripBook
-
-Professional email with:
-✅ TripBook branding
-✅ Reset button/link
-✅ Security information
-✅ 24-hour expiry notice
+// Or specific screen
+ForgotPasswordScreen(navController)
 ```
 
-### Welcome Email
+### Email Integration Details
 
-```
-Subject: Welcome to TripBook! 🎉
-
-Personalized email with:
-✅ User's name
-✅ Getting started checklist  
-✅ Professional signature
-✅ Beautiful HTML template
+```kotlin
+// Real email sending via JavaMail
+private suspend fun sendPasswordResetEmail(email: String): Boolean {
+    val otp = (100000..999999).random().toString()
+    OtpStorage.storeOtp(email, otp)
+    
+    // Send professional HTML email with OTP
+    // Returns true if sent successfully
+}
 ```
 
 ## 🛠️ Tech Stack
 
-### Android App
+### Android Frontend
 
 - **Kotlin** - Modern Android development
-- **Jetpack Compose** - Declarative UI framework
+- **Jetpack Compose** - Declarative UI
 - **Material Design 3** - Latest design system
-- **MVVM Architecture** - Clean separation of concerns
-- **StateFlow** - Reactive state management
+- **Navigation Compose** - Screen navigation
+- **MVVM Architecture** - Clean separation
 
-### Email Backend
+### Email Integration
 
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **Nodemailer** - Email sending library
-- **Gmail SMTP** - Reliable email delivery
-- **CORS** - Cross-origin request handling
+- **JavaMail API** - Real email sending
+- **Gmail SMTP** - Reliable delivery
+- **HTML Templates** - Professional design
+- **OTP Security** - Time-based verification
 
-## 📚 Documentation
+### Backend Alternative
 
-- **[NODEMAILER_SETUP.md](NODEMAILER_SETUP.md)** - Complete email setup guide
-- **[FIREBASE_EMAIL_SETUP.md](FIREBASE_EMAIL_SETUP.md)** - Alternative Firebase setup
-- **[AUTH_SYSTEM_README.md](AUTH_SYSTEM_README.md)** - Original auth documentation
+- **Node.js + Nodemailer** - Alternative email solution
+- **Express API** - RESTful endpoints
+- **CORS Support** - Cross-origin requests
+
+## 📧 Email Template Preview
+
+```html
+🔐 TripBook Password Reset
+
+Hello,
+
+You requested to reset your password for your TripBook account. 
+Use the verification code below:
+
+┌─────────────────────────┐
+│       123456            │  
+└─────────────────────────┘
+
+⏰ This code will expire in 10 minutes.
+
+🛡️ Security Note: Never share this code with anyone.
+```
 
 ## 🔧 Configuration
 
-### Android App
+### JavaMail Setup (Production)
 
 ```kotlin
-// In AuthViewModel.kt
-private val apiBaseUrl = "http://10.0.2.2:3000" // Android emulator
-
-// For real device testing:
-private val apiBaseUrl = "http://192.168.1.100:3000" // Your computer's IP
+// Replace with your SMTP credentials
+val session = Session.getInstance(properties, object : Authenticator() {
+    override fun getPasswordAuthentication(): PasswordAuthentication {
+        return PasswordAuthentication("your-email@gmail.com", "your-app-password")
+    }
+})
 ```
 
-### Backend Server
+### Build Configuration
 
-```env
-# In backend/.env
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-16-char-app-password
-PORT=3000
+```kotlin
+// app/build.gradle.kts
+packaging {
+    resources {
+        excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        excludes += "/META-INF/NOTICE.md"
+        excludes += "/META-INF/LICENSE.md"
+        pickFirsts += "META-INF/NOTICE.md"
+        pickFirsts += "META-INF/LICENSE.md"
+    }
+}
+
+dependencies {
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+}
 ```
 
-## 🚀 Deployment
+## 📚 Documentation
 
-### Android App
+- **[UserProfile Sunjo README](userprofile/src/main/java/com/tripbook/userprofilesunjo/README.md)
+  ** - Detailed implementation guide
+- **[NODEMAILER_SETUP.md](NODEMAILER_SETUP.md)** - Backend email setup
+- **[FIREBASE_EMAIL_SETUP.md](FIREBASE_EMAIL_SETUP.md)** - Firebase alternative
+- **[AUTH_SYSTEM_README.md](AUTH_SYSTEM_README.md)** - General auth documentation
+
+## 🚀 Team Implementations
+
+### userprofilesunjo (Latest)
+
+- ✅ Complete password recovery system
+- ✅ Real JavaMail email integration
+- ✅ Modern Material 3 UI
+- ✅ Clean architecture implementation
+- ✅ Professional email templates
+
+### userprofilendedilan
+
+- ✅ User registration flow
+- ✅ Basic authentication
+- ✅ Onboarding screens
+
+### userprofileManfoIngrid
+
+- ✅ User profile management
+- ✅ Profile picture handling
+- ✅ User data management
+
+### passwordrecoverysunjo
+
+- ✅ Dedicated recovery module
+- ✅ Alternative implementation
+- ✅ Modular architecture
+
+## 🐛 Common Issues & Solutions
+
+### Build Issues
 
 ```bash
-# Debug build
-./gradlew assembleDebug
-
-# Release build
-./gradlew assembleRelease
+# META-INF conflicts resolved in build.gradle.kts
+# JavaMail dependencies properly configured
+# Packaging exclusions added for smooth builds
 ```
 
-### Backend Server
+### Email Issues
 
-- **Heroku** - `git push heroku main`
-- **Railway** - Connect GitHub repo
-- **DigitalOcean** - VPS deployment
-- **Local** - `npm start`
-
-## 🐛 Troubleshooting
+```bash
+# Use Gmail app passwords (not account password)
+# Enable 2FA on Gmail account first
+# Check SMTP settings: smtp.gmail.com:587
+# Verify TLS/STARTTLS configuration
+```
 
 ## 📊 Current Status
 
-**✅ Android App:** Fully functional with beautiful UI
-**✅ Authentication:** Complete login/register/recovery system  
-**✅ Email Integration:** Nodemailer backend with real email sending
-**✅ Documentation:** Comprehensive setup guides
-**✅ Production Ready:** Deployable to app stores and cloud platforms
+**✅ Password Recovery:** Fully functional with real email sending  
+**✅ JavaMail Integration:** Production-ready SMTP configuration  
+**✅ UI/UX:** Modern Material 3 design with smooth animations  
+**✅ Architecture:** Clean, testable, and maintainable code  
+**✅ Security:** OTP expiration, password validation, secure storage  
+**✅ Documentation:** Comprehensive guides and README files
 
-## 📱 Application Preview
+## 📱 Screenshots
 
-### Authentication Flow
+### Password Recovery Flow
 
 <div align="center">
-  <img src="screenshots/Screenshot_2.png" width="1080" alt="Login Screen" />
-  <img src="screenshots/Screenshot_3.png" width="1080" alt="Register Screen" />
-  <img src="screenshots/Screenshot_4.png" width="1080" alt="Password Recovery" />
+  <img src="screenshots/Screenshot_2.png" width="270" alt="Login Screen" />
+  <img src="screenshots/Screenshot_3.png" width="270" alt="Forgot Password" />
+  <img src="screenshots/Screenshot_4.png" width="270" alt="OTP Verification" />
 </div>
-
 
 ### Email Examples
 
 <div align="center">
-  <img src="screenshots/Screenshot_1.png" width="1440" alt="Password Reset Email" />
+  <img src="screenshots/Screenshot_1.png" width="800" alt="Password Reset Email" />
 </div>
+
+---
+
+**Latest Update**: Added complete password recovery system with JavaMail integration in
+`userprofilesunjo` package.  
+**Next Steps**: Deploy to production with cloud email service integration.

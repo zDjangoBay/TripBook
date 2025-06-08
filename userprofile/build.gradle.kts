@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
 
-        minSdk = 31
+        minSdk = 28
         targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -45,6 +45,13 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/LICENSE.txt"
+            excludes += "/META-INF/NOTICE"
+            excludes += "/META-INF/NOTICE.txt"
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/NOTICE.md"
         }
     }
 }
@@ -79,6 +86,10 @@ dependencies {
     //---------------------------------------------------------
 
 
+    // JavaMail API for sending emails
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+
     // Compose
     implementation(libs.ui)
     implementation(libs.ui.graphics)
@@ -100,8 +111,10 @@ dependencies {
     // Date picker
     implementation(libs.androidx.compose.material3.material3)
 
-
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
-
+    // Firebase Authentication and Kotlin coroutines
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
