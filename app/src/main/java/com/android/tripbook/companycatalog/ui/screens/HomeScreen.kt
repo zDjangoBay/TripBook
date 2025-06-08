@@ -17,4 +17,27 @@ import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
+@Composable
+fun HomeScreen() {
+    val context = LocalContext.current
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        item { DynamicGreetingSection() }
+        item { QuickNavigationTiles() }
+        item { FeaturedCompanySection() }
+        item { CategoriesPreview() }
+        item { WhatsNewSection() }
+        item { TrendingTagsSection() }
+        item { QuoteOfTheDaySection() }
+        item { LastVisitedCompanySection(context) }
+        item { BookmarkedCompaniesSection() }
+        item { SettingsButtonSection() }
+    }
+}
+
 
