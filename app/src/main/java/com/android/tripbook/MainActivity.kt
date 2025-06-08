@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
-import com.android.tripbook.ui.UserProfileScreen // Import the UserProfileScreen function
 import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
 
 class MainActivity : ComponentActivity() {
@@ -22,14 +21,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             UserProfileNdeDilanEntryPoint( )
             TripBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Calling the UserProfileScreen composable
-                    UserProfileScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
-}
+
 
 @Preview
 @Composable
