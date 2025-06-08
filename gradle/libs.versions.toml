@@ -29,7 +29,8 @@ lifecycleViewModelCompose = "2.8.7"
 constraintlayoutCompose = "1.0.1"
 kotlinxCoroutinesAndroid = "1.7.3"
 lifecycleRuntimeCompose = "2.6.2"
-playServicesPlaces = "17.1.0"
+playServicesLocation = "21.3.0"
+
 
 
 [libraries]
@@ -68,7 +69,7 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
-play-services-places = { group = "com.google.android.gms", name = "play-services-places", version.ref = "playServicesPlaces" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

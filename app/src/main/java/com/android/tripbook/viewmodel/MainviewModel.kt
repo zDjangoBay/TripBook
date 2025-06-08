@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.tripbook.model.Place
 import com.android.tripbook.model.Triphome
-import com.android.tripbook.Repository.TripsRepository
+import com.android.tripbook.repository.TripsRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel(

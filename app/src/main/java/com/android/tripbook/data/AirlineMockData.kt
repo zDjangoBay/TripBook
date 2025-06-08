@@ -2,7 +2,6 @@ package com.android.tripbook.data
 
 import com.android.tripbook.model.AirlineCompany
 import com.android.tripbook.model.FlightDestination
-import com.android.tripbook.R
 
 object AirlineMockData {
 

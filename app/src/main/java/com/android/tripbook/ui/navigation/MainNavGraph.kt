@@ -6,28 +6,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.android.tripbook.viewmodel.MainViewModel
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
-import com.android.tripbook.ui.screens.BoatCompaniesScreen
-import com.android.tripbook.viewmodel.BoatCompanyViewModel
-import com.android.tripbook.ui.screens.TrainCompaniesScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.android.tripbook.viewmodel.BusCompaniesViewModel
+import com.android.tripbook.viewmodel.BoatCompanyViewModel
+import com.android.tripbook.data.SampleTrips
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-
-
 
 
 @Composable
@@ -54,12 +51,14 @@ fun MainNavGraph(
 
         composable("catalog") {
             TripCatalogScreen(
-                modifier = Modifier.fillMaxSize(),
+                modifier= Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onNavigateToAddPlace = { navController.navigate("addPlace/{tripId}")}
             )
         }
+
 
         composable("profile") {
             ProfileScreen(navController = navController)
@@ -69,12 +68,12 @@ fun MainNavGraph(
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
-                navController = navController,
                 onBack = { navController.popBackStack() },
-                onSeeAllReviews = { id ->
+                navController = navController,
+                onSeeAllReviews = { id: Int ->
                     navController.navigate("reviews/$id")
                 },
-                onBookTrip = { id ->
+                onBookTrip = { id: Int ->
                     navController.navigate("booking/$id")
                 }
             )
@@ -123,6 +122,9 @@ fun MainNavGraph(
             )
         }
 
+
+
+
         // New Bus Companies Screen Route
         composable("bus_companies") {
             val busCompaniesViewModel: BusCompaniesViewModel = viewModel()
@@ -140,12 +142,12 @@ fun MainNavGraph(
                 onCompanyClick = { company ->
                     busCompaniesViewModel.onCompanyClick(company)
 
-                     navController.navigate("company_details/${company.id}")
+                    navController.navigate("company_details/${company.id}")
                 },
                 onDestinationClick = { destination ->
                     busCompaniesViewModel.onDestinationClick(destination)
 
-                     navController.navigate("destination_details/${destination.id}")
+                    navController.navigate("destination_details/${destination.id}")
                 }
             )
         }

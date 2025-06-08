@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -87,7 +87,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.runtime.android)
-    implementation(libs.play.services.places)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -128,13 +127,10 @@ dependencies {
     implementation(libs.coil.compose)
 
 
-
-
-
-
     // Maps
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // Layout
     implementation(libs.constraintlayout.compose)

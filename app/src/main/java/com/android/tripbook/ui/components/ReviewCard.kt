@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.android.tripbook.model.Review
-import com.android.tripbook.ui.components.FullscreenGalleryDialog
 
 @Composable
 fun ReviewCard(

@@ -1,6 +1,5 @@
 package com.android.tripbook.viewmodel
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleComments
 import com.android.tripbook.model.CommentReaction

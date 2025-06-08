@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.viewmodel.MainViewModel
-import com.android.tripbook.ui.components.BottomNavigationBar
+import com.android.tripbook.ui.navigation.BottomNavigationBar
 import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
 

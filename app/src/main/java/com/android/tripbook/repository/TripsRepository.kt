@@ -1,4 +1,4 @@
-package com.android.tripbook.Repository
+package com.android.tripbook.repository
 
 import com.android.tripbook.model.Place
 import com.google.firebase.database.DataSnapshot

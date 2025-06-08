@@ -10,6 +10,7 @@ import androidx.core.view.WindowCompat
 import com.android.tripbook.ui.navigation.WelcomeScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
