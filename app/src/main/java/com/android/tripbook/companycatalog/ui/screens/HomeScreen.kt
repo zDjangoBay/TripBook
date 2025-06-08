@@ -18,10 +18,13 @@ import java.time.LocalDate
 import java.time.LocalTime
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import com.android.tripbook.companycatalog.MainAppScreen
+
 
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
 
     LazyColumn(
@@ -39,7 +42,8 @@ fun HomeScreen() {
         item { QuoteOfTheDaySection() }
         item { LastVisitedCompanySection(context) }
         item { BookmarkedCompaniesSection() }
-        item { SettingsButtonSection() }
+        item { SettingsButtonSection(navController) }
+
     }
 }
 
@@ -291,9 +295,9 @@ fun BookmarkedCompaniesSection() {
 }
 
 @Composable
-fun SettingsButtonSection() {
+fun SettingsButtonSection(navController: NavController) {
     Button(
-        onClick = { /* Navigate to settings */ },
+        onClick = { navController.navigate(MainAppScreen.Settings.route) },
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),

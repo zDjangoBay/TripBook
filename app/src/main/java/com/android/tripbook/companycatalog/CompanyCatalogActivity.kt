@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Store
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import com.android.tripbook.companycatalog.ui.screens.CatalogScreen
 import com.android.tripbook.companycatalog.ui.screens.ExploreScreen
 import com.android.tripbook.companycatalog.ui.screens.HomeScreen
 import com.android.tripbook.companycatalog.ui.screens.ProfileScreen
+import com.android.tripbook.companycatalog.ui.screens.SettingsScreen
 import com.android.tripbook.ui.theme.TripBookTheme
 
 // Represents each screen in the bottom navigation bar
@@ -40,6 +42,7 @@ sealed class MainAppScreen(val route: String, val label: String, val icon: Image
     data object Explore : MainAppScreen("explore", "Explore", Icons.Default.CompassCalibration)
     data object Catalog : MainAppScreen("catalog", "Catalog", Icons.Default.Store)
     data object Profile : MainAppScreen("profile", "Profile", Icons.Default.Person)
+    data object Settings : MainAppScreen("settings", "Settings", Icons.Default.Settings)
 }
 
 class CompanyCatalogActivity : ComponentActivity() {
@@ -66,6 +69,7 @@ fun AppRootNavHost() {
         MainAppScreen.Explore,
         MainAppScreen.Catalog,
         MainAppScreen.Profile
+        // If you want Settings in bottom nav, add here: MainAppScreen.Settings
     )
 
     Scaffold(
@@ -101,7 +105,7 @@ fun AppRootNavHost() {
             modifier = Modifier.padding(padding)
         ) {
             composable(MainAppScreen.Home.route) {
-                HomeScreen()
+                HomeScreen(navController)  // pass navController here!
             }
             composable(MainAppScreen.Explore.route) {
                 ExploreScreen()
@@ -111,6 +115,9 @@ fun AppRootNavHost() {
             }
             composable(MainAppScreen.Profile.route) {
                 ProfileScreen()
+            }
+            composable(MainAppScreen.Settings.route) {
+                SettingsScreen()
             }
         }
     }
