@@ -8,8 +8,13 @@ import com.android.tripbook.ui.chat.GroupChatActivity
 object ChatLauncher {
 
     fun openGroupChat(context: Context, tripId: String?, tripName: String?) {
-        if (tripId.isNullOrEmpty() || tripName.isNullOrEmpty()) {
-            Toast.makeText(context, "Missing trip information", Toast.LENGTH_SHORT).show()
+        if (tripId.isNullOrEmpty()) {
+            Toast.makeText(context, "Missing trip ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (tripName.isNullOrEmpty()) {
+            Toast.makeText(context, "Missing trip name", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -21,8 +26,13 @@ object ChatLauncher {
     }
 
     fun openGroupChatWithUserId(context: Context, tripId: String?, tripName: String?, userId: String?) {
-        if (tripId.isNullOrEmpty() || tripName.isNullOrEmpty()) {
-            Toast.makeText(context, "Missing trip information", Toast.LENGTH_SHORT).show()
+        if (tripId.isNullOrEmpty()) {
+            Toast.makeText(context, "Missing trip ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (tripName.isNullOrEmpty()) {
+            Toast.makeText(context, "Missing trip name", Toast.LENGTH_SHORT).show()
             return
         }
 

@@ -13,6 +13,7 @@ import com.android.tripbook.model.TripStatus
 import com.android.tripbook.service.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.ui.uis.*
+import com.android.tripbook.utils.ChatLauncher
 import com.google.firebase.FirebaseApp
 import java.time.LocalDate
 
@@ -40,10 +41,7 @@ class MainActivity : ComponentActivity() {
                     travelAgencyService = travelAgencyService,
                     googleMapsService = googleMapsService,
                     openGroupChat = { trip ->
-                        val intent = Intent(this, com.android.tripbook.ui.chat.GroupChatActivity::class.java)
-                        intent.putExtra("TRIP_ID", trip.id)
-                        intent.putExtra("TRIP_NAME", trip.name)
-                        startActivity(intent)
+                        ChatLauncher.openGroupChat(this, trip.id, trip.name)
                     }
                 )
             }

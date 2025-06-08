@@ -43,7 +43,6 @@ fun TripMapView(
         }
     }
 
-
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,

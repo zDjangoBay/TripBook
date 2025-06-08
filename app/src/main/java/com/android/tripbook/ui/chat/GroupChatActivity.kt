@@ -93,7 +93,7 @@ class GroupChatActivity : AppCompatActivity() {
     private fun sendMessage() {
         val messageText = etMessage.text.toString().trim()
         if (TextUtils.isEmpty(messageText)) {
-            Toast.makeText(this, "Please enter a message", Toast.LENGTH_SHORT).show()
+            etMessage.error = "Please enter a message"
             return
         }
 
@@ -103,10 +103,12 @@ class GroupChatActivity : AppCompatActivity() {
             return
         }
 
+        val senderName = currentUser.displayName?.takeIf { it.isNotEmpty() } ?: "Anonymous"
+        
         val message = Message(
             text = messageText,
             senderId = currentUser.uid,
-            senderName = currentUser.displayName ?: "Anonymous",
+            senderName = senderName,
             tripId = tripId,
             timestamp = null
         )
@@ -120,6 +122,7 @@ class GroupChatActivity : AppCompatActivity() {
             .add(message)
             .addOnSuccessListener {
                 etMessage.setText("")
+                etMessage.error = null
                 scrollToBottomDelayed()
             }
             .addOnFailureListener {

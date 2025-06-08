@@ -69,13 +69,17 @@ class MessageAdapter(
 
         fun bind(message: Message) {
             tvMessage.text = message.text
-            tvSenderName.text = message.senderName ?: "Anonymous"
+            tvSenderName.text = if (message.senderName.isEmpty()) "Anonymous" else message.senderName
             tvTime.text = formatTime(message.timestamp?.toDate())
         }
     }
 
     private fun formatTime(date: Date?): String {
-        return if (date != null) SimpleDateFormat("HH:mm", Locale.getDefault()).format(date) else "--:--"
+        return if (date != null) {
+            SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+        } else {
+            "Just now" // Better UX than "--:--"
+        }
     }
 
     class MessageDiffCallback(

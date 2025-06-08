@@ -48,12 +48,33 @@ data class Trip(
     val type: String = "",
     val description: String = "",
 
-    // TODO: Replace List<String> with proper models if needed
-    val activities: List<String> = emptyList(),
-    val expenses: List<String> = emptyList(),
-    val travelersList: List<String> = emptyList(),
+    // Restore proper type safety
+    val activities: List<Activity> = emptyList(),
+    val expenses: List<Expense> = emptyList(),
+    val travelersList: List<Traveler> = emptyList(),
 
     val itinerary: List<ItineraryItem> = emptyList(),
     val destinationCoordinates: Location? = null,
     val mapCenter: Location? = null
+)
+
+// Add these data classes if they don't exist elsewhere
+data class Activity(
+    val name: String,
+    val description: String = "",
+    val location: String = "",
+    val date: LocalDate? = null
+)
+
+data class Expense(
+    val name: String,
+    val amount: Double,
+    val category: String = "",
+    val date: LocalDate = LocalDate.now()
+)
+
+data class Traveler(
+    val id: String,
+    val name: String,
+    val email: String = ""
 )

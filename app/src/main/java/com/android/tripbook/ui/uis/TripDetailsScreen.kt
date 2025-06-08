@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import androidx.compose.ui.platform.LocalContext
 import android.content.Intent
+import com.android.tripbook.utils.ChatLauncher
 
 @Composable
 fun TripDetailsScreen(
@@ -178,6 +179,8 @@ fun TripDetailsScreen(
 
 @Composable
 private fun OverviewTab(trip: Trip, onGroupChatClick: () -> Unit) {
+    val context = LocalContext.current
+    
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -256,7 +259,9 @@ private fun OverviewTab(trip: Trip, onGroupChatClick: () -> Unit) {
         item {
             // Group Chat Button
             Button(
-                onClick = onGroupChatClick,
+                onClick = { 
+                    ChatLauncher.openGroupChat(context, trip.id, trip.name)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

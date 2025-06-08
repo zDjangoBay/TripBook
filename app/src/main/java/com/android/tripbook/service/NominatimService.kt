@@ -15,7 +15,8 @@ data class NominatimPlace(
     @SerializedName("display_name") val displayName: String,
     @SerializedName("lat") val latitude: String,
     @SerializedName("lon") val longitude: String,
-    @SerializedName("type") val type: String?
+    @SerializedName("type") val type: String?,
+    @SerializedName("category") val category: String? = null
 )
 
 interface NominatimApi {
@@ -41,14 +42,20 @@ class NominatimService {
             places.mapNotNull { place ->
                 val name = place.displayName.split(",")[0].trim()
                 val location = place.displayName
-                if (
-                    name.isNotEmpty() &&
-                    location.isNotEmpty() &&
-                    place.type in listOf("monument", "viewpoint", "tourist_attraction")
+                
+                // More flexible type checking - add more types as needed
+                val validTypes = listOf(
+                    "monument", "viewpoint", "tourist_attraction", 
+                    "attraction", "landmark", "historic", "museum"
+                )
+                
+                if (name.isNotEmpty() && 
+                    location.isNotEmpty() && 
+                    (place.type in validTypes || place.category in validTypes)
                 ) {
                     Attraction(name, location)
                 } else null
-            }.distinctBy { it.name }.take(5)
+            }.distinctBy { "${it.name}:${it.location}" }.take(5) // Better distinction
         } catch (e: Exception) {
             emptyList()
         }
