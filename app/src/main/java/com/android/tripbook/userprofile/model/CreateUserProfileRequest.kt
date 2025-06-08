@@ -1,5 +1,5 @@
 // CreateUserProfileRequest.kt
-package com.android.tripbook.src.main.kotlin.userprofile.model
+package com.android.tripbook.userprofile.model
 
 import kotlinx.serialization.Serializable
 

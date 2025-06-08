@@ -1,7 +1,7 @@
 // UserProfileRoutes.kt
-package com.android.tripbook.src.main.kotlin.userprofile.routes
+package com.android.tripbook.userprofile.routes
 
-import com.android.tripbook.src.main.kotlin.userprofile.model.UserProfile
+import com.android.tripbook.userprofile.model.UserProfile
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*

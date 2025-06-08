@@ -1,6 +1,6 @@
-package com.android.tripbook.src.main.kotlin.userprofile.model
+package com.android.tripbook.userprofile.model
 
-import com.android.tripbook.src.main.kotlin.userprofile.model.*
+import com.android.tripbook.userprofile.model.*
 import kotlinx.serialization.json.Json
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import redis.clients.jedis.Jedis

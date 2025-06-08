@@ -1,10 +1,10 @@
-package com.android.tripbook.src.main.kotlin.userprofile.model
+package com.android.tripbook.userprofile.model
 
 // Update the import paths below to match the actual package structure where CreateUserProfileRequest, UpdateUserProfileRequest, and UserProfile are defined.
 // For example, if they are in com.android.tripbook.userprofile.model, use:
-import com.android.tripbook.src.main.kotlin.userprofile.model.CreateUserProfileRequest
-import com.android.tripbook.src.main.kotlin.userprofile.model.UpdateUserProfileRequest
-import com.android.tripbook.src.main.kotlin.userprofile.model.UserProfile
+import com.android.tripbook.userprofile.model.CreateUserProfileRequest
+import com.android.tripbook.userprofile.model.UpdateUserProfileRequest
+import com.android.tripbook.userprofile.model.UserProfile
 
 interface UserProfileService {
     suspend fun createUserProfile(request: CreateUserProfileRequest): UserProfile?
