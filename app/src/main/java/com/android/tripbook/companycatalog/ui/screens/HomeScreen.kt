@@ -16,6 +16,9 @@ import com.android.tripbook.companycatalog.data.MockCompanyData
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+
 
 @Composable
 fun HomeScreen() {
@@ -102,8 +105,7 @@ fun FeaturedCompanySection() {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Uncomment and use if you have logos:
-            /*
+            // ✅ Logo displayed here
             Image(
                 painter = painterResource(id = currentCompany.logoResId),
                 contentDescription = "${currentCompany.name} logo",
@@ -111,7 +113,6 @@ fun FeaturedCompanySection() {
                     .size(110.dp)
                     .padding(end = 20.dp)
             )
-            */
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -144,6 +145,7 @@ fun FeaturedCompanySection() {
         }
     }
 }
+
 
 @Composable
 fun CategoriesPreview() {
