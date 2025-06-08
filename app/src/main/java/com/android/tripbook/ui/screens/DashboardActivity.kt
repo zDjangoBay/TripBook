@@ -22,7 +22,6 @@ import androidx.navigation.NavController
 import com.android.tripbook.ui.screens.profile.ProfileScreen
 
 
-
 /**
  * Main Dashboard Activity with bottom navigation
  */
@@ -76,6 +75,8 @@ fun DashboardActivity() {
 
                     onBack = { navController.popBackStack() }
                 )
+
+                ProfileScreen()
             }
             composable("payment/{reservationId}") { backStackEntry ->
                 val reservationId = backStackEntry.arguments?.getString("reservationId") ?: ""
