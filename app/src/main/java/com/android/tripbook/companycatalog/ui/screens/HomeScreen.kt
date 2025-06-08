@@ -173,4 +173,51 @@ fun CategoriesPreview() {
     }
 }
 
+@Composable
+fun WhatsNewSection() {
+    val newCompanies = listOf("GreenCorp", "HealthPro", "EcoLogix")
+    Column {
+        Text(
+            "🆕 What's New",
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        newCompanies.forEach {
+            Text(
+                "• $it",
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+fun TrendingTagsSection() {
+    val tags = listOf("#TopStartup", "#WomenLed", "#RemoteFriendly")
+    Column {
+        Text(
+            "🔥 Trending Tags",
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            tags.forEach {
+                AssistChip(
+                    onClick = { /* Filter */ },
+                    label = { Text(it) },
+                    modifier = Modifier.padding(end = 10.dp),
+                    shape = MaterialTheme.shapes.small,
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                )
+            }
+        }
+    }
+}
+
 
