@@ -40,4 +40,40 @@ fun HomeScreen() {
     }
 }
 
+@Composable
+fun DynamicGreetingSection() {
+    val greeting = when (LocalTime.now().hour) {
+        in 0..11 -> "Good Morning"
+        in 12..17 -> "Good Afternoon"
+        else -> "Good Evening"
+    }
+    Text(
+        text = "$greeting, Welcome to Company Catalog Home",
+        style = MaterialTheme.typography.headlineMedium.copy(
+            fontWeight = FontWeight.ExtraBold,
+            color = MaterialTheme.colorScheme.primary
+        )
+    )
+}
+
+@Composable
+fun QuickNavigationTiles() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        listOf("Explore", "Categories", "Saved", "News", "Feedback").forEach {
+            AssistChip(
+                onClick = { /* Navigate */ },
+                label = { Text(it) },
+                shape = MaterialTheme.shapes.medium,
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            )
+        }
+    }
+}
+
 
