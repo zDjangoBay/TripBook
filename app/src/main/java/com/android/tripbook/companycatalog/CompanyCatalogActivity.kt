@@ -35,6 +35,8 @@ import com.android.tripbook.companycatalog.ui.screens.HomeScreen
 import com.android.tripbook.companycatalog.ui.screens.ProfileScreen
 import com.android.tripbook.companycatalog.ui.screens.SettingsScreen
 import com.android.tripbook.ui.theme.TripBookTheme
+import com.android.tripbook.companycatalog.ui.screens.CompanyDetailScreen
+
 
 // Represents each screen in the bottom navigation bar
 sealed class MainAppScreen(val route: String, val label: String, val icon: ImageVector) {
@@ -105,7 +107,7 @@ fun AppRootNavHost() {
             modifier = Modifier.padding(padding)
         ) {
             composable(MainAppScreen.Home.route) {
-                HomeScreen(navController)  // pass navController here!
+                HomeScreen(navController)
             }
             composable(MainAppScreen.Explore.route) {
                 ExploreScreen()
@@ -119,7 +121,16 @@ fun AppRootNavHost() {
             composable(MainAppScreen.Settings.route) {
                 SettingsScreen()
             }
+
+            // 🔽 Company detail route
+            composable("companyDetail/{companyId}") { backStackEntry ->
+                val companyId = backStackEntry.arguments?.getString("companyId")
+                if (companyId != null) {
+                    CompanyDetailScreen(companyId)
+                }
+            }
         }
+
     }
 }
 

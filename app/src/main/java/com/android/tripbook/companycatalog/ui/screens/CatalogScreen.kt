@@ -30,14 +30,7 @@ import com.android.tripbook.companycatalog.ui.components.GridCompanyCard
 import com.android.tripbook.companycatalog.ui.components.SearchHistoryList
 import com.android.tripbook.companycatalog.viewmodel.CatalogViewModel
 import com.android.tripbook.ui.theme.TripBookTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.tripbook.companycatalog.data.SearchHistoryItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +47,6 @@ fun CatalogScreen(
     val allCompanies = MockCompanyData.companies
     val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
 
-    // Filter companies based on selected filter and search query
     val companiesToDisplay = allCompanies.filter { company ->
         (selectedFilter == "All" || company.servicesOffered.any {
             it.contains(selectedFilter, ignoreCase = true)
@@ -62,7 +54,6 @@ fun CatalogScreen(
                 || company.description.contains(searchQuery, ignoreCase = true))
     }
 
-    // Function to perform search
     fun performSearch() {
         if (searchQuery.isNotEmpty()) {
             viewModel.addSearchQuery(searchQuery, companiesToDisplay.size)
@@ -108,7 +99,7 @@ fun CatalogScreen(
 
         OutlinedTextField(
             value = searchQuery,
-            onValueChange = { 
+            onValueChange = {
                 searchQuery = it
                 showSearchHistory = it.isEmpty()
                 isSearchPerformed = false
@@ -120,7 +111,7 @@ fun CatalogScreen(
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
             trailingIcon = {
                 if (searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { 
+                    IconButton(onClick = {
                         searchQuery = ""
                         showSearchHistory = true
                         isSearchPerformed = false
@@ -204,7 +195,7 @@ fun CatalogScreen(
                     ) {
                         items(companiesToDisplay) { company ->
                             GridCompanyCard(company = company) {
-                                // TODO: Navigate to company details
+                                navController.navigate("companyDetail/${company.id}")
                             }
                         }
                     }
@@ -216,7 +207,7 @@ fun CatalogScreen(
                     ) {
                         items(companiesToDisplay) { company ->
                             CompanyCard(company = company) {
-                                // TODO: Navigate to company details
+                                navController.navigate("companyDetail/${company.id}")
                             }
                         }
                     }
