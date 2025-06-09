@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProfileScreen() {
     // Simulate editable profile data with states
-    var name by remember { mutableStateOf(TextFieldValue("John Doe")) }
-    var email by remember { mutableStateOf(TextFieldValue("john.doe@example.com")) }
+    var name by remember { mutableStateOf(TextFieldValue("Alain Brice")) }
+    var email by remember { mutableStateOf(TextFieldValue("alainbrice@gmail.com")) }
     var bio by remember { mutableStateOf(TextFieldValue("Lover of adventure and travel. Exploring new places every chance I get.")) }
 
     val scrollState = rememberScrollState()
