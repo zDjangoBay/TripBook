@@ -3,48 +3,37 @@ package com.android.tripbook.companycatalog
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Store
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.android.tripbook.companycatalog.ui.screens.CatalogScreen
-import com.android.tripbook.companycatalog.ui.screens.ExploreScreen
-import com.android.tripbook.companycatalog.ui.screens.HomeScreen
-import com.android.tripbook.companycatalog.ui.screens.ProfileScreen
-import com.android.tripbook.companycatalog.ui.screens.SettingsScreen
+import androidx.navigation.compose.*
+import com.android.tripbook.companycatalog.ui.screens.*
 import com.android.tripbook.ui.theme.TripBookTheme
-import com.android.tripbook.companycatalog.ui.screens.CompanyDetailScreen
 
-
-// Represents each screen in the bottom navigation bar
 sealed class MainAppScreen(val route: String, val label: String, val icon: ImageVector) {
-    data object Home : MainAppScreen("home", "Home", Icons.Default.Home)
-    data object Explore : MainAppScreen("explore", "Explore", Icons.Default.CompassCalibration)
-    data object Catalog : MainAppScreen("catalog", "Catalog", Icons.Default.Store)
-    data object Profile : MainAppScreen("profile", "Profile", Icons.Default.Person)
-    data object Settings : MainAppScreen("settings", "Settings", Icons.Default.Settings)
+    object Home : MainAppScreen("home", "Home", Icons.Default.Home)
+    object Explore : MainAppScreen("explore", "Explore", Icons.Default.CompassCalibration)
+    object Catalog : MainAppScreen("catalog", "Catalog", Icons.Default.Store)
+    object Profile : MainAppScreen("profile", "Profile", Icons.Default.Person)
+    object Settings : MainAppScreen("settings", "Settings", Icons.Default.Settings)
 }
 
 class CompanyCatalogActivity : ComponentActivity() {
@@ -70,23 +59,41 @@ fun AppRootNavHost() {
         MainAppScreen.Home,
         MainAppScreen.Explore,
         MainAppScreen.Catalog,
-        MainAppScreen.Profile
-        // If you want Settings in bottom nav, add here: MainAppScreen.Settings
+        MainAppScreen.Profile,
+        MainAppScreen.Settings
     )
 
     Scaffold(
         bottomBar = {
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
 
                 navItems.forEach { screen ->
+                    val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
+
                     NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.label) },
-                        label = { Text(screen.label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } ?: false,
+                        icon = {
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = screen.label,
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = screen.label,
+                                fontSize = 12.sp,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        selected = selected,
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -101,36 +108,49 @@ fun AppRootNavHost() {
             }
         }
     ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = MainAppScreen.Home.route,
-            modifier = Modifier.padding(padding)
-        ) {
-            composable(MainAppScreen.Home.route) {
-                HomeScreen(navController)
-            }
-            composable(MainAppScreen.Explore.route) {
-                ExploreScreen()
-            }
-            composable(MainAppScreen.Catalog.route) {
-                CatalogScreen(navController = navController)
-            }
-            composable(MainAppScreen.Profile.route) {
-                ProfileScreen()
-            }
-            composable(MainAppScreen.Settings.route) {
-                SettingsScreen()
-            }
-
-            // 🔽 Company detail route
-            composable("companyDetail/{companyId}") { backStackEntry ->
-                val companyId = backStackEntry.arguments?.getString("companyId")
-                if (companyId != null) {
-                    CompanyDetailScreen(companyId)
+        Box(modifier = Modifier.padding(padding)) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = MainAppScreen.Home.route
+                ) {
+                    composable(MainAppScreen.Home.route) {
+                        HomeScreen(navController)
+                    }
+                    composable(MainAppScreen.Explore.route) {
+                        ExploreScreen()
+                    }
+                    composable(MainAppScreen.Catalog.route) {
+                        CatalogScreen(navController)
+                    }
+                    composable(MainAppScreen.Profile.route) {
+                        ProfileScreen()
+                    }
+                    composable(MainAppScreen.Settings.route) {
+                        SettingsScreen()
+                    }
+                    composable("companyDetail/{companyId}") { backStackEntry ->
+                        val companyId = backStackEntry.arguments?.getString("companyId")
+                        if (companyId != null) {
+                            CompanyDetailScreen(companyId)
+                        } else {
+                            Text(
+                                "Company not found",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center),
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                        }
+                    }
                 }
             }
         }
-
     }
 }
 
