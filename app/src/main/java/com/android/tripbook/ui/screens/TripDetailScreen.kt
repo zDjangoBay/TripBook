@@ -69,7 +69,6 @@ fun TripDetailScreen(
 
     // Rating states
     var showRatingDialog by remember { mutableStateOf(false) }
-    var userRating by remember { mutableStateOf(0) }
     var hasUserRated by remember { mutableStateOf(false) }
     var hasShownRatingDialog by remember { mutableStateOf(false) }
     var showRatingEffect by remember { mutableStateOf(false) }
@@ -91,7 +90,6 @@ fun TripDetailScreen(
         RatingDialog(
             tripName = trip?.title ?: "This Trip",
             onRatingSubmitted = { rating ->
-                userRating = rating
                 hasUserRated = true
                 showRatingDialog = false
                 showRatingEffect = true
@@ -189,8 +187,6 @@ fun TripDetailScreen(
                 // Rating Summary Section
                 RatingSummaryCard(
                     ratingSummary = ratingSummary,
-                    userRating = if (hasUserRated) userRating else null,
-                    onRateClick = if (hasUserRated) {{ showRatingDialog = true }} else null,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
@@ -358,8 +354,6 @@ fun RatingSuccessEffect(
 @Composable
 fun RatingSummaryCard(
     ratingSummary: RatingSummary,
-    userRating: Int?,
-    onRateClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -372,31 +366,11 @@ fun RatingSummaryCard(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Ratings & Reviews",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                if (userRating != null) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = "Your Rating:",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        StarRating(rating = userRating, size = 16.dp)
-                    }
-                }
-            }
+            Text(
+                text = "Ratings & Reviews",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -437,21 +411,6 @@ fun RatingSummaryCard(
                                 total = ratingSummary.totalRatings
                             )
                         }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Only show button if user has already rated
-            if (onRateClick != null) {
-                Button(
-                    onClick = onRateClick,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text("Update Rating")
                 }
             }
         }

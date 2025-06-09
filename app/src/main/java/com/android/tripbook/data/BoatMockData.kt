@@ -2,11 +2,16 @@ package com.android.tripbook.data
 
 import com.android.tripbook.model.BoatCompany
 import com.android.tripbook.model.Destination
+import com.android.tripbook.model.UserRating
 import com.android.tripbook.R
 
 object BoatMockData {
 
-    val boatCompanies = listOf(
+    // Store user ratings separately to track who has rated what
+    private val userRatings = mutableListOf<UserRating>()
+
+    // Keep original companies data
+    private val originalBoatCompanies = listOf(
         BoatCompany(
             id = 1,
             name = "Atlantic Marine Services",
@@ -19,7 +24,10 @@ object BoatMockData {
             logoRes = R.drawable.boat,
             totalTrips = 145,
             amenities = listOf("Life Jackets", "WiFi", "Refreshments", "AC", "Entertainment"),
-            imageUrl = "https://media.licdn.com/dms/image/v2/C560BAQFSSPIoHz4QKg/company-logo_200_200/company-logo_200_200/0/1631425099523/atlantic_marine_services_egypt_logo?e=2147483647&v=beta&t=c2pIs_vO9CsUDKGGNQjEoQ9kA2QiKphkI0Q9q7Pc1QQ"
+            imageUrl = "https://media.licdn.com/dms/image/v2/C560BAQFSSPIoHz4QKg/company-logo_200_200/company-logo_200_200/0/1631425099523/atlantic_marine_services_egypt_logo?e=2147483647&v=beta&t=c2pIs_vO9CsUDKGGNQjEoQ9kA2QiKphkI0Q9q7Pc1QQ",
+            totalRatings = 50, // Simulated initial ratings
+            ratingSum = 225.0, // 4.5 * 50
+            hasUserRated = false
         ),
         BoatCompany(
             id = 2,
@@ -33,7 +41,10 @@ object BoatMockData {
             logoRes = R.drawable.boat,
             totalTrips = 98,
             amenities = listOf("Life Jackets", "Snacks", "Charging", "Blanket"),
-            imageUrl = "https://www.seaexpresstransit.com/assets/ico/favicon.ico"
+            imageUrl = "https://www.seaexpresstransit.com/assets/ico/favicon.ico",
+            totalRatings = 35,
+            ratingSum = 147.0, // 4.2 * 35
+            hasUserRated = false
         ),
         BoatCompany(
             id = 3,
@@ -47,7 +58,10 @@ object BoatMockData {
             logoRes = R.drawable.boat,
             totalTrips = 203,
             amenities = listOf("Life Jackets", "WiFi", "AC", "Entertainment", "Refreshments", "Charging"),
-            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsIlyNdZOwCpNU-IMHUd0XbJhCDd4YvDQ9TMi_U5puqkiKftOWYEn8R3yjuoe-tkD0DtQ&usqp=CAU"
+            imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsIlyNdZOwCpNU-IMHUd0XbJhCDd4YvDQ9TMi_U5puqkiKftOWYEn8R3yjuoe-tkD0DtQ&usqp=CAU",
+            totalRatings = 75,
+            ratingSum = 352.5, // 4.7 * 75
+            hasUserRated = false
         ),
         BoatCompany(
             id = 4,
@@ -58,10 +72,12 @@ object BoatMockData {
             startingPrice = "20,000",
             routes = listOf("Douala - Bonaberi", "Douala - Edea", "Yabassi - Dizangué"),
             contact = "+237 233 445 678",
-            //logoRes = R.drawable.boat,
             totalTrips = 156,
             amenities = listOf("Life Jackets", "Snacks", "Entertainment", "Charging"),
-            imageUrl = "https://yengafrica.com/wp-content/uploads/2022/07/09a852eb-a4e6-4ed4-a017-644b256ca7f6.jpg"
+            imageUrl = "https://yengafrica.com/wp-content/uploads/2022/07/09a852eb-a4e6-4ed4-a017-644b256ca7f6.jpg",
+            totalRatings = 40,
+            ratingSum = 164.0, // 4.1 * 40
+            hasUserRated = false
         ),
         BoatCompany(
             id = 5,
@@ -75,9 +91,16 @@ object BoatMockData {
             logoRes = R.drawable.boat,
             totalTrips = 87,
             amenities = listOf("Life Jackets", "Snacks", "Charging"),
-            imageUrl = null
+            imageUrl = null,
+            totalRatings = 25,
+            ratingSum = 97.5, // 3.9 * 25
+            hasUserRated = false
         )
     )
+
+    // Mutable list that can be updated with new ratings
+    private val _boatCompanies = originalBoatCompanies.toMutableList()
+    val boatCompanies: List<BoatCompany> get() = _boatCompanies.toList()
 
     val destinations = listOf(
         Destination(
@@ -141,4 +164,75 @@ object BoatMockData {
             imageUrl = "https://ayilaa.s3.eu-west-1.amazonaws.com/attraction/logos/666853a944b43_1718113193_Gorges%20de%20la%20Sanaga%20(1).jpg"
         )
     )
+
+    /**
+     * Check if a user has already rated a specific company
+     */
+    fun hasUserRatedCompany(userId: String, companyId: Int): Boolean {
+        return userRatings.any { it.userId == userId && it.companyId == companyId }
+    }
+
+    /**
+     * Add a new rating for a company
+     * Returns the updated BoatCompany or null if user has already rated
+     */
+    fun rateCompany(userId: String, companyId: Int, rating: Float): BoatCompany? {
+        // Check if user has already rated this company
+        if (hasUserRatedCompany(userId, companyId)) {
+            return null // User has already rated, return null
+        }
+
+        // Find the company
+        val companyIndex = _boatCompanies.indexOfFirst { it.id == companyId }
+        if (companyIndex == -1) return null
+
+        val currentCompany = _boatCompanies[companyIndex]
+
+        // Add the user rating to our tracking list
+        userRatings.add(UserRating(userId, companyId, rating))
+
+        // Calculate new rating
+        val newTotalRatings = currentCompany.totalRatings + 1
+        val newRatingSum = currentCompany.ratingSum + rating
+        val newAverageRating = String.format("%.1f", newRatingSum / newTotalRatings).toDouble()
+
+        // Create updated company
+        val updatedCompany = currentCompany.copy(
+            rating = newAverageRating,
+            totalRatings = newTotalRatings,
+            ratingSum = newRatingSum,
+            hasUserRated = true
+        )
+
+        // Update the list
+        _boatCompanies[companyIndex] = updatedCompany
+
+        return updatedCompany
+    }
+
+    /**
+     * Get companies with user rating status updated
+     */
+    fun getCompaniesForUser(userId: String): List<BoatCompany> {
+        return _boatCompanies.map { company ->
+            company.copy(hasUserRated = hasUserRatedCompany(userId, company.id))
+        }
+    }
+
+    /**
+     * Get a specific company with user rating status
+     */
+    fun getCompanyForUser(userId: String, companyId: Int): BoatCompany? {
+        val company = _boatCompanies.find { it.id == companyId }
+        return company?.copy(hasUserRated = hasUserRatedCompany(userId, companyId))
+    }
+
+    /**
+     * Reset all ratings (for testing purposes)
+     */
+    fun resetRatings() {
+        userRatings.clear()
+        _boatCompanies.clear()
+        _boatCompanies.addAll(originalBoatCompanies)
+    }
 }

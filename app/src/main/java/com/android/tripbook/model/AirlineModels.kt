@@ -19,5 +19,7 @@ data class FlightDestination(
     val duration: String,
     val price: String,
     val distance: String,
-    val popularTimes: String
+    val popularTimes: String,
+    val rating:Float,
+    val totalRatings:Int
 )

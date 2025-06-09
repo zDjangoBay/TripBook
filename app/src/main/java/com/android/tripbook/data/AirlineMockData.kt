@@ -3,6 +3,26 @@ package com.android.tripbook.data
 import com.android.tripbook.model.AirlineCompany
 import com.android.tripbook.model.FlightDestination
 
+// Extension functions for FlightDestination
+fun FlightDestination.addRating(newRating: Float): FlightDestination {
+    val totalScore = this.rating * this.totalRatings + newRating
+    val newTotalRatings = this.totalRatings + 1
+    val newAverageRating = totalScore / newTotalRatings
+
+    return this.copy(
+        rating = newAverageRating,
+        totalRatings = newTotalRatings
+    )
+}
+
+fun FlightDestination.getDisplayRating(): String {
+    return if (totalRatings > 0) {
+        String.format("%.1f (%d)", rating, totalRatings)
+    } else {
+        "No ratings yet"
+    }
+}
+
 object AirlineMockData {
 
     val airlineCompanies = AirlineCompany(
@@ -14,7 +34,8 @@ object AirlineMockData {
         priceRange = "From 450,000FCFA"
     )
 
-    val flightDestinations = listOf(
+    // Made mutable to allow rating updates
+    val flightDestinations = mutableListOf(
         FlightDestination(
             id = 1,
             name = "Paris",
@@ -23,7 +44,9 @@ object AirlineMockData {
             duration = "6h 30min",
             price = "from 450,000 FCFA",
             distance = "285 km",
-            popularTimes = "Morning & Evening"
+            popularTimes = "Morning & Evening",
+            rating = 4.3f,
+            totalRatings = 127
         ),
         FlightDestination(
             id = 2,
@@ -33,7 +56,9 @@ object AirlineMockData {
             duration = "8h 15min",
             price = "From 380,000 FCFA",
             distance = "500 km",
-            popularTimes = "Night Service"
+            popularTimes = "Night Service",
+            rating = 4.6f,
+            totalRatings = 89
         ),
         FlightDestination(
             id = 3,
@@ -43,7 +68,9 @@ object AirlineMockData {
             duration = "7h 45min",
             price = "From 520,000 FCFA",
             distance = "900 km",
-            popularTimes = "Early Morning"
+            popularTimes = "Early Morning",
+            rating = 4.1f,
+            totalRatings = 203
         ),
         FlightDestination(
             id = 4,
@@ -53,7 +80,9 @@ object AirlineMockData {
             duration = "6h 15min",
             price = "From 320,000 FCFA",
             distance = "2000 km",
-            popularTimes = "Evenings"
+            popularTimes = "Evenings",
+            rating = 4.4f,
+            totalRatings = 156
         ),
         FlightDestination(
             id = 5,
@@ -63,7 +92,18 @@ object AirlineMockData {
             duration = "4h 15min",
             price = "From 280,000 FCFA",
             distance = "400 km",
-            popularTimes = "All day"
+            popularTimes = "All day",
+            rating = 3.9f,
+            totalRatings = 74
         )
     )
+
+    fun updateDestinationRating(destinationId: Int, newRating: Float) {
+        val destinationIndex = flightDestinations.indexOfFirst { it.id == destinationId }
+        if (destinationIndex != -1) {
+            val currentDestination = flightDestinations[destinationIndex]
+            val updatedDestination = currentDestination.addRating(newRating)
+            flightDestinations[destinationIndex] = updatedDestination
+        }
+    }
 }

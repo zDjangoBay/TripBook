@@ -6,7 +6,8 @@ data class TrainCompany(
     val logoRes: Int? = null,
     val logoUrl: String? = null,
     val description: String,
-    val rating: Float,
+    val rating: Float = 0f,           // Added rating field
+    val totalRatings: Int = 0,         // Added total ratings field
     val priceRange: String
 )
 
@@ -19,5 +20,7 @@ data class TrainDestination(
     val duration: String,
     val price: String,
     val distance: String,
-    val popularTimes: String
+    val popularTimes: String,
+    val rating: Float = 0f,           // Added rating field
+    val totalRatings: Int = 0        // Added total ratings field
 )

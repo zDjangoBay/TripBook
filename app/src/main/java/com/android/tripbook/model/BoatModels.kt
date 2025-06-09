@@ -12,7 +12,10 @@ data class BoatCompany(
     val imageUrl: String? = null,
     val totalTrips: Int = 0,
     val amenities: List<String> = emptyList(),
-    val startingPrice: String = ""
+    val startingPrice: String = "",
+    val totalRatings: Int = 0, // Total number of ratings received
+    val ratingSum: Double = 0.0, // Sum of all ratings for calculation
+    val hasUserRated: Boolean = false // Track if current user has rated this company
 )
 
 data class Destination(
@@ -26,4 +29,18 @@ data class Destination(
     val imageUrl: String? = null,
     val activities: List<String>,
     val bestTimeToVisit: String
+)
+
+data class UserRating(
+    val userId: String,
+    val companyId: Int,
+    val rating: Float,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+// Helper class to manage rating operations
+data class RatingUpdate(
+    val companyId: Int,
+    val newRating: Float,
+    val updatedCompany: BoatCompany
 )
