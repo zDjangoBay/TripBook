@@ -30,10 +30,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -44,12 +46,15 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -59,9 +64,9 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
-    //-----------------------------------------------------
+    //           default dependencies on the project
+    //                       do not touch them !!!!
+    //------------------------------------------------------
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
@@ -104,4 +109,10 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
+
+    // Accompanist (optional, from reservations branch)
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
+    // Calendar (from reservations branch)
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
 }
