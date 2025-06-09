@@ -76,9 +76,9 @@ fun TripDetailScreen(
         mutableStateOf(RatingSummary())
     }
 
-    // Show rating dialog after 1 minute (only once)
+    // Show rating dialog after 10 seconds (only once)
     LaunchedEffect(Unit) {
-        delay(60000) // 1 minute = 60000 milliseconds
+        delay(10000) // 10 seconds = 10000 milliseconds
         if (!hasUserRated && !hasShownRatingDialog) {
             showRatingDialog = true
             hasShownRatingDialog = true
