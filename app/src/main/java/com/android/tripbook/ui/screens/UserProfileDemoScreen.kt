@@ -10,57 +10,98 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.data.SampleData
+import com.android.tripbook.data.User
 import com.android.tripbook.ui.components.UserProfileEmbedding
 
 @Composable
 fun UserProfileDemoScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    specificUser: com.android.tripbook.data.User? = null
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header
-        Text(
-            text = "User Profile Embedding",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        if (specificUser != null) {
+            // Show specific user profile when clicked from travelers list
+            Text(
+                text = "Traveler Profile",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
-        Text(
-            text = "Mini profile component for trip catalogs",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
+            Text(
+                text = "Profile details for ${specificUser.name}",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
-        // Profile Examples
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item {
-                Text(
-                    text = "Profile Examples:",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(bottom = 8.dp)
+            // Convert data.User to SampleData.User for compatibility
+            val convertedUser = com.android.tripbook.data.User(
+                id = specificUser.id,
+                name = specificUser.name,
+                destination = specificUser.destination,
+                profileImageUrl = specificUser.profileImageUrl
+            )
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
-            }
-
-            items(SampleData.sampleUsers) { user ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    UserProfileEmbedding(user = convertedUser)
+                }
+            }
+        } else {
+            // Show all sample users (original demo behavior)
+            Text(
+                text = "User Profile Embedding",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Text(
+                text = "Mini profile component for trip catalogs",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+
+            // Profile Examples
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    Text(
+                        text = "Profile Examples:",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                items(SampleData.sampleUsers) { user ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
                     ) {
-                        UserProfileEmbedding(user = user)
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            UserProfileEmbedding(user = user)
+                        }
                     }
                 }
             }
