@@ -3,6 +3,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.delay
+import com.android.tripbook.repository.PostRepository
 import java.time.Instant
 
 class FakePostRepository : PostRepository {
@@ -89,6 +90,8 @@ class FakePostRepository : PostRepository {
             username = "Sarah Explorer",
             title = "Sunset at Santorini",
             description = "Witnessed the most breathtaking sunset from Oia village. The blue domes and white buildings create a perfect contrast against the golden sky. This magical moment reminded me why I fell in love with travel photography.",
+            content = "Full story about the Santorini sunset experience.",
+            author = "Sarah Explorer",
             location = Location(
                 name = "Oia Village",
                 city = "Santorini",
@@ -96,8 +99,14 @@ class FakePostRepository : PostRepository {
                 coordinates = Coordinates(36.4618, 25.3753)
             ),
             images = listOf(
-                ImageModel(uri = "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff", isUploaded = true),
-                ImageModel(uri = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e", isUploaded = true)
+                ImageModel(
+                    uri = "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff",
+                    isUploaded = true
+                ),
+                ImageModel(
+                    uri = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e",
+                    isUploaded = true
+                )
             ),
             categories = listOf(Category.NATURE, Category.CULTURE),
             tags = listOf(
@@ -133,12 +142,19 @@ class FakePostRepository : PostRepository {
             username = "Mike Traveler",
             title = "Street Food Adventure in Bangkok",
             description = "Exploring the vibrant street food scene in Chatuchak Market. From pad thai to mango sticky rice, every bite was incredible! The local vendors were so friendly and passionate about their craft.",
+            content = "Full story about the Bangkok street food adventure.",
+            author = "Mike Traveler",
             location = Location(
                 name = "Chatuchak Weekend Market",
                 city = "Bangkok",
                 country = "Thailand"
             ),
-            images = listOf(ImageModel(uri = "https://images.unsplash.com/photo-1578662996442-48f60103fc96", isUploaded = true)),
+            images = listOf(
+                ImageModel(
+                    uri = "https://images.unsplash.com/photo-1578662996442-48f60103fc96",
+                    isUploaded = true
+                )
+            ),
             categories = listOf(Category.FOOD, Category.CULTURE),
             tags = listOf(
                 TagModel("tag3", "streetfood", Category.FOOD, true),
@@ -146,6 +162,7 @@ class FakePostRepository : PostRepository {
             ),
             hashtags = listOf("streetfood", "thailand", "market", "spicy"),
             timestamp = Instant.now().minusSeconds(3600 * 8),
+            isVerified = false,
             likes = setOf("user1", "user3"),
             comments = listOf()
         )
