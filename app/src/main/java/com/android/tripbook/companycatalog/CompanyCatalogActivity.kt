@@ -31,8 +31,11 @@ import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.companycatalog.ui.screens.CatalogScreen
 import com.android.tripbook.companycatalog.ui.screens.ExploreScreen
 import com.android.tripbook.companycatalog.ui.screens.HomeScreen
+import com.android.tripbook.companycatalog.ui.screens.MapViewScreen
 import com.android.tripbook.companycatalog.ui.screens.ProfileScreen
+import com.android.tripbook.companycatalog.data.MockCompanyData
 import com.android.tripbook.ui.theme.TripBookTheme
+import org.osmdroid.util.GeoPoint
 
 // Represents each screen in the bottom navigation bar
 sealed class MainAppScreen(val route: String, val label: String, val icon: ImageVector) {
@@ -104,13 +107,20 @@ fun AppRootNavHost() {
                 HomeScreen()
             }
             composable(MainAppScreen.Explore.route) {
-                ExploreScreen()
+                ExploreScreen(navController = navController)
             }
             composable(MainAppScreen.Catalog.route) {
                 CatalogScreen(navController = navController)
             }
             composable(MainAppScreen.Profile.route) {
                 ProfileScreen()
+            }
+            composable("map") {
+                MapViewScreen(
+                    navController = navController,
+                    companies = MockCompanyData.companies,
+                    userLocation = GeoPoint(0.0, 0.0)
+                )
             }
         }
     }
