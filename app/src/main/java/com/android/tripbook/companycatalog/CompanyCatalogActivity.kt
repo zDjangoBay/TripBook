@@ -27,6 +27,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import com.android.tripbook.companycatalog.ui.screens.*
 import com.android.tripbook.ui.theme.TripBookTheme
+import androidx.compose.material.icons.filled.Category
+
 
 sealed class MainAppScreen(val route: String, val label: String, val icon: ImageVector) {
     object Home : MainAppScreen("home", "Home", Icons.Default.Home)
@@ -34,6 +36,8 @@ sealed class MainAppScreen(val route: String, val label: String, val icon: Image
     object Catalog : MainAppScreen("catalog", "Catalog", Icons.Default.Store)
     object Profile : MainAppScreen("profile", "Profile", Icons.Default.Person)
     object Settings : MainAppScreen("settings", "Settings", Icons.Default.Settings)
+    object Categories : MainAppScreen("categories", "Categories", Icons.Default.Category)
+
 }
 
 class CompanyCatalogActivity : ComponentActivity() {
@@ -134,6 +138,10 @@ fun AppRootNavHost() {
                     composable(MainAppScreen.Settings.route) {
                         SettingsScreen()
                     }
+                    composable(MainAppScreen.Categories.route) {
+                        CategoriesScreen(navController) // or without navController if not needed
+                    }
+
                     composable("companyDetail/{companyId}") { backStackEntry ->
                         val companyId = backStackEntry.arguments?.getString("companyId")
                         if (companyId != null) {

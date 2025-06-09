@@ -34,7 +34,7 @@ fun HomeScreen(navController: NavController) {
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item { DynamicGreetingSection() }
-        item { QuickNavigationTiles() }
+        item { QuickNavigationTiles(navController) }
         item { FeaturedCompanySection() }
         item { CategoriesPreview() }
         item { WhatsNewSection() }
@@ -64,14 +64,19 @@ fun DynamicGreetingSection() {
 }
 
 @Composable
-fun QuickNavigationTiles() {
+fun QuickNavigationTiles(navController: NavController) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         listOf("Explore", "Categories", "Saved", "News", "Feedback").forEach {
             AssistChip(
-                onClick = { /* Navigate */ },
+                onClick = {
+                    when (it) {
+                        "Categories" -> navController.navigate(MainAppScreen.Categories.route)
+                        // TODO: Add other routes if needed
+                    }
+                },
                 label = { Text(it) },
                 shape = MaterialTheme.shapes.medium,
                 colors = AssistChipDefaults.assistChipColors(
@@ -82,6 +87,7 @@ fun QuickNavigationTiles() {
         }
     }
 }
+
 
 @Composable
 fun FeaturedCompanySection() {
