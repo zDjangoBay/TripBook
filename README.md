@@ -10,7 +10,7 @@ TripBook: A mobile social network for travelers exploring Africa &amp; beyond. S
 - **Connection**: Meet travelers with similar interests and plan together.
 - **Evaluation**: Rate travel agencies to help the community.
 - **Security**: Access reliable information for peaceful journeys.
----
+--
 
 ## 📱 Screenshots
 
@@ -51,4 +51,4 @@ Eng Daniel Moune (alias sas-bergson)
 Lecturer Android Mobile App,   
 ICT University, Spring 2025 GitHub  <hr></hr>
 🌍 Licence
-Ce projet est sous licence MIT.
+Ce project est sous licence MIT.
