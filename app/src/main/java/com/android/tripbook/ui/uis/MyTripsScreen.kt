@@ -253,23 +253,20 @@ fun TripCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
+        // Main content Row inside the Card: Divides content into Left and Right sections
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(20.dp), // Padding for the entire content block within the card
+            horizontalArrangement = Arrangement.SpaceBetween, // Pushes left and right columns to ends
+            verticalAlignment = Alignment.Top // Align content to the top within this row
         ) {
-            // Header with title and status
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                // Use SpaceBetween to push Location to left and Travelers/Status to right
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // LEFT COLUMN: Location and Budget stacked vertically
+            Column(
+                modifier = Modifier.weight(1f) // Takes available space on the left
             ) {
-                // Location (left side)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f) // Takes up remaining space
-                ) {
+                // Location Row
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "Location",
@@ -284,45 +281,48 @@ fun TripCard(
                         maxLines = 1 // Ensure text doesn't wrap
                     )
                 }
-
-                // Travelers and Status Indicator (right side)
-                // Wrapped in a Column to stack Travelers text and the indicator
-                Column(
-                    horizontalAlignment = Alignment.End // Align content within this column to the right
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Travelers",
-                            tint = Color(0xFF64748B),
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "${trip.travelers} travelers",
-                            fontSize = 14.sp,
-                            color = Color(0xFF64748B)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp)) // Small space between text and indicator
-                    TripStatusIndicator(status = trip.status)
+                Spacer(modifier = Modifier.height(8.dp)) // Space between Location and Budget
+                // Budget Row
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AttachMoney,
+                        contentDescription = "Budget",
+                        tint = Color(0xFF64748B),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
+                        fontSize = 14.sp,
+                        color = Color(0xFF64748B)
+                    )
                 }
             }
 
-            // Second row: Budget (full width, below the first row)
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
-                Icon(
-                    imageVector = Icons.Default.AttachMoney,
-                    contentDescription = "Budget",
-                    tint = Color(0xFF64748B),
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
+            Spacer(modifier = Modifier.width(16.dp)) // Horizontal space between the left and right content columns
+
+            // RIGHT COLUMN: Travelers and Status Indicator stacked vertically
+            Column(
+                horizontalAlignment = Alignment.End // Align items within this column to the right
+            ) {
+                // Travelers Row
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Travelers",
+                        tint = Color(0xFF64748B),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${trip.travelers} travelers",
+                        fontSize = 14.sp,
+                        color = Color(0xFF64748B)
+                    )
+                }
+                Spacer(modifier = Modifier.height(5.dp)) // Small vertical space between travelers text and status indicator
+                // Status Indicator
+                TripStatusIndicator(status = trip.status)
             }
         }
     }

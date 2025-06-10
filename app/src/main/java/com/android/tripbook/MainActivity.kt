@@ -266,7 +266,7 @@ class MainActivity : ComponentActivity() {
                 val firebaseTrips = firebaseResult.getOrThrow()
                 // Combine mock data with Firebase data
                 // To avoid duplicates if mock data also has Firebase IDs,
-                // you might want to filter or merge based on IDs.
+                // filter or merge based on IDs.
                 // For simplicity, we'll just add them all here.
                 allTripsList.clear()
                 allTripsList.addAll(mockTrips) // Add mock data first
