@@ -76,4 +76,13 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+        // Coil (for Jetpack Compose)
+    implementation(libs.coil.compose) 
+
+      //  Material design
+    implementation "com.google.android.material:material:$version"
+
+     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 }
