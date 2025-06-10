@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
         // This list will hold both mock data and Firebase data
         val allTrips = remember { mutableStateListOf<Trip>() }
 
-        // Use LaunchedEffect to load trips when the Composable first enters the composition
+        // Using LaunchedEffect to load trips when the Composable first enters the composition
         LaunchedEffect(Unit) { // Use Unit as key to run once
             loadCombinedTrips(firebaseTripService, mockTrips, allTrips)
         }
