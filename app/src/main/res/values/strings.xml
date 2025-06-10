@@ -1,5 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TripBook</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="brandName">TRIP BOOK</string>
+    <!-- Nom de l'application -->
+    <string name="app_name">TripBook Reservation</string>
+
+    <!-- Notifications -->
+    <string name="default_notification_channel_id">tripbook_notifications</string>
+    <string name="notification_channel_name">Notifications TripBook</string>
+    <string name="notification_channel_description">Notifications pour les réservations de vols et rappels</string>
+
+    <!-- Canaux de notifications spécifiques -->
+    <string name="booking_channel_name">Réservations</string>
+    <string name="booking_channel_description">Notifications concernant vos réservations</string>
+
+    <string name="flight_status_channel_name">Statut des vols</string>
+    <string name="flight_status_channel_description">Mises à jour sur le statut de vos vols</string>
+
+    <string name="check_in_channel_name">Enregistrement</string>
+    <string name="check_in_channel_description">Rappels d\'enregistrement</string>
+
+    <string name="urgent_channel_name">Urgent</string>
+    <string name="urgent_channel_description">Notifications urgentes nécessitant une attention immédiate</string>
+
+    <!-- Actions des notifications -->
+    <string name="action_view_details">Voir détails</string>
+    <string name="action_check_in">S\'enregistrer</string>
+    <string name="action_view_boarding_pass">Voir carte d\'embarquement</string>
+    <string name="action_dismiss">Ignorer</string>
+
+    <!-- Messages de notifications -->
+    <string name="booking_confirmed">Réservation confirmée</string>
+    <string name="flight_delayed">Vol retardé</string>
+    <string name="flight_cancelled">Vol annulé</string>
+    <string name="check_in_available">Enregistrement disponible</string>
+    <string name="boarding_soon">Embarquement bientôt</string>
+    <string name="gate_changed">Changement de porte</string>
+
+    <!-- Titres des activités -->
+    <string name="activity_booking_details">Détails de la réservation</string>
+    <string name="activity_flight_status">Statut du vol</string>
+    <string name="activity_check_in">Enregistrement</string>
+
+    <!-- Messages d'erreur -->
+    <string name="error_network">Erreur de connexion réseau</string>
+    <string name="error_booking_not_found">Réservation introuvable</string>
+    <string name="error_flight_not_found">Vol introuvable</string>
+
+    <!-- Messages de succès -->
+    <string name="success_check_in">Enregistrement réussi</string>
+    <string name="success_booking_updated">Réservation mise à jour</string>
+
+    <!-- Boutons et actions -->
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_retry">Réessayer</string>
+    <string name="btn_refresh">Actualiser</string>
+
+    <!-- Statuts -->
+    <string name="status_on_time">À l\'heure</string>
+    <string name="status_delayed">Retardé</string>
+    <string name="status_cancelled">Annulé</string>
+    <string name="status_boarding">Embarquement</string>
+    <string name="status_departed">Parti</string>
+
+    <!-- Informations de vol -->
+    <string name="flight_number">Numéro de vol</string>
+    <string name="departure_time">Heure de départ</string>
+    <string name="arrival_time">Heure d\'arrivée</string>
+    <string name="gate">Porte</string>
+    <string name="terminal">Terminal</string>
+    <string name="seat">Siège</string>
+
+    <!-- Formats de temps -->
+    <string name="time_format">HH:mm</string>
+    <string name="date_format">dd/MM/yyyy</string>
+    <string name="datetime_format">dd/MM/yyyy HH:mm</string>
 </resources>
