@@ -5,19 +5,9 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,17 +17,18 @@ import com.android.tripbook.ui.theme.TripBookTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         Log.d("TripBook", "MainActivity onCreate started")
 
         try {
-            enableEdgeToEdge()
             setContent {
                 TripBookTheme {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        // Progressive loading with error handling
+                        // You can switch to SafeDashboardLoader() if testing
                         SafeDashboardLoader()
                     }
                 }
@@ -170,70 +161,4 @@ fun ErrorScreen(
             Text("Use Test Screen")
         }
     }
-}
-
-@Composable
-fun MinimalDashboard() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "TripBook Dashboard",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Text(
-            text = "Dashboard loaded successfully!",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        Button(
-            onClick = {
-                Log.d("TripBook", "Dashboard button clicked")
-            }
-        ) {
-            Text("Dashboard Action")
-        }
-    }
-}
-
-@Composable
-fun SimpleDashboardTest() {
-    Log.d("TripBook", "SimpleDashboardTest: Starting")
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Simple Dashboard Test",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        Text(
-            text = "This is a basic dashboard replacement",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        Button(
-            onClick = {
-                Log.d("TripBook", "Simple dashboard button clicked")
-            }
-        ) {
-            Text("Test Dashboard Button")
-        }
-    }
-
-    Log.d("TripBook", "SimpleDashboardTest: Completed")
 }

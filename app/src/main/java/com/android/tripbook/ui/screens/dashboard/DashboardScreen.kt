@@ -13,15 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Flight
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Business
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,8 +27,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.android.tripbook.data.providers.DummyTripDataProvider
 import com.android.tripbook.data.models.Trip
+import com.android.tripbook.data.providers.DummyTripDataProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Job
 
@@ -47,7 +39,8 @@ import kotlinx.coroutines.Job
 @Composable
 fun DashboardScreen(
     onTripClick: (String) -> Unit
-) {    val context = LocalContext.current
+) {
+    val context = LocalContext.current
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
 
@@ -78,14 +71,15 @@ fun DashboardScreen(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-            )        } else {
+            )
+        } else {
             currentLocation = "New York, NY" // Mock location
         }
     }
 
     // Filter preferences helper functions
     val prefs = remember { context.getSharedPreferences("trip_filters", Context.MODE_PRIVATE) }
-      fun saveFilterPreferences(
+    fun saveFilterPreferences(
         category: String,
         priceStart: Float,
         priceEnd: Float,
@@ -115,39 +109,38 @@ fun DashboardScreen(
 
     // State for category dropdown visibility and selected category with persistence
     var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
-    var selectedCategory by remember { 
-        mutableStateOf(prefs.getString("selected_category", "All") ?: "All") 
+    var selectedCategory by remember {
+        mutableStateOf(prefs.getString("selected_category", "All") ?: "All")
     }
-      // Price range state management with persistence
+    // Price range state management with persistence
     val minPrice = remember { trips.minOfOrNull { it.basePrice } ?: 0.0 }
     val maxPrice = remember { trips.maxOfOrNull { it.basePrice } ?: 5000.0 }
-    var priceRangeStart by remember { 
+    var priceRangeStart by remember {
         val savedStart = prefs.getFloat("price_range_start", minPrice.toFloat())
-        // Validate saved value is within bounds
         mutableFloatStateOf(savedStart.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
     }
-    var priceRangeEnd by remember { 
+    var priceRangeEnd by remember {
         val savedEnd = prefs.getFloat("price_range_end", maxPrice.toFloat())
-        // Validate saved value is within bounds
         mutableFloatStateOf(savedEnd.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
     }
-    var isPriceDialogVisible by remember { mutableStateOf(false) }    // Duration filter state management with persistence
-    val availableDurations = remember { 
+    var isPriceDialogVisible by remember { mutableStateOf(false) }
+    // Duration filter state management with persistence
+    val availableDurations = remember {
         listOf("All") + trips.map { it.duration }.distinct().sorted()
     }
-    var selectedDuration by remember { 
+    var selectedDuration by remember {
         val savedDuration = prefs.getString("selected_duration", "All") ?: "All"
-        // Validate saved duration is still available
         mutableStateOf(if (availableDurations.contains(savedDuration)) savedDuration else "All")
     }
-    var isDurationDropdownExpanded by remember { mutableStateOf(false) }    // Search query with persistence and advanced debouncing
-    var searchQuery by remember { 
-        mutableStateOf(prefs.getString("search_query", "") ?: "") 
+    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
+    // Search query with persistence and advanced debouncing
+    var searchQuery by remember {
+        mutableStateOf(prefs.getString("search_query", "") ?: "")
     }
-    
+
     // Debounced search query for performance
     var debouncedSearchQuery by remember { mutableStateOf(searchQuery) }
-    
+
     // Advanced debounce search input with job cancellation for better performance
     LaunchedEffect(searchQuery) {
         val searchJob = Job()
@@ -159,94 +152,70 @@ fun DashboardScreen(
         } catch (e: Exception) {
             // Handle cancellation gracefully
         }
-    }    // Save preferences whenever filter state changes (with debounced search and throttling)
+    }
+
+    // Save preferences whenever filter state changes (with debounced search and throttling)
     LaunchedEffect(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery) {
-        // Throttle preference saves to avoid excessive I/O
         delay(100)
         saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery)
     }
 
-    // Memoized category names for performance
-    val categoryNames = remember {
-        mapOf(
-            "business" to "Business",
-            "adventure" to "Adventure", 
-            "cultural" to "Cultural",
-            "relaxation" to "Relaxation",
-            "family" to "Family"
-        )
-    }    // High-performance optimized search function with advanced filtering
-    val filteredTrips = remember(debouncedSearchQuery, currentLocation, selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration) {
-        // Early return if no trips available
+    // High-performance optimized search function with advanced filtering
+    val filteredTrips = remember(
+        debouncedSearchQuery,
+        currentLocation,
+        selectedCategory,
+        priceRangeStart,
+        priceRangeEnd,
+        selectedDuration
+    ) {
         if (trips.isEmpty()) return@remember emptyList<Trip>()
-        
-        // Pre-compute search terms for better performance
+
         val searchTerms = if (debouncedSearchQuery.isBlank()) {
             emptyList()
         } else {
             debouncedSearchQuery.lowercase().trim()
-                .split(Regex("\\s+")) // Split on any whitespace
-                .filter { it.isNotBlank() && it.length >= 2 } // Filter short terms for better relevance
+                .split(Regex("\\s+"))
+                .filter { it.isNotBlank() && it.length >= 2 }
         }
-        
         val currentLocationLower = currentLocation.lowercase()
         val hasLocationFilter = currentLocationLower.isNotBlank()
-        
-        // Pre-compute filter states for performance
         val hasSearchFilter = searchTerms.isNotEmpty()
         val hasCategoryFilter = selectedCategory != "All"
         val hasPriceFilter = priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat()
         val hasDurationFilter = selectedDuration != "All"
-        
-        trips.asSequence() // Use sequence for lazy evaluation
+
+        trips.asSequence()
             .filter { trip ->
-                // Category filter first (most selective)
-                if (hasCategoryFilter && !trip.category.name.equals(selectedCategory, ignoreCase = true)) {
-                    return@filter false
-                }
-                
-                // Price range filter (numeric comparison is fast)
-                if (hasPriceFilter && trip.basePrice !in priceRangeStart..priceRangeEnd) {
-                    return@filter false
-                }
-                
-                // Duration filter (simple string comparison)
-                if (hasDurationFilter && !trip.duration.equals(selectedDuration, ignoreCase = true)) {
-                    return@filter false
-                }
-                
-                // Text search filter (most expensive, so do it last)
+                if (hasCategoryFilter && !trip.category.name.equals(selectedCategory, ignoreCase = true)) return@filter false
+                if (hasPriceFilter && trip.basePrice !in priceRangeStart..priceRangeEnd) return@filter false
+                if (hasDurationFilter && !trip.duration.equals(selectedDuration, ignoreCase = true)) return@filter false
                 if (hasSearchFilter) {
                     val tripTitle = trip.title.lowercase()
                     val fromLocation = trip.fromLocation.lowercase()
                     val toLocation = trip.toLocation.lowercase()
-                    
                     val matchesSearchTerms = searchTerms.any { term ->
                         tripTitle.contains(term) ||
-                        fromLocation.contains(term) ||
-                        toLocation.contains(term)
+                                fromLocation.contains(term) ||
+                                toLocation.contains(term)
                     }
-                    
                     val matchesCurrentLocation = hasLocationFilter && fromLocation.contains(currentLocationLower)
-                    
-                    if (!matchesSearchTerms && !matchesCurrentLocation) {
-                        return@filter false
-                    }
+                    if (!matchesSearchTerms && !matchesCurrentLocation) return@filter false
                 }
-                
                 true
             }
-            .toList() // Convert sequence back to list
+            .toList()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .semantics { 
+            .semantics {
                 contentDescription = "Trip booking dashboard with search and filter options"
             }
-    ) {        // Header with filter count (using debounced search for consistency)
+    ) {
+        // Header with filter count
         val activeFilterCount = listOf(
             selectedCategory != "All",
             priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat(),
@@ -258,7 +227,7 @@ fun DashboardScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
-                .semantics { 
+                .semantics {
                     contentDescription = "Header section with app title and active filters indicator"
                 },
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -274,7 +243,7 @@ fun DashboardScreen(
                     contentDescription = "App title: Discover Amazing Trips"
                 }
             )
-            
+
             AnimatedVisibility(
                 visible = activeFilterCount > 0,
                 enter = slideInHorizontally(
@@ -293,7 +262,7 @@ fun DashboardScreen(
                     ),
                     modifier = Modifier
                         .padding(start = 8.dp)
-                        .semantics { 
+                        .semantics {
                             contentDescription = "$activeFilterCount active filters applied"
                             role = Role.Button
                         }
@@ -304,7 +273,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = null, // Decorative icon, content description is on the parent
+                            contentDescription = null,
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -341,7 +310,7 @@ fun DashboardScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
-                    .semantics { 
+                    .semantics {
                         contentDescription = "Current location is $currentLocation, trips from this location will be prioritized"
                     },
                 colors = CardDefaults.cardColors(
@@ -356,7 +325,7 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
-                        contentDescription = null, // Decorative icon
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -369,7 +338,7 @@ fun DashboardScreen(
             }
         }
 
-        // Enhanced Search Bar
+        // Search Bar
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -377,7 +346,7 @@ fun DashboardScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = null // Decorative icon, screen reader will announce text field role
+                    contentDescription = null
                 )
             },
             trailingIcon = {
@@ -392,7 +361,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = null, // Content description is on the button
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -407,7 +376,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
-                            contentDescription = null, // Content description is on the button
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -420,13 +389,14 @@ fun DashboardScreen(
                     contentDescription = "Search text field for destination names and locations"
                 },
             shape = RoundedCornerShape(16.dp)
-        )        // Active Filters and Results Count (using debounced search for consistency)
-        val hasActiveFilters = selectedCategory != "All" || 
-            priceRangeStart != minPrice.toFloat() || 
-            priceRangeEnd != maxPrice.toFloat() || 
-            selectedDuration != "All" ||
-            debouncedSearchQuery.isNotBlank()
+        )
 
+        // Active Filters and Results Count
+        val hasActiveFilters = selectedCategory != "All" ||
+                priceRangeStart != minPrice.toFloat() ||
+                priceRangeEnd != maxPrice.toFloat() ||
+                selectedDuration != "All" ||
+                debouncedSearchQuery.isNotBlank()
         AnimatedVisibility(
             visible = hasActiveFilters,
             enter = slideInVertically(
@@ -472,10 +442,9 @@ fun DashboardScreen(
                         }
                     )
                 }
-                
+
                 TextButton(
                     onClick = {
-                        // Clear all filters and preferences
                         searchQuery = ""
                         debouncedSearchQuery = ""
                         selectedCategory = "All"
@@ -490,14 +459,16 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
-                        contentDescription = null, // Content description is on the button
+                        contentDescription = null,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Clear all")
                 }
             }
-        }// Filter Section
+        }
+
+        // Filter Chips Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -532,7 +503,9 @@ fun DashboardScreen(
                 onClick = { isDurationDropdownExpanded = true },
                 contentDescription = "Duration filter: ${if (selectedDuration == "All") "no duration selected, tap to choose a duration" else "selected $selectedDuration, tap to change"}"
             )
-        }// Category Dropdown
+        }
+
+        // Category Dropdown
         DropdownMenu(
             expanded = isCategoryDropdownExpanded,
             onDismissRequest = { isCategoryDropdownExpanded = false },
@@ -595,8 +568,6 @@ fun DashboardScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        
-                        // Current range display
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -620,10 +591,7 @@ fun DashboardScreen(
                                 }
                             )
                         }
-                        
                         Spacer(modifier = Modifier.height(16.dp))
-                        
-                        // Range Slider
                         RangeSlider(
                             value = priceRangeStart..priceRangeEnd,
                             onValueChange = { range ->
@@ -637,8 +605,6 @@ fun DashboardScreen(
                                     contentDescription = "Price range slider. Current range: $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}"
                                 }
                         )
-                        
-                        // Min/Max labels
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -669,11 +635,9 @@ fun DashboardScreen(
                 dismissButton = {
                     TextButton(
                         onClick = {
-                            // Reset to original range and clear preferences
                             priceRangeStart = minPrice.toFloat()
                             priceRangeEnd = maxPrice.toFloat()
                             isPriceDialogVisible = false
-                            // Update preferences immediately
                             saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
                         },
                         modifier = Modifier.semantics {
@@ -722,12 +686,14 @@ fun DashboardScreen(
                         }
                 )
             }
-        }        // Trip Cards
+        }
+
+        // Trip Cards
         AnimatedContent(
             targetState = filteredTrips,
             transitionSpec = {
                 fadeIn(animationSpec = tween(400)) togetherWith
-                fadeOut(animationSpec = tween(200))
+                        fadeOut(animationSpec = tween(200))
             },
             label = "trip cards"
         ) { trips ->
@@ -805,7 +771,7 @@ fun TripCard(
                         "family" -> Icons.Default.Groups
                         else -> Icons.Default.Flight
                     },
-                    contentDescription = null, // Content description is on the parent Box
+                    contentDescription = null,
                     modifier = Modifier.size(80.dp),
                     tint = Color.White
                 )
@@ -905,19 +871,19 @@ fun FilterChip(
         ),
         label = "chip scale"
     )
-    
+
     val containerColor by animateColorAsState(
         targetValue = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
         animationSpec = tween(300),
         label = "container color"
     )
-    
+
     val contentColor by animateColorAsState(
         targetValue = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
         animationSpec = tween(300),
         label = "content color"
     )
-    
+
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
@@ -942,7 +908,7 @@ fun FilterChip(
             targetState = label,
             transitionSpec = {
                 fadeIn(animationSpec = tween(200)) togetherWith
-                fadeOut(animationSpec = tween(200))
+                        fadeOut(animationSpec = tween(200))
             },
             label = "chip label"
         ) { currentLabel ->
