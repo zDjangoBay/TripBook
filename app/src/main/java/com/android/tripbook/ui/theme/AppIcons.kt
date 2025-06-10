@@ -103,6 +103,11 @@ object AppIcons {
     val Favorite = Icons.Rounded.Favorite
     val FavoriteBorder = Icons.Rounded.FavoriteBorder
 
+    // Additional icons for enhanced functionality
+    val Photo = Icons.Rounded.Photo
+    val Notification = Icons.Rounded.Notifications
+    val NotificationOff = Icons.Rounded.NotificationsOff
+
     /**
      * Get status icon based on reservation status
      */
