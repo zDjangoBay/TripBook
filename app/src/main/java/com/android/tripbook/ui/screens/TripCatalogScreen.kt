@@ -18,8 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.*
@@ -289,7 +289,10 @@ fun TripCatalogScreen(
                         ) {
                             Text("Filter Options", style = MaterialTheme.typography.titleSmall)
                             IconButton({ showAdvancedFilters = !showAdvancedFilters }) {
-                                Icon(if (showAdvancedFilters) Icons.Default.ExpandLess else Icons.Default.ExpandMore, "Toggle Filters")
+                                Icon(
+                                    if (showAdvancedFilters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                    "Toggle Filters"
+                                )
                             }
                         }
                         AnimatedVisibility(
