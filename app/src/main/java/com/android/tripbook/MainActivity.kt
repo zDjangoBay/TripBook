@@ -161,7 +161,7 @@ class MainActivity : ComponentActivity() {
                 onEditItineraryClick = {
                     currentScreen = "ItineraryBuilder"
                 },
-                apiKey = apiKey // <--- IMPORTANT: Pass apiKey here
+                apiKey = apiKey //
             )
 
             "ItineraryBuilder" -> ItineraryBuilderScreen(

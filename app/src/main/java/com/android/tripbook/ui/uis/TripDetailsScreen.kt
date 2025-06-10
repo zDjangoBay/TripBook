@@ -1,7 +1,11 @@
 package com.android.tripbook.ui.uis
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.* // Ensure this import is present for BoxScope functions like align
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
@@ -67,6 +72,45 @@ fun TripDetailsScreen(
     var nearbyGasStations by remember { mutableStateOf<List<PlaceResult>>(emptyList()) }
     var isLoadingGasStations by remember { mutableStateOf(false) }
     var gasStationError by remember { mutableStateOf<String?>(null) }
+
+    // State to hold location permission status for the map
+    var hasLocationPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+
+    // Snackbar Host State to show messages (e.g., permission denied)
+    val snackbarHostState = remember { SnackbarHostState() }
+
+
+    // Permission launcher for location
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasLocationPermission = isGranted
+        if (!isGranted) {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Location permission denied. Map's 'My Location' feature will be unavailable.",
+                    actionLabel = "Grant",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Long
+                )
+            }
+        } else {
+            // Optionally, show a success message if permission was just granted
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Location permission granted!",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
 
 
     Box(
@@ -204,20 +248,43 @@ fun TripDetailsScreen(
                                 setGasStationError = { gasStationError = it }
                             )
                             "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
-                            "Map" -> MapTab(trip, googleMapsService, nominatimService)
+                            "Map" -> MapTab(
+                                trip = trip,
+                                googleMapsService = googleMapsService,
+                                nominatimService = nominatimService,
+                                hasLocationPermission = hasLocationPermission,
+                                onPermissionRequest = { locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
+                                snackbarHostState = snackbarHostState
+                            )
                             "Expenses" -> ExpensesTab(trip)
                         }
                     }
                 }
             }
         }
+        // This is the line where the error was reported.
+        // It's placed directly inside the root Box's content lambda,
+        // so BoxScope is indeed available here.
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimService: NominatimService) {
+private fun MapTab(
+    trip: Trip,
+    googleMapsService: GoogleMapsService,
+    nominatimService: NominatimService,
+    hasLocationPermission: Boolean,
+    onPermissionRequest: () -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
     var showRoutes by remember { mutableStateOf(true) }
     var mapType by remember { mutableStateOf(MapType.NORMAL) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -290,9 +357,42 @@ private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimSe
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp)),
+            isMyLocationEnabled = hasLocationPermission,
+            onPermissionRequest = {
+                onPermissionRequest()
+            }
         )
 
+        if (!hasLocationPermission) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(4.dp, RoundedCornerShape(12.dp)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Enable location to see your current position on the map.",
+                        modifier = Modifier.weight(1f),
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = { onPermissionRequest() }) {
+                        Text("Grant Access")
+                    }
+                }
+            }
+        }
         if (trip.itinerary.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             MapLegend()
@@ -300,7 +400,6 @@ private fun MapTab(trip: Trip, googleMapsService: GoogleMapsService, nominatimSe
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OverviewTab(
     trip: Trip,
@@ -400,7 +499,6 @@ private fun OverviewTab(
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
 
-                    // Find Nearby Restaurants Button
                     Button(
                         onClick = {
                             trip.destinationCoordinates?.let { coords ->
@@ -413,7 +511,6 @@ private fun OverviewTab(
                                             longitude = coords.longitude
                                         )
                                         setNearbyRestaurants(results)
-                                        // Optional: Print to Logcat for debugging
                                         println("Found ${results.size} nearby restaurants for ${trip.destination}")
                                         results.forEach { println(" - ${it.name} (${it.address})") }
                                     } catch (e: Exception) {
@@ -447,14 +544,13 @@ private fun OverviewTab(
                         }
                     }
 
-                    // Display Restaurants
                     if (isLoadingRestaurants) {
                         Text("Searching for restaurants...", modifier = Modifier.padding(top = 8.dp))
                     } else if (restaurantError != null) {
                         Text("Error: $restaurantError", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
                     } else if (nearbyRestaurants.isNotEmpty()) {
                         Text("Restaurants Found:", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
-                        nearbyRestaurants.take(5).forEach { // Show top 5 for brevity
+                        nearbyRestaurants.take(5).forEach {
                             Text("- ${it.name} (${it.address})", style = MaterialTheme.typography.bodySmall)
                         }
                         if (nearbyRestaurants.size > 5) {
@@ -466,7 +562,6 @@ private fun OverviewTab(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Find Nearby Gas Stations Button
                     Button(
                         onClick = {
                             trip.destinationCoordinates?.let { coords ->
@@ -479,7 +574,6 @@ private fun OverviewTab(
                                             longitude = coords.longitude
                                         )
                                         setNearbyGasStations(results)
-                                        // Optional: Print to Logcat for debugging
                                         println("Found ${results.size} nearby gas stations for ${trip.destination}")
                                         results.forEach { println(" - ${it.name} (${it.address})") }
                                     } catch (e: Exception) {
@@ -513,14 +607,13 @@ private fun OverviewTab(
                         }
                     }
 
-                    // Display Gas Stations
                     if (isLoadingGasStations) {
                         Text("Searching for gas stations...", modifier = Modifier.padding(top = 8.dp))
                     } else if (gasStationError != null) {
                         Text("Error: $gasStationError", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
                     } else if (nearbyGasStations.isNotEmpty()) {
                         Text("Gas Stations Found:", style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 8.dp))
-                        nearbyGasStations.take(5).forEach { // Show top 5 for brevity
+                        nearbyGasStations.take(5).forEach {
                             Text("- ${it.name} (${it.address})", style = MaterialTheme.typography.bodySmall)
                         }
                         if (nearbyGasStations.size > 5) {
@@ -564,12 +657,12 @@ private fun MapLegend() {
                     modifier = Modifier.weight(1f)
                 )
                 LegendItem(
-                    color = Color(0xFF00CC66),
+                    color = Color(0xFFE91E63),
                     label = "Hotels",
                     modifier = Modifier.weight(1f)
                 )
                 LegendItem(
-                    color = Color(0xFFFF9500),
+                    color = Color(0xFF00CC66),
                     label = "Transport",
                     modifier = Modifier.weight(1f)
                 )
@@ -717,26 +810,7 @@ private fun ItineraryTab(trip: Trip, onEditItineraryClick: () -> Unit) {
                                     text = item.location,
                                     fontSize = 14.sp,
                                     color = Color(0xFF64748B),
-                                    modifier = Modifier.padding(bottom = 4.dp)
                                 )
-                                Text(
-                                    text = item.type.name,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = when (item.type) {
-                                        ItineraryType.ACTIVITY -> Color(0xFF667EEA)
-                                        ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
-                                        ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
-                                    },
-                                    modifier = Modifier.padding(bottom = 4.dp)
-                                )
-                                if (item.notes.isNotEmpty()) {
-                                    Text(
-                                        text = item.notes,
-                                        fontSize = 14.sp,
-                                        color = Color(0xFF64748B)
-                                    )
-                                }
                             }
                         }
                     }
