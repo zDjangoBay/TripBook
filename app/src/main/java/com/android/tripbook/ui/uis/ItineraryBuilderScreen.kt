@@ -15,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
+import com.android.tripbook.model.ItineraryType.*
 import com.android.tripbook.model.Trip
 import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
@@ -434,13 +434,15 @@ fun ItineraryBuilderScreen(
                                     setTypeError = { typeError = it }
                                 )
                             ) {
+                                var selectedAgencyService = null
                                 val newItem = ItineraryItem(
+                                    title = title.trim(),
                                     date = date!!,
                                     time = time.trim(),
-                                    title = title.trim(),
                                     location = location.trim(),
                                     type = selectedType!!,
-                                    notes = notes.trim()
+                                    notes = notes.trim(),
+                                    agencyService = selectedAgencyService
                                 )
                                 itineraryItems = itineraryItems + newItem
                                 // Reset form
@@ -450,6 +452,7 @@ fun ItineraryBuilderScreen(
                                 location = ""
                                 selectedType = null
                                 notes = ""
+                                selectedAgencyService = null
                             }
                         },
                         modifier = Modifier
@@ -591,9 +594,11 @@ private fun ItineraryItemCard(item: ItineraryItem) {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = when (item.type) {
-                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
-                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
-                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                    ACTIVITY -> Color(0xFF667EEA)
+                    ACCOMMODATION -> Color(0xFFE91E63)
+                    TRANSPORTATION -> Color(0xFF00CC66)
+                    FOOD -> TODO()
+                    OTHER -> TODO()
                 }
             )
             if (item.agencyService != null) {
