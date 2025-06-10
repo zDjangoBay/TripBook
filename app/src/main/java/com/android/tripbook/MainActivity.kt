@@ -149,9 +149,7 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
-            // ... (rest of your when statement remains the same)
             "TripDetails" -> TripDetailsScreen(
-                // Use selectedTrip or default to the first trip if selectedTrip is null
                 trip = selectedTrip ?: allTrips.firstOrNull() ?: Trip( // Safely get first or provide a default empty trip
                     id = "default", name = "Default Trip",
                     startDate = LocalDate.now(), endDate = LocalDate.now(),
@@ -163,7 +161,7 @@ class MainActivity : ComponentActivity() {
                 onEditItineraryClick = {
                     currentScreen = "ItineraryBuilder"
                 },
-                apiKey = apiKey
+                apiKey = apiKey // <--- IMPORTANT: Pass apiKey here
             )
 
             "ItineraryBuilder" -> ItineraryBuilderScreen(
