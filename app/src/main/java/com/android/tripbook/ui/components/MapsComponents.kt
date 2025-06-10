@@ -7,11 +7,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import com.android.tripbook.service.GoogleMapsService
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -35,7 +30,10 @@ fun TripMapView(
     nominatimService: NominatimService,
     modifier: Modifier = Modifier,
     showRoutes: Boolean = true,
-    mapType: MapType = MapType.NORMAL
+    mapType: MapType = MapType.NORMAL,
+    // New parameters for permission handling
+    isMyLocationEnabled: Boolean,
+    onPermissionRequest: () -> Unit // Lambda to request permission
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -45,39 +43,12 @@ fun TripMapView(
     var resolvedMapCenter by remember { mutableStateOf<LatLng?>(null) }
     var isResolving by remember { mutableStateOf(false) }
     var resolutionError by remember { mutableStateOf<String?>(null) }
-    var hasLocationPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        )
-    }
 
     // Default location (Yaoundé, Cameroon)
     val fallbackDefaultLatLng = LatLng(3.848, 11.502)
 
     // Camera position state
     val cameraPositionState = rememberCameraPositionState()
-
-    // Permission launcher
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasLocationPermission = isGranted
-        // If permission is granted, try to move camera to resolved center if available
-        if (isGranted && resolvedMapCenter != null) {
-            scope.launch {
-                try {
-                    cameraPositionState.animate(
-                        CameraUpdateFactory.newLatLngZoom(resolvedMapCenter!!, 12f)
-                    )
-                } catch (e: Exception) {
-                    println("TripMapView: Camera animation after permission failed: ${e.message}")
-                }
-            }
-        }
-    }
 
     // Effect to resolve the destination coordinates
     LaunchedEffect(trip.destination, trip.destinationCoordinates) {
@@ -173,7 +144,6 @@ fun TripMapView(
     }
 
     // Effect to load route polylines when showRoutes is true
-    // This will now only run if resolvedMapCenter is not null, ensuring null safety for resolvedMapCenter!!
     LaunchedEffect(trip.itinerary, showRoutes, resolvedMapCenter) {
         if (showRoutes && resolvedMapCenter != null) {
             scope.launch {
@@ -201,7 +171,6 @@ fun TripMapView(
 
                 } catch (e: Exception) {
                     println("TripMapView: Route calculation failed: ${e.message}")
-                    // Optionally, show a Toast or Snackbar to the user about route calculation failure
                 }
             }
         } else {
@@ -250,18 +219,25 @@ fun TripMapView(
         uiSettings = MapUiSettings(
             zoomControlsEnabled = true,
             compassEnabled = true,
-            // Only enable myLocationButton if permission is granted
-            myLocationButtonEnabled = hasLocationPermission,
+            myLocationButtonEnabled = isMyLocationEnabled, // Controlled by parent
             mapToolbarEnabled = true
         ),
         properties = MapProperties(
             mapType = mapType,
-            // Only enable isMyLocationEnabled if permission is granted
-            isMyLocationEnabled = hasLocationPermission
+            isMyLocationEnabled = isMyLocationEnabled // Controlled by parent
         ),
         onMapClick = { latLng ->
             // Handle map clicks if needed
             println("Map clicked at: $latLng")
+        },
+        // Handle clicks on the "My Location" button when permission is not granted
+        onMyLocationButtonClick = {
+            if (!isMyLocationEnabled) {
+                onPermissionRequest() // Trigger the permission request in the parent
+                true // Consume the event so the default behavior doesn't run
+            } else {
+                false // Allow default behavior (move to current location)
+            }
         }
     ) {
         // Main destination marker
@@ -299,25 +275,6 @@ fun TripMapView(
                 color = Color(0xFF667EEA),
                 width = 8f
             )
-        }
-    }
-
-    // A button or UI element to trigger permission request, instead of LaunchedEffect(Unit)
-    // You would integrate this into your UI, for example, showing a button if hasLocationPermission is false.
-    // For demonstration, let's add a simple FloatingActionButton
-    if (!hasLocationPermission) {
-        // This is a placeholder for how you might integrate it into your UI.
-        // You might want to show a more descriptive message or a dedicated screen.
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            FloatingActionButton(
-                onClick = { locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("Enable Location")
-            }
         }
     }
 }
