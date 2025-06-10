@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -26,7 +25,6 @@ import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
-import com.android.tripbook.service.Attraction
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
 import com.android.tripbook.service.GoogleMapsService
@@ -39,9 +37,7 @@ import java.time.format.DateTimeFormatter
 
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import com.android.tripbook.model.ItineraryType.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -286,12 +282,13 @@ fun PlanNewTripScreen(
                                                 destinationSuggestions = emptyList()
                                                 if (startDate != null) {
                                                     itineraryItems = itineraryItems + ItineraryItem(
+                                                        title = suggestion.name,
                                                         date = startDate!!,
                                                         time = "10:00 AM",
-                                                        title = suggestion.name,
                                                         location = suggestion.address,
                                                         type = ItineraryType.ACTIVITY,
-                                                        notes = "Suggested attraction"
+                                                        notes = "Suggested attraction",
+                                                        agencyService = null
                                                     )
                                                 }
                                             }
@@ -899,12 +896,13 @@ fun PlanNewTripScreen(
                                 )
                             ) {
                                 val newItem = ItineraryItem(
+                                    title = title.trim(),
                                     date = date!!,
                                     time = time.trim(),
-                                    title = title.trim(),
                                     location = location.trim(),
                                     type = selectedItineraryType!!,
-                                    notes = notes.trim()
+                                    notes = notes.trim(),
+                                    agencyService = null
                                 )
                                 itineraryItems = itineraryItems + newItem
                                 // Reset itinerary form
@@ -978,14 +976,13 @@ fun PlanNewTripScreen(
                                 val newTrip = Trip(
                                     id = System.currentTimeMillis().toString(),
                                     name = tripName.trim(),
+                                    destination = destination.trim(),
                                     startDate = startDate!!,
                                     endDate = endDate!!,
-                                    destination = destination.trim(),
+                                    budget = budget.toInt().toDouble(),
+                                    itinerary = itineraryItems,
                                     travelers = travelers.toInt(),
-                                    budget = budget.toInt(),
-                                    status = TripStatus.PLANNED,
-                                    type = selectedTripType,
-                                    itinerary = itineraryItems
+                                    status = TripStatus.PLANNED
                                 )
                                 onTripCreated(newTrip)
                             }
@@ -1150,9 +1147,11 @@ private fun ItineraryItemCard(item: ItineraryItem) {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = when (item.type) {
-                    ItineraryType.ACTIVITY -> Color(0xFF667EEA)
-                    ItineraryType.ACCOMMODATION -> Color(0xFFE91E63)
-                    ItineraryType.TRANSPORTATION -> Color(0xFF00CC66)
+                    ACTIVITY -> Color(0xFF667EEA)
+                    ACCOMMODATION -> Color(0xFFE91E63)
+                    TRANSPORTATION -> Color(0xFF00CC66)
+                    FOOD -> TODO()
+                    OTHER -> TODO()
                 }
             )
             if (item.agencyService != null) {
