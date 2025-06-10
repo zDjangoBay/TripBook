@@ -64,6 +64,7 @@ This document is intended to give you instructions on how to run the data mining
   ### Sixth step , `Open` the extracted folder as a new project 
 
     ![Sixth Step 1](https://github.com/zDjangoBay/TripBook/blob/datamining-zingui-fred-mike-ICTU20233585-post-reservations-comments-companycatalog-for-datamining/app/src/main/java/com/android/tripbook/Datamining/tutrl/Screenshot%202025-06-09%20at%2018.08.22.png)
+
     ![Sixth Step 2](https://github.com/zDjangoBay/TripBook/blob/datamining-zingui-fred-mike-ICTU20233585-post-reservations-comments-companycatalog-for-datamining/app/src/main/java/com/android/tripbook/Datamining/tutrl/Screenshot%202025-06-09%20at%2018.08.49.png)
 
   ### Seventh step , `Wait for Gradle` 
@@ -76,7 +77,7 @@ This document is intended to give you instructions on how to run the data mining
 * Go in the terminal and run 
                     ```bash
                     docker compose up -d 
-                      ````
+                      ```
 
                     
   ### Eighth Step , `Press the magic button ` also known as `run` 
