@@ -65,6 +65,18 @@ fun TripMapView(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasLocationPermission = isGranted
+        // If permission is granted, try to move camera to resolved center if available
+        if (isGranted && resolvedMapCenter != null) {
+            scope.launch {
+                try {
+                    cameraPositionState.animate(
+                        CameraUpdateFactory.newLatLngZoom(resolvedMapCenter!!, 12f)
+                    )
+                } catch (e: Exception) {
+                    println("TripMapView: Camera animation after permission failed: ${e.message}")
+                }
+            }
+        }
     }
 
     // Effect to resolve the destination coordinates
@@ -100,36 +112,47 @@ fun TripMapView(
                     }
                 } catch (e: Exception) {
                     println("TripMapView: Google search failed: ${e.message}")
-                    resolutionError = "Google search failed: ${e.message}"
+                    // Don't set resolutionError here, try Nominatim as fallback
                 }
 
-                // Try Nominatim as fallback
-                try {
-                    val nominatimSearchResults = nominatimService.searchLocation(trip.destination)
-                    val nominatimResult = nominatimSearchResults.firstOrNull()
+                // Try Nominatim as fallback if Google failed or didn't find
+                if (resolvedMapCenter == null) {
+                    try {
+                        val nominatimSearchResults = nominatimService.searchLocation(trip.destination)
+                        val nominatimResult = nominatimSearchResults.firstOrNull()
 
-                    if (nominatimResult != null) {
-                        resolvedMapCenter = LatLng(
-                            nominatimResult.latitude.toDouble(),
-                            nominatimResult.longitude.toDouble()
-                        )
-                        println("TripMapView: Found location via Nominatim: $resolvedMapCenter")
-                        return@LaunchedEffect
+                        if (nominatimResult != null) {
+                            resolvedMapCenter = LatLng(
+                                nominatimResult.latitude.toDouble(),
+                                nominatimResult.longitude.toDouble()
+                            )
+                            println("TripMapView: Found location via Nominatim: $resolvedMapCenter")
+                            return@LaunchedEffect
+                        }
+                    } catch (e: Exception) {
+                        println("TripMapView: Nominatim search failed: ${e.message}")
+                        // Set resolutionError only if both failed to find location
+                        if (resolvedMapCenter == null) {
+                            resolutionError = "Could not find location for '${trip.destination}' via Google Maps or Nominatim."
+                        }
                     }
-                } catch (e: Exception) {
-                    println("TripMapView: Nominatim search failed: ${e.message}")
-                    resolutionError = "${resolutionError ?: ""}\nNominatim search failed: ${e.message}"
                 }
             }
 
-            // Fallback to default location
-            resolvedMapCenter = fallbackDefaultLatLng
-            println("TripMapView: Using fallback location: $resolvedMapCenter")
+            // Fallback to default location if no coordinates or search results
+            if (resolvedMapCenter == null) {
+                resolvedMapCenter = fallbackDefaultLatLng
+                println("TripMapView: Using fallback location: $fallbackDefaultLatLng")
+                // Only set resolutionError if there was an attempt to find a named destination and it failed
+                if (trip.destination.isNotBlank() && resolutionError == null) {
+                    resolutionError = "Could not find location for '${trip.destination}'. Showing default location."
+                }
+            }
 
         } catch (e: Exception) {
             println("TripMapView: Unexpected error during resolution: ${e.message}")
             resolvedMapCenter = fallbackDefaultLatLng
-            resolutionError = "Unexpected error: ${e.message}"
+            resolutionError = "Unexpected error resolving location: ${e.message}. Showing default location."
         } finally {
             isResolving = false
         }
@@ -144,12 +167,13 @@ fun TripMapView(
                     CameraUpdateFactory.newLatLngZoom(center, 12f)
                 )
             } catch (e: Exception) {
-                println("TripMapView: Camera animation failed: ${e.message}")
+                println("TripMapView: Camera animation failed: ${e.message}. Consider checking map lifecycle or initial state.")
             }
         }
     }
 
     // Effect to load route polylines when showRoutes is true
+    // This will now only run if resolvedMapCenter is not null, ensuring null safety for resolvedMapCenter!!
     LaunchedEffect(trip.itinerary, showRoutes, resolvedMapCenter) {
         if (showRoutes && resolvedMapCenter != null) {
             scope.launch {
@@ -157,7 +181,7 @@ fun TripMapView(
                     val points = mutableListOf<LatLng>()
 
                     // Add destination as first point
-                    points.add(resolvedMapCenter!!)
+                    points.add(resolvedMapCenter!!) // Safe due to enclosing 'if (resolvedMapCenter != null)'
 
                     // Add itinerary points that have coordinates
                     trip.itinerary.forEach { item ->
@@ -170,12 +194,19 @@ fun TripMapView(
                     // For now, just connect points directly
                     if (points.size > 1) {
                         polylinePoints = points
+                    } else {
+                        // Clear polyline if there's only one point or no points to draw a route
+                        polylinePoints = emptyList()
                     }
 
                 } catch (e: Exception) {
                     println("TripMapView: Route calculation failed: ${e.message}")
+                    // Optionally, show a Toast or Snackbar to the user about route calculation failure
                 }
             }
+        } else {
+            // Clear polyline if showRoutes is false or resolvedMapCenter is null
+            polylinePoints = emptyList()
         }
     }
 
@@ -197,8 +228,8 @@ fun TripMapView(
         return
     }
 
-    // Show error state if needed
-    if (resolutionError != null && resolvedMapCenter == fallbackDefaultLatLng) {
+    // Show error state if needed (always display if an error occurred)
+    if (resolutionError != null) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -206,7 +237,7 @@ fun TripMapView(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
             Text(
-                text = "Could not find destination location. Showing default location.",
+                text = resolutionError!!, // Display the specific error message
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colorScheme.onErrorContainer
             )
@@ -219,11 +250,13 @@ fun TripMapView(
         uiSettings = MapUiSettings(
             zoomControlsEnabled = true,
             compassEnabled = true,
+            // Only enable myLocationButton if permission is granted
             myLocationButtonEnabled = hasLocationPermission,
             mapToolbarEnabled = true
         ),
         properties = MapProperties(
             mapType = mapType,
+            // Only enable isMyLocationEnabled if permission is granted
             isMyLocationEnabled = hasLocationPermission
         ),
         onMapClick = { latLng ->
@@ -269,11 +302,22 @@ fun TripMapView(
         }
     }
 
-    // Request location permission if not granted and user tries to use location features
-    LaunchedEffect(Unit) {
-        if (!hasLocationPermission) {
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    // A button or UI element to trigger permission request, instead of LaunchedEffect(Unit)
+    // You would integrate this into your UI, for example, showing a button if hasLocationPermission is false.
+    // For demonstration, let's add a simple FloatingActionButton
+    if (!hasLocationPermission) {
+        // This is a placeholder for how you might integrate it into your UI.
+        // You might want to show a more descriptive message or a dedicated screen.
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            FloatingActionButton(
+                onClick = { locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Enable Location")
+            }
         }
     }
 }
-
