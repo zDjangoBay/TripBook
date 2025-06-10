@@ -1,5 +1,6 @@
 package com.android.tripbook.companycatalog.ui.screens
 
+
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.foundation.layout.*
@@ -14,8 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.companycatalog.data.MockCompanyData
 import kotlinx.coroutines.delay
-import java.time.LocalDate
-import java.time.LocalTime
+import java.util.Calendar
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
@@ -36,6 +36,7 @@ fun HomeScreen(navController: NavController) {
         item { DynamicGreetingSection() }
         item { QuickNavigationTiles(navController) }
         item { FeaturedCompanySection() }
+
         item { CategoriesPreview() }
         item { WhatsNewSection() }
         item { TrendingTagsSection() }
@@ -49,7 +50,8 @@ fun HomeScreen(navController: NavController) {
 
 @Composable
 fun DynamicGreetingSection() {
-    val greeting = when (LocalTime.now().hour) {
+    val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val greeting = when (currentHour) {
         in 0..11 -> "Good Morning"
         in 12..17 -> "Good Afternoon"
         else -> "Good Evening"
@@ -65,26 +67,34 @@ fun DynamicGreetingSection() {
 
 @Composable
 fun QuickNavigationTiles(navController: NavController) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceAround
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        listOf("Explore", "Categories", "Saved", "News", "Feedback").forEach {
-            AssistChip(
-                onClick = {
-                    when (it) {
-                        "Categories" -> navController.navigate(MainAppScreen.Categories.route)
-                        // TODO: Add other routes if needed
-                    }
-                },
-                label = { Text(it) },
-                shape = MaterialTheme.shapes.medium,
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+        // First row - Original navigation
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            listOf("Explore", "Categories", "Saved", "News", "Feedback").forEach {
+                AssistChip(
+                    onClick = {
+                        when (it) {
+                            "Categories" -> navController.navigate(MainAppScreen.Categories.route)
+                            "Explore" -> navController.navigate(MainAppScreen.Explore.route)
+                            // TODO: Add other routes if needed
+                        }
+                    },
+                    label = { Text(it) },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                 )
-            )
+            }
         }
+
+
     }
 }
 
@@ -92,7 +102,7 @@ fun QuickNavigationTiles(navController: NavController) {
 @Composable
 fun FeaturedCompanySection() {
     val companies = MockCompanyData.companies
-    var currentIndex by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -187,7 +197,7 @@ fun CategoriesPreview() {
 
 @Composable
 fun WhatsNewSection() {
-    val newCompanies = listOf("GreenCorp", "HealthPro", "EcoLogix")
+    val newCompanies = listOf("GreenCorp", "HealthPro", "EcoLogic")
     Column {
         Text(
             "🆕 What's New",
@@ -238,7 +248,9 @@ fun QuoteOfTheDaySection() {
         "Innovation distinguishes between a leader and a follower.",
         "The best way to predict the future is to create it."
     )
-    val todayQuote = quotes[LocalDate.now().dayOfYear % quotes.size]
+    val calendar = Calendar.getInstance()
+    val dayOfYear = calendar.get(Calendar.DAY_OF_YEAR)
+    val todayQuote = quotes[dayOfYear % quotes.size]
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
@@ -317,3 +329,5 @@ fun SettingsButtonSection(navController: NavController) {
         )
     }
 }
+
+

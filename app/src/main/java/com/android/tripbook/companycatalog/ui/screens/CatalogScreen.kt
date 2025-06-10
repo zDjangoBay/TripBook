@@ -130,6 +130,11 @@ fun CatalogScreen(
             )
         )
 
+        // Quick access to company features
+        if (!showSearchHistory && searchQuery.isEmpty()) {
+            CompanyFeaturesQuickAccess(navController)
+        }
+
         if (showSearchHistory) {
             SearchHistoryList(
                 searchHistory = searchHistory,
@@ -211,6 +216,69 @@ fun CatalogScreen(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CompanyFeaturesQuickAccess(navController: NavHostController) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "✨ Explore Company Features",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Text(
+                text = "Try our new interactive company profile features",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val features = listOf(
+                    Triple("Reviews", "⭐", "companyDetail/mock_001?tab=2"),
+                    Triple("Services", "🛠️", "companyDetail/mock_001?tab=1"),
+                    Triple("Contact", "📞", "companyDetail/mock_001?tab=3"),
+                    Triple("Analytics", "📊", "companyDetail/mock_001?tab=4"),
+                    Triple("Portfolio", "🎨", "companyDetail/mock_001?tab=5"),
+                    Triple("Compare", "⚖️", "companyDetail/mock_001?tab=6")
+                )
+
+                items(features) { (title, icon, route) ->
+                    AssistChip(
+                        onClick = { navController.navigate(route) },
+                        label = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(icon)
+                                Text(title)
+                            }
+                        },
+                        colors = AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            labelColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
                 }
             }
         }

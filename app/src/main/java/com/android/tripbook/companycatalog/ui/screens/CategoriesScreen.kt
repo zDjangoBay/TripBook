@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 data class CategoryItem(
     val name: String,
@@ -73,7 +72,7 @@ val mockCategories = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriesScreen(navController: NavController) {
+fun CategoriesScreen() {
     Scaffold(
         topBar = {
             TopAppBar(

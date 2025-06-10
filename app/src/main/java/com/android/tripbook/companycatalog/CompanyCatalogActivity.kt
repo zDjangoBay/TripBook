@@ -24,7 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.android.tripbook.companycatalog.ui.screens.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import androidx.compose.material.icons.filled.Category
@@ -113,7 +115,6 @@ fun AppRootNavHost() {
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
             AnimatedVisibility(
                 visible = true,
                 enter = fadeIn(),
@@ -139,13 +140,23 @@ fun AppRootNavHost() {
                         SettingsScreen()
                     }
                     composable(MainAppScreen.Categories.route) {
-                        CategoriesScreen(navController) // or without navController if not needed
+                        CategoriesScreen() // or without navController if not needed
                     }
 
-                    composable("companyDetail/{companyId}") { backStackEntry ->
+                    composable(
+                        "companyDetail/{companyId}?tab={tab}",
+                        arguments = listOf(
+                            navArgument("companyId") { type = NavType.StringType },
+                            navArgument("tab") {
+                                type = NavType.StringType
+                                defaultValue = "0"
+                            }
+                        )
+                    ) { backStackEntry ->
                         val companyId = backStackEntry.arguments?.getString("companyId")
+                        val tabIndex = backStackEntry.arguments?.getString("tab")?.toIntOrNull() ?: 0
                         if (companyId != null) {
-                            CompanyDetailScreen(companyId)
+                            CompanyDetailScreen(companyId, initialTab = tabIndex)
                         } else {
                             Text(
                                 "Company not found",
