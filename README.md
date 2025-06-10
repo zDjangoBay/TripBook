@@ -6,34 +6,34 @@
 [![Material Design 3](https://img.shields.io/badge/Design-Material%203-purple.svg)](https://m3.material.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENCE.txt)
 
-**TripBook** is a comprehensive Android travel application that enables users to discover, book, and manage travel reservations with an intuitive and modern interface. Built with cutting-edge Android technologies, it offers a seamless experience for travelers exploring destinations worldwide.
+**TripBook** is a comprehensive Android travel application that enables users to discover, book, and manage travel reservations with an intuitive and modern interface. Built with cutting-edge Android technologies and a modern development workflow.
 
-## ✨ **Key Features**
+## ✨ Key Features
 
-### 🎯 **Core Functionality**
-- **📱 Trip Discovery** - Browse and search available trips with detailed information
-- **❤️ Favorites System** - Save and manage favorite trips with persistent storage
-- **📅 Reservation Management** - Complete booking flow with calendar integration
-- **💳 Payment Processing** - Secure payment handling with multiple payment methods
-- **🔍 Advanced Search** - Filter trips by destination, date, and preferences
-- **📊 Dashboard** - Comprehensive overview of trips and reservations
+### 🎯 Core Functionality
+- 📱 Trip Discovery - Browse and search available trips with detailed information
+- ❤️ Favorites System - Save and manage favorite trips with persistent storage
+- 📅 Reservation Management - Complete booking flow with calendar integration
+- 💳 Payment Processing - Secure payment handling with multiple payment methods
+- 🔍 Advanced Search - Filter trips by destination, date, and preferences
+- 📊 Dashboard - Comprehensive overview of trips and reservations
 
-### 🎨 **User Experience**
-- **Material Design 3** - Modern, accessible UI following Google's latest design principles
-- **Purple Theme** - Elegant color scheme with primary (#6A1B9A) and secondary (#CE93D8) colors
-- **Responsive Design** - Optimized for various screen sizes and orientations
-- **Smooth Animations** - Fluid transitions and interactive elements
-- **Dark/Light Mode** - Adaptive theming support
+### 🎨 User Experience
+- Material Design 3 - Modern, accessible UI following Google's latest design principles
+- Purple Theme - Elegant color scheme with primary (#6A1B9A) and secondary (#CE93D8) colors
+- Responsive Design - Optimized for various screen sizes and orientations
+- Smooth Animations - Fluid transitions and interactive elements
+- Dark/Light Mode - Adaptive theming support
 
-### 🏗️ **Technical Features**
-- **Room Database** - Local data persistence with SQLite
-- **DataStore** - Modern preferences and settings storage
-- **Jetpack Compose** - Declarative UI framework
-- **Navigation Component** - Type-safe navigation between screens
-- **Coroutines & Flow** - Reactive programming for smooth performance
-- **Clean Architecture** - Maintainable and testable code structure
+### 🏗️ Technical Features
+- Room Database - Local data persistence with SQLite
+- DataStore - Modern preferences and settings storage
+- Jetpack Compose - Declarative UI framework
+- Navigation Component - Type-safe navigation between screens
+- Coroutines & Flow - Reactive programming for smooth performance
+- Clean Architecture - Maintainable and testable code structure
 
-## 📱 **Screenshots & Demo**
+## 📱 Screenshots & Demo
 
 ## 🖼️ UI Previews
 
@@ -60,15 +60,15 @@
 - Interactive maps and location services
 - User reviews and ratings
 
-## 🚀 **Getting Started**
+## 🚀 Getting Started
 
-### **Prerequisites**
+### Prerequisites
 - **Android Studio** Arctic Fox (2020.3.1) or later
 - **Android SDK** API level 31 or higher
 - **Kotlin** 1.8.0 or later
 - **Gradle** 8.0 or later
 
-### **Installation**
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -91,7 +91,7 @@
    ./gradlew installDebug
    ```
 
-### **Quick Development Setup**
+### Quick Development Setup
 
 For rapid development and testing, use the provided development scripts:
 
@@ -103,9 +103,9 @@ For rapid development and testing, use the provided development scripts:
 .\gradlew.bat clean build installDebug
 ```
 
-## 🏛️ **Architecture**
+## 🏛️ Architecture
 
-### **Project Structure**
+### Project Structure
 ```
 app/src/main/java/com/android/tripbook/
 ├── data/                          # Data layer
@@ -128,7 +128,7 @@ app/src/main/java/com/android/tripbook/
 └── MainActivity.kt              # Entry point
 ```
 
-### **Technology Stack**
+### Technology Stack
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
@@ -141,9 +141,9 @@ app/src/main/java/com/android/tripbook/
 | **DI** | Manual DI | Dependency injection |
 | **Design** | Material Design 3 | UI/UX guidelines |
 
-## 📊 **Database Schema**
+## 📊 Database Schema
 
-### **Core Entities**
+### Core Entities
 - **TripEntity** - Trip information and details
 - **UserEntity** - User profiles and preferences
 - **ReservationEntity** - Booking records and status
@@ -153,15 +153,15 @@ app/src/main/java/com/android/tripbook/
 - **ActivityEntity** - Available activities
 - **NotificationEntity** - User notifications
 
-### **Key Features**
+### Key Features
 - **Foreign Key Relationships** - Proper data integrity
 - **Indexing** - Optimized query performance
 - **Type Converters** - Date/time handling
 - **Migration Support** - Future schema updates
 
-## 🎯 **Current Implementation Status**
+## 🎯 Current Implementation Status
 
-### ✅ **Completed Features**
+### ✅ Completed Features
 - [x] **Project Setup** - Complete Android project structure
 - [x] **UI Framework** - Jetpack Compose with Material Design 3
 - [x] **Database** - Room database with comprehensive schema
@@ -175,7 +175,7 @@ app/src/main/java/com/android/tripbook/
 - [x] **Reservation Flow** - Multi-step booking process
 - [x] **Payment Integration** - Payment processing framework
 
-### 🚧 **In Development**
+### 🚧 In Development
 - [ ] **User Authentication** - Login/registration system
 - [ ] **Profile Management** - User profile editing
 - [ ] **Real-time Sync** - Cloud data synchronization
@@ -183,7 +183,7 @@ app/src/main/java/com/android/tripbook/
 - [ ] **Social Features** - User reviews and ratings
 - [ ] **Maps Integration** - Interactive location services
 
-### 🔮 **Planned Features**
+### 🔮 Planned Features
 - [ ] **Offline Mode** - Offline trip browsing
 - [ ] **Multi-language** - Internationalization support
 - [ ] **Analytics** - User behavior tracking
@@ -191,9 +191,9 @@ app/src/main/java/com/android/tripbook/
 - [ ] **API Integration** - External travel services
 - [ ] **Social Sharing** - Share trips on social media
 
-## 🛠️ **Development**
+## 🛠️ Development
 
-### **Building the Project**
+### Building the Project
 
 ```bash
 # Clean build
@@ -212,13 +212,13 @@ app/src/main/java/com/android/tripbook/
 ./gradlew installDebug
 ```
 
-### **Code Style**
+### Code Style
 - **Kotlin Coding Conventions** - Follow official Kotlin style guide
 - **Material Design Guidelines** - Consistent UI/UX patterns
 - **Clean Architecture** - Separation of concerns
 - **MVVM Pattern** - Model-View-ViewModel architecture
 
-### **Testing**
+### Testing
 ```bash
 # Unit tests
 ./gradlew testDebugUnitTest
@@ -230,7 +230,7 @@ app/src/main/java/com/android/tripbook/
 ./gradlew lintDebug
 ```
 
-## 📱 **Supported Platforms**
+## 📱 Supported Platforms
 
 - **Minimum SDK**: API 31 (Android 12)
 - **Target SDK**: API 34 (Android 14)
@@ -238,35 +238,35 @@ app/src/main/java/com/android/tripbook/
 - **Screen Sizes**: Phone, Tablet
 - **Orientation**: Portrait, Landscape
 
-## 🤝 **Contributing**
+## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-### **Development Workflow**
+### Development Workflow
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### **Code Review Process**
+### Code Review Process
 - All changes require review
 - Automated tests must pass
 - Follow coding standards
 - Update documentation as needed
 
-## 📄 **License**
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENCE.txt](LICENCE.txt) file for details.
 
-## 🙏 **Acknowledgments**
+## 🙏 Acknowledgments
 
 - **Material Design Team** - For the excellent design system
 - **Android Team** - For Jetpack Compose and modern Android tools
 - **Kotlin Team** - For the amazing programming language
 - **Open Source Community** - For the libraries and tools used
 
-## 📞 **Support**
+## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/TripBook/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/TripBook/discussions)

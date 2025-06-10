@@ -90,7 +90,7 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    // Navigation Compose
+// Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.5")
 
     // Material Icons Extended

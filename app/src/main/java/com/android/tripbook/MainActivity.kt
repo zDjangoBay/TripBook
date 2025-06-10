@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                         color = MaterialTheme.colorScheme.background
                     ) {
                         // You can switch to SafeDashboardLoader() if testing
-                        DashboardActivity()
+                        SafeDashboardLoader()
                     }
                 }
             }
@@ -41,14 +41,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// --- Optional reusable components for testing/debugging below ---
-
 @Composable
 fun SafeDashboardLoader() {
     var showDashboard by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     if (errorMessage != null) {
+        // Show error screen
         ErrorScreen(
             error = errorMessage!!,
             onRetry = {
@@ -61,12 +60,64 @@ fun SafeDashboardLoader() {
             }
         )
     } else if (showDashboard) {
+        // Load dashboard with logging
         Log.d("TripBook", "=== DASHBOARD LOADING START ===")
+        Log.d("TripBook", "Step 1: About to call DashboardActivity composable")
+        Log.d("TripBook", "Step 2: Testing DashboardActivity import")
+        Log.d("TripBook", "Step 3: Calling real DashboardActivity")
+
         DashboardActivity()
+
+        Log.d("TripBook", "Step 4: DashboardActivity completed successfully")
         Log.d("TripBook", "=== DASHBOARD LOADING END ===")
     } else {
-        TestScreen {
-            showDashboard = true
+        // Show test screen with option to load dashboard
+        TestScreen(
+            onLoadDashboard = {
+                Log.d("TripBook", "=== USER CLICKED LOAD DASHBOARD ===")
+                Log.d("TripBook", "Setting showDashboard = true")
+                showDashboard = true
+                Log.d("TripBook", "showDashboard state updated")
+            }
+        )
+    }
+}
+
+@Composable
+fun TestScreen(onLoadDashboard: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "TripBook Test Screen",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Text(
+            text = "Basic app functionality is working!",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        Button(
+            onClick = {
+                Log.d("TripBook", "Test button clicked")
+            },
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Test Button")
+        }
+
+        Button(
+            onClick = onLoadDashboard,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Load Dashboard")
         }
     }
 }
@@ -89,44 +140,25 @@ fun ErrorScreen(
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.error
         )
+
         Text(
             text = error,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(16.dp)
         )
-        Button(onClick = onRetry, modifier = Modifier.padding(8.dp)) {
+
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.padding(8.dp)
+        ) {
             Text("Retry Dashboard")
         }
-        Button(onClick = onUseTestScreen, modifier = Modifier.padding(8.dp)) {
-            Text("Use Test Screen")
-        }
-    }
-}
 
-@Composable
-fun TestScreen(onLoadDashboard: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "TripBook Test Screen",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "Basic app functionality is working!",
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(16.dp)
-        )
-        Button(onClick = {}, modifier = Modifier.padding(8.dp)) {
-            Text("Test Button")
-        }
-        Button(onClick = onLoadDashboard, modifier = Modifier.padding(8.dp)) {
-            Text("Load Dashboard")
+        Button(
+            onClick = onUseTestScreen,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text("Use Test Screen")
         }
     }
 }

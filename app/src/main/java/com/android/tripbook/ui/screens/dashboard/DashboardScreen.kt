@@ -1,42 +1,36 @@
 package com.android.tripbook.ui.screens.dashboard
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Flight
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Business
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.*
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.android.tripbook.data.providers.DummyTripDataProvider
 import com.android.tripbook.data.models.Trip
-import com.android.tripbook.data.managers.FavoritesManager
-import com.android.tripbook.data.DataStoreProvider
-import kotlinx.coroutines.launch
+import com.android.tripbook.data.providers.DummyTripDataProvider
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 
 /**
  * Dashboard screen showing available trips
@@ -47,18 +41,10 @@ fun DashboardScreen(
     onTripClick: (String) -> Unit
 ) {
     val context = LocalContext.current
-    var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
-    var showFavoritesOnly by remember { mutableStateOf(false) }
 
     val trips = remember { DummyTripDataProvider.getTrips() }
-
-    // Initialize FavoritesManager
-    val favoritesManager = remember {
-        FavoritesManager.getInstance(DataStoreProvider.getDataStore(context))
-    }
-    val favoriteTrips by favoritesManager.favoriteTrips.collectAsState(initial = emptySet())
 
     // Location permission launcher
     val locationPermissionLauncher = rememberLauncherForActivityResult(
@@ -91,65 +77,229 @@ fun DashboardScreen(
         }
     }
 
-    val filteredTrips = remember(searchQuery, currentLocation, showFavoritesOnly, favoriteTrips) {
-        var result = trips
-
-        // Filter by favorites if enabled
-        if (showFavoritesOnly) {
-            result = result.filter { it.id in favoriteTrips }
+    // Filter preferences helper functions
+    val prefs = remember { context.getSharedPreferences("trip_filters", Context.MODE_PRIVATE) }
+    fun saveFilterPreferences(
+        category: String,
+        priceStart: Float,
+        priceEnd: Float,
+        duration: String,
+        search: String
+    ) {
+        prefs.edit().apply {
+            putString("selected_category", category)
+            putFloat("price_range_start", priceStart)
+            putFloat("price_range_end", priceEnd)
+            putString("selected_duration", duration)
+            putString("search_query", search)
+            apply()
         }
+    }
 
-        // Filter by search query
-        if (searchQuery.isNotBlank()) {
-            result = result.filter {
-                it.title.contains(searchQuery, ignoreCase = true) ||
-                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                it.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
+    fun clearAllFilterPreferences() {
+        prefs.edit().apply {
+            remove("selected_category")
+            remove("price_range_start")
+            remove("price_range_end")
+            remove("selected_duration")
+            remove("search_query")
+            apply()
+        }
+    }
+
+    // State for category dropdown visibility and selected category with persistence
+    var isCategoryDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember {
+        mutableStateOf(prefs.getString("selected_category", "All") ?: "All")
+    }
+    // Price range state management with persistence
+    val minPrice = remember { trips.minOfOrNull { it.basePrice } ?: 0.0 }
+    val maxPrice = remember { trips.maxOfOrNull { it.basePrice } ?: 5000.0 }
+    var priceRangeStart by remember {
+        val savedStart = prefs.getFloat("price_range_start", minPrice.toFloat())
+        mutableFloatStateOf(savedStart.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
+    }
+    var priceRangeEnd by remember {
+        val savedEnd = prefs.getFloat("price_range_end", maxPrice.toFloat())
+        mutableFloatStateOf(savedEnd.coerceIn(minPrice.toFloat(), maxPrice.toFloat()))
+    }
+    var isPriceDialogVisible by remember { mutableStateOf(false) }
+    // Duration filter state management with persistence
+    val availableDurations = remember {
+        listOf("All") + trips.map { it.duration }.distinct().sorted()
+    }
+    var selectedDuration by remember {
+        val savedDuration = prefs.getString("selected_duration", "All") ?: "All"
+        mutableStateOf(if (availableDurations.contains(savedDuration)) savedDuration else "All")
+    }
+    var isDurationDropdownExpanded by remember { mutableStateOf(false) }
+    // Search query with persistence and advanced debouncing
+    var searchQuery by remember {
+        mutableStateOf(prefs.getString("search_query", "") ?: "")
+    }
+
+    // Debounced search query for performance
+    var debouncedSearchQuery by remember { mutableStateOf(searchQuery) }
+
+    // Advanced debounce search input with job cancellation for better performance
+    LaunchedEffect(searchQuery) {
+        val searchJob = Job()
+        try {
+            delay(300) // 300ms debounce delay
+            if (searchJob.isActive) {
+                debouncedSearchQuery = searchQuery
             }
+        } catch (e: Exception) {
+            // Handle cancellation gracefully
         }
+    }
 
-        result
+    // Save preferences whenever filter state changes (with debounced search and throttling)
+    LaunchedEffect(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery) {
+        delay(100)
+        saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, debouncedSearchQuery)
+    }
+
+    // High-performance optimized search function with advanced filtering
+    val filteredTrips = remember(
+        debouncedSearchQuery,
+        currentLocation,
+        selectedCategory,
+        priceRangeStart,
+        priceRangeEnd,
+        selectedDuration
+    ) {
+        if (trips.isEmpty()) return@remember emptyList<Trip>()
+
+        val searchTerms = if (debouncedSearchQuery.isBlank()) {
+            emptyList()
+        } else {
+            debouncedSearchQuery.lowercase().trim()
+                .split(Regex("\\s+"))
+                .filter { it.isNotBlank() && it.length >= 2 }
+        }
+        val currentLocationLower = currentLocation.lowercase()
+        val hasLocationFilter = currentLocationLower.isNotBlank()
+        val hasSearchFilter = searchTerms.isNotEmpty()
+        val hasCategoryFilter = selectedCategory != "All"
+        val hasPriceFilter = priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat()
+        val hasDurationFilter = selectedDuration != "All"
+
+        trips.asSequence()
+            .filter { trip ->
+                if (hasCategoryFilter && !trip.category.name.equals(selectedCategory, ignoreCase = true)) return@filter false
+                if (hasPriceFilter && trip.basePrice !in priceRangeStart..priceRangeEnd) return@filter false
+                if (hasDurationFilter && !trip.duration.equals(selectedDuration, ignoreCase = true)) return@filter false
+                if (hasSearchFilter) {
+                    val tripTitle = trip.title.lowercase()
+                    val fromLocation = trip.fromLocation.lowercase()
+                    val toLocation = trip.toLocation.lowercase()
+                    val matchesSearchTerms = searchTerms.any { term ->
+                        tripTitle.contains(term) ||
+                                fromLocation.contains(term) ||
+                                toLocation.contains(term)
+                    }
+                    val matchesCurrentLocation = hasLocationFilter && fromLocation.contains(currentLocationLower)
+                    if (!matchesSearchTerms && !matchesCurrentLocation) return@filter false
+                }
+                true
+            }
+            .toList()
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .semantics {
+                contentDescription = "Trip booking dashboard with search and filter options"
+            }
     ) {
-        // Header with Favorites Toggle
+        // Header with filter count
+        val activeFilterCount = listOf(
+            selectedCategory != "All",
+            priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat(),
+            selectedDuration != "All",
+            debouncedSearchQuery.isNotBlank()
+        ).count { it }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Header section with app title and active filters indicator"
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (showFavoritesOnly) "Your Favorite Trips" else "Discover Amazing Trips",
+                text = "Discover Amazing Trips",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.semantics {
+                    heading()
+                    contentDescription = "App title: Discover Amazing Trips"
+                }
             )
 
-            // Favorites toggle button
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            AnimatedVisibility(
+                visible = activeFilterCount > 0,
+                enter = slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300)),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
             ) {
-                Text(
-                    text = "${favoriteTrips.size}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                IconButton(
-                    onClick = { showFavoritesOnly = !showFavoritesOnly }
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .semantics {
+                            contentDescription = "$activeFilterCount active filters applied"
+                            role = Role.Button
+                        }
                 ) {
-                    Icon(
-                        imageVector = if (showFavoritesOnly) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (showFavoritesOnly) "Show All Trips" else "Show Favorites Only",
-                        tint = if (showFavoritesOnly) Color.Red else MaterialTheme.colorScheme.onSurface
-                    )
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        AnimatedContent(
+                            targetState = activeFilterCount,
+                            transitionSpec = {
+                                slideInVertically(
+                                    initialOffsetY = { if (targetState > initialState) -it else it },
+                                    animationSpec = tween(300)
+                                ) + fadeIn(animationSpec = tween(300)) togetherWith
+                                slideOutVertically(
+                                    targetOffsetY = { if (targetState > initialState) it else -it },
+                                    animationSpec = tween(300)
+                                ) + fadeOut(animationSpec = tween(300))
+                            },
+                            label = "filter count"
+                        ) { count ->
+                            Text(
+                                text = "$count filter${if (count == 1) "" else "s"}",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -159,7 +309,10 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        contentDescription = "Current location is $currentLocation, trips from this location will be prioritized"
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -172,7 +325,7 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Current Location",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -185,7 +338,7 @@ fun DashboardScreen(
             }
         }
 
-        // Enhanced Search Bar
+        // Search Bar
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -193,19 +346,37 @@ fun DashboardScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+                    contentDescription = null
                 )
             },
             trailingIcon = {
-                if (currentLocation.isNotBlank()) {
+                if (searchQuery.isNotBlank()) {
+                    IconButton(
+                        onClick = {
+                            searchQuery = ""
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Clear search query"
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else if (currentLocation.isNotBlank()) {
                     IconButton(
                         onClick = {
                             searchQuery = currentLocation
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Use current location $currentLocation as search query"
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Use Current Location",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -213,55 +384,342 @@ fun DashboardScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Search text field for destination names and locations"
+                },
             shape = RoundedCornerShape(16.dp)
         )
 
-        // Trip Cards or Empty State
-        if (filteredTrips.isEmpty() && showFavoritesOnly) {
-            // Empty favorites state
-            Column(
+        // Active Filters and Results Count
+        val hasActiveFilters = selectedCategory != "All" ||
+                priceRangeStart != minPrice.toFloat() ||
+                priceRangeEnd != maxPrice.toFloat() ||
+                selectedDuration != "All" ||
+                debouncedSearchQuery.isNotBlank()
+        AnimatedVisibility(
+            visible = hasActiveFilters,
+            enter = slideInVertically(
+                initialOffsetY = { -it / 2 },
+                animationSpec = tween(400, easing = EaseOutCubic)
+            ) + fadeIn(animationSpec = tween(400)),
+            exit = slideOutVertically(
+                targetOffsetY = { -it / 2 },
+                animationSpec = tween(300, easing = EaseInCubic)
+            ) + fadeOut(animationSpec = tween(300))
+        ) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(bottom = 8.dp)
+                    .semantics {
+                        contentDescription = "Filter results section showing ${filteredTrips.size} trips found and clear all option"
+                    },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "No favorites",
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "No Favorite Trips Yet",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "Tap the heart icon on trips you love to add them here",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(filteredTrips) { trip ->
-                    TripCard(
-                        trip = trip,
-                        isFavorite = trip.id in favoriteTrips,
-                        onReserveClick = { onTripClick(trip.id) },
-                        onFavoriteClick = {
-                            // Use coroutine scope to handle suspend function
-                            kotlinx.coroutines.MainScope().launch {
-                                favoritesManager.toggleFavorite(trip.id)
-                            }
+                AnimatedContent(
+                    targetState = filteredTrips.size,
+                    transitionSpec = {
+                        slideInVertically(
+                            initialOffsetY = { if (targetState > initialState) it else -it },
+                            animationSpec = tween(300)
+                        ) + fadeIn(animationSpec = tween(300)) togetherWith
+                        slideOutVertically(
+                            targetOffsetY = { if (targetState > initialState) -it else it },
+                            animationSpec = tween(300)
+                        ) + fadeOut(animationSpec = tween(300))
+                    },
+                    label = "results count"
+                ) { count ->
+                    Text(
+                        text = "$count trips found",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Search results: $count trips found matching current filters"
+                            liveRegion = LiveRegionMode.Polite
                         }
                     )
+                }
+
+                TextButton(
+                    onClick = {
+                        searchQuery = ""
+                        debouncedSearchQuery = ""
+                        selectedCategory = "All"
+                        priceRangeStart = minPrice.toFloat()
+                        priceRangeEnd = maxPrice.toFloat()
+                        selectedDuration = "All"
+                        clearAllFilterPreferences()
+                    },
+                    modifier = Modifier.semantics {
+                        contentDescription = "Clear all active filters and reset search. This will remove all applied filters and show all available trips"
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Clear all")
+                }
+            }
+        }
+
+        // Filter Chips Section
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+                .semantics {
+                    contentDescription = "Filter options: category, price range, and duration filters"
+                },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Category Filter
+            FilterChip(
+                label = if (selectedCategory == "All") "Category" else selectedCategory,
+                isActive = selectedCategory != "All",
+                onClick = { isCategoryDropdownExpanded = true },
+                contentDescription = "Category filter: ${if (selectedCategory == "All") "no category selected, tap to choose a category" else "selected $selectedCategory, tap to change"}"
+            )
+
+            // Price Range Filter
+            val isPriceActive = priceRangeStart != minPrice.toFloat() || priceRangeEnd != maxPrice.toFloat()
+            FilterChip(
+                label = if (isPriceActive) "$${String.format("%.0f", priceRangeStart)}-$${String.format("%.0f", priceRangeEnd)}" else "Price Range",
+                isActive = isPriceActive,
+                onClick = { isPriceDialogVisible = true },
+                contentDescription = "Price filter: ${if (isPriceActive) "range from $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}" else "no price filter set"}, tap to adjust"
+            )
+
+            // Duration Filter
+            FilterChip(
+                label = if (selectedDuration == "All") "Duration" else selectedDuration,
+                isActive = selectedDuration != "All",
+                onClick = { isDurationDropdownExpanded = true },
+                contentDescription = "Duration filter: ${if (selectedDuration == "All") "no duration selected, tap to choose a duration" else "selected $selectedDuration, tap to change"}"
+            )
+        }
+
+        // Category Dropdown
+        DropdownMenu(
+            expanded = isCategoryDropdownExpanded,
+            onDismissRequest = { isCategoryDropdownExpanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .semantics {
+                    contentDescription = "Category selection menu with ${listOf("All", "Business", "Adventure", "Cultural", "Relaxation", "Family").size} options"
+                }
+        ) {
+            val categories = listOf("All", "Business", "Adventure", "Cultural", "Relaxation", "Family")
+            categories.forEach { category ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedCategory = category
+                        isCategoryDropdownExpanded = false
+                    },
+                    text = {
+                        Text(
+                            text = category,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp)
+                        .semantics {
+                            contentDescription = if (category == "All") "Show all categories" else "Filter by $category trips"
+                            role = Role.Button
+                        }
+                )
+            }
+        }
+
+        // Price Range Dialog
+        if (isPriceDialogVisible) {
+            AlertDialog(
+                onDismissRequest = { isPriceDialogVisible = false },
+                title = {
+                    Text(
+                        text = "Price Range",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.semantics {
+                            heading()
+                            contentDescription = "Price range selector dialog"
+                        }
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Price range controls from $${String.format("%.0f", minPrice)} to $${String.format("%.0f", maxPrice)}"
+                        }
+                    ) {
+                        Text(
+                            text = "Select your budget range",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "$${String.format("%.0f", priceRangeStart)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Minimum price: $${String.format("%.0f", priceRangeStart)}"
+                                }
+                            )
+                            Text(
+                                text = "$${String.format("%.0f", priceRangeEnd)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Maximum price: $${String.format("%.0f", priceRangeEnd)}"
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        RangeSlider(
+                            value = priceRangeStart..priceRangeEnd,
+                            onValueChange = { range ->
+                                priceRangeStart = range.start
+                                priceRangeEnd = range.endInclusive
+                            },
+                            valueRange = minPrice.toFloat()..maxPrice.toFloat(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = "Price range slider. Current range: $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}"
+                                }
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "$${String.format("%.0f", minPrice)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "$${String.format("%.0f", maxPrice)}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { isPriceDialogVisible = false },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Apply price range filter from $${String.format("%.0f", priceRangeStart)} to $${String.format("%.0f", priceRangeEnd)}"
+                        }
+                    ) {
+                        Text("Apply")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            priceRangeStart = minPrice.toFloat()
+                            priceRangeEnd = maxPrice.toFloat()
+                            isPriceDialogVisible = false
+                            saveFilterPreferences(selectedCategory, priceRangeStart, priceRangeEnd, selectedDuration, searchQuery)
+                        },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Reset price range to show all trips from $${String.format("%.0f", minPrice)} to $${String.format("%.0f", maxPrice)}"
+                        }
+                    ) {
+                        Text("Reset")
+                    }
+                },
+                modifier = Modifier.semantics {
+                    contentDescription = "Price range selection dialog"
+                }
+            )
+        }
+
+        // Duration Dropdown
+        DropdownMenu(
+            expanded = isDurationDropdownExpanded,
+            onDismissRequest = { isDurationDropdownExpanded = false },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .semantics {
+                    contentDescription = "Duration selection menu with ${availableDurations.size} options"
+                }
+        ) {
+            availableDurations.forEach { duration ->
+                DropdownMenuItem(
+                    onClick = {
+                        selectedDuration = duration
+                        isDurationDropdownExpanded = false
+                    },
+                    text = {
+                        Text(
+                            text = duration,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    },
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(8.dp)
+                        .semantics {
+                            contentDescription = if (duration == "All") "Show all trip durations" else "Filter by $duration trips"
+                            role = Role.Button
+                        }
+                )
+            }
+        }
+
+        // Trip Cards
+        AnimatedContent(
+            targetState = filteredTrips,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(400)) togetherWith
+                        fadeOut(animationSpec = tween(200))
+            },
+            label = "trip cards"
+        ) { trips ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.semantics {
+                    contentDescription = "List of ${trips.size} available trips"
+                }
+            ) {
+                items(
+                    items = trips,
+                    key = { trip -> trip.id }
+                ) { trip ->
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = slideInVertically(
+                            initialOffsetY = { it / 3 },
+                            animationSpec = tween(300, easing = EaseOutCubic)
+                        ) + fadeIn(animationSpec = tween(300)),
+                        modifier = Modifier
+                    ) {
+                        TripCard(
+                            trip = trip,
+                            onReserveClick = { onTripClick(trip.id) }
+                        )
+                    }
                 }
             }
         }
@@ -272,15 +730,15 @@ fun DashboardScreen(
 @Composable
 fun TripCard(
     trip: Trip,
-    isFavorite: Boolean = false,
-    onReserveClick: () -> Unit,
-    onFavoriteClick: () -> Unit = {}
+    onReserveClick: () -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp),
+            .height(280.dp)
+            .semantics {
+                contentDescription = "Trip card: ${trip.title} from ${trip.fromLocation} to ${trip.toLocation}, ${trip.duration}, starting at ${String.format("%.0f", trip.basePrice)} FCFA, ${trip.category.name} category"
+            },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -298,25 +756,12 @@ fun TripCard(
                                 MaterialTheme.colorScheme.primaryContainer
                             )
                         )
-                    ),
+                    )
+                    .semantics {
+                        contentDescription = "${trip.category.name} category icon for ${trip.title}"
+                    },
                 contentAlignment = Alignment.Center
             ) {
-                // Favorite button in top-right corner
-                IconButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                        tint = if (isFavorite) Color.Red else Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                // Trip category icon in center
                 Icon(
                     imageVector = when (trip.category.name.lowercase()) {
                         "business" -> Icons.Default.Business
@@ -326,7 +771,7 @@ fun TripCard(
                         "family" -> Icons.Default.Groups
                         else -> Icons.Default.Flight
                     },
-                    contentDescription = trip.title,
+                    contentDescription = null,
                     modifier = Modifier.size(80.dp),
                     tint = Color.White
                 )
@@ -337,12 +782,19 @@ fun TripCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
+                    .semantics {
+                        contentDescription = "Trip details section"
+                    }
             ) {
                 Text(
                     text = trip.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.semantics {
+                        heading()
+                        contentDescription = "Trip name: ${trip.title}"
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -350,7 +802,10 @@ fun TripCard(
                 Text(
                     text = "${trip.fromLocation} → ${trip.toLocation}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.semantics {
+                        contentDescription = "Route: from ${trip.fromLocation} to ${trip.toLocation}"
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -360,28 +815,108 @@ fun TripCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Trip duration and pricing information"
+                        }
+                    ) {
                         Text(
                             text = trip.duration,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.semantics {
+                                contentDescription = "Duration: ${trip.duration}"
+                            }
                         )
                         Text(
                             text = "From $${String.format("%.0f", trip.basePrice)}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.semantics {
+                                contentDescription = "Starting price: $${String.format("%.0f", trip.basePrice)}"
+                            }
                         )
                     }
 
                     Button(
                         onClick = onReserveClick,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.semantics {
+                            contentDescription = "Reserve ${trip.title} trip from ${trip.fromLocation} to ${trip.toLocation}"
+                            role = Role.Button
+                        }
                     ) {
                         Text("Reserve")
                     }
                 }
             }
+        }
+    }
+}
+
+// Helper Composable for Filter Chips
+@Composable
+fun FilterChip(
+    label: String,
+    isActive: Boolean = false,
+    onClick: () -> Unit,
+    contentDescription: String? = null
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isActive) 1.05f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "chip scale"
+    )
+
+    val containerColor by animateColorAsState(
+        targetValue = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+        animationSpec = tween(300),
+        label = "container color"
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer,
+        animationSpec = tween(300),
+        label = "content color"
+    )
+
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        modifier = Modifier
+            .height(40.dp)
+            .padding(horizontal = 4.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .semantics {
+                this.contentDescription = contentDescription ?: label
+                role = Role.Button
+                stateDescription = if (isActive) "active filter" else "inactive filter"
+            }
+    ) {
+        AnimatedContent(
+            targetState = label,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(200)) togetherWith
+                        fadeOut(animationSpec = tween(200))
+            },
+            label = "chip label"
+        ) { currentLabel ->
+            Text(
+                text = currentLabel,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
+            )
         }
     }
 }
