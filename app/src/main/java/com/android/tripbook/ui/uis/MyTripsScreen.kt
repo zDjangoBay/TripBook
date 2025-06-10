@@ -1,6 +1,8 @@
 package com.android.tripbook.ui.uis
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun MyTripsScreen(
@@ -150,21 +155,59 @@ fun MyTripsScreen(
                 }
             }
 
-            // Trip List
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(trips.filter { trip ->
-                    (selectedTab == "All" ||
-                            (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
-                            (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
-                            (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
-                            (searchText.isEmpty() ||
-                                    trip.name.contains(searchText, ignoreCase = true) ||
-                                    trip.destination.contains(searchText, ignoreCase = true))
-                }) { trip ->
-                    TripCard(trip = trip, onClick = { onTripClick(trip) })
+            // Trip List or Empty State
+            val filteredTrips = trips.filter { trip ->
+                (selectedTab == "All" ||
+                        (selectedTab == "Planned" && trip.status == TripStatus.PLANNED) ||
+                        (selectedTab == "Active" && trip.status == TripStatus.ACTIVE) ||
+                        (selectedTab == "Completed" && trip.status == TripStatus.COMPLETED)) &&
+                        (searchText.isEmpty() ||
+                                trip.name.contains(searchText, ignoreCase = true) ||
+                                trip.destination.contains(searchText, ignoreCase = true))
+            }
+
+            if (filteredTrips.isEmpty()) {
+                // Empty State
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = if (trips.isEmpty()) Icons.Default.Add else Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color.White.copy(alpha = 0.6f),
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = if (trips.isEmpty()) "No trips yet" else "No trips found",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = if (trips.isEmpty())
+                            "Start planning your African adventure!"
+                        else
+                            "Try adjusting your search or filters",
+                        fontSize = 14.sp,
+                        color = Color.White.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(filteredTrips) { trip ->
+                        TripCard(trip = trip, onClick = { onTripClick(trip) })
+                    }
                 }
             }
         }
@@ -188,26 +231,20 @@ fun MyTripsScreen(
     }
 }
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun TripCard(
     trip: Trip,
     onClick: () -> Unit
 ) {
-    val statusColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFF0066CC)
-        TripStatus.ACTIVE -> Color(0xFF00CC66)
-        TripStatus.COMPLETED -> Color(0xFF666666)
-    }
-    val statusBgColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFFE6F3FF)
-        TripStatus.ACTIVE -> Color(0xFFE6FFE6)
-        TripStatus.COMPLETED -> Color(0xFFF0F0F0)
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick,
+                indication = rememberRipple(color = Color(0xFF667EEA)),
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -216,77 +253,64 @@ fun TripCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Column(
+        // Main content Row inside the Card: Divides content into Left and Right sections
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(20.dp), // Padding for the entire content block within the card
+            horizontalArrangement = Arrangement.SpaceBetween, // Pushes left and right columns to ends
+            verticalAlignment = Alignment.Top // Align content to the top within this row
         ) {
-            // Header with title and status
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // LEFT COLUMN: Location and Budget stacked vertically
+            Column(
+                modifier = Modifier.weight(1f) // Takes available space on the left
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = trip.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
-                    )
-                    Text(
-                        text = "${trip.startDate.format(DateTimeFormatter.ofPattern("MMM d"))} - ${
-                            trip.endDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
-                        }",
-                        fontSize = 14.sp,
-                        color = Color(0xFF667EEA),
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(statusBgColor)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = trip.status.name.uppercase(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = statusColor
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Details row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // Location
+                // Location Row
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "📍",
-                        fontSize = 14.sp,
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = trip.destination,
                         fontSize = 14.sp,
+                        color = Color(0xFF64748B),
+                        maxLines = 1 // Ensure text doesn't wrap
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp)) // Space between Location and Budget
+                // Budget Row
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AttachMoney,
+                        contentDescription = "Budget",
+                        tint = Color(0xFF64748B),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
+                        fontSize = 14.sp,
                         color = Color(0xFF64748B)
                     )
                 }
+            }
 
-                // Travelers
+            Spacer(modifier = Modifier.width(16.dp)) // Horizontal space between the left and right content columns
+
+            // RIGHT COLUMN: Travelers and Status Indicator stacked vertically
+            Column(
+                horizontalAlignment = Alignment.End // Align items within this column to the right
+            ) {
+                // Travelers Row
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "👥",
-                        fontSize = 14.sp,
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Travelers",
+                        tint = Color(0xFF64748B),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -296,22 +320,40 @@ fun TripCard(
                         color = Color(0xFF64748B)
                     )
                 }
-
-                // Budget
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "💰",
-                        fontSize = 14.sp,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "$${trip.budget}",
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
+                Spacer(modifier = Modifier.height(5.dp)) // Small vertical space between travelers text and status indicator
+                // Status Indicator
+                TripStatusIndicator(status = trip.status)
             }
         }
+    }
+}
+
+@Composable
+fun TripStatusIndicator(status: TripStatus) {
+    val backgroundColor = when (status) {
+        TripStatus.PLANNED -> Color(0xFFC8E6C9) // Light Green (Material Green 300)
+        TripStatus.ACTIVE -> Color(0xFFFFD54F) // Light Orange/Amber (Material Amber 300)
+        TripStatus.COMPLETED -> Color(0xFFFFCDD2) // Light Red (Material Red 100)
+    }
+
+    val textColor = when (status) {
+        TripStatus.PLANNED -> Color(0xFF388E3C) // Darker Green (Material Green 700)
+        TripStatus.ACTIVE -> Color(0xFFEF6C00) // Darker Orange (Material Orange 800)
+        TripStatus.COMPLETED -> Color(0xFFD32F2F) // Darker Red (Material Red 700)
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp)) // Slightly rounded corners for the indicator
+            .background(backgroundColor)
+            .padding(horizontal = 8.dp, vertical = 4.dp), // Padding inside the indicator
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = status.name, // Will display PLANNED, ACTIVE, COMPLETED
+            fontSize = 10.sp, // Small font size
+            fontWeight = FontWeight.SemiBold,
+            color = textColor
+        )
     }
 }
