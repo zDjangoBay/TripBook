@@ -38,9 +38,6 @@ import com.android.tripbook.data.models.Trip
 @Composable
 fun DashboardScreen(
     onTripClick: (String) -> Unit
-) {
-    val context = LocalContext.current
-    var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
 
@@ -71,21 +68,11 @@ fun DashboardScreen(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-            )
-        } else {
             currentLocation = "New York, NY" // Mock location
         }
     }
 
-    val filteredTrips = remember(searchQuery, currentLocation) {
-        if (searchQuery.isBlank()) {
-            trips
         } else {
-            trips.filter {
-                it.title.contains(searchQuery, ignoreCase = true) ||
-                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
-                it.toLocation.contains(searchQuery, ignoreCase = true) ||
-                (currentLocation.isNotBlank() && it.fromLocation.contains(currentLocation, ignoreCase = true))
             }
         }
     }
@@ -95,13 +82,11 @@ fun DashboardScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header
         Text(
             text = "Discover Amazing Trips",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
         )
 
         // Current Location Display
@@ -109,7 +94,6 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -122,7 +106,6 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
-                        contentDescription = "Current Location",
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -143,11 +126,9 @@ fun DashboardScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
                 )
             },
             trailingIcon = {
-                if (currentLocation.isNotBlank()) {
                     IconButton(
                         onClick = {
                             searchQuery = currentLocation
@@ -155,7 +136,6 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
-                            contentDescription = "Use Current Location",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -163,15 +143,11 @@ fun DashboardScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
             shape = RoundedCornerShape(16.dp)
         )
 
-        // Trip Cards
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(filteredTrips) { trip ->
                 TripCard(
                     trip = trip,
                     onReserveClick = { onTripClick(trip.id) }
@@ -187,11 +163,9 @@ fun TripCard(
     trip: Trip,
     onReserveClick: () -> Unit
 ) {
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -209,7 +183,6 @@ fun TripCard(
                                 MaterialTheme.colorScheme.primaryContainer
                             )
                         )
-                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -221,7 +194,6 @@ fun TripCard(
                         "family" -> Icons.Default.Groups
                         else -> Icons.Default.Flight
                     },
-                    contentDescription = trip.title,
                     modifier = Modifier.size(80.dp),
                     tint = Color.White
                 )
@@ -237,7 +209,6 @@ fun TripCard(
                     text = trip.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -245,7 +216,6 @@ fun TripCard(
                 Text(
                     text = "${trip.fromLocation} → ${trip.toLocation}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -255,23 +225,19 @@ fun TripCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
                         Text(
                             text = trip.duration,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "From $${String.format("%.0f", trip.basePrice)}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
                         )
                     }
 
                     Button(
                         onClick = onReserveClick,
-                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Text("Reserve")
                     }

@@ -1,6 +1,5 @@
 import React from "react";
 
-// Sample reservations for testing
 const sampleReservations = [
   {
     destination: "Nairobi",

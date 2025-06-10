@@ -15,7 +15,6 @@ import com.android.tripbook.ui.screens.dashboard.DashboardScreen
 import com.android.tripbook.ui.screens.reservations.ReservationListScreen
 import com.android.tripbook.ui.screens.notifications.NotificationScreen
 import com.android.tripbook.ui.screens.profile.ProfileScreen
-import com.android.tripbook.ui.screens.profile.EditProfileScreen
 import com.android.tripbook.ui.screens.reservation.ReservationFlowActivity
 import com.android.tripbook.ui.screens.PaymentScreen
 
@@ -65,19 +64,6 @@ fun DashboardActivity() {
                 NotificationScreen()
             }
             composable("profile") {
-                ProfileScreen(
-                    onNavigateToEditProfile = {
-                        navController.navigate("edit_profile")
-                    }
-                )
-            }
-            composable("edit_profile") {
-                EditProfileScreen(
-                    onNavigateBack = { navController.popBackStack() },
-                    onProfileUpdated = {
-                        navController.popBackStack()
-                    }
-                )
             }
             composable("payment/{reservationId}") { backStackEntry ->
                 val reservationId = backStackEntry.arguments?.getString("reservationId") ?: ""

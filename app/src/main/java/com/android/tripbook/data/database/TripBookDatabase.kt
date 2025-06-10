@@ -4,8 +4,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import android.content.Context
 import com.android.tripbook.data.database.converters.DateTimeConverters
 import com.android.tripbook.data.database.entities.*
@@ -53,7 +51,6 @@ import com.android.tripbook.data.database.dao.*
         NotificationEntity::class,
         UserFavoriteEntity::class
     ],
-    version = 3,
     exportSchema = true
 )
 @TypeConverters(DateTimeConverters::class)
@@ -83,24 +80,6 @@ abstract class TripBookDatabase : RoomDatabase() {
         private var INSTANCE: TripBookDatabase? = null
 
         /**
-         * Migration from version 1 to 2: Add password_hash column to users table
-         */
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE users ADD COLUMN password_hash TEXT NOT NULL DEFAULT ''")
-            }
-        }
-
-        /**
-         * Migration from version 2 to 3: Add bio column to users table
-         */
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE users ADD COLUMN bio TEXT")
-            }
-        }
-
-        /**
          * Get database instance using singleton pattern
          * Thread-safe implementation with double-checked locking
          */
@@ -111,7 +90,6 @@ abstract class TripBookDatabase : RoomDatabase() {
                     TripBookDatabase::class.java,
                     DATABASE_NAME
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .fallbackToDestructiveMigration() // For development - remove in production
                     .build()
 
@@ -278,8 +256,6 @@ class DatabaseInitializer {
                 username = "demo_user",
                 email = "demo@tripbook.com",
                 firstName = "Demo",
-                lastName = "User",
-                passwordHash = "demo123".hashCode().toString() // Simple hash for demo
             )
 
             database.userDao().insertUser(sampleUser)

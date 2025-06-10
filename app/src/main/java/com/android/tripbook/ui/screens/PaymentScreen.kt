@@ -14,12 +14,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.data.managers.ReservationSessionManager
-import com.android.tripbook.data.managers.UserSessionManager
 import com.android.tripbook.data.services.FakeNotificationDispatcher
 import com.android.tripbook.data.services.MockPaymentProcessor
-import com.android.tripbook.TripBookApplication
 import kotlinx.coroutines.delay
 
 /**
@@ -34,14 +31,6 @@ fun PaymentScreen(
 ) {
     val paymentProcessor = remember { MockPaymentProcessor.getInstance() }
     val notificationDispatcher = remember { FakeNotificationDispatcher.getInstance() }
-    val context = LocalContext.current
-    val application = context.applicationContext as TripBookApplication
-    val userSessionManager = remember {
-        UserSessionManager.getInstance(context, application.database)
-    }
-    val sessionManager = remember {
-        ReservationSessionManager.getInstance(context, application.database, userSessionManager)
-    }
 
     val paymentMethods = remember { paymentProcessor.getAvailablePaymentMethods() }
     var selectedPaymentMethod by remember { mutableStateOf<MockPaymentProcessor.PaymentMethod?>(null) }

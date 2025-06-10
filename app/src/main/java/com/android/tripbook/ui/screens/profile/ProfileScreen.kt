@@ -1,8 +1,6 @@
 package com.android.tripbook.ui.screens.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -16,27 +14,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
-import com.android.tripbook.data.managers.UserSessionManager
-import com.android.tripbook.TripBookApplication
 
 @Composable
-fun ProfileScreen(
-    onNavigateToEditProfile: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    val application = context.applicationContext as TripBookApplication
-    val userSessionManager = remember {
-        UserSessionManager.getInstance(context, application.database)
-    }
-
-    val currentUser by userSessionManager.currentUser.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
         Text(
@@ -70,13 +53,11 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = currentUser?.getFullName() ?: "User",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = currentUser?.email ?: "user@email.com",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -116,66 +97,11 @@ fun ProfileScreen(
         )
         
         profileOptions.forEach { option ->
-            if (option.title == "Sign Out") {
-                // Special styling for Sign Out option
-                @OptIn(ExperimentalMaterial3Api::class)
-                Card(
-                    onClick = { userSessionManager.logout() },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = option.icon,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(24.dp)
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        Text(
-                            text = option.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.error,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Default.ChevronRight,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-            } else {
                 ProfileOptionCard(
                     option = option,
-                    onClick = {
-                        when (option.title) {
-                            "Edit Profile" -> onNavigateToEditProfile()
-                            else -> {
-                                // Handle other option clicks
-                            }
-                        }
-                    }
                 )
-            }
             Spacer(modifier = Modifier.height(8.dp))
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
