@@ -308,7 +308,7 @@ fun DestinationCard(destination: Destination) {
                     color = Color(0xFF64748B)
                 )
                 Text(
-                    text = NumberFormat.getCurrencyInstance(Locale.US).format(destination.destinationTarif),
+                    text = NumberFormat.getCurrencyInstance(Locale.PRC).format(destination.destinationTarif),
                     fontSize = 14.sp,
                     color = Color(0xFF667EEA)
                 )

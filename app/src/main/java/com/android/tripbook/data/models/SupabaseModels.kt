@@ -1,7 +1,5 @@
 package com.android.tripbook.data.models
 
-
-
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TravelCompanion
 import com.android.tripbook.model.TripCategory
@@ -12,7 +10,6 @@ import com.android.tripbook.model.Location
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 // Serializable models for Supabase database operations
 
@@ -64,13 +61,13 @@ data class SupabaseTrip(
         return Trip(
             id = id ?: "",
             name = name,
-            startDate = parseDate(start_date) ?: LocalDate.now(),
-            endDate = parseDate(end_date) ?: LocalDate.now().plusDays(1),
+            startDate = LocalDate.parse(start_date),
+            endDate = LocalDate.parse(end_date),
             destination = destination,
             travelers = travelers,
             budget = budget,
-            status = parseStatus(status),
-            category = parseCategory(category),
+            status = TripStatus.valueOf(status),
+            category = TripCategory.valueOf(category),
             description = description,
             companions = companions
         )
@@ -90,37 +87,6 @@ data class SupabaseTrip(
                 category = trip.category.name,
                 description = trip.description
             )
-        }
-
-        private fun parseDate(dateString: String): LocalDate? {
-            return try {
-                LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE)
-            } catch (e: DateTimeParseException) {
-                // Try alternative formats if needed
-                try {
-                    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                } catch (e2: DateTimeParseException) {
-                    null
-                }
-            }
-        }
-
-        private fun parseStatus(statusString: String): TripStatus {
-            return try {
-                TripStatus.valueOf(statusString.uppercase())
-            } catch (e: IllegalArgumentException) {
-                // Fallback to a default status if parsing fails
-                TripStatus.PLANNED // Assuming PLANNING is a valid default status
-            }
-        }
-
-        private fun parseCategory(categoryString: String): TripCategory {
-            return try {
-                TripCategory.valueOf(categoryString.uppercase())
-            } catch (e: IllegalArgumentException) {
-                // Fallback to a default category if parsing fails
-                TripCategory.ADVENTURE // Assuming LEISURE is a valid default category
-            }
         }
     }
 }
@@ -150,26 +116,20 @@ data class SupabaseItineraryItem(
         return ItineraryItem(
             id = id ?: "",
             tripId = trip_id,
-            date = parseDate(date) ?: LocalDate.now(),
+            date = LocalDate.parse(date),
             time = time,
             title = title,
             location = location,
-            type = parseItineraryType(type),
+            type = ItineraryType.valueOf(type),
             notes = notes,
             description = description,
             duration = duration,
             cost = cost,
             isCompleted = is_completed,
-            coordinates = createLocation()
+            coordinates = if (latitude != null && longitude != null) {
+                Location(latitude, longitude, address, place_id)
+            } else null
         )
-    }
-
-    private fun createLocation(): Location? {
-        return if (latitude != null && longitude != null &&
-            latitude >= -90.0 && latitude <= 90.0 &&
-            longitude >= -180.0 && longitude <= 180.0) {
-            Location(latitude, longitude, address, place_id)
-        } else null
     }
 
     companion object {
@@ -192,27 +152,6 @@ data class SupabaseItineraryItem(
                 address = item.coordinates?.address ?: "",
                 place_id = item.coordinates?.placeId ?: ""
             )
-        }
-
-        private fun parseDate(dateString: String): LocalDate? {
-            return try {
-                LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE)
-            } catch (e: DateTimeParseException) {
-                try {
-                    LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                } catch (e2: DateTimeParseException) {
-                    null
-                }
-            }
-        }
-
-        private fun parseItineraryType(typeString: String): ItineraryType {
-            return try {
-                ItineraryType.valueOf(typeString.uppercase())
-            } catch (e: IllegalArgumentException) {
-                // Fallback to a default type if parsing fails
-                ItineraryType.ACTIVITY // Assuming ACTIVITY is a valid default type
-            }
         }
     }
 }
@@ -237,22 +176,5 @@ data class TripWithDetails(
     fun toTrip(): Trip {
         return trip.toTrip(companions.map { it.toTravelCompanion() })
             .copy(itinerary = itinerary.map { it.toItineraryItem() })
-    }
-}
-
-// Extension functions for additional safety
-fun String?.toSafeDouble(default: Double = 0.0): Double {
-    return this?.toDoubleOrNull() ?: default
-}
-
-fun String?.toSafeInt(default: Int = 0): Int {
-    return this?.toIntOrNull() ?: default
-}
-
-fun String?.toSafeBoolean(default: Boolean = false): Boolean {
-    return when (this?.lowercase()) {
-        "true", "1", "yes" -> true
-        "false", "0", "no" -> false
-        else -> default
     }
 }
