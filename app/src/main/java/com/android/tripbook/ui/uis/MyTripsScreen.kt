@@ -237,17 +237,6 @@ fun TripCard(
     trip: Trip,
     onClick: () -> Unit
 ) {
-    val statusColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFF0066CC)
-        TripStatus.ACTIVE -> Color(0xFF00CC66)
-        TripStatus.COMPLETED -> Color(0xFF666666)
-    }
-    val statusBgColor = when (trip.status) {
-        TripStatus.PLANNED -> Color(0xFFE6F3FF)
-        TripStatus.ACTIVE -> Color(0xFFE6FFE6)
-        TripStatus.COMPLETED -> Color(0xFFF0F0F0)
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -272,72 +261,99 @@ fun TripCard(
             // Header with title and status
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                // Use SpaceBetween to push Location to left and Travelers/Status to right
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                // Location (left side)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f) // Takes up remaining space
                 ) {
-                    // First row: Location and Travelers
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        // Location
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location",
-                                tint = Color(0xFF64748B),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = trip.destination,
-                                fontSize = 14.sp,
-                                color = Color(0xFF64748B),
-                                maxLines = 1
-                            )
-                        }
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        tint = Color(0xFF64748B),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = trip.destination,
+                        fontSize = 14.sp,
+                        color = Color(0xFF64748B),
+                        maxLines = 1 // Ensure text doesn't wrap
+                    )
+                }
 
-                        // Travelers
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Travelers",
-                                tint = Color(0xFF64748B),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = "${trip.travelers} travelers",
-                                fontSize = 14.sp,
-                                color = Color(0xFF64748B)
-                            )
-                        }
-                    }
-
-                    // Second row: Budget (full width)
+                // Travelers and Status Indicator (right side)
+                // Wrapped in a Column to stack Travelers text and the indicator
+                Column(
+                    horizontalAlignment = Alignment.End // Align content within this column to the right
+                ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.AttachMoney,
-                            contentDescription = "Budget",
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Travelers",
                             tint = Color(0xFF64748B),
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
+                            text = "${trip.travelers} travelers",
                             fontSize = 14.sp,
                             color = Color(0xFF64748B)
                         )
                     }
+                    Spacer(modifier = Modifier.height(4.dp)) // Small space between text and indicator
+                    TripStatusIndicator(status = trip.status)
                 }
+            }
+
+            // Second row: Budget (full width, below the first row)
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
+                Icon(
+                    imageVector = Icons.Default.AttachMoney,
+                    contentDescription = "Budget",
+                    tint = Color(0xFF64748B),
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B)
+                )
+            }
         }
     }
-}}
+}
+
+@Composable
+fun TripStatusIndicator(status: TripStatus) {
+    val backgroundColor = when (status) {
+        TripStatus.PLANNED -> Color(0xFFC8E6C9) // Light Green (Material Green 300)
+        TripStatus.ACTIVE -> Color(0xFFFFD54F) // Light Orange/Amber (Material Amber 300)
+        TripStatus.COMPLETED -> Color(0xFFFFCDD2) // Light Red (Material Red 100)
+    }
+
+    val textColor = when (status) {
+        TripStatus.PLANNED -> Color(0xFF388E3C) // Darker Green (Material Green 700)
+        TripStatus.ACTIVE -> Color(0xFFEF6C00) // Darker Orange (Material Orange 800)
+        TripStatus.COMPLETED -> Color(0xFFD32F2F) // Darker Red (Material Red 700)
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(6.dp)) // Slightly rounded corners for the indicator
+            .background(backgroundColor)
+            .padding(horizontal = 8.dp, vertical = 4.dp), // Padding inside the indicator
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = status.name, // Will display PLANNED, ACTIVE, COMPLETED
+            fontSize = 10.sp, // Small font size
+            fontWeight = FontWeight.SemiBold,
+            color = textColor
+        )
+    }
+}
