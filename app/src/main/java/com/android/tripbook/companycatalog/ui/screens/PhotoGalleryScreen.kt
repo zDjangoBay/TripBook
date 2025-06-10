@@ -39,40 +39,40 @@ fun PhotoGalleryScreen() {
             TravelPhoto(
                 id = "1",
                 imageResId = R.drawable.mock_logo_1,
-                location = "Serengeti National Park",
-                caption = "Wildlife safari at its finest",
-                photographerName = "David Wilson",
+                location = "Waza National Park",
+                caption = "Wildlife safari in northern Cameroon",
+                photographerName = "Claude Mbida",
                 timeAgo = "1 hour ago"
             ),
             TravelPhoto(
                 id = "2",
                 imageResId = R.drawable.mock_logo_2,
-                location = "Zanzibar Beach",
-                caption = "Crystal clear waters",
-                photographerName = "Lisa Brown",
+                location = "Kribi Beach",
+                caption = "Crystal clear waters of the Atlantic",
+                photographerName = "Sylvie Atangana",
                 timeAgo = "3 hours ago"
             ),
             TravelPhoto(
                 id = "3",
                 imageResId = R.drawable.mock_logo_3,
-                location = "Ethiopian Highlands",
-                caption = "Mountain trekking adventure",
-                photographerName = "Ahmed Hassan",
+                location = "Mount Cameroon",
+                caption = "Trekking Africa's highest active volcano",
+                photographerName = "Roger Fongang",
                 timeAgo = "1 day ago"
             ),
             TravelPhoto(
                 id = "4",
                 imageResId = R.drawable.mock_logo_4,
-                location = "Sahara Desert",
-                caption = "Camel trek at sunset",
-                photographerName = "Maria Garcia",
+                location = "Rhumsiki Village",
+                caption = "Sunset over the Mandara Mountains",
+                photographerName = "Beatrice Ngo",
                 timeAgo = "2 days ago"
             ),
             TravelPhoto(
                 id = "5",
                 imageResId = R.drawable.mock_logo_5,
-                location = "Kruger National Park",
-                caption = "Big Five spotted!",
+                location = "Dja Biosphere Reserve",
+                caption = "Rare forest elephants spotted!",
                 photographerName = "John Smith",
                 timeAgo = "1 week ago"
             )

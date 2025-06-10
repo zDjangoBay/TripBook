@@ -81,35 +81,35 @@ fun SafetyScreen() {
         listOf(
             EmergencyContact(
                 id = "1",
-                country = "Kenya",
-                police = "999",
-                medical = "999",
-                fire = "999",
-                tourist = "+254 20 2711077"
+                country = "Cameroon",
+                police = "17",
+                medical = "18",
+                fire = "18",
+                tourist = "+237 222 23 40 11"
             ),
             EmergencyContact(
                 id = "2",
-                country = "South Africa",
-                police = "10111",
-                medical = "10177",
-                fire = "10177",
-                tourist = "+27 12 428 9111"
+                country = "Chad",
+                police = "17",
+                medical = "18",
+                fire = "18",
+                tourist = "+235 22 52 80 09"
             ),
             EmergencyContact(
                 id = "3",
-                country = "Tanzania",
-                police = "999",
-                medical = "114",
-                fire = "115",
-                tourist = "+255 22 213 1555"
+                country = "Central African Republic",
+                police = "117",
+                medical = "118",
+                fire = "118",
+                tourist = "+236 21 61 45 66"
             ),
             EmergencyContact(
                 id = "4",
-                country = "Morocco",
-                police = "19",
-                medical = "15",
-                fire = "15",
-                tourist = "+212 537 57 21 77"
+                country = "Equatorial Guinea",
+                police = "114",
+                medical = "115",
+                fire = "115",
+                tourist = "+240 333 09 26 53"
             )
         )
     }
