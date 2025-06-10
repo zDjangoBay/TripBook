@@ -1,4 +1,4 @@
-package com.android.tripbook.ui.components
+package com.android.tripbook.ui.navigation
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,6 +9,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.ui.navigation.BottomNavItem
 
 @Composable
 fun BottomNavigationBar(

@@ -14,10 +14,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.android.tripbook.ViewModel.MainViewModel
+import com.android.tripbook.viewmodel.MainViewModel
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.android.tripbook.viewmodel.BusCompaniesViewModel
+import com.android.tripbook.viewmodel.BoatCompanyViewModel
+import com.android.tripbook.data.SampleTrips
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
@@ -46,12 +51,14 @@ fun MainNavGraph(
 
         composable("catalog") {
             TripCatalogScreen(
-                modifier = Modifier.fillMaxSize(),
+                modifier= Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onNavigateToAddPlace = { navController.navigate("addPlace/{tripId}")}
             )
         }
+
 
         composable("profile") {
             ProfileScreen(navController = navController)
@@ -61,12 +68,12 @@ fun MainNavGraph(
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0
             TripDetailScreen(
                 tripId = tripId,
-                navController = navController,
                 onBack = { navController.popBackStack() },
-                onSeeAllReviews = { id ->
+                navController = navController,
+                onSeeAllReviews = { id: Int ->
                     navController.navigate("reviews/$id")
                 },
-                onBookTrip = { id ->
+                onBookTrip = { id: Int ->
                     navController.navigate("booking/$id")
                 }
             )
@@ -113,6 +120,67 @@ fun MainNavGraph(
                     }
                 }
             )
+        }
+
+
+
+
+        // New Bus Companies Screen Route
+        composable("bus_companies") {
+            val busCompaniesViewModel: BusCompaniesViewModel = viewModel()
+            val busCompanies by busCompaniesViewModel.busCompanies.collectAsState()
+            val popularDestinations by busCompaniesViewModel.popularDestinations.collectAsState()
+            val isLoadingCompanies by busCompaniesViewModel.isLoadingCompanies.collectAsState()
+            val isLoadingDestinations by busCompaniesViewModel.isLoadingDestinations.collectAsState()
+
+            BusCompaniesScreen(
+                navController = navController,
+                busCompanies = busCompanies,
+                popularDestinations = popularDestinations,
+                isLoadingCompanies = isLoadingCompanies,
+                isLoadingDestinations = isLoadingDestinations,
+                onCompanyClick = { company ->
+                    busCompaniesViewModel.onCompanyClick(company)
+
+                    navController.navigate("company_details/${company.id}")
+                },
+                onDestinationClick = { destination ->
+                    busCompaniesViewModel.onDestinationClick(destination)
+
+                    navController.navigate("destination_details/${destination.id}")
+                }
+            )
+        }
+        composable("boat_companies") {
+            val boatCompaniesViewModel: BoatCompanyViewModel = viewModel()
+            val boatCompanies by boatCompaniesViewModel.boatCompanies.collectAsState()
+            val popularDestinations by boatCompaniesViewModel.popularDestinations.collectAsState()
+            val isLoadingCompanies by boatCompaniesViewModel.isLoadingCompanies.collectAsState()
+            val isLoadingDestinations by boatCompaniesViewModel.isLoadingDestinations.collectAsState()
+
+            BoatCompaniesScreen(
+                navController = navController,
+                boatCompanies = boatCompanies,
+                destinations = popularDestinations,
+                isLoadingCompanies = isLoadingCompanies,
+                isLoadingDestinations = isLoadingDestinations,
+                onCompanyClick = { company ->
+                    boatCompaniesViewModel.onCompanyClick(company)
+                    navController.navigate("company_details/${company.id}")
+                },
+                onDestinationClick = { destination ->
+                    boatCompaniesViewModel.onDestinationClick(destination)
+                    navController.navigate("destination_details/${destination.id}")
+                }
+            )
+        }
+
+        composable("airline_companies") {
+            AirlineScreen(navController = navController)
+        }
+
+        composable("train_companies") {
+            TrainCompaniesScreen(navController = navController)
         }
 
         composable(
