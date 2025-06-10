@@ -110,9 +110,9 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
-    // Accompanist (optional, from reservations branch)
+    // Accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 
-    // Calendar (from reservations branch)
+    // Calendar
     implementation("com.kizitonwose.calendar:compose:2.4.0")
 }
