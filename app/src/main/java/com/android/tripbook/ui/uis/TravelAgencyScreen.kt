@@ -2,7 +2,6 @@ package com.android.tripbook.ui.uis
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,9 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,6 +22,7 @@ import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.service.AgencyService
 import com.android.tripbook.service.TravelAgency
 import com.android.tripbook.service.TravelAgencyService
+import androidx. compose. foundation. clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,29 +46,27 @@ fun TravelAgencyScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF667EEA), Color(0xFF764BA2))
-                )
-            )
+            .background(Color.White)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 20.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
             // Header
-            Row(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .height(120.dp)
+                    .background(Color(0xFF667EEA))
             ) {
                 IconButton(
                     onClick = onBackClick,
                     modifier = Modifier
+                        .padding(16.dp)
                         .size(40.dp)
-                        .background(Color.White.copy(alpha = 0.2f), CircleShape)
+                        .background(
+                            color = Color.White.copy(alpha = 0.2f),
+                            shape = CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
@@ -78,38 +74,36 @@ fun TravelAgencyScreen(
                         tint = Color.White
                     )
                 }
-                Spacer(modifier = Modifier.width(12.dp))
+                
                 Text(
                     text = "Travel Agencies in $destination",
-                    style = TextStyle(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp)
                 )
             }
-
-            // Content Card
+            
+            // Filters
             Card(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF8FAFC))
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    // Filters
                     Text(
-                        text = "Filter Services",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF374151)
+                        text = "Filters",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
                     )
+                    
                     Spacer(modifier = Modifier.height(8.dp))
+                    
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -119,77 +113,61 @@ fun TravelAgencyScreen(
                             onClick = {
                                 minRating = if (minRating == null) 4.0f else null
                             },
-                            label = { Text("Rating 4.0+") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = { Text("4+ Stars") }
                         )
+                        
                         FilterChip(
                             selected = maxPrice != null,
                             onClick = {
-                                maxPrice = if (maxPrice == null) 300 else null
+                                maxPrice = if (maxPrice == null) 200 else null
                             },
-                            label = { Text("Price ≤ $300") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = { Text("Under $200") }
                         )
+                        
                         FilterChip(
                             selected = serviceType != null,
                             onClick = {
                                 serviceType = if (serviceType == null) "Tour" else null
                             },
-                            label = { Text("Tours Only") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFF667EEA),
-                                selectedLabelColor = Color.White
-                            )
+                            label = { Text("Tours Only") }
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Agency List or Empty State
-                    if (agencies.isEmpty()) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "No travel agencies found for $destination",
-                                fontSize = 16.sp,
-                                color = Color(0xFF64748B),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Text(
-                                text = "Try adjusting filters or selecting a different destination",
-                                fontSize = 14.sp,
-                                color = Color(0xFF64748B)
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(agencies) { agency ->
-                                AgencyCard(
-                                    agency = agency,
-                                    onServiceClick = { service ->
-                                        val itineraryType = when (service.type) {
-                                            "Tour" -> ItineraryType.ACTIVITY
-                                            "Accommodation" -> ItineraryType.ACCOMMODATION
-                                            "Transportation" -> ItineraryType.TRANSPORTATION
-                                            else -> ItineraryType.ACTIVITY
-                                        }
-                                        onServiceSelected(service, itineraryType)
-                                    }
-                                )
+                }
+            }
+            
+            // Agency List
+            if (agencies.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No agencies found for $destination",
+                        color = Color.Gray
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(agencies) { agency ->
+                        AgencyCard(
+                            agency = agency,
+                            onServiceClick = { service ->
+                                val itineraryType = when (service.type) {
+                                    "Tour" -> ItineraryType.ACTIVITY
+                                    "Accommodation" -> ItineraryType.ACCOMMODATION
+                                    "Transportation" -> ItineraryType.TRANSPORTATION
+                                    else -> ItineraryType.ACTIVITY
+                                }
+                                onServiceSelected(service, itineraryType)
                             }
-                        }
+                        )
                     }
                 }
             }
@@ -198,43 +176,63 @@ fun TravelAgencyScreen(
 }
 
 @Composable
-private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> Unit) {
+fun AgencyCard(
+    agency: TravelAgency,
+    onServiceClick: (AgencyService) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = agency.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A202C)
-            )
             Row(
-                modifier = Modifier.padding(vertical = 4.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    contentDescription = "Rating",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(16.dp)
-                )
                 Text(
-                    text = "${agency.rating}/5.0",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
+                    text = agency.name,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Rating",
+                        tint = Color(0xFFFFC107),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "${agency.rating}",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                }
             }
+            
+            Divider(
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+            
+            Text(
+                text = "Services",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+            
             Spacer(modifier = Modifier.height(8.dp))
+            
             agency.services.forEach { service ->
-                ServiceItem(service = service, onClick = { onServiceClick(service) })
+                ServiceItem(
+                    service = service,
+                    onClick = { onServiceClick(service) }
+                )
+                
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -242,7 +240,10 @@ private fun AgencyCard(agency: TravelAgency, onServiceClick: (AgencyService) -> 
 }
 
 @Composable
-private fun ServiceItem(service: AgencyService, onClick: () -> Unit) {
+fun ServiceItem(
+    service: AgencyService,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
