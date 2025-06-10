@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.model.Location
 import com.android.tripbook.model.Trip
+import com.android.tripbook.service.GoogleMapsService
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -18,11 +18,9 @@ fun TripMapView(
     modifier: Modifier = Modifier,
     showRoute: Boolean = true
 ) {
-    // Default center point (you can customize this)
+    // Default center point
     val defaultCenter = LatLng(0.0, 0.0)
-    val mapCenter = trip.mapCenter?.let {
-        LatLng(it.latitude, it.longitude)
-    } ?: trip.destinationCoordinates?.let {
+    val mapCenter = trip.destinationCoordinates?.let {
         LatLng(it.latitude, it.longitude)
     } ?: defaultCenter
 
@@ -66,9 +64,19 @@ fun TripMapView(
         // Add route polylines if requested
         if (showRoute) {
             trip.itinerary.forEachIndexed { index, item ->
-                item.routeToNext?.let { route ->
-                    // You would decode the polyline here and add it as a Polyline
-                    // This requires the GoogleMapsService.decodePolyline function
+                if (index < trip.itinerary.size - 1) {
+                    val nextItem = trip.itinerary[index + 1]
+                    if (item.coordinates != null && nextItem.coordinates != null) {
+                        // Simple straight line between points for now
+                        Polyline(
+                            points = listOf(
+                                LatLng(item.coordinates.latitude, item.coordinates.longitude),
+                                LatLng(nextItem.coordinates.latitude, nextItem.coordinates.longitude)
+                            ),
+                            color = androidx.compose.ui.graphics.Color.Blue,
+                            width = 5f
+                        )
+                    }
                 }
             }
         }
@@ -128,6 +136,7 @@ fun LocationPicker(
 @Composable
 fun PlaceSearchField(
     onPlaceSelected: (String, String) -> Unit, // placeName, placeId
+    googleMapsService: GoogleMapsService? = null,
     modifier: Modifier = Modifier
 ) {
     var searchText by remember { mutableStateOf("") }
@@ -140,8 +149,7 @@ fun PlaceSearchField(
             onValueChange = { newText ->
                 searchText = newText
                 showSuggestions = newText.isNotEmpty()
-                // Here you would call your GoogleMapsService to get suggestions
-                // For now, we'll use mock data
+                // Use mock data for now
                 if (newText.isNotEmpty()) {
                     suggestions = listOf(
                         "Search result 1",
