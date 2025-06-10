@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.TripStatus
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun MyTripsScreen(
@@ -330,7 +332,7 @@ fun TripCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "FCFA ${String.format("%,d", trip.budget)}",
+                            text = "FCFA ${NumberFormat.getNumberInstance(Locale.getDefault()).format(trip.budget)}",
                             fontSize = 14.sp,
                             color = Color(0xFF64748B)
                         )

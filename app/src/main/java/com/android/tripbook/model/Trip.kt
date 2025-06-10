@@ -1,6 +1,6 @@
 package com.android.tripbook.model
 import androidx.room.TypeConverter
-import com.android.tripbook.service.AgencyService
+import com.android.tripbook.service.AgencyService // Assuming AgencyService is defined and Gson-serializable
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.time.LocalDate
@@ -94,7 +94,7 @@ data class Trip(
     // Validation
     fun isValid(): Boolean {
         return name.isNotBlank() &&
-                startDate.isBefore(endDate) || startDate.isEqual(endDate) &&
+                (startDate.isBefore(endDate) || startDate.isEqual(endDate)) && // Corrected logic for clarity
                 travelers > 0 &&
                 budget >= 0
     }
@@ -134,13 +134,15 @@ class Converters {
         return ItineraryType.valueOf(type)
     }
 
+    // --- MODIFIED for Nullability Handling ---
     @TypeConverter
-    fun fromStringList(list: List<String>): String {
-        return gson.toJson(list)
+    fun fromStringList(list: List<String>?): String? { // Made input nullable
+        return gson.toJson(list) // Gson will handle null lists gracefully (produces "null" string)
     }
 
     @TypeConverter
-    fun toStringList(json: String): List<String> {
+    fun toStringList(json: String?): List<String> { // Made input nullable
+        if (json == null || json == "null") return emptyList() // Handle explicit null or "null" string
         val type = object : TypeToken<List<String>>() {}.type
         return gson.fromJson(json, type) ?: emptyList()
     }
@@ -166,12 +168,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromItineraryList(list: List<ItineraryItem>): String {
-        return gson.toJson(list)
+    fun fromItineraryList(list: List<ItineraryItem>?): String? { // Made input nullable
+        return gson.toJson(list) // Gson handles null lists gracefully
     }
 
     @TypeConverter
-    fun toItineraryList(json: String): List<ItineraryItem> {
+    fun toItineraryList(json: String?): List<ItineraryItem> { // Made input nullable
+        if (json == null || json == "null") return emptyList() // Handle explicit null or "null" string
         val type = object : TypeToken<List<ItineraryItem>>() {}.type
         return gson.fromJson(json, type) ?: emptyList()
     }
