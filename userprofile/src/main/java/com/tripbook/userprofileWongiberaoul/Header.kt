@@ -169,6 +169,9 @@ fun MediaStat(label: String, count: Int) {
 }
 
 @Composable
+// // The add media functionality is handled by another module mate.
+// Once that is done  he will Create a function to add new media items,
+// which will also update the counts accordingly.
 fun EditProfileDialog(
     currentName: String,
     currentStatus: String,
@@ -193,7 +196,7 @@ fun EditProfileDialog(
                     value = status,
                     onValueChange = { status = it },
                     label = { Text("Status") })
-                TextField(value = photos.toString(), onValueChange = {
+                TextField(value = photos.toString(), onValueChange = { // The add media functionality is handled by another module mate. Once that is done  he will Create a function to add new media items, which will also update the counts accordingly.
                     photos = it.toIntOrNull() ?: 0
                 }, label = { Text("Photos") })
                 TextField(value = videos.toString(), onValueChange = {
