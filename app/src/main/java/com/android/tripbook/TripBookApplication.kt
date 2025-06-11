@@ -9,3 +9,4 @@ class TripBookApplication : Application() {
         FirebaseApp.initializeApp(this)
     }
 }
+
