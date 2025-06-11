@@ -18,7 +18,7 @@ class PostValidator {
         private const val MAX_TAGS_COUNT = 10
         private const val MAX_TAG_LENGTH = 30
         private const val MAX_IMAGES_COUNT = 10
-        
+
         // Regex patterns for validation
         private val TITLE_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s\\-_.,!?()]+$")
         private val LOCATION_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s\\-_.,()]+$")
@@ -321,11 +321,11 @@ class PostValidator {
      */
     private fun isValidImageUrl(imageUrl: String): Boolean {
         if (!URL_PATTERN.matcher(imageUrl).matches()) return false
-        
+
         val lowercaseUrl = imageUrl.lowercase()
-        return lowercaseUrl.endsWith(".jpg") || 
-               lowercaseUrl.endsWith(".jpeg") || 
-               lowercaseUrl.endsWith(".png") || 
+        return lowercaseUrl.endsWith(".jpg") ||
+               lowercaseUrl.endsWith(".jpeg") ||
+               lowercaseUrl.endsWith(".png") ||
                lowercaseUrl.endsWith(".webp") ||
                lowercaseUrl.contains("firebasestorage") ||
                lowercaseUrl.contains("amazonaws.com") ||
@@ -336,8 +336,8 @@ class PostValidator {
      * Calculates a validation score based on various factors
      */
     private fun calculateValidationScore(
-        post: Post, 
-        hasNoErrors: Boolean, 
+        post: Post,
+        hasNoErrors: Boolean,
         warningCount: Int
     ): ValidationScore {
         if (!hasNoErrors) return ValidationScore.POOR

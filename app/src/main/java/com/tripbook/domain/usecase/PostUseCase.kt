@@ -46,10 +46,10 @@ class PostUseCase(
         // Upload images if provided
         if (imageUris.isNotEmpty()) {
             emit(NetworkResult.Loading("Uploading images..."))
-            
+
             try {
                 val uploadedImageUrls = mutableListOf<String>()
-                
+
                 imageUris.forEach { uri ->
                     imageUploader.uploadImage(uri).collect { uploadResult ->
                         when (uploadResult) {
@@ -67,10 +67,10 @@ class PostUseCase(
                         }
                     }
                 }
-                
+
                 // Update post with uploaded image URLs
                 finalPost = post.copy(images = uploadedImageUrls)
-                
+
             } catch (e: Exception) {
                 emit(NetworkResult.Error("Failed to upload images: ${e.message}"))
                 return@flow
@@ -166,7 +166,7 @@ class PostUseCase(
         if (query.isBlank()) {
             return flow { emit(NetworkResult.Error("Search query cannot be empty")) }
         }
-        
+
         return postRepository.searchPosts(query.trim(), page, limit)
     }
 

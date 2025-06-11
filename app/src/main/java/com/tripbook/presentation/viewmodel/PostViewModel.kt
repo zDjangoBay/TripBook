@@ -107,7 +107,7 @@ class PostViewModel(
      */
     fun loadMorePosts() {
         if (_isLoadingMore.value) return
-        
+
         _currentPage.value += 1
         loadPosts()
     }
@@ -118,7 +118,7 @@ class PostViewModel(
     fun loadPost(postId: String) {
         viewModelScope.launch {
             _postState.value = NetworkResult.Loading("Loading post...")
-            
+
             val result = postUseCase.getPostById(postId)
             _postState.value = result
         }
@@ -131,7 +131,7 @@ class PostViewModel(
         viewModelScope.launch {
             postUseCase.createPost(post, imageUris).collect { result ->
                 _postOperationState.value = result
-                
+
                 if (result is NetworkResult.Success) {
                     // Refresh posts list to include the new post
                     loadPosts(refresh = true)
@@ -146,10 +146,10 @@ class PostViewModel(
     fun updatePost(post: Post) {
         viewModelScope.launch {
             _postOperationState.value = NetworkResult.Loading("Updating post...")
-            
+
             val result = postUseCase.updatePost(post)
             _postOperationState.value = result
-            
+
             if (result is NetworkResult.Success) {
                 // Refresh posts list
                 loadPosts(refresh = true)
@@ -163,7 +163,7 @@ class PostViewModel(
     fun deletePost(postId: String, imageIds: List<String> = emptyList()) {
         viewModelScope.launch {
             val result = postUseCase.deletePost(postId, imageIds)
-            
+
             when (result) {
                 is NetworkResult.Success -> {
                     // Remove post from current list
@@ -184,7 +184,7 @@ class PostViewModel(
      */
     fun searchPosts(query: String) {
         _searchQuery.value = query
-        
+
         if (query.isBlank()) {
             _searchResults.value = null
             return
@@ -211,7 +211,7 @@ class PostViewModel(
     fun loadUserPosts(userId: String) {
         viewModelScope.launch {
             _postsState.value = NetworkResult.Loading("Loading user posts...")
-            
+
             postUseCase.getPostsByUser(userId).collect { result ->
                 _postsState.value = result
             }
@@ -239,7 +239,7 @@ class PostViewModel(
     fun likePost(postId: String) {
         viewModelScope.launch {
             val result = postUseCase.likePost(postId)
-            
+
             if (result is NetworkResult.Success) {
                 // Update the post in the current list
                 updatePostInList(postId) { post ->
@@ -257,7 +257,7 @@ class PostViewModel(
     fun unlikePost(postId: String) {
         viewModelScope.launch {
             val result = postUseCase.unlikePost(postId)
-            
+
             if (result is NetworkResult.Success) {
                 // Update the post in the current list
                 updatePostInList(postId) { post ->

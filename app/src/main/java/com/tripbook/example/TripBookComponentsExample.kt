@@ -18,7 +18,7 @@ import java.util.*
 /**
  * Example usage class demonstrating how to use the improved PostRepository,
  * ImageUploader, and PostValidator components.
- * 
+ *
  * This class shows the complete flow from dependency injection to UI operations.
  */
 class TripBookComponentsExample(private val context: Context) {
@@ -64,7 +64,7 @@ class TripBookComponentsExample(private val context: Context) {
         if (validationResult.isValid) {
             // Create the post using ViewModel
             postViewModel.createPost(newPost, imageUris)
-            
+
             // Observe the result
             observePostCreation()
         } else {
@@ -80,7 +80,7 @@ class TripBookComponentsExample(private val context: Context) {
     fun loadPostsExample() {
         // Load posts using ViewModel
         postViewModel.loadPosts()
-        
+
         // Observe posts state
         observePostsState()
     }
@@ -91,7 +91,7 @@ class TripBookComponentsExample(private val context: Context) {
     fun searchPostsExample() {
         val searchQuery = "Paris"
         postViewModel.searchPosts(searchQuery)
-        
+
         // Observe search results
         observeSearchResults()
     }
@@ -132,11 +132,11 @@ class TripBookComponentsExample(private val context: Context) {
         val titleValid = postValidator.validateField("title", "My Trip")
         val contentValid = postValidator.validateField("content", "This is my trip content...")
         val locationValid = postValidator.validateField("location", "Paris")
-        
+
         println("Title valid: $titleValid")
         println("Content valid: $contentValid")
         println("Location valid: $locationValid")
-        
+
         // Get detailed validation for a complete post
         val testPost = Post(
             userId = "user123",
@@ -146,7 +146,7 @@ class TripBookComponentsExample(private val context: Context) {
             images = listOf("https://example.com/image1.jpg"),
             tags = listOf("travel", "paris")
         )
-        
+
         val detailedValidation = postValidator.validate(testPost)
         println("Detailed validation:")
         println("  Valid: ${detailedValidation.isValid}")
@@ -160,10 +160,10 @@ class TripBookComponentsExample(private val context: Context) {
      */
     fun postInteractionExample() {
         val postId = "post123"
-        
+
         // Like a post
         postViewModel.likePost(postId)
-        
+
         // Unlike a post
         postViewModel.unlikePost(postId)
     }
@@ -175,10 +175,10 @@ class TripBookComponentsExample(private val context: Context) {
         lifecycleScope.launch {
             // Convert URI to file for validation
             val imageFile = imageUploader.createTempImageFile()
-            
+
             // Validate the image file
             val validationResult = imageUploader.validateImageFile(imageFile)
-            
+
             if (validationResult.isValid) {
                 println("Image is valid, proceeding with upload...")
                 uploadImageExample(imageUri)
@@ -193,10 +193,10 @@ class TripBookComponentsExample(private val context: Context) {
      */
     fun postManagementExample() {
         val userId = "user123"
-        
+
         // Load posts by specific user
         postViewModel.loadUserPosts(userId)
-        
+
         // Update an existing post
         val updatedPost = Post(
             id = "post123",
@@ -207,9 +207,9 @@ class TripBookComponentsExample(private val context: Context) {
             images = listOf("https://example.com/image1.jpg", "https://example.com/image2.jpg"),
             tags = listOf("travel", "paris", "updated", "eiffeltower")
         )
-        
+
         postViewModel.updatePost(updatedPost)
-        
+
         // Delete a post
         postViewModel.deletePost("post456", listOf("image1", "image2"))
     }

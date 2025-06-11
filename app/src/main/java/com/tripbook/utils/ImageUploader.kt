@@ -59,30 +59,30 @@ class ImageUploader(
      */
     fun uploadImage(imageUri: Uri, description: String? = null): Flow<UploadResult> = flow {
         emit(UploadResult.Loading)
-        
+
         try {
             emit(UploadResult.Progress(10, "Preparing image..."))
-            
+
             // Convert URI to File
             val imageFile = uriToFile(imageUri)
                 ?: throw IOException("Could not convert URI to file")
-            
+
             emit(UploadResult.Progress(30, "Compressing image..."))
-            
+
             // Compress the image
             val compressedFile = compressImage(imageFile)
-            
+
             emit(UploadResult.Progress(50, "Uploading to server..."))
-            
+
             // Create multipart body
             val requestFile = compressedFile.asRequestBody("image/*".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("image", compressedFile.name, requestFile)
-            
+
             // Upload to server
             val response = imageUploadApiService.uploadImage(body, description)
-            
+
             emit(UploadResult.Progress(90, "Processing response..."))
-            
+
             if (response.isSuccessful) {
                 val uploadResponse = response.body()
                 if (uploadResponse?.success == true) {
@@ -93,10 +93,10 @@ class ImageUploader(
             } else {
                 emit(UploadResult.Error("HTTP ${response.code()}: ${response.message()}"))
             }
-            
+
             // Clean up temporary file
             compressedFile.delete()
-            
+
         } catch (e: IOException) {
             emit(UploadResult.Error("File error: ${e.message}", e))
         } catch (e: Exception) {
@@ -112,33 +112,33 @@ class ImageUploader(
      */
     fun uploadMultipleImages(imageUris: List<Uri>, description: String? = null): Flow<UploadResult> = flow {
         emit(UploadResult.Loading)
-        
+
         try {
             emit(UploadResult.Progress(10, "Preparing ${imageUris.size} images..."))
-            
+
             val imageParts = mutableListOf<MultipartBody.Part>()
-            
+
             imageUris.forEachIndexed { index, uri ->
                 emit(UploadResult.Progress(
                     10 + (40 * (index + 1) / imageUris.size),
                     "Processing image ${index + 1}/${imageUris.size}..."
                 ))
-                
+
                 val imageFile = uriToFile(uri)
                     ?: throw IOException("Could not convert URI to file for image ${index + 1}")
-                
+
                 val compressedFile = compressImage(imageFile)
                 val requestFile = compressedFile.asRequestBody("image/*".toMediaTypeOrNull())
                 val body = MultipartBody.Part.createFormData("images", compressedFile.name, requestFile)
                 imageParts.add(body)
             }
-            
+
             emit(UploadResult.Progress(60, "Uploading ${imageUris.size} images..."))
-            
+
             val response = imageUploadApiService.uploadMultipleImages(imageParts, description)
-            
+
             emit(UploadResult.Progress(90, "Processing response..."))
-            
+
             if (response.isSuccessful) {
                 val uploadResponse = response.body()
                 if (uploadResponse?.success == true && uploadResponse.imageUrls.isNotEmpty()) {
@@ -150,7 +150,7 @@ class ImageUploader(
             } else {
                 emit(UploadResult.Error("HTTP ${response.code()}: ${response.message()}"))
             }
-            
+
         } catch (e: IOException) {
             emit(UploadResult.Error("File error: ${e.message}", e))
         } catch (e: Exception) {
@@ -182,11 +182,11 @@ class ImageUploader(
     private suspend fun manualCompress(imageFile: File): File = withContext(Dispatchers.IO) {
         val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
         val outputFile = createTempImageFile()
-        
+
         val outputStream = FileOutputStream(outputFile)
         bitmap.compress(Bitmap.CompressFormat.JPEG, COMPRESSION_QUALITY, outputStream)
         outputStream.close()
-        
+
         outputFile
     }
 
@@ -197,13 +197,13 @@ class ImageUploader(
         try {
             val inputStream = context.contentResolver.openInputStream(uri)
             val tempFile = createTempImageFile()
-            
+
             inputStream?.use { input ->
                 tempFile.outputStream().use { output ->
                     input.copyTo(output)
                 }
             }
-            
+
             tempFile
         } catch (e: Exception) {
             null

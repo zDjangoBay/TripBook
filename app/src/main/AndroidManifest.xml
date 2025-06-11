@@ -5,19 +5,19 @@
     <!-- Network permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <!-- Camera and storage permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    
+
     <!-- Camera feature -->
-    <uses-feature 
+    <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-feature 
+    <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
@@ -31,7 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook"
         android:usesCleartextTraffic="true">
-        
+
         <!-- File provider for camera images -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -42,7 +42,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-        
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
