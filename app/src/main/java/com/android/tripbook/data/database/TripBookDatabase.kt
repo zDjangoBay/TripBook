@@ -51,6 +51,7 @@ import com.android.tripbook.data.database.dao.*
         NotificationEntity::class,
         UserFavoriteEntity::class
     ],
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(DateTimeConverters::class)

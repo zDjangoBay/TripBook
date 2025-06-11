@@ -99,11 +99,14 @@ fun ReservationListScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(filteredReservations) { reservation ->
+                    ReservationCard(
                         reservation = reservation,
+                        onClick = { /* Handle click */ },
+                        onCancel = if (reservation.status == ReservationStatus.PENDING) {
+                            { /* Handle cancel */ }
+                        } else null
                     )
                 }
-                )
-            }
             }
         }
     }
@@ -112,6 +115,7 @@ fun ReservationListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReservationCard(
+    reservation: TripReservation,
     onClick: () -> Unit,
     onCancel: (() -> Unit)? = null
 ) {
@@ -127,6 +131,8 @@ fun ReservationCard(
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
+                model = "https://images.unsplash.com/photo-1488646953014-85cb44e25828",
+                contentDescription = "Trip image",
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight()
@@ -145,6 +151,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
+                        text = reservation.tripTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
@@ -156,6 +163,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
+                    text = "${reservation.fromLocation} → ${reservation.toLocation}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -163,6 +171,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
+                    text = "Departure: ${reservation.departureDate}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -175,6 +184,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
+                        text = "$${String.format("%.2f", reservation.totalPrice)}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -206,8 +216,10 @@ fun StatusBadge(
             MaterialTheme.colorScheme.tertiary,
             "Pending"
         )
+        ReservationStatus.CONFIRMED -> Triple(
             MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
             MaterialTheme.colorScheme.primary,
+            "Confirmed"
         )
         ReservationStatus.COMPLETED -> Triple(
             MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),

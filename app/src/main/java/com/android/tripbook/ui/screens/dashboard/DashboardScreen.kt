@@ -38,6 +38,9 @@ import com.android.tripbook.data.models.Trip
 @Composable
 fun DashboardScreen(
     onTripClick: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var searchQuery by remember { mutableStateOf("") }
     var currentLocation by remember { mutableStateOf("") }
     var hasLocationPermission by remember { mutableStateOf(false) }
 
@@ -68,12 +71,9 @@ fun DashboardScreen(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
-            currentLocation = "New York, NY" // Mock location
-        }
-    }
-
+            )
         } else {
-            }
+            currentLocation = "New York, NY" // Mock location
         }
     }
 
@@ -94,6 +94,7 @@ fun DashboardScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -106,6 +107,7 @@ fun DashboardScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Location",
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -126,9 +128,11 @@ fun DashboardScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
                 )
             },
             trailingIcon = {
+                if (currentLocation.isNotBlank()) {
                     IconButton(
                         onClick = {
                             searchQuery = currentLocation
@@ -136,6 +140,7 @@ fun DashboardScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Use current location",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -143,11 +148,21 @@ fun DashboardScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(vertical = 8.dp),
             shape = RoundedCornerShape(16.dp)
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            items(trips.filter {
+                searchQuery.isBlank() ||
+                it.title.contains(searchQuery, ignoreCase = true) ||
+                it.fromLocation.contains(searchQuery, ignoreCase = true) ||
+                it.toLocation.contains(searchQuery, ignoreCase = true)
+            }) { trip ->
                 TripCard(
                     trip = trip,
                     onReserveClick = { onTripClick(trip.id) }
@@ -166,6 +181,7 @@ fun TripCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 4.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -183,6 +199,7 @@ fun TripCard(
                                 MaterialTheme.colorScheme.primaryContainer
                             )
                         )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -194,6 +211,7 @@ fun TripCard(
                         "family" -> Icons.Default.Groups
                         else -> Icons.Default.Flight
                     },
+                    contentDescription = "Trip category",
                     modifier = Modifier.size(80.dp),
                     tint = Color.White
                 )
@@ -225,19 +243,23 @@ fun TripCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Column {
                         Text(
                             text = trip.duration,
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = "From $${String.format("%.0f", trip.basePrice)}",
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
 
                     Button(
                         onClick = onReserveClick,
+                        modifier = Modifier.padding(start = 8.dp)
                     ) {
                         Text("Reserve")
                     }

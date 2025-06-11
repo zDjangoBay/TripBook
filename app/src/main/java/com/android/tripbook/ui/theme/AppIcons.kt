@@ -36,8 +36,9 @@ object AppIcons {
     val NotificationOff = Icons.Rounded.NotificationsOff
 
     /**
+     * Travel and transportation icons
      */
-        return when (status) {
-        }
-    }
+    val Flight = Icons.Rounded.Flight
+    val Hotel = Icons.Rounded.Hotel
+    val Restaurant = Icons.Rounded.Restaurant
 }

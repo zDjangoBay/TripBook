@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -76,4 +77,40 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // DataStore for preferences
+    implementation(libs.androidx.datastore.preferences)
+
+    // Material Icons Extended
+    implementation(libs.androidx.material.icons.extended)
+
+    // Image Loading with Coil
+    implementation(libs.coil.compose)
+
+    // Location Services
+    implementation(libs.play.services.location)
+
+    // Permissions handling
+    implementation(libs.accompanist.permissions)
+
+    // ViewModel Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+
+    // JSON Serialization
+    implementation(libs.kotlinx.serialization.json)
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
