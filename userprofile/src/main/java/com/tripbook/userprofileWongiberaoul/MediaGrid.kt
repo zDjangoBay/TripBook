@@ -176,7 +176,9 @@ fun MediaItemCard(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFFECF0F1)),
+                        .background(Color(0xFFECF0F1)), // using a color constant..
+                    //  .background(MaterialTheme.colorScheme.primary) 
+                    // Using color.primary
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
