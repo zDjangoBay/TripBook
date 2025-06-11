@@ -1,6 +1,4 @@
-package com.tripbook.userprofileWongiberaoul.w
-
-
+package com.tripbook.userprofileWongiberaoul
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,7 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +21,30 @@ import coil.compose.AsyncImage
 
 @Composable
 fun ProfileHeader() {
+    var userName by remember { mutableStateOf("Joe") }
+    var userStatus by remember { mutableStateOf("Passionate about travelling and photography") }
+    var photoCount by remember { mutableStateOf(6) }
+    var videoCount by remember { mutableStateOf(1) }
+
+    var showEditDialog by remember { mutableStateOf(false) }
+
+    if (showEditDialog) {
+        EditProfileDialog(
+            currentName = userName,
+            currentStatus = userStatus,
+            currentPhotos = photoCount,
+            currentVideos = videoCount,
+            onDismiss = { showEditDialog = false },
+            onSave = { newName, newStatus, newPhotos, newVideos ->
+                userName = newName
+                userStatus = newStatus
+                photoCount = newPhotos
+                videoCount = newVideos
+                showEditDialog = false
+            }
+        )
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,13 +72,13 @@ fun ProfileHeader() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Wongibe Raoul",
+                        text = userName,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF2C3E50)
                     )
                     Text(
-                        text = "Passionnate about travelling and photography",
+                        text = userStatus,
                         fontSize = 14.sp,
                         color = Color(0xFF7F8C8D)
                     )
@@ -70,8 +92,8 @@ fun ProfileHeader() {
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp)
                     ) {
-                        MediaStat(label = "Photos", count = 6)
-                        MediaStat(label = "Videos", count = 1)
+                        MediaStat(label = "Photos", count = photoCount)
+                        MediaStat(label = "Videos", count = videoCount)
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -80,7 +102,7 @@ fun ProfileHeader() {
 
             // Edit icon (top left)
             IconButton(
-                onClick = { /* Handle edit click */ },
+                onClick = { showEditDialog = true },
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(12.dp)
@@ -117,7 +139,7 @@ fun ProfileHeader() {
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
-                    model = "https://www.sott.net/image/s5/100781/full/pygmies_1.jpg", // 🔁 Replace with a valid image URL
+                    model = "https://www.sott.net/image/s5/100781/full/pygmies_1.jpg",
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(250.dp)
@@ -144,4 +166,49 @@ fun MediaStat(label: String, count: Int) {
             color = Color(0xFF7F8C8D)
         )
     }
+}
+
+@Composable
+fun EditProfileDialog(
+    currentName: String,
+    currentStatus: String,
+    currentPhotos: Int,
+    currentVideos: Int,
+    onDismiss: () -> Unit,
+    onSave: (String, String, Int, Int) -> Unit
+) {
+    // State variables for the dialog inputs
+    var name by remember { mutableStateOf(currentName) }
+    var status by remember { mutableStateOf(currentStatus) }
+    var photos by remember { mutableStateOf(currentPhotos) }
+    var videos by remember { mutableStateOf(currentVideos) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Profile") },
+        text = {
+            Column {
+                TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+                TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
+                TextField(value = photos.toString(), onValueChange = {
+                    photos = it.toIntOrNull() ?: 0
+                }, label = { Text("Photos") })
+                TextField(value = videos.toString(), onValueChange = {
+                    videos = it.toIntOrNull() ?: 0
+                }, label = { Text("Videos") })
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onSave(name, status, photos, videos)
+            }) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }
