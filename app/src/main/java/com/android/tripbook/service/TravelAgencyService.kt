@@ -16,7 +16,7 @@ data class AgencyService(
     val name: String,
     val type: String,  // e.g., "Tour", "Accommodation", "Transportation"
     val description: String,
-    val price: Int,    // in USD
+    val price: Double, // Fixed: Changed from Int to Double for consistency with Expense
     val rating: Float, // 0.0 to 5.0
     val location: String,
     val agencyName: String = "" // Added to track which agency provides this service
@@ -35,7 +35,7 @@ data class TravelAgencyServiceItem(
     val name: String,
     val type: String,
     val description: String,
-    val price: Int,
+    val price: Double, // Fixed: Changed from Int to Double for consistency
     val rating: Float,
     val location: String,
     val agencyName: String,
@@ -54,7 +54,7 @@ interface TravelAgencyApi {
     suspend fun getFilteredAgencies(
         @Query("destination") destination: String,
         @Query("minRating") minRating: Float?,
-        @Query("maxPrice") maxPrice: Int?,
+        @Query("maxPrice") maxPrice: Double?, // Fixed: Changed from Int to Double
         @Query("serviceType") serviceType: String?
     ): Response<List<TravelAgency>>
 }
@@ -79,8 +79,8 @@ class TravelAgencyService {
             id = "agency1",
             name = "Nile Adventures",
             services = listOf(
-                AgencyService("s1", "Nile River Cruise", "Tour", "3-day cruise on the Nile", 500, 4.5f, "Cairo, Egypt", "Nile Adventures"),
-                AgencyService("s2", "Pyramids Tour", "Tour", "Giza pyramids with guide", 150, 4.8f, "Giza, Egypt", "Nile Adventures")
+                AgencyService("s1", "Nile River Cruise", "Tour", "3-day cruise on the Nile", 500.0, 4.5f, "Cairo, Egypt", "Nile Adventures"),
+                AgencyService("s2", "Pyramids Tour", "Tour", "Giza pyramids with guide", 150.0, 4.8f, "Giza, Egypt", "Nile Adventures")
             ),
             rating = 4.6f
         ),
@@ -88,8 +88,8 @@ class TravelAgencyService {
             id = "agency2",
             name = "Sahara Travels",
             services = listOf(
-                AgencyService("s3", "Desert Safari", "Tour", "Camel trekking safari", 300, 4.2f, "Marrakech, Morocco", "Sahara Travels"),
-                AgencyService("s4", "Luxury Hotel Booking", "Accommodation", "5-star hotel in Marrakech", 200, 4.7f, "Marrakech, Morocco", "Sahara Travels")
+                AgencyService("s3", "Desert Safari", "Tour", "Camel trekking safari", 300.0, 4.2f, "Marrakech, Morocco", "Sahara Travels"),
+                AgencyService("s4", "Luxury Hotel Booking", "Accommodation", "5-star hotel in Marrakech", 200.0, 4.7f, "Marrakech, Morocco", "Sahara Travels")
             ),
             rating = 4.4f
         ),
@@ -97,8 +97,8 @@ class TravelAgencyService {
             id = "agency3",
             name = "African Explorer",
             services = listOf(
-                AgencyService("s5", "Safari Adventure", "Tour", "Wildlife safari in Kenya", 800, 4.9f, "Nairobi, Kenya", "African Explorer"),
-                AgencyService("s6", "Airport Transfer", "Transportation", "Private airport transfer", 50, 4.3f, "Nairobi, Kenya", "African Explorer")
+                AgencyService("s5", "Safari Adventure", "Tour", "Wildlife safari in Kenya", 800.0, 4.9f, "Nairobi, Kenya", "African Explorer"),
+                AgencyService("s6", "Airport Transfer", "Transportation", "Private airport transfer", 50.0, 4.3f, "Nairobi, Kenya", "African Explorer")
             ),
             rating = 4.6f
         )
@@ -162,7 +162,7 @@ class TravelAgencyService {
     fun filterAgencies(
         agencies: List<TravelAgency>,
         minRating: Float? = null,
-        maxPrice: Int? = null,
+        maxPrice: Double? = null, // Fixed: Changed from Int to Double
         serviceType: String? = null
     ): List<TravelAgency> {
         return agencies.mapNotNull { agency ->
@@ -184,7 +184,7 @@ class TravelAgencyService {
     fun filterServices(
         services: List<TravelAgencyServiceItem>,
         minRating: Float? = null,
-        maxPrice: Int? = null,
+        maxPrice: Double? = null, // Fixed: Changed from Int to Double
         serviceType: String? = null
     ): List<TravelAgencyServiceItem> {
         return services.filter { service ->
@@ -202,7 +202,7 @@ class TravelAgencyService {
     suspend fun getFilteredAgencies(
         destination: String,
         minRating: Float? = null,
-        maxPrice: Int? = null,
+        maxPrice: Double? = null, // Fixed: Changed from Int to Double
         serviceType: String? = null
     ): List<TravelAgency> {
         val baseList = getAgenciesForDestination(destination)
@@ -215,7 +215,7 @@ class TravelAgencyService {
     suspend fun getFilteredServices(
         destination: String,
         minRating: Float? = null,
-        maxPrice: Int? = null,
+        maxPrice: Double? = null, // Fixed: Changed from Int to Double
         serviceType: String? = null
     ): List<TravelAgencyServiceItem> {
         val baseList = getServicesForDestination(destination)

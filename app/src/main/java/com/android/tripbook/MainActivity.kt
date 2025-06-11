@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
 
+        // TODO: Consider using dependency injection framework like Hilt for better testability
         val nominatimService = NominatimService()
         val travelAgencyService = TravelAgencyService()
 
@@ -102,6 +103,21 @@ fun TripBookApp(
         )
     }
 
+    // Helper function to get current trip safely
+    fun getCurrentTrip(): Trip? {
+        return selectedTrip ?: trips.firstOrNull()
+    }
+
+    // Helper function to safely map service type to ItineraryType
+    fun mapServiceTypeToItineraryType(serviceType: String): ItineraryType? {
+        return when (serviceType.uppercase()) {
+            "ACTIVITY", "TOUR" -> ItineraryType.ACTIVITY
+            "ACCOMMODATION", "HOTEL" -> ItineraryType.ACCOMMODATION
+            "TRANSPORTATION", "TRANSPORT" -> ItineraryType.TRANSPORTATION
+            else -> null
+        }
+    }
+
     when (currentScreen) {
         "MyTrips" -> MyTripsScreen(
             trips = trips,
@@ -131,42 +147,58 @@ fun TripBookApp(
             }
         )
 
-        "TripDetails" -> TripDetailsScreen(
-            trip = selectedTrip ?: trips.first(),
-            onBackClick = {
-                currentScreen = "MyTrips"
-            },
-            onEditItineraryClick = {
-                currentScreen = "ItineraryBuilder"
-            },
-            onGroupChatClick = {
-                selectedTrip?.let { openGroupChat(it) }
-            }
-        )
-
-        "ItineraryBuilder" -> ItineraryBuilderScreen(
-            trip = selectedTrip ?: trips.first(),
-            onBackClick = {
-                currentScreen = "TripDetails"
-            },
-            onItineraryUpdated = { updatedItinerary ->
-                selectedTrip?.let { trip ->
-                    trips = trips.map {
-                        if (it.id == trip.id)
-                            it.copy(itinerary = updatedItinerary)
-                        else
-                            it
+        "TripDetails" -> {
+            val currentTrip = getCurrentTrip()
+            if (currentTrip != null) {
+                TripDetailsScreen(
+                    trip = currentTrip,
+                    onBackClick = {
+                        currentScreen = "MyTrips"
+                    },
+                    onEditItineraryClick = {
+                        currentScreen = "ItineraryBuilder"
+                    },
+                    onGroupChatClick = {
+                        selectedTrip?.let { openGroupChat(it) }
                     }
-                    selectedTrip = selectedTrip?.copy(itinerary = updatedItinerary)
-                }
-            },
-            nominatimService = nominatimService,
-            travelAgencyService = travelAgencyService,
-            onBrowseAgencies = { destination ->
-                selectedDestination = destination
-                currentScreen = "TravelAgency"
+                )
+            } else {
+                // Handle case where no trips exist - redirect to MyTrips
+                currentScreen = "MyTrips"
             }
-        )
+        }
+
+        "ItineraryBuilder" -> {
+            val currentTrip = getCurrentTrip()
+            if (currentTrip != null) {
+                ItineraryBuilderScreen(
+                    trip = currentTrip,
+                    onBackClick = {
+                        currentScreen = "TripDetails"
+                    },
+                    onItineraryUpdated = { updatedItinerary ->
+                        selectedTrip?.let { trip ->
+                            trips = trips.map {
+                                if (it.id == trip.id)
+                                    it.copy(itinerary = updatedItinerary)
+                                else
+                                    it
+                            }
+                            selectedTrip = selectedTrip?.copy(itinerary = updatedItinerary)
+                        }
+                    },
+                    nominatimService = nominatimService,
+                    travelAgencyService = travelAgencyService,
+                    onBrowseAgencies = { destination ->
+                        selectedDestination = destination
+                        currentScreen = "TravelAgency"
+                    }
+                )
+            } else {
+                // Handle case where no trips exist - redirect to MyTrips
+                currentScreen = "MyTrips"
+            }
+        }
 
         "TravelAgency" -> TravelAgencyScreen(
             destination = selectedDestination ?: "",
@@ -175,12 +207,32 @@ fun TripBookApp(
                 currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
             },
             onServiceSelected = { service ->
-                val typeResult = runCatching {
-                    ItineraryType.valueOf(service.type.uppercase())
-                }
+                // Fixed: Safe mapping with fallback for unknown service types
+                val itineraryType = mapServiceTypeToItineraryType(service.type)
 
-                if (typeResult.isSuccess) {
-                    val itineraryType = typeResult.getOrNull()
+                if (itineraryType != null) {
+                    selectedTrip?.let { trip ->
+                        val newItem = ItineraryItem(
+                            date = trip.startDate,
+                            time = "10:00 AM",
+                            title = service.name,
+                            location = service.location,
+                            type = itineraryType,
+                            agencyService = null
+                        )
+
+                        selectedTrip = trip.copy(
+                            itinerary = trip.itinerary + newItem
+                        )
+
+                        trips = trips.map {
+                            if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
+                            else it
+                        }
+                    }
+                } else {
+                    // Handle unknown service type - could show error message or log
+                    println("Warning: Unknown service type '${service.type}' - defaulting to ACTIVITY")
 
                     selectedTrip?.let { trip ->
                         val newItem = ItineraryItem(
@@ -188,7 +240,7 @@ fun TripBookApp(
                             time = "10:00 AM",
                             title = service.name,
                             location = service.location,
-                            type = itineraryType!!,
+                            type = ItineraryType.ACTIVITY, // Default fallback
                             agencyService = null
                         )
 
