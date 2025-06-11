@@ -1,4 +1,4 @@
-package com.example.tripbook.profile
+package com.tripbook.userprofilendedilan.profile
 
 import android.Manifest
 import android.app.Activity
@@ -17,7 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.tripbook.R
+import com.tripbook.userprofilendedilan.R
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
