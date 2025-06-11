@@ -9,13 +9,19 @@ import com.android.tripbook.model.ReservationStatus
 
 /**
  * Centralized icon definitions for TripBook app
+ * Combines enhanced icon sets and status mapping from both branches
  */
 object AppIcons {
 
     // Navigation icons
     val Home = Icons.Rounded.Home
+    val Back = Icons.Rounded.ArrowBack
+    val Close = Icons.Rounded.Close
+    val Menu = Icons.Rounded.Menu
     val Search = Icons.Rounded.Search
     val Notifications = Icons.Rounded.Notifications
+    val Notification = Icons.Rounded.Notifications
+    val NotificationOff = Icons.Rounded.NotificationsOff
     val Profile = Icons.Rounded.Person
 
     // Action icons
@@ -26,39 +32,51 @@ object AppIcons {
     val Filter = Icons.Rounded.FilterList
     val Sort = Icons.Rounded.Sort
     val More = Icons.Rounded.MoreVert
-    val Close = Icons.Rounded.Close
     val Check = Icons.Rounded.Check
     val Clear = Icons.Rounded.Clear
 
+    // Reservation status icons
+    val CheckCircle = Icons.Rounded.CheckCircle
+    val Confirmed = Icons.Rounded.CheckCircle
+    val Pending = Icons.Rounded.Schedule // can also use Icons.Rounded.HourglassTop if preferred
+    val Cancelled = Icons.Rounded.Cancel
+    val Cancel = Icons.Rounded.Cancel
+    val Completed = Icons.Rounded.Done
+
     // Calendar and date icons
-    val Calendar = Icons.Rounded.CalendarToday
+    val Calendar = Icons.Rounded.CalendarMonth
     val CalendarToday = Icons.Rounded.CalendarToday
     val CalendarMonth = Icons.Rounded.CalendarMonth
+    val CalendarWeek = Icons.Rounded.CalendarViewWeek
     val DateRange = Icons.Rounded.DateRange
     val Schedule = Icons.Rounded.Schedule
     val AccessTime = Icons.Rounded.AccessTime
+    val Event = Icons.Rounded.Event
+    val EventAvailable = Icons.Rounded.EventAvailable
+    val EventBusy = Icons.Rounded.EventBusy
 
     // Travel icons
     val Flight = Icons.Rounded.Flight
     val FlightTakeoff = Icons.Filled.FlightTakeoff
+    val FlightLand = Icons.Rounded.FlightLand
     val Hotel = Icons.Rounded.Hotel
+    val Restaurant = Icons.Rounded.Restaurant
+    val Beach = Icons.Rounded.BeachAccess
+    val Hiking = Icons.Rounded.Terrain
+    val Car = Icons.Rounded.DirectionsCar
+    val Train = Icons.Rounded.Train
+    val Bus = Icons.Rounded.DirectionsBus
+    val Taxi = Icons.Rounded.LocalTaxi
+    val Boat = Icons.Rounded.DirectionsBoat
+    val Bike = Icons.Rounded.DirectionsBike
     val LocationOn = Icons.Rounded.LocationOn
     val Location = Icons.Rounded.LocationOn
     val Map = Icons.Rounded.Map
     val Directions = Icons.Rounded.Directions
-    val Train = Icons.Rounded.Train
-    val DirectionsBus = Icons.Rounded.DirectionsBus
-    val DirectionsCar = Icons.Rounded.DirectionsCar
-
-    // Status icons
-    val CheckCircle = Icons.Rounded.CheckCircle
-    val Pending = Icons.Rounded.Schedule
-    val Cancel = Icons.Rounded.Cancel
-    val Warning = Icons.Rounded.Warning
-    val Error = Icons.Rounded.Error
-    val Info = Icons.Rounded.Info
 
     // UI icons
+    val List = Icons.Rounded.ViewList
+    val Grid = Icons.Rounded.GridView
     val ArrowBack = Icons.Rounded.ArrowBack
     val ArrowForward = Icons.Rounded.ArrowForward
     val ArrowDropDown = Icons.Rounded.ArrowDropDown
@@ -67,42 +85,52 @@ object AppIcons {
     val ExpandLess = Icons.Rounded.ExpandLess
     val ChevronLeft = Icons.Rounded.ChevronLeft
     val ChevronRight = Icons.Rounded.ChevronRight
+    val Favorite = Icons.Rounded.Favorite
+    val FavoriteBorder = Icons.Rounded.FavoriteBorder
+    val Star = Icons.Rounded.Star
+    val StarBorder = Icons.Rounded.StarBorder
+    val Info = Icons.Rounded.Info
+    val Help = Icons.Rounded.Help
+    val Warning = Icons.Rounded.Warning
+    val Error = Icons.Rounded.Error
 
-    // Content icons
-    val Image = Icons.Rounded.Image
-    val PhotoCamera = Icons.Rounded.PhotoCamera
-    val Attachment = Icons.Rounded.AttachFile
-    val Download = Icons.Rounded.Download
-    val Upload = Icons.Rounded.Upload
-    val List = Icons.Filled.List
-    val Money = Icons.Filled.Money
-    val Notes = Icons.Filled.Notes
+    // Weather icons
+    val Sunny = Icons.Rounded.WbSunny
+    val Cloudy = Icons.Rounded.Cloud
+    val Rainy = Icons.Filled.Umbrella
+    val Snowy = Icons.Filled.AcUnit
+    val Windy = Icons.Filled.Air
 
-    // Communication icons
-    val Email = Icons.Rounded.Email
-    val Phone = Icons.Rounded.Phone
-    val Message = Icons.Rounded.Message
-    val Chat = Icons.Rounded.Chat
-
-    // Settings icons
-    val Settings = Icons.Rounded.Settings
-    val Tune = Icons.Rounded.Tune
-    val Visibility = Icons.Rounded.Visibility
-    val VisibilityOff = Icons.Rounded.VisibilityOff
-
-    // Payment icons
-    val Payment = Icons.Rounded.Payment
+    // Misc icons
+    val Money = Icons.Rounded.AttachMoney
     val CreditCard = Icons.Rounded.CreditCard
+    val Payment = Icons.Rounded.Payment
     val AccountBalance = Icons.Rounded.AccountBalance
     val MonetizationOn = Icons.Rounded.MonetizationOn
-
-    // Booking icons
+    val Person = Icons.Rounded.Person
+    val People = Icons.Rounded.People
+    val Phone = Icons.Rounded.Phone
+    val Email = Icons.Rounded.Email
+    val Message = Icons.Rounded.Message
+    val Chat = Icons.Rounded.Chat
+    val Visibility = Icons.Rounded.Visibility
+    val VisibilityOff = Icons.Rounded.VisibilityOff
     val BookOnline = Icons.Rounded.BookOnline
     val Bookmark = Icons.Rounded.Bookmark
     val BookmarkBorder = Icons.Rounded.BookmarkBorder
-    val Favorite = Icons.Rounded.Favorite
-    val FavoriteBorder = Icons.Rounded.FavoriteBorder
+    val Notes = Icons.Rounded.Notes
+    val Image = Icons.Rounded.Image
+    val PhotoCamera = Icons.Rounded.PhotoCamera
+    val Camera = Icons.Rounded.PhotoCamera
+    val Photo = Icons.Rounded.Photo
+    val Attachment = Icons.Rounded.AttachFile
+    val Download = Icons.Rounded.Download
+    val Upload = Icons.Rounded.Upload
 
+    val Tune = Icons.Rounded.Tune
+    val Settings = Icons.Rounded.Settings
+
+    // Functions for status/travel icons
     /**
      * Get status icon based on reservation status
      */
@@ -123,8 +151,8 @@ object AppIcons {
             "flight", "plane", "air" -> Flight
             "hotel", "accommodation" -> Hotel
             "train", "railway" -> Train
-            "bus" -> DirectionsBus
-            "car", "drive" -> DirectionsCar
+            "bus" -> Bus
+            "car", "drive" -> Car
             else -> LocationOn
         }
     }
