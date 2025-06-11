@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("plugin.serialization") version "1.9.0"
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -77,9 +77,9 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    
+
     // Location picker dependencies
     implementation(libs.androidx.serialization)
-    implementation(libs.com.google.android.gms.location)
-    implementation(libs.com.google.android.gms.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
 }
