@@ -1,5 +1,10 @@
+
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.android.tripbook.companycatalog.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -95,7 +100,7 @@ fun HiddenGemsScreen() {
                 category = "Culture & Food",
                 discoveredBy = "Paul Mbarga",
                 rating = 4.9f,
-                reviewCount = 15,
+                reviewCount = 42,
                 imageResId = R.drawable.mock_logo_4,
                 tips = "Check lunar calendar - market happens 3 days before full moon. Try local millet beer and dried fish specialties.",
                 timeAgo = "1 week ago"
@@ -121,9 +126,9 @@ fun HiddenGemsScreen() {
                 category = "Wildlife & Nature",
                 discoveredBy = "Christine Ndongo",
                 rating = 4.5f,
-                reviewCount = 8,
+                reviewCount = 27,
                 imageResId = R.drawable.mock_logo_1,
-                tips = "Best viewing at dawn between 5-7 AM. Book through local fishermen's association. Bring binoculars and maintain silence on water.",
+                tips = "Best viewing between 6-8 AM when manatees surface to breathe. Bring binoculars and maintain respectful distance.",
                 timeAgo = "5 days ago"
             )
         )
@@ -210,120 +215,170 @@ fun HiddenGemsScreen() {
 }
 
 @Composable
-private fun InfoChip(
-    label: String,
-    icon: ImageVector
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer,
-        shape = RoundedCornerShape(20.dp)
+fun HiddenGemCard(gem: HiddenGem) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.size(14.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
-            )
+        Column {
+            // Image section
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = gem.imageResId),
+                    contentDescription = gem.name,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Rating badge
+                Card(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.Black.copy(alpha = 0.7f)),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color.Yellow,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "${gem.rating}",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                // Category tag
+                Card(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF4CAF50)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = gem.category,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            // Content section
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Text(
+                    text = gem.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1B5E20)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = gem.location,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = gem.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black.copy(alpha = 0.8f),
+                    lineHeight = 20.sp
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Tips section
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E8)),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = "💡 Local Tip",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2E7D32)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = gem.tips,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF2E7D32),
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Footer
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Discovered by ${gem.discoveredBy}",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF4CAF50)
+                        )
+                        Text(
+                            text = gem.timeAgo,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+                    }
+
+                    Text(
+                        text = "${gem.reviewCount} reviews",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
-}
-
-private fun getSampleHiddenGems(): List<HiddenGem> {
-    return listOf(
-        HiddenGem(
-            name = "Ekom-Nkam Waterfalls",
-            location = "Melong, Littoral Region",
-            description = "A stunning 80-meter waterfall hidden in the rainforest, featured in the movie Greystoke: The Legend of Tarzan. Perfect for nature photography and peaceful meditation.",
-            difficulty = "Moderate",
-            estimatedTime = "Half day",
-            highlights = listOf(
-                "80-meter high waterfall",
-                "Natural swimming pool",
-                "Diverse wildlife spotting",
-                "Photography opportunities"
-            ),
-            icon = Icons.Default.Landscape
-        ),
-        HiddenGem(
-            name = "Lobé Waterfalls",
-            location = "Kribi, South Region",
-            description = "One of the few waterfalls in the world that flows directly into the ocean. A unique geological phenomenon where river meets Atlantic Ocean.",
-            difficulty = "Easy",
-            estimatedTime = "2-3 hours",
-            highlights = listOf(
-                "Waterfall meets ocean",
-                "Unique geological formation",
-                "Beach access",
-                "Local fishing villages"
-            ),
-            icon = Icons.Default.Waves
-        ),
-        HiddenGem(
-            name = "Mefou National Park",
-            location = "Centre Region, near Yaoundé",
-            description = "A primate sanctuary and national park home to rescued chimpanzees, gorillas, and other endangered species. Offers guided tours and wildlife education.",
-            difficulty = "Easy",
-            estimatedTime = "Full day",
-            highlights = listOf(
-                "Chimpanzee sanctuary",
-                "Guided wildlife tours",
-                "Conservation education",
-                "Forest hiking trails"
-            ),
-            icon = Icons.Default.Pets
-        ),
-        HiddenGem(
-            name = "Lake Nyos",
-            location = "Northwest Region",
-            description = "A crater lake with a unique geological history, surrounded by beautiful highlands. Known for its deep blue waters and scientific significance.",
-            difficulty = "Challenging",
-            estimatedTime = "Full day",
-            highlights = listOf(
-                "Crater lake formation",
-                "Highland scenery",
-                "Scientific importance",
-                "Remote location experience"
-            ),
-            icon = Icons.Default.Water
-        ),
-        HiddenGem(
-            name = "Bafut Palace",
-            location = "Bafut, Northwest Region",
-            description = "Traditional Tikar architecture palace of the Fon of Bafut, showcasing centuries-old Cameroonian royal heritage and cultural traditions.",
-            difficulty = "Easy",
-            estimatedTime = "2-3 hours",
-            highlights = listOf(
-                "Traditional architecture",
-                "Royal heritage site",
-                "Cultural performances",
-                "Historical artifacts"
-            ),
-            icon = Icons.Default.AccountBalance
-        ),
-        HiddenGem(
-            name = "Limbe Botanical Garden",
-            location = "Limbe, Southwest Region",
-            description = "One of the oldest botanical gardens in Cameroon, featuring rare plant species from the Congo Basin and medicinal plants used by local communities.",
-            difficulty = "Easy",
-            estimatedTime = "Half day",
-            highlights = listOf(
-                "Rare plant species",
-                "Medicinal plant collection",
-                "Congo Basin flora",
-                "Educational tours"
-            ),
-            icon = Icons.Default.LocalFlorist
-        )
-    )
 }
