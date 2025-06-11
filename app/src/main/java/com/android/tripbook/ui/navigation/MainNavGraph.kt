@@ -16,10 +16,16 @@ import androidx.navigation.compose.composable
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
 
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.android.tripbook.viewmodel.MainViewModel
+
+
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    mainViewModel: MainViewModel,
+    modifier: Modifier
 ) {
     NavHost(
         navController = navController,
@@ -27,18 +33,13 @@ fun MainNavGraph(
         modifier = modifier
     ) {
         composable("home") {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Home Screen",
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
+            HomeScreenWrapper(
+               navController=navController,
+                mainViewModel = mainViewModel
+            )
+
             }
-        }
+
         composable("schedule") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -52,14 +53,17 @@ fun MainNavGraph(
                 )
             }
         }
-        composable("catalog") {
+
+        composable("catalog") { // Or whatever your route name is
             TripCatalogScreen(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                onNavigateToAddPlace = {navController.navigate("addPlace/{tripId}")}
             )
         }
+
         composable("profile") {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -130,6 +134,18 @@ fun MainNavGraph(
                         }
                     }
                 }
+            )
+        }
+
+
+
+
+        composable(
+            route = "addPlace/{tripId}", // This route expects a tripId argument
+            arguments = listOf(navArgument("tripId") { type = NavType.StringType })
+        ) {
+            AddPlaceScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }

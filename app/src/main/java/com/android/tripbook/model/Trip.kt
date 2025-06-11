@@ -14,9 +14,16 @@ import java.io.Serializable
 data class Trip(
     val id: Int,
     val title: String,
-    val caption: String,
     val description: String,
-    val imageUrl: List<String>
+    val city: String,
+    val country: String,
+    val latitude: Double,
+    val longitude: Double,
+    val imageUrl: List<String>,
+
+    val caption: String = "",
+    val region: String? = null,
+
 ) : Serializable
 
 
