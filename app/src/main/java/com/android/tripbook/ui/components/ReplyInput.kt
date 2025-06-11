@@ -21,7 +21,7 @@ fun ReplyInput(
     modifier: Modifier = Modifier
 ) {
     var replyText by remember { mutableStateOf("") }
-    
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -41,12 +41,12 @@ fun ReplyInput(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Replying to ${parentAuthor}",
+                    text = "Replying to $parentAuthor",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.primary
                 )
-                
+
                 IconButton(
                     onClick = onCancel,
                     modifier = Modifier.size(24.dp)
@@ -58,9 +58,9 @@ fun ReplyInput(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             // Reply input
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -72,15 +72,15 @@ fun ReplyInput(
                     modifier = Modifier.weight(1f),
                     placeholder = { Text("Write a reply...") },
                     shape = RoundedCornerShape(24.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     ),
                     maxLines = 3
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 IconButton(
                     onClick = {
                         if (replyText.isNotBlank()) {
@@ -96,9 +96,9 @@ fun ReplyInput(
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = "Send Reply",
-                        tint = if (replyText.isNotBlank()) 
-                            MaterialTheme.colorScheme.primary 
-                        else 
+                        tint = if (replyText.isNotBlank())
+                            MaterialTheme.colorScheme.primary
+                        else
                             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }
