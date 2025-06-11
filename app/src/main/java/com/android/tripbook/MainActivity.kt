@@ -7,10 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.tripbook.shared.ui.examples.LocationPickerExample
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    LocationPickerExample(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -30,19 +29,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview
 @Composable
-fun GreetingPreview() {
+fun LocationPickerPreview() {
     TripBookTheme {
-        Greeting("Android")
+        LocationPickerExample()
     }
 }
