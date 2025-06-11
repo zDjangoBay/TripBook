@@ -108,7 +108,7 @@ object ErrorHandler {
             is ConnectException, is UnknownHostException -> 5000L
             else -> 1000L
         }
-        
+
         // Exponential backoff with jitter
         return baseDelay * attemptNumber + (Math.random() * 1000).toLong()
     }
@@ -140,7 +140,7 @@ object ErrorHandler {
                 }
             }
         }
-        
+
         // In a real app, you would use proper logging framework like Timber
         println(errorMessage)
         throwable.printStackTrace()

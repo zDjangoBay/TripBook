@@ -19,14 +19,14 @@ class TripBookApplication : Application() {
     // Network layer
     private val okHttpClient by lazy { NetworkModule.provideOkHttpClient() }
     private val retrofit by lazy { NetworkModule.provideRetrofit(okHttpClient) }
-    
+
     // API Services
     val postApiService: PostApiService by lazy { NetworkModule.providePostApiService(retrofit) }
     val imageUploadApiService: ImageUploadApiService by lazy { NetworkModule.provideImageUploadApiService(retrofit) }
-    
+
     // Repository layer
     val postRepository: PostRepository by lazy { PostRepositoryImpl(postApiService) }
-    
+
     // Domain layer
     val postValidator: PostValidator by lazy { PostValidator() }
     val imageUploader: ImageUploader by lazy { ImageUploader(this, imageUploadApiService) }

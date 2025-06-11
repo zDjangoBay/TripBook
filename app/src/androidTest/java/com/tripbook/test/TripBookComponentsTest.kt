@@ -56,7 +56,7 @@ class TripBookComponentsTest {
         // Assert
         assertTrue("Post should be valid", result.isValid)
         assertTrue("Should have no errors", result.errors.isEmpty())
-        assertTrue("Should have good or excellent score", 
+        assertTrue("Should have good or excellent score",
             result.score in listOf(PostValidator.ValidationScore.GOOD, PostValidator.ValidationScore.EXCELLENT))
     }
 
@@ -136,14 +136,14 @@ class TripBookComponentsTest {
     fun testImageValidation_FileSizeAndFormat() {
         // Create a temporary image file for testing
         val tempFile = imageUploader.createTempImageFile()
-        
+
         // Test file validation
         val validation = imageUploader.validateImageFile(tempFile)
-        
+
         // Since it's an empty temp file, it should be invalid
         assertFalse("Empty file should be invalid", validation.isValid)
         assertNotNull("Should have error message", validation.errorMessage)
-        
+
         // Clean up
         tempFile.delete()
     }
@@ -153,11 +153,11 @@ class TripBookComponentsTest {
         // Test network availability check
         val isNetworkAvailable = NetworkUtils.isNetworkAvailable(context)
         // Note: This depends on the test environment's network state
-        
+
         // Test network type detection
         val networkType = NetworkUtils.getNetworkType(context)
         assertNotNull("Network type should not be null", networkType)
-        assertTrue("Network type should be known", 
+        assertTrue("Network type should be known",
             networkType in listOf("WiFi", "Mobile Data", "Ethernet", "No Connection", "Unknown"))
     }
 
@@ -170,10 +170,10 @@ class TripBookComponentsTest {
 
         // Get missing permissions
         val missingPermissions = PermissionUtils.getMissingPermissions(context)
-        
+
         // Verify logical consistency
         if (allPermissions) {
-            assertTrue("If all permissions granted, missing list should be empty", 
+            assertTrue("If all permissions granted, missing list should be empty",
                 missingPermissions.isEmpty())
         }
 
@@ -267,7 +267,7 @@ class TripBookComponentsTest {
     fun testPostRepository_Integration() = runBlocking {
         // This would require a test server or mock setup
         val repository = app.postRepository
-        
+
         try {
             val posts = repository.getPosts(1, 5)
             posts.collect { result ->

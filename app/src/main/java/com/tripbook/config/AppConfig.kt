@@ -13,7 +13,7 @@ object AppConfig {
         const val CONNECT_TIMEOUT = 30L // seconds
         const val READ_TIMEOUT = 30L // seconds
         const val WRITE_TIMEOUT = 30L // seconds
-        
+
         // API Endpoints
         const val POSTS_ENDPOINT = "posts"
         const val UPLOAD_ENDPOINT = "upload/image"
@@ -27,7 +27,7 @@ object AppConfig {
         const val MAX_WIDTH = 1920
         const val MAX_HEIGHT = 1080
         const val MAX_IMAGES_PER_POST = 10
-        
+
         // Supported formats
         val SUPPORTED_FORMATS = listOf("image/jpeg", "image/png", "image/webp")
         val SUPPORTED_EXTENSIONS = listOf(".jpg", ".jpeg", ".png", ".webp")
@@ -42,11 +42,11 @@ object AppConfig {
         const val MAX_CONTENT_LENGTH = 2000
         const val MIN_LOCATION_LENGTH = 2
         const val MAX_LOCATION_LENGTH = 100
-        
+
         // Tags validation
         const val MAX_TAGS_COUNT = 10
         const val MAX_TAG_LENGTH = 30
-        
+
         // User validation
         const val MIN_USER_ID_LENGTH = 3
         const val MAX_USER_ID_LENGTH = 50
