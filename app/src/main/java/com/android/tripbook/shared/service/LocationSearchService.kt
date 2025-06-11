@@ -7,10 +7,10 @@ import com.android.tripbook.shared.model.Location
  * Implementations can use different providers like Google Places API, Nominatim, etc.
  */
 interface LocationSearchService {
-    
+
     /**
      * Searches for locations based on a query string.
-     * 
+     *
      * @param query The search query (place name, address, etc.)
      * @param maxResults Maximum number of results to return (default 10)
      * @return List of matching locations
@@ -20,19 +20,19 @@ interface LocationSearchService {
         query: String,
         maxResults: Int = 10
     ): List<Location>
-    
+
     /**
      * Gets location details by place ID.
-     * 
+     *
      * @param placeId Unique identifier for the place
      * @return Location details or null if not found
      * @throws LocationSearchException if the request fails
      */
     suspend fun getLocationDetails(placeId: String): Location?
-    
+
     /**
      * Gets nearby locations around given coordinates.
-     * 
+     *
      * @param latitude Latitude coordinate
      * @param longitude Longitude coordinate
      * @param radiusMeters Search radius in meters

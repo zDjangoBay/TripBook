@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 /**
  * A composable component for selecting locations with search functionality.
- * 
+ *
  * @param selectedLocation The currently selected location
  * @param onLocationSelected Callback when a location is selected
  * @param error Validation error for the location field
@@ -66,9 +66,9 @@ fun LocationPicker(
         OutlinedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { 
+                .clickable {
                     viewModel.clearSearch()
-                    showLocationDialog = true 
+                    showLocationDialog = true
                 },
             colors = CardDefaults.outlinedCardColors(
                 containerColor = if (hasError) {
@@ -127,7 +127,7 @@ fun LocationPicker(
                 }
             }
         }
-        
+
         // Error message
         if (hasError) {
             Text(
@@ -147,9 +147,9 @@ fun LocationPicker(
                 onLocationSelected(location)
                 showLocationDialog = false
             },
-            onDismiss = { 
+            onDismiss = {
                 viewModel.clearSearch()
-                showLocationDialog = false 
+                showLocationDialog = false
             }
         )
     }
@@ -248,7 +248,7 @@ private fun LocationSelectionDialog(
                                 }
                             }
                         }
-                        
+
                         uiState.searchError != null -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -262,7 +262,7 @@ private fun LocationSelectionDialog(
                                 )
                             }
                         }
-                        
+
                         uiState.searchResults.isEmpty() && searchQuery.length > 1 -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -276,12 +276,12 @@ private fun LocationSelectionDialog(
                                 )
                             }
                         }
-                        
+
                         uiState.searchResults.isNotEmpty() -> {
                             LazyColumn {
                                 items(
                                     items = uiState.searchResults,
-                                    key = { location -> 
+                                    key = { location ->
                                         "${location.name}-${location.city}-${location.country}-${location.coordinates?.latitude}-${location.coordinates?.longitude}"
                                     }
                                 ) { location ->
@@ -292,7 +292,7 @@ private fun LocationSelectionDialog(
                                 }
                             }
                         }
-                        
+
                         else -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -350,7 +350,7 @@ private fun LocationSearchResultItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            
+
             val locationDetails = mutableListOf<String>()
             if (location.city.isNotEmpty() && location.city.lowercase() != location.name.lowercase()) {
                 locationDetails.add(location.city)
@@ -358,7 +358,7 @@ private fun LocationSearchResultItem(
             if (location.country.isNotEmpty()) {
                 locationDetails.add(location.country)
             }
-            
+
             if (locationDetails.isNotEmpty()) {
                 Text(
                     text = locationDetails.joinToString(", "),
@@ -368,7 +368,7 @@ private fun LocationSearchResultItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            
+
             if (location.address.isNotEmpty()) {
                 Text(
                     text = location.address,

@@ -20,18 +20,18 @@ data class Location(
     fun getDisplayName(): String {
         val parts = mutableListOf<String>()
         parts.add(name)
-        
+
         if (city.isNotEmpty() && city.lowercase() != name.lowercase()) {
             parts.add(city)
         }
-        
+
         if (country.isNotEmpty()) {
             parts.add(country)
         }
-        
+
         return parts.joinToString(", ")
     }
-    
+
     /**
      * Returns true if this location has valid coordinates.
      */

@@ -56,7 +56,7 @@ app/src/main/java/com/android/tripbook/shared/
 @Composable
 fun MyScreen() {
     var selectedLocation by remember { mutableStateOf<Location?>(null) }
-    
+
     LocationPicker(
         selectedLocation = selectedLocation,
         onLocationSelected = { location ->
@@ -76,7 +76,7 @@ fun MyScreen(
     viewModel: LocationPickerViewModel = viewModel()
 ) {
     var selectedLocation by remember { mutableStateOf<Location?>(null) }
-    
+
     LocationPicker(
         selectedLocation = selectedLocation,
         onLocationSelected = { location ->

@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 class LocationPickerViewModel(
     private val locationSearchService: LocationSearchService = MockLocationSearchService()
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(LocationPickerUiState())
     val uiState: StateFlow<LocationPickerUiState> = _uiState.asStateFlow()
-    
+
     /**
      * Searches for locations based on the provided query.
      */
@@ -32,12 +32,12 @@ class LocationPickerViewModel(
             )
             return
         }
-        
+
         _uiState.value = _uiState.value.copy(
             isSearching = true,
             searchError = null
         )
-        
+
         viewModelScope.launch {
             try {
                 val results = locationSearchService.searchLocations(query, maxResults = 10)
@@ -61,7 +61,7 @@ class LocationPickerViewModel(
             }
         }
     }
-    
+
     /**
      * Clears the search results and resets the search state.
      */
@@ -72,7 +72,7 @@ class LocationPickerViewModel(
             isSearching = false
         )
     }
-    
+
     /**
      * Gets nearby locations around the specified coordinates.
      */
@@ -85,7 +85,7 @@ class LocationPickerViewModel(
             isSearching = true,
             searchError = null
         )
-        
+
         viewModelScope.launch {
             try {
                 val results = locationSearchService.getNearbyLocations(
