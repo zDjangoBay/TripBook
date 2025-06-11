@@ -1,9 +1,10 @@
 package com.android.tripbook.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleComments
-import com.android.tripbook.model.CommentReaction
 import com.android.tripbook.model.Comment
+import com.android.tripbook.model.CommentReaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +36,7 @@ class MockCommentViewModel : ViewModel() {
     fun getCommentsForReview(reviewId: Int): List<Comment> {
         return commentsMap[reviewId] ?: emptyList()
     }
-
+    
     fun addReaction(reviewId: Int, commentId: String, emoji: String, username: String = "You") {
         val commentsList = commentsMap[reviewId] ?: return
         val commentIndex = commentsList.indexOfFirst { it.id == commentId }
@@ -50,30 +51,34 @@ class MockCommentViewModel : ViewModel() {
             username = username
         )
 
-        // Add or update the reaction
-        val updatedComment = comment.copy()
-        if (!updatedComment.reactions.containsKey(emoji)) {
-            updatedComment.reactions[emoji] = mutableListOf()
-        }
+        // Create new reactions map with proper immutable handling
+        val currentReactions = comment.reactions.toMutableMap()
+        val currentEmojiReactions = currentReactions[emoji]?.toMutableList() ?: mutableListOf()
 
         // Check if user already reacted with this emoji
-        val existingReactionIndex = updatedComment.reactions[emoji]?.indexOfFirst { it.username == username }
-        if (existingReactionIndex != null && existingReactionIndex != -1) {
+        val existingReactionIndex = currentEmojiReactions.indexOfFirst { it.username == username }
+        if (existingReactionIndex != -1) {
             // User already reacted with this emoji, remove it (toggle behavior)
-            updatedComment.reactions[emoji]?.removeAt(existingReactionIndex)
-            if (updatedComment.reactions[emoji]?.isEmpty() == true) {
-                updatedComment.reactions.remove(emoji)
+            currentEmojiReactions.removeAt(existingReactionIndex)
+            if (currentEmojiReactions.isEmpty()) {
+                currentReactions.remove(emoji)
+            } else {
+                currentReactions[emoji] = currentEmojiReactions.toList()
             }
         } else {
             // Add new reaction
-            updatedComment.reactions[emoji]?.add(reaction)
+            currentEmojiReactions.add(reaction)
+            currentReactions[emoji] = currentEmojiReactions.toList()
         }
+
+        // Create updated comment with new reactions
+        val updatedComment = comment.copy(reactions = currentReactions.toMap())
 
         // Update the comment in the list
         commentsList[commentIndex] = updatedComment
         _comments.value = commentsList.toList()
     }
-
+    
     fun hasUserReacted(commentId: String, emoji: String, username: String = "You"): Boolean {
         val comment = _comments.value.find { it.id == commentId } ?: return false
         return comment.reactions[emoji]?.any { it.username == username } == true
@@ -93,9 +98,11 @@ class MockCommentViewModel : ViewModel() {
             parentId = parentCommentId
         )
 
-        // Add the reply to the parent comment
-        val updatedComment = parentComment.copy()
-        updatedComment.replies.add(0, reply) // Add to beginning of replies
+        // Create new replies list with the new reply at the beginning
+        val updatedReplies = listOf(reply) + parentComment.replies
+
+        // Create updated comment with new replies
+        val updatedComment = parentComment.copy(replies = updatedReplies)
 
         // Update the comment in the list
         commentsList[parentCommentIndex] = updatedComment
