@@ -1,4 +1,4 @@
-package com.tripbook.userprofileWongiberaoul.w.Itemmodels
+package com.tripbook.userprofileWongiberaoul.Itemmodels
 
 import java.util.Date
 

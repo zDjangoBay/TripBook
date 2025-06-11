@@ -1,4 +1,4 @@
-package com.tripbook.userprofileWongiberaoul.w.modelview
+package com.tripbook.userprofileWongiberaoul.modelview
 
 
 
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import java.util.Date
-import com.tripbook.userprofileWongiberaoul.w.Itemmodels.*
+import com.tripbook.userprofileWongiberaoul.Itemmodels.*
 
 class ViewModels : ViewModel() {
     private val _mediaItems = MutableStateFlow<List<MediaItem>>(emptyList())
@@ -64,7 +64,7 @@ class ViewModels : ViewModel() {
 
 
     private fun loadSampleData() {
-        _mediaItems.value = listOf(
+        _mediaItems.value = listOf( //hardcoded data. The edit ability is implemented by Ingrid as part of her module work
             MediaItem("1",
                 "Yaounde",
                 MediaType.PHOTO,

@@ -1,35 +1,31 @@
-package com.tripbook.userprofileWongiberaoul.w
+package com.tripbook.userprofileWongiberaoul
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.GridView  //This icon represents a Grid layout, commonly used to indicate a Grid view option displayed in a button
+import androidx.compose.material.icons.filled.List //This icon represents a list layout, commonly used to indicate a list view option
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.tripbook.userprofileWongiberaoul.w.Itemmodels.MediaItem
-import com.tripbook.userprofileWongiberaoul.w.modelview.ViewModels
+import com.tripbook.userprofileWongiberaoul.Itemmodels.MediaItem
+import com.tripbook.userprofileWongiberaoul.modelview.ViewModels
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Mediascreenview(
+fun MediaScreenView(
     navController: NavController,
     viewModel: ViewModels = viewModel()
 ) {
     val mediaItems by viewModel.filteredAndSortedMedia.collectAsState()
     val currentFilter by viewModel.currentFilter.collectAsState()
-
-    var showActionDialog by remember { mutableStateOf(false) }
     var selectedMedia by remember { mutableStateOf<MediaItem?>(null) }
-    var showEditDialog by remember { mutableStateOf(false) }
-    var showShareDialog by remember { mutableStateOf(false) }
+
 
     // New state for toggling views
     var isGridView by remember { mutableStateOf(true) }
@@ -38,7 +34,7 @@ fun Mediascreenview(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             // Optional top app bar here
-            // TopAppBar(title = { Text("Mes Médias") })
+            // TopAppBar(title = { Text("") })
         }
     ) { innerPadding ->
         Column(
@@ -85,7 +81,7 @@ fun Mediascreenview(
                     mediaItems = mediaItems,
                     onMediaClick = { media ->
                         selectedMedia = media
-                        showActionDialog = true
+
                     }
                 )
             } else {
@@ -93,7 +89,7 @@ fun Mediascreenview(
                     mediaItems = mediaItems,
                     onMediaClick = { media ->
                         selectedMedia = media
-                        showActionDialog = true
+
                     }
                 )
             }
