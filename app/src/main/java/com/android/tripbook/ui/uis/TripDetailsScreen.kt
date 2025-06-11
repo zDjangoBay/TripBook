@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
+import com.android.tripbook.model.JournalEntry
 import com.android.tripbook.ui.components.TripMapView
 import java.time.format.DateTimeFormatter
 
@@ -24,7 +25,8 @@ import java.time.format.DateTimeFormatter
 fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
-    onEditItineraryClick: () -> Unit
+    onEditItineraryClick: () -> Unit,
+    onJournalUpdated: (List<JournalEntry>) -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
@@ -88,7 +90,7 @@ fun TripDetailsScreen(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            listOf("Overview", "Itinerary", "Map").forEach { tab ->
+            listOf("Overview", "Itinerary", "Journal", "Map").forEach { tab ->
                 Text(
                     text = tab,
                     modifier = Modifier
@@ -111,6 +113,7 @@ fun TripDetailsScreen(
             when (selectedTab) {
                 "Overview" -> OverviewTab(trip)
                 "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
+                "Journal" -> JournalTab(trip, onJournalUpdated)
                 "Map" -> MapTab(trip)
             }
         }
@@ -275,4 +278,13 @@ private fun MapTab(trip: Trip) {
             modifier = Modifier.fillMaxSize()
         )
     }
+}
+
+@Composable
+private fun JournalTab(trip: Trip, onJournalUpdated: (List<JournalEntry>) -> Unit) {
+    JournalScreen(
+        trip = trip,
+        onBackClick = { /* No-op as we're in a tab */ },
+        onJournalUpdated = onJournalUpdated
+    )
 }
