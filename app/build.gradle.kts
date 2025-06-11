@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 android {
@@ -76,4 +77,10 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+
+    // Location picker dependencies
+    implementation(libs.androidx.serialization)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 }
