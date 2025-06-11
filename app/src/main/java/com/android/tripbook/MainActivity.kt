@@ -5,7 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import com.android.tripbook.model.ItineraryItem
 import com.android.tripbook.model.ItineraryType
 import com.android.tripbook.model.Trip
@@ -200,63 +205,90 @@ fun TripBookApp(
             }
         }
 
-        "TravelAgency" -> TravelAgencyScreen(
-            destination = selectedDestination ?: "",
-            travelAgencyService = travelAgencyService,
-            onBackClick = {
-                currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
-            },
-            onServiceSelected = { service ->
-                // Fixed: Safe mapping with fallback for unknown service types
-                val itineraryType = mapServiceTypeToItineraryType(service.type)
+        "TravelAgency" -> {
+            // TODO: Implement TravelAgencyScreen or create a placeholder
+            // For now, we'll create a simple placeholder screen
+            TravelAgencyPlaceholderScreen(
+                destination = selectedDestination ?: "",
+                onBackClick = {
+                    currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
+                },
+                onServiceSelected = { serviceName: String, serviceType: String, serviceLocation: String ->
+                    // Fixed: Explicit parameter types for the lambda
+                    val itineraryType = mapServiceTypeToItineraryType(serviceType)
 
-                if (itineraryType != null) {
-                    selectedTrip?.let { trip ->
-                        val newItem = ItineraryItem(
-                            date = trip.startDate,
-                            time = "10:00 AM",
-                            title = service.name,
-                            location = service.location,
-                            type = itineraryType,
-                            agencyService = null
-                        )
+                    if (itineraryType != null) {
+                        selectedTrip?.let { trip ->
+                            val newItem = ItineraryItem(
+                                date = trip.startDate,
+                                time = "10:00 AM",
+                                title = serviceName,
+                                location = serviceLocation,
+                                type = itineraryType,
+                                agencyService = null
+                            )
 
-                        selectedTrip = trip.copy(
-                            itinerary = trip.itinerary + newItem
-                        )
+                            selectedTrip = trip.copy(
+                                itinerary = trip.itinerary + newItem
+                            )
 
-                        trips = trips.map {
-                            if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
-                            else it
+                            trips = trips.map {
+                                if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
+                                else it
+                            }
+                        }
+                    } else {
+                        // Handle unknown service type - could show error message or log
+                        println("Warning: Unknown service type '$serviceType' - defaulting to ACTIVITY")
+
+                        selectedTrip?.let { trip ->
+                            val newItem = ItineraryItem(
+                                date = trip.startDate,
+                                time = "10:00 AM",
+                                title = serviceName,
+                                location = serviceLocation,
+                                type = ItineraryType.ACTIVITY, // Default fallback
+                                agencyService = null
+                            )
+
+                            selectedTrip = trip.copy(
+                                itinerary = trip.itinerary + newItem
+                            )
+
+                            trips = trips.map {
+                                if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
+                                else it
+                            }
                         }
                     }
-                } else {
-                    // Handle unknown service type - could show error message or log
-                    println("Warning: Unknown service type '${service.type}' - defaulting to ACTIVITY")
 
-                    selectedTrip?.let { trip ->
-                        val newItem = ItineraryItem(
-                            date = trip.startDate,
-                            time = "10:00 AM",
-                            title = service.name,
-                            location = service.location,
-                            type = ItineraryType.ACTIVITY, // Default fallback
-                            agencyService = null
-                        )
-
-                        selectedTrip = trip.copy(
-                            itinerary = trip.itinerary + newItem
-                        )
-
-                        trips = trips.map {
-                            if (it.id == trip.id) it.copy(itinerary = trip.itinerary + newItem)
-                            else it
-                        }
-                    }
+                    currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
                 }
+            )
+        }
+    }
+}
 
-                currentScreen = if (selectedTrip == null) "PlanNewTrip" else "ItineraryBuilder"
-            }
-        )
+// Temporary placeholder screen until TravelAgencyScreen is implemented
+@Composable
+fun TravelAgencyPlaceholderScreen(
+    destination: String,
+    onBackClick: () -> Unit,
+    onServiceSelected: (String, String, String) -> Unit
+) {
+    // This is a placeholder implementation
+    // Replace this with your actual TravelAgencyScreen implementation
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text("Travel Agency Screen for $destination")
+        Button(onClick = onBackClick) {
+            Text("Back")
+        }
+        Button(onClick = {
+            onServiceSelected("Sample Service", "ACTIVITY", destination)
+        }) {
+            Text("Add Sample Service")
+        }
     }
 }
