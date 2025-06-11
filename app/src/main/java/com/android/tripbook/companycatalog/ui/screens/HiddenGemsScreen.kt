@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-@file:OptIn(ExperimentalMaterial3Api::class)
-
-=======
-
-@file:OptIn(ExperimentalMaterial3Api::class)
-
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
 package com.android.tripbook.companycatalog.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -56,242 +49,146 @@ fun HiddenGemsScreen() {
     val hiddenGems = remember {
         listOf(
             HiddenGem(
-                name = "Ekom Nkam Waterfalls",
-                location = "Melong, Littoral Region",
-                description = "Spectacular 80-meter waterfall hidden in the rainforest. Perfect for photography and swimming.",
-                rating = 4.7f,
-                coordinates = "5.1017°N, 10.1333°E"
-            ),
-            HiddenGem(
-                name = "Lac Barombi Mbo",
-                location = "Near Kumba, Southwest Region",
-                description = "Volcanic crater lake with unique endemic fish species. Pristine and rarely visited.",
-                rating = 4.5f,
-                coordinates = "4.6667°N, 9.4000°E"
-            ),
-            HiddenGem(
-                name = "Mandara Mountains Caves",
-                location = "Far North Region",
-                description = "Ancient caves with traditional rock paintings. Guided tours available from local communities.",
-                rating = 4.3f,
-                coordinates = "10.8500°N, 14.2000°E"
-            ),
-            HiddenGem(
-                name = "Chutes de la Lobé",
-                location = "Kribi, South Region",
-                description = "Unique waterfall that flows directly into the Atlantic Ocean. Magical sunset views.",
+                id = "1",
+                name = "Bana Sacred Forest",
+                location = "Bana, West Region, Cameroon",
+                description = "A mystical forest sanctuary where local Bamiléké traditions are preserved. Ancient trees house spirits according to local beliefs, and traditional healers gather medicinal plants.",
+                category = "Culture & Nature",
+                discoveredBy = "Marie Tchoua",
                 rating = 4.8f,
-                coordinates = "2.9333°N, 9.9167°E"
+                reviewCount = 23,
+                imageResId = R.drawable.mock_logo_1,
+                tips = "Visit with local guide from Bana village. Respect traditional customs and ask permission before taking photos.",
+                timeAgo = "2 weeks ago"
             ),
             HiddenGem(
-                name = "Bamenda Highlands",
-                location = "Northwest Region",
-                description = "Rolling hills with traditional villages and stunning panoramic views of the Ring Road.",
+                id = "2",
+                name = "Limbe Botanical Garden Night Trail",
+                location = "Limbe, Southwest Region, Cameroon",
+                description = "Secret night trails through Cameroon's oldest botanical garden. Experience nocturnal wildlife and bioluminescent plants guided by local botanists.",
+                category = "Nature & Adventure",
+                discoveredBy = "Dr. Emmanuel Taku",
+                rating = 4.6f,
+                reviewCount = 18,
+                imageResId = R.drawable.mock_logo_2,
+                tips = "Book night tours through Limbe Wildlife Centre. Bring insect repellent and red flashlight to preserve night vision.",
+                timeAgo = "1 month ago"
+            ),
+            HiddenGem(
+                id = "3",
+                name = "Foumban Royal Pottery Village",
+                location = "Foumban, West Region, Cameroon",
+                description = "Hidden artisan quarter where Bamoun royal pottery traditions continue unchanged for centuries. Watch master potters create ceremonial vessels for the Sultan's palace.",
+                category = "Culture & Art",
+                discoveredBy = "Ibrahim Njoya",
                 rating = 4.4f,
-                coordinates = "5.9597°N, 10.1489°E"
+                reviewCount = 31,
+                imageResId = R.drawable.mock_logo_3,
+                tips = "Visit during mornings when clay is being prepared. Learn basic Bamoun greetings - 'Mbé ni wé' means good morning!",
+                timeAgo = "3 weeks ago"
+            ),
+            HiddenGem(
+                id = "4",
+                name = "Rhumsiki Moonlight Market",
+                location = "Rhumsiki, Far North Region, Cameroon",
+                description = "A monthly market held under the full moon among the Mandara Mountains' dramatic rock formations. Local Kapsiki people trade traditional crafts and millet beer.",
+                category = "Culture & Food",
+                discoveredBy = "Paul Mbarga",
+                rating = 4.9f,
+                reviewCount = 15,
+                imageResId = R.drawable.mock_logo_4,
+                tips = "Check lunar calendar - market happens 3 days before full moon. Try local millet beer and dried fish specialties.",
+                timeAgo = "1 week ago"
+            ),
+            HiddenGem(
+                id = "5",
+                name = "Dja Reserve Pygmy Village Experience",
+                location = "Dja Biosphere Reserve, East Region, Cameroon",
+                description = "Authentic cultural exchange with Baka pygmy communities deep in the rainforest. Learn traditional hunting techniques, forest medicine, and honey gathering.",
+                category = "Culture & Nature",
+                discoveredBy = "Anatole Biyiha",
+                rating = 4.7f,
+                reviewCount = 12,
+                imageResId = R.drawable.mock_logo_5,
+                tips = "Contact local NGOs for ethical visits. Bring small gifts like salt or soap. Respect photography restrictions in sacred areas.",
+                timeAgo = "4 days ago"
+            ),
+            HiddenGem(
+                id = "6",
+                name = "Edéa Bridge Manatee Watching",
+                location = "Edéa, Littoral Region, Cameroon",
+                description = "Best kept secret for spotting West African manatees in Sanaga River. Early morning boat trips offer chances to see these gentle giants in their natural habitat.",
+                category = "Wildlife & Nature",
+                discoveredBy = "Christine Ndongo",
+                rating = 4.5f,
+                reviewCount = 8,
+                imageResId = R.drawable.mock_logo_1,
+                tips = "Best viewing at dawn between 5-7 AM. Book through local fishermen's association. Bring binoculars and maintain silence on water.",
+                timeAgo = "5 days ago"
             )
         )
     }
-=======
-    val hiddenGems = remember { getSampleHiddenGems() }
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
+
+    val categories = listOf("All", "Culture & Nature", "Nature & Adventure", "Culture & Art", "Culture & Food", "Wildlife & Nature")
+    var selectedCategory by remember { mutableStateOf("All") }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
             .padding(16.dp)
     ) {
-        Text(
-<<<<<<< HEAD
-            text = "Hidden Gems",
-=======
-            text = "Hidden Gems in Cameroon",
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        Text(
-<<<<<<< HEAD
-            text = "Discover secret locations shared by fellow travelers",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray,
-=======
-            text = "Discover secret spots and off-the-beaten-path destinations that most tourists never see.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            items(hiddenGems) { gem ->
-                HiddenGemCard(gem = gem)
+            Column {
+                Text(
+                    text = "Hidden Gems",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1B5E20)
+                )
+                Text(
+                    text = "Discover Cameroon's secrets",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+
+            FloatingActionButton(
+                onClick = { /* Add new gem */ },
+                modifier = Modifier.size(56.dp),
+                containerColor = Color(0xFF4CAF50)
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Add Hidden Gem",
+                    tint = Color.White
+                )
             }
         }
-    }
-}
 
-@Composable
-private fun HiddenGemCard(gem: HiddenGem) {
-    Card(
-<<<<<<< HEAD
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Category filters
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Title and rating
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = gem.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = "Rating",
-                        tint = Color(0xFFFFD700),
-                        modifier = Modifier.size(16.dp)
+            items(categories) { category ->
+                FilterChip(
+                    onClick = { selectedCategory = category },
+                    label = { Text(category) },
+                    selected = selectedCategory == category,
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = Color(0xFF4CAF50),
+                        selectedLabelColor = Color.White
                     )
-                    Text(
-                        text = gem.rating.toString(),
-                        fontSize = 14.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Location
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    Icons.Default.LocationOn,
-                    contentDescription = "Location",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = gem.location,
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(start = 4.dp)
                 )
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-=======
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            // Header with icon and name
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 12.dp)
-            ) {
-                Icon(
-                    imageVector = gem.icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(28.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = gem.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = gem.location,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
->>>>>>> f82f177a06fd7efe7a399c4320c9580979559da3
-            // Description
-            Text(
-                text = gem.description,
-                style = MaterialTheme.typography.bodyMedium,
-<<<<<<< HEAD
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Coordinates
-            Text(
-                text = "📍 ${gem.coordinates}",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier
-                    .background(
-                        Color.Gray.copy(alpha = 0.1f),
-                        RoundedCornerShape(6.dp)
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-=======
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // Highlights
-            Text(
-                text = "Highlights:",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            gem.highlights.forEach { highlight ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = highlight,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
+        }
 
             Spacer(modifier = Modifier.height(16.dp))
 
