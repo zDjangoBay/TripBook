@@ -138,6 +138,15 @@ fun TripBookApp(
             },
             onEditItineraryClick = {
                 currentScreen = "ItineraryBuilder"
+            },
+            onJournalUpdated = { updatedJournalEntries ->
+                selectedTrip?.let { trip ->
+                    val updatedTrip = trip.copy(journalEntries = updatedJournalEntries)
+                    selectedTrip = updatedTrip
+                    trips = trips.map {
+                        if (it.id == trip.id) updatedTrip else it
+                    }
+                }
             }
         )
 
