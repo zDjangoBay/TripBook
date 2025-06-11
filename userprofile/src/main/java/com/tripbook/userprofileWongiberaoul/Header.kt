@@ -189,7 +189,10 @@ fun EditProfileDialog(
         text = {
             Column {
                 TextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
-                TextField(value = status, onValueChange = { status = it }, label = { Text("Status") })
+                TextField(
+                    value = status,
+                    onValueChange = { status = it },
+                    label = { Text("Status") })
                 TextField(value = photos.toString(), onValueChange = {
                     photos = it.toIntOrNull() ?: 0
                 }, label = { Text("Photos") })
