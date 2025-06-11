@@ -82,4 +82,5 @@ dependencies {
     implementation(libs.androidx.serialization)
     implementation(libs.play.services.location)
     implementation(libs.play.services.maps)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 }
