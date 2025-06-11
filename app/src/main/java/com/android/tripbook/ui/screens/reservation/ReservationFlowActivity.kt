@@ -23,7 +23,6 @@ fun ReservationFlowActivity(
     onNavigateBack: () -> Unit,
     onNavigateToPayment: (String) -> Unit
 ) {
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
     val trip = remember { DummyTripDataProvider.getTripById(tripId) }
     var currentStep by remember { mutableStateOf(0) }
     

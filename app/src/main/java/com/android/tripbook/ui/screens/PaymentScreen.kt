@@ -31,7 +31,6 @@ fun PaymentScreen(
 ) {
     val paymentProcessor = remember { MockPaymentProcessor.getInstance() }
     val notificationDispatcher = remember { FakeNotificationDispatcher.getInstance() }
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
 
     val paymentMethods = remember { paymentProcessor.getAvailablePaymentMethods() }
     var selectedPaymentMethod by remember { mutableStateOf<MockPaymentProcessor.PaymentMethod?>(null) }

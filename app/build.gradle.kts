@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -78,26 +78,39 @@ dependencies {
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 
-    // Extended Icons
-    implementation("androidx.compose.material:material-icons-extended")
-
-    // Coil for image loading
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
-    // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.5")
-
-    // Accompanist
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
-
-    // Calendar
-    implementation("com.kizitonwose.calendar:compose:2.4.0")
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
 
     // Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // DataStore for preferences
+    implementation(libs.androidx.datastore.preferences)
+
+    // Material Icons Extended
+    implementation(libs.androidx.material.icons.extended)
+
+    // Image Loading with Coil
+    implementation(libs.coil.compose)
+
+    // Location Services
+    implementation(libs.play.services.location)
+
+    // Permissions handling
+    implementation(libs.accompanist.permissions)
+
+    // ViewModel Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation(libs.kotlinx.coroutines.android)
+
+    // JSON Serialization
+    implementation(libs.kotlinx.serialization.json)
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

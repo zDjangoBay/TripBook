@@ -17,7 +17,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    onEditProfileClick: () -> Unit = {},
+    onSignOutClick: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,13 +57,13 @@ fun ProfileScreen() {
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
-                    text = "John Traveler",
+                    text = "John Doe",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Text(
-                    text = "john.traveler@email.com",
+                    text = "Travel Enthusiast",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -102,7 +105,13 @@ fun ProfileScreen() {
         profileOptions.forEach { option ->
             ProfileOptionCard(
                 option = option,
-                onClick = { /* Handle option click */ }
+                onClick = {
+                    when (option.title) {
+                        "Edit Profile" -> onEditProfileClick()
+                        "Sign Out" -> onSignOutClick()
+                        else -> { /* Handle other options */ }
+                    }
+                }
             )
             Spacer(modifier = Modifier.height(8.dp))
         }

@@ -16,8 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.tripbook.data.managers.ReservationSessionManager
-import com.android.tripbook.data.models.ReservationStatus
-import com.android.tripbook.data.models.TripReservation
 import java.time.format.DateTimeFormatter
 
 /**
@@ -27,14 +25,11 @@ import java.time.format.DateTimeFormatter
 fun ReservationListScreen(
     onReservationClick: (String) -> Unit
 ) {
-    val sessionManager = remember { ReservationSessionManager.getInstance() }
-    val reservations by sessionManager.reservations.collectAsState()
 
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Pending", "Upcoming", "Completed")
     val statuses = listOf(
         ReservationStatus.PENDING,
-        ReservationStatus.UPCOMING,
         ReservationStatus.COMPLETED
     )
 
@@ -106,15 +101,9 @@ fun ReservationListScreen(
                 items(filteredReservations) { reservation ->
                     ReservationCard(
                         reservation = reservation,
-                        onClick = { onReservationClick(reservation.id) },
-                        onCancel = if (reservation.status == ReservationStatus.PENDING ||
-                                      reservation.status == ReservationStatus.UPCOMING) {
-                            {
-                                sessionManager.updateReservationStatus(
-                                    reservation.id,
-                                    ReservationStatus.CANCELLED
-                                )
-                            }
+                        onClick = { /* Handle click */ },
+                        onCancel = if (reservation.status == ReservationStatus.PENDING) {
+                            { /* Handle cancel */ }
                         } else null
                     )
                 }
@@ -142,8 +131,8 @@ fun ReservationCard(
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = reservation.trip.imageUrl,
-                contentDescription = reservation.trip.title,
+                model = "https://images.unsplash.com/photo-1488646953014-85cb44e25828",
+                contentDescription = "Trip image",
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight()
@@ -162,7 +151,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = reservation.trip.title,
+                        text = reservation.tripTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f)
@@ -174,7 +163,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "${reservation.trip.fromLocation} → ${reservation.trip.toLocation}",
+                    text = "${reservation.fromLocation} → ${reservation.toLocation}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -182,7 +171,7 @@ fun ReservationCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Booked: ${reservation.bookingDate.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))}",
+                    text = "Departure: ${reservation.departureDate}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -195,7 +184,7 @@ fun ReservationCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$${String.format("%.2f", reservation.totalCost)}",
+                        text = "$${String.format("%.2f", reservation.totalPrice)}",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -227,10 +216,10 @@ fun StatusBadge(
             MaterialTheme.colorScheme.tertiary,
             "Pending"
         )
-        ReservationStatus.UPCOMING -> Triple(
+        ReservationStatus.CONFIRMED -> Triple(
             MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
             MaterialTheme.colorScheme.primary,
-            "Upcoming"
+            "Confirmed"
         )
         ReservationStatus.COMPLETED -> Triple(
             MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),

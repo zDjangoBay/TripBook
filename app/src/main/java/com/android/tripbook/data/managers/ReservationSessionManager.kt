@@ -1,5 +1,6 @@
 package com.android.tripbook.data.managers
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * Manages the current reservation session state
  */
-class ReservationSessionManager {
+class ReservationSessionManager(private val context: Context) {
 
     private val _currentSession = MutableStateFlow<ReservationSession?>(null)
     val currentSession: StateFlow<ReservationSession?> = _currentSession.asStateFlow()
@@ -101,8 +102,7 @@ class ReservationSessionManager {
             paymentStatus = PaymentStatus.PENDING
         )
 
-        // Add to reservations list
-        _reservations.value = _reservations.value + reservation
+                _reservations.value = _reservations.value + reservation
 
         // Clear current session
         clearSession()
@@ -138,9 +138,9 @@ class ReservationSessionManager {
         @Volatile
         private var INSTANCE: ReservationSessionManager? = null
 
-        fun getInstance(): ReservationSessionManager {
+        fun getInstance(context: Context): ReservationSessionManager {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ReservationSessionManager().also { INSTANCE = it }
+                INSTANCE ?: ReservationSessionManager(context).also { INSTANCE = it }
             }
         }
     }

@@ -64,7 +64,6 @@ fun DashboardActivity() {
                 NotificationScreen()
             }
             composable("profile") {
-                ProfileScreen()
             }
             composable("payment/{reservationId}") { backStackEntry ->
                 val reservationId = backStackEntry.arguments?.getString("reservationId") ?: ""

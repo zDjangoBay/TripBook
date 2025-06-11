@@ -51,7 +51,7 @@ import com.android.tripbook.data.database.dao.*
         NotificationEntity::class,
         UserFavoriteEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(DateTimeConverters::class)
@@ -257,7 +257,6 @@ class DatabaseInitializer {
                 username = "demo_user",
                 email = "demo@tripbook.com",
                 firstName = "Demo",
-                lastName = "User"
             )
 
             database.userDao().insertUser(sampleUser)

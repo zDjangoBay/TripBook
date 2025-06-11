@@ -31,7 +31,7 @@ enum class ReservationStatus {
     PENDING,
     CANCELLED,
     COMPLETED;
-    
+
     fun getColorName(): String {
         return when (this) {
             CONFIRMED -> "Green"
