@@ -19,6 +19,7 @@ data class Trip(
     val budget: Double = 0.0,
     val destinationCoordinates: Coordinates? = null,
     val itinerary: List<ItineraryItem> = emptyList(),
+    val journalEntries: List<JournalEntry> = emptyList(),
     val travelers: Int = 1,
     val status: TripStatus = TripStatus.PLANNED,
     val type: String = "Vacation"
