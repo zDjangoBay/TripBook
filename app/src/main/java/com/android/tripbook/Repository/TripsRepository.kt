@@ -1,6 +1,6 @@
 package com.android.tripbook.Repository
 
-import com.android.tripbook.Model.Place
+import com.android.tripbook.model.Place
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -9,7 +9,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import android.util.Log
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Triphome
 
 class TripsRepository {
     private val database by lazy {

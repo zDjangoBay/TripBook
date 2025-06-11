@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
-import com.android.tripbook.ViewModel.MainViewModel
+import com.android.tripbook.viewmodel.MainViewModel
 import com.android.tripbook.ui.components.BottomNavigationBar
 import com.android.tripbook.ui.navigation.MainNavGraph
 import com.android.tripbook.ui.theme.TripBookTheme
@@ -34,7 +34,7 @@ class HomeActivity : ComponentActivity() {
         }
     }
 }
-
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun TripBookApp(mainViewModel: MainViewModel) {
     val navController = rememberNavController()

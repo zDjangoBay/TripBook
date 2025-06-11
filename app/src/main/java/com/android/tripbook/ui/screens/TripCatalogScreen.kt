@@ -30,6 +30,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
  * - Scrollable, paginated trip list
  * -Add a place button
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun TripCatalogScreen(

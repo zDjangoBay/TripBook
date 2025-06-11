@@ -1,11 +1,11 @@
-package com.android.tripbook.ViewModel
+package com.android.tripbook.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.Model.Place
-import com.android.tripbook.Model.Triphome
+import com.android.tripbook.model.Place
+import com.android.tripbook.model.Triphome
 import com.android.tripbook.Repository.TripsRepository
 import kotlinx.coroutines.launch
 
