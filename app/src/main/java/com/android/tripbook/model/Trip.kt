@@ -18,5 +18,3 @@ data class Trip(
     val description: String,
     val imageUrl: List<String>
 ) : Serializable
-
-
