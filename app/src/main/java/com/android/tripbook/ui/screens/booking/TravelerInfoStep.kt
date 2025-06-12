@@ -193,7 +193,7 @@ fun TravelerInfoStep(
             }
         }
 
-        // Navigation Buttons
+        // Navigation Buttons for the booking process
         Row(
             modifier = Modifier
                 .fillMaxWidth()
