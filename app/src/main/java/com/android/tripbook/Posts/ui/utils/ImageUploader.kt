@@ -11,7 +11,7 @@ import java.io.File
 import java.util.UUID
 
 class ImageUploader(private val context: Context) {
-
+    // Note: uploadUrl is a placeholder; replace with actual endpoint in production
     suspend fun uploadFromGallery(uri: Uri): Result<ImageModel> = withContext(Dispatchers.IO) {
         try {
             // Simulate upload process
@@ -40,7 +40,7 @@ class ImageUploader(private val context: Context) {
             uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
         )
     }
-
+// Note: uploadUrl is a placeholder; replace with actual endpoint in production
 suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispatchers.IO) {
     try {
         if (!file.exists()) {
