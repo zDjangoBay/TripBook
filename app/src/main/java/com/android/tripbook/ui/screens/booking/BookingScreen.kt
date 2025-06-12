@@ -104,7 +104,7 @@ fun BookingScreen(
                 )
             }
 
-            // Current step content
+            // Current step content for the booking process
             when (currentStep) {
                 BookingStep.DATE_SELECTION -> {
                     DateSelectionStep(
