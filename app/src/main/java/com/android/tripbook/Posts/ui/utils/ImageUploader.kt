@@ -49,6 +49,9 @@ suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispa
         if (!file.exists()) {
             return@withContext Result.failure(Exception("Camera file does not exist"))
         }
+        if (file.length() > 10 * 1024 * 1024) { // 10MB
+            return@withContext Result.failure(Exception("File size exceeds 10MB"))
+        }
         // Simulate upload process
         delay(1500)
         Result.success(
