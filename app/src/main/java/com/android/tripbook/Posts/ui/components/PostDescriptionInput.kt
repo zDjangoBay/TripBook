@@ -19,7 +19,11 @@ fun PostDescriptionInput(
     Column(modifier = modifier) {
         OutlinedTextField(
             value = description,
-            onValueChange = onDescriptionChange,
+            onValueChange = { newText ->
+                if (newText.length <= 1000) {
+                    onDescriptionChange(newText)
+                }
+            },
             label = { Text("Description") },
             placeholder = { Text("Share your travel experience...") },
             minLines = 4,
@@ -48,4 +52,3 @@ fun PostDescriptionInput(
         )
     }
 }
-
