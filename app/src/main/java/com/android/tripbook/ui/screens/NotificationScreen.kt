@@ -71,13 +71,29 @@ fun NotificationItem(notification: Notification, onMarkAsRead: () -> Unit) {
             .padding(vertical = 8.dp),
         elevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = notification.message, style = MaterialTheme.typography.body1)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Type: ${notification.type}", style = MaterialTheme.typography.caption)
-            Spacer(modifier = Modifier.height(8.dp))
+            Icon(
+                imageVector = when (notification.type) {
+                    NotificationType.PAYMENT_SUCCESS -> Icons.Default.CheckCircle
+                    NotificationType.BOOKING_CONFIRMED -> Icons.Default.Event
+                    NotificationType.GENERAL -> Icons.Default.Info
+                },
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.size(40.dp)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = notification.message, style = MaterialTheme.typography.body1)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Type: ${notification.type}", style = MaterialTheme.typography.caption)
+            }
+
             if (!notification.isRead) {
                 Button(onClick = onMarkAsRead) {
                     Text("Mark as Read")
