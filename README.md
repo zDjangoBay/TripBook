@@ -66,6 +66,30 @@ hot_reload.bat
 - **Trip categorization** with visual icons
 - **Real-time development logs** (Flutter-style experience)
 
+## Notification System
+
+### Features
+- **User Notifications**: Displays notifications for users.
+- **Status Management**: Notifications can be marked as read/unread.
+- **Real-Time Updates**: Notifications are updated dynamically using `StateFlow`.
+- **Notification Types**:
+  - `PAYMENT_SUCCESS`: Indicates successful payment.
+  - `BOOKING_CONFIRMED`: Confirms a booking.
+  - `GENERAL`: General notifications.
+
+### Implementation
+- **Mock Data**: Used for simulating notifications.
+- **UI Integration**: Notifications are displayed in a dedicated screen with filtering and real-time updates.
+- **Expandable Design**: Placeholder methods for database integration are included.
+
+### Testing
+- Unit tests verify sending notifications and marking them as read.
+
+### How to Use
+1. Navigate to the `NotificationScreen`.
+2. Use the buttons to filter notifications or send new ones.
+3. Mark notifications as read directly from the UI.
+
 ## 🎨 Design System
 
 ### Color Scheme
