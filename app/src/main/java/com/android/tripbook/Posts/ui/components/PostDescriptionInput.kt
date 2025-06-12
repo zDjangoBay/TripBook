@@ -2,6 +2,9 @@ package com.android.tripbook.posts.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -16,12 +19,15 @@ fun PostDescriptionInput(
     error: String? = null,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
     Column(modifier = modifier) {
         OutlinedTextField(
             value = description,
             onValueChange = { newText ->
                 if (newText.length <= 1000) {
                     onDescriptionChange(newText)
+                } else {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
             },
             label = { Text("Description") },
