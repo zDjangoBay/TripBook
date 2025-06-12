@@ -13,7 +13,7 @@ TripBook is built for backpackers, digital nomads, local adventurers, group trav
 We connect travelers through interactive maps, user-generated content, and verified reviews. With advanced geolocation, AI-curated suggestions, and seamless integration with local services, TripBook turns your phone into a smart travel companion.
 
 ## Team Members & Contributors
-TripBook is made possible by a dedicated team of developers, UI/UX designers, travel bloggers, and open-source contributors from across Africa. We welcome community participation—submit your stories, report issues, or help us improve!
+TripBook was born and brought to light by a dedicated team of Africa's finest, Young, Brilliant developers, UI/UX designers, travel bloggers, and open-source contributors from across Africa. We welcome community participation—submit your stories, report issues, or help us improve!
 
 ## Why TripBook Matters
 Africa's travel potential is immense—but underrepresented. TripBook helps bridge the gap by spotlighting local destinations, empowering travelers with information, and building a trust-based travel community like no other.

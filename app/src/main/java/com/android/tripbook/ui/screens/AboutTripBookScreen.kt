@@ -73,7 +73,7 @@ fun AboutTripBookScreen(onBackClick: () -> Unit) {
 
             Text("Team Members & Contributors", style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "TripBook was born and brought to light by a dedicated team of Africa's finest Young, Brilliant developers, UI/UX designers, travel bloggers, and open-source contributors from across Africa. We welcome community participation—submit your stories, report issues, or help us improve!",
+                text = "TripBook was born and brought to light by a dedicated team of Africa's finest, Young, Brilliant developers, UI/UX designers, travel bloggers, and open-source contributors from across Africa. We welcome community participation—submit your stories, report issues, or help us improve!",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
@@ -82,7 +82,7 @@ fun AboutTripBookScreen(onBackClick: () -> Unit) {
 
             Text("Why TripBook Matters", style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "Africa's travel potential is immense—but underrepresented. TripBook helps bridge the gap by spotlighting local destinations, empowering travelers with information, and building a trust-based travel community like no other.",
+                text = "Africa's travel potential is immense—but underrepresented. TripBook is here to help bridge the gap by spotlighting local destinations, empowering travelers with information, and building a trust-based travel community like no other.",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
