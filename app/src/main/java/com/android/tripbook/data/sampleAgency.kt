@@ -13,7 +13,7 @@ object SampleAgency {
             reviewCount = 128,
             perks = listOf("Free cancellation", "English guides"),
             imageUrl = "https://example.com/agency1.jpg",
-            description = "Reliable agency with 10+ years experience in mountain trips"
+            description = "Reliable agency with 10+ years experience in mountain trips over the country"
         ),
         Agency(
             id = 2,
