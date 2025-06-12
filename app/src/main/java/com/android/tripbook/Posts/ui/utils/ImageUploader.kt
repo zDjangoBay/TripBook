@@ -41,7 +41,26 @@ class ImageUploader(private val context: Context) {
         )
     }
 
-    suspend fun uploadFromCamera(file: File): ImageModel = withContext(Dispatchers.IO) {
+suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispatchers.IO) {
+    try {
+        if (!file.exists()) {
+            return@withContext Result.failure(Exception("Camera file does not exist"))
+        }
+        // Simulate upload process
+        delay(1500)
+        Result.success(
+            ImageModel(
+                id = UUID.randomUUID().toString(),
+                uri = Uri.fromFile(file).toString(),
+                path = file.absolutePath,
+                isUploaded = true,
+                uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
+            )
+        )
+    } catch (e: Exception) {
+        Result.failure(Exception("Failed to upload image from camera: ${e.message}"))
+    }
+}
         // Simulate upload process
         kotlinx.coroutines.delay(1500)
 
