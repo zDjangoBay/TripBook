@@ -153,7 +153,7 @@ class BookingViewModel : ViewModel() {
         _currentStep.update { currentStep ->
             when (currentStep) {
                 BookingStep.DATE_SELECTION -> BookingStep.DATE_SELECTION
-                BookingStep.AGENCY_SELECTION -> BookingStep.DATE_SELECTION
+                BookingStep.AGENCY_SELECTION -> BookingStep.DATE_SELECTION  // Addition of the agency step in the process
                 BookingStep.TRAVELER_INFO -> BookingStep.AGENCY_SELECTION
                 BookingStep.ADDITIONAL_OPTIONS -> BookingStep.TRAVELER_INFO
                 BookingStep.SUMMARY -> BookingStep.ADDITIONAL_OPTIONS
