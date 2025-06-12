@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.android.tripbook.companycatalog.ui.screens
 
 import androidx.compose.foundation.layout.*
@@ -38,12 +36,33 @@ fun TipsScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "Travel Tips",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Travel Tips",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1B5E20)
+            )
+
+            FloatingActionButton(
+                onClick = { /* Add new tip */ },
+                modifier = Modifier.size(56.dp),
+                containerColor = Color(0xFF4CAF50)
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Add Tip",
+                    tint = Color.White
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Category filter
         LazyRow(
@@ -108,15 +127,33 @@ private fun TipCard(tip: TravelTip) {
             }
 
             Text(
-                text = tip.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 12.dp)
+                text = tip.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                color = Color(0xFF2E7D32)
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = tip.content,
+                fontSize = 14.sp,
+                lineHeight = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Author and location
+            Text(
+                text = "by ${tip.author} • ${tip.location} • ${tip.timeAgo}",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Upvote section
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
@@ -249,7 +286,7 @@ private val mockTips = listOf(
 fun TipsScreen() {
     var selectedCategory by remember { mutableStateOf("All") }
     val categories = listOf("All", "Wildlife", "Transportation", "Food", "Adventure", "Safety", "Culture")
-    
+
     val filteredTips = if (selectedCategory == "All") {
         mockTips
     } else {
@@ -272,7 +309,7 @@ fun TipsScreen() {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
-            
+
             FloatingActionButton(
                 onClick = { /* TODO: Add new tip */ },
                 modifier = Modifier.size(48.dp)
@@ -340,7 +377,7 @@ private fun TipCard(tip: TravelTip) {
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
-                
+
                 if (tip.isVerified) {
                     Text(
                         text = "Verified",
@@ -398,9 +435,9 @@ private fun TipCard(tip: TravelTip) {
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(start = 4.dp)
                     )
-                    
+
                     Spacer(modifier = Modifier.width(16.dp))
-                    
+
                     Icon(
                         Icons.Default.ThumbUp,
                         contentDescription = "Likes",
