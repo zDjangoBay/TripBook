@@ -38,4 +38,32 @@ object MockNotificationData {
     fun addNotification(notification: Notification) {
         notifications.add(notification)
     }
+
+    fun addMockNotifications() {
+        notifications.addAll(
+            listOf(
+                Notification(
+                    id = "4",
+                    type = NotificationType.PAYMENT_SUCCESS,
+                    message = "Payment failed due to insufficient funds.",
+                    timestamp = Date(),
+                    isRead = false
+                ),
+                Notification(
+                    id = "5",
+                    type = NotificationType.BOOKING_CONFIRMED,
+                    message = "Your booking is pending confirmation.",
+                    timestamp = Date(),
+                    isRead = false
+                ),
+                Notification(
+                    id = "6",
+                    type = NotificationType.GENERAL,
+                    message = "Reminder: Your trip starts tomorrow!",
+                    timestamp = Date(),
+                    isRead = false
+                )
+            )
+        )
+    }
 }
