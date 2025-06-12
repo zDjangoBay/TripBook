@@ -14,6 +14,9 @@ class ImageUploader(private val context: Context) {
     // Note: uploadUrl is a placeholder; replace with actual endpoint in production
     suspend fun uploadFromGallery(uri: Uri): Result<ImageModel> = withContext(Dispatchers.IO) {
         try {
+            if (uri.scheme.isNullOrEmpty()) {
+                return@withContext Result.failure(Exception("Invalid URI scheme"))
+            }
             // Simulate upload process
             delay(1000)
             Result.success(
