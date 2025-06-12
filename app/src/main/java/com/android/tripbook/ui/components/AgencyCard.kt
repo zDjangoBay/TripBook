@@ -48,7 +48,7 @@ fun AgencyCard(
         elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Agency Name and Price
+            // Agency Name and Price with the different catalogs
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
