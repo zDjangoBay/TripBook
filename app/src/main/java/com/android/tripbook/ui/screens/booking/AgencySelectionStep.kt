@@ -57,7 +57,7 @@ fun AgencySelectionStep(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // Added vertical scroll
+            .verticalScroll(rememberScrollState()) // Added vertical scroll for the view of the different agencies
     ) {
         // Compact Header
         Box(
