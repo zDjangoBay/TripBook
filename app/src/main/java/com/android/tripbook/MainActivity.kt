@@ -20,23 +20,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             UserProfileNdeDilanEntryPoint( )
+            TripBookTheme {
+                }
+            }
         }
     }
-}
 
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview
 @Composable
 fun GreetingPreview() {
     TripBookTheme {
-        Greeting("Android")
+        //Greeting("Android")
     }
 }
