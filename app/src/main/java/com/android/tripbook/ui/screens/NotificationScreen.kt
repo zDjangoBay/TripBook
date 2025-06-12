@@ -41,6 +41,21 @@ fun NotificationScreen(notificationDispatcher: NotificationDispatcher) {
                     }
                 }
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    NotificationType.values().forEach { type ->
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                notificationDispatcher.sendNotification(type, "New ${type.name} notification!")
+                            }
+                        }) {
+                            Text("Send ${type.name}")
+                        }
+                    }
+                }
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp)
