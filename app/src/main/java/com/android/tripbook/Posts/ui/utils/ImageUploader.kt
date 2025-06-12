@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.android.tripbook.posts.model.ImageModel
 import kotlin.Result
+import android.provider.OpenableColumns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -94,8 +95,12 @@ suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispa
         )
     }
 
-    private fun getRealPathFromUri(uri: Uri): String {
-        // Implementation to get real path from URI
-        return uri.path ?: ""
-    }
+// Note: This is a simplified implementation; real path resolution may vary based on Android version
+private fun getRealPathFromUri(uri: Uri): String {
+    return context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        cursor.moveToFirst()
+        val fileName = cursor.getString(nameIndex)
+        File(context.cacheDir, fileName).absolutePath
+    } ?: uri.path ?: ""
 }
