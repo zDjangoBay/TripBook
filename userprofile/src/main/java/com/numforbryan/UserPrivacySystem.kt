@@ -1,3 +1,4 @@
+// Copied from privacy system design files
 package com.android.tripbook.numforbryan.ui
 
 import android.content.Context
@@ -20,10 +21,7 @@ import com.android.tripbook.numforbryan.ui.theme.UserPrivacyViewModelFactory
 @Composable
 fun UserPrivacySystemRoot(context: Context) {
     val navController = rememberNavController()
-
-    // ViewModel to hold UI state and persistence logic
     val viewModel: UserPrivacyViewModel = viewModel(factory = UserPrivacyViewModelFactory(context))
-
     NavHost(navController = navController, startDestination = "profile") {
         composable("profile") {
             UserProfileScreen(
@@ -59,7 +57,6 @@ fun UserProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // showing button and current visibility
         Button(onClick = { navController.navigate("privacySettings") }) {
             Text("Privacy Settings")
         }
@@ -75,7 +72,6 @@ fun PrivacySettingsScreen(
     navController: NavHostController
 ) {
     val options = Visibility.values().toList()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +81,6 @@ fun PrivacySettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text("Choose who can view your content", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(16.dp))
-
         options.forEach { option ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -99,7 +94,6 @@ fun PrivacySettingsScreen(
                 Text(option.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() })
             }
         }
-
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = { navController.popBackStack() }) {
             Text("Back to Profile")

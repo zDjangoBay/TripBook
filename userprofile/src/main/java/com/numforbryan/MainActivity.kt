@@ -1,3 +1,4 @@
+// Copied from privacy system design files
 package com.android.tripbook
 
 import android.os.Bundle
