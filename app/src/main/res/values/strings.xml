@@ -61,5 +61,6 @@
     <string name="nav_header_title">TripBook Explorer</string>
     <string name="nav_header_subtitle">explore@tripbook.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_main">Main Activity</string>
 
 </resources>

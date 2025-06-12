@@ -7,8 +7,9 @@ data class TravelService(
     val imageUrl: String, 
     val price: Double,
     val currency: String,
-    val rating: Double, /
+    val rating: Double,
     val reviewCount: Int,
+
     val location: String,
     val category: String, // e.g., "Flights", "Hotels", "Tours"
     val agency: TravelAgency 

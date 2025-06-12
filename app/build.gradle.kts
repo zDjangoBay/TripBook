@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
+apply(plugin = "androidx.navigation.safeargs.kotlin")
+
+
+
+
 
 android {
     namespace = "com.android.tripbook"
@@ -78,11 +83,15 @@ dependencies {
     //---------------------------------------------------------
 
         // Coil (for Jetpack Compose)
-    implementation(libs.coil.compose) 
+    // implementation(libs.coil.compose) 
 
-      //  Material design
-    implementation "com.google.android.material:material:$version"
+    //  Material design
+    implementation("com.google.android.material:material:1.9.0")
 
-     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+
+
+
+
 }
