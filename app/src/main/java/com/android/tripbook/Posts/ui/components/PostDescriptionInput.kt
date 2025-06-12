@@ -5,6 +5,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ fun PostDescriptionInput(
     onDescriptionChange: (String) -> Unit,
     error: String? = null,
     enabled: Boolean = true,
+    focusRequester: FocusRequester? = null,
     modifier: Modifier = Modifier
 )
 ) {
@@ -41,7 +44,9 @@ fun PostDescriptionInput(
                 capitalization = KeyboardCapitalization.Sentences
             ),
             enabled = enabled,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(focusRequester?.let { Modifier.focusRequester(it) } ?: Modifier)
         )
 
         if (error != null) {
