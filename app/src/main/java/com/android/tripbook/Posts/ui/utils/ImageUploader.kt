@@ -3,6 +3,7 @@ package com.android.tripbook.posts.utils
 import android.content.Context
 import android.net.Uri
 import com.android.tripbook.posts.model.ImageModel
+import kotlin.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -11,7 +12,23 @@ import java.util.UUID
 
 class ImageUploader(private val context: Context) {
 
-    suspend fun uploadFromGallery(uri: Uri): ImageModel = withContext(Dispatchers.IO) {
+    suspend fun uploadFromGallery(uri: Uri): Result<ImageModel> = withContext(Dispatchers.IO) {
+        try {
+            // Simulate upload process
+            delay(1000)
+            Result.success(
+                ImageModel(
+                    id = UUID.randomUUID().toString(),
+                    uri = uri.toString(),
+                    path = getRealPathFromUri(uri),
+                    isUploaded = true,
+                    uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
+                )
+            )
+        } catch (e: Exception) {
+            Result.failure(Exception("Failed to upload image from gallery: ${e.message}"))
+        }
+    }
         // Simulate upload process
         kotlinx.coroutines.delay(1000)
 
