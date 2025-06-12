@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -35,6 +36,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
     }
     buildFeatures {
         compose = true
@@ -76,13 +80,16 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
-    implementation (libs.androidx.navigation.compose.v277) // instead of 2.9.0
-    implementation (libs.androidx.lifecycle.runtime.compose) // instead of 2.9.0
-    implementation (libs.androidx.activity.compose)
-    implementation (libs.androidx.compose.ui.ui) // instead of 1.8.2
+    implementation(libs.androidx.navigation.compose.v277)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.ui.ui)
     implementation(libs.androidx.material.icons.extended)
 
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+
+    // Foundation for LazyRow
+    implementation("androidx.compose.foundation:foundation:1.5.4")
 }

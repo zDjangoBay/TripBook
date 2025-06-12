@@ -141,6 +141,24 @@ fun AppRootNavHost() {
                     composable(MainAppScreen.Categories.route) {
                         CategoriesScreen(navController) // or without navController if not needed
                     }
+                    composable("stories") {
+                        StoriesScreen()
+                    }
+                    composable("tips") {
+                        TipsScreen()
+                    }
+                    composable("safety") {
+                        SafetyScreen()
+                    }
+                    composable("hidden_gems") {
+                        HiddenGemsScreen()
+                    }
+                    composable("photo_gallery") {
+                        PhotoGalleryScreen()
+                    }
+                    composable("traveler_network") {
+                        TravelerNetworkScreen()
+                    }
 
                     composable("companyDetail/{companyId}") { backStackEntry ->
                         val companyId = backStackEntry.arguments?.getString("companyId")
