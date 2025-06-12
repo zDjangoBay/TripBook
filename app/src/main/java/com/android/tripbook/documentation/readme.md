@@ -13,7 +13,7 @@ It integrates with other modules, including the **Trip Scheduling Module**, whic
 
 ## 🔧 Functionalities Planned
 
-Below is a breakdown of the key features and screens planned for the Trip Catalog module:
+Below is a breakdown of the key features and screens planned for the Trip Catalog module and my section on which i specifically worked:
 
 ### ✅ Core Functionalities
 
