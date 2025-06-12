@@ -17,7 +17,9 @@ fun PostDescriptionInput(
     description: String,
     onDescriptionChange: (String) -> Unit,
     error: String? = null,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
+)
 ) {
     val haptic = LocalHapticFeedback.current
     Column(modifier = modifier) {
@@ -38,6 +40,7 @@ fun PostDescriptionInput(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences
             ),
+            enabled = enabled,
             modifier = Modifier.fillMaxWidth()
         )
 
