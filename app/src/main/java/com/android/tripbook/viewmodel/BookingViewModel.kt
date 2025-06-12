@@ -138,7 +138,7 @@ class BookingViewModel : ViewModel() {
             when (currentStep) {
                 BookingStep.DATE_SELECTION -> BookingStep.AGENCY_SELECTION
                 BookingStep.AGENCY_SELECTION -> {
-                    require(selectedAgency.value != null) { "Agency must be selected" }
+                    require(selectedAgency.value != null) { "Agency must be selected" }  //The user must select an agency for the booking process to be completed
                     require(departureTime.value.isNotEmpty()) { "Departure time must be selected" }
                     BookingStep.TRAVELER_INFO
                 }
