@@ -11,7 +11,16 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 
+/**
+ * Utility class for uploading images from gallery or camera.
+ * @param context The application context.
+ */
 class ImageUploader(private val context: Context) {
+    /**
+     * Uploads an image from the gallery.
+     * @param uri The URI of the image.
+     * @return Result containing the ImageModel or an error.
+     */
     // Note: uploadUrl is a placeholder; replace with actual endpoint in production
     suspend fun uploadFromGallery(uri: Uri): Result<ImageModel> = withContext(Dispatchers.IO) {
         try {
@@ -59,6 +68,11 @@ class ImageUploader(private val context: Context) {
             uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
         )
     }
+/**
+ * Uploads an image from the camera.
+ * @param file The file containing the image.
+ * @return Result containing the ImageModel or an error.
+ */
 // Note: uploadUrl is a placeholder; replace with actual endpoint in production
 suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispatchers.IO) {
     try {
@@ -94,7 +108,11 @@ suspend fun uploadFromCamera(file: File): Result<ImageModel> = withContext(Dispa
             uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
         )
     }
-
+/**
+ * Resolves the real file path from a URI.
+ * @param uri The URI of the content.
+ * @return The file path or empty string if resolution fails.
+ */
 // Note: This is a simplified implementation; real path resolution may vary based on Android version
 private fun getRealPathFromUri(uri: Uri): String {
     return context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
