@@ -29,7 +29,22 @@ class ImageUploader(private val context: Context) {
                 )
             )
         } catch (e: Exception) {
-            Result.failure(Exception("Failed to upload image from gallery: ${e.message}"))
+            // Retry once
+            try {
+                delay(1000)
+                Result.success(
+                    ImageModel(
+                        id = UUID.randomUUID().toString(),
+                        uri = uri.toString(),
+                        path = getRealPathFromUri(uri),
+                        isUploaded = true,
+                        uploadUrl = "https://example.com/uploads/${UUID.randomUUID()}"
+                    )
+                )
+            } catch (e2: Exception) {
+                Result.failure(Exception("Upload failed after retry: ${e2.message}"))
+            }
+        }
         }
     }
         // Simulate upload process
