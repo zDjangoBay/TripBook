@@ -30,7 +30,7 @@ class BookingViewModel : ViewModel() {
     private val _availableOptions = MutableStateFlow<List<TripOption>>(emptyList())
     val availableOptions: StateFlow<List<TripOption>> = _availableOptions.asStateFlow()
 
-    // Added trip option for the agency availabilities
+    // Added trip option for the agency availabilities as it's from the mock data
     private val _availableAgencies = MutableStateFlow<List<Agency>>(emptyList())
     val availableAgencies: StateFlow<List<Agency>> = _availableAgencies.asStateFlow()
 
@@ -50,6 +50,7 @@ class BookingViewModel : ViewModel() {
     }
 
 
+    // agency selection function
     fun selectAgency(agency: Agency) {
         _selectedAgency.value = agency
         _booking.update { current ->
