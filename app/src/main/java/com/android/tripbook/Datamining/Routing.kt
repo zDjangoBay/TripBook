@@ -3,6 +3,18 @@ package com.android
 import com.android.comments.model.CommentService
 import com.android.comments.model.CommentServiceImpl
 import com.android.comments.model.CommentRoutes
+import com.android.posts.model.PostService
+import com.android.posts.model.PostServiceImpl
+import com.android.posts.routes.PostRoutes
+import com.android.algorithms.textmining.model.TextMiningService
+import com.android.algorithms.textmining.model.TextMiningServiceImpl
+import com.android.algorithms.textmining.routes.TextMiningRoutes
+import com.android.algorithms.classification.model.ClassificationService
+import com.android.algorithms.classification.model.ClassificationServiceImpl
+import com.android.algorithms.classification.routes.ClassificationRoutes
+import com.android.algorithms.insights.model.InsightsService
+import com.android.algorithms.insights.model.InsightsServiceImpl
+import com.android.algorithms.insights.routes.InsightsRoutes
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -43,7 +55,13 @@ fun Application.configureRouting() {
     }
     
     val commentService: CommentService = CommentServiceImpl(database, jedis, jsonConfig)
-    
+    val postService: PostService = PostServiceImpl(database, jedis, jsonConfig)
+
+    // Initialize algorithm services
+    val textMiningService: TextMiningService = TextMiningServiceImpl(database, jedis, jsonConfig)
+    val classificationService: ClassificationService = ClassificationServiceImpl(database, jedis, textMiningService, jsonConfig)
+    val insightsService: InsightsService = InsightsServiceImpl(database, jedis, textMiningService, classificationService, jsonConfig)
+
     // Configure routes
     routing {
         // Basic routes
@@ -60,6 +78,12 @@ fun Application.configureRouting() {
         
         // Module routes
         CommentRoutes(commentService)
+        PostRoutes(postService)
+
+        // Algorithm module routes
+        TextMiningRoutes(textMiningService)
+        ClassificationRoutes(classificationService)
+        InsightsRoutes(insightsService)
     }
 }
 
