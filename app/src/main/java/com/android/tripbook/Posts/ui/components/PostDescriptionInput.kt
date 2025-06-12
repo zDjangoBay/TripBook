@@ -50,5 +50,13 @@ fun PostDescriptionInput(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(start = 16.dp, top = 4.dp)
         )
+        if (description.length >= 1000) {
+            Text(
+                text = "Maximum character limit reached",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+        }
     }
 }
