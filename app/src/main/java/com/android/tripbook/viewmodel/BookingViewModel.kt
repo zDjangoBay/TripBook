@@ -30,7 +30,7 @@ class BookingViewModel : ViewModel() {
     private val _availableOptions = MutableStateFlow<List<TripOption>>(emptyList())
     val availableOptions: StateFlow<List<TripOption>> = _availableOptions.asStateFlow()
 
-    // Add these properties
+    // Added trip option for the agency selection
     private val _availableAgencies = MutableStateFlow<List<Agency>>(emptyList())
     val availableAgencies: StateFlow<List<Agency>> = _availableAgencies.asStateFlow()
 
