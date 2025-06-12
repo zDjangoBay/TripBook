@@ -10,8 +10,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
-import com.android.tripbook.ui.theme.Purple40
-import androidx.compose.material3.MaterialTheme
+
 
 
 // In ui/theme/Extensions.kt
