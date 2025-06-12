@@ -47,8 +47,11 @@ fun PostDescriptionInput(
         Text(
             text = "${description.length}/1000",
             style = MaterialTheme.typography.bodySmall,
-            color = if (description.length >= 1000) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = when {
+                description.length >= 1000 -> MaterialTheme.colorScheme.error
+                description.length >= 900 -> MaterialTheme.colorScheme.secondary
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            },
             modifier = Modifier.padding(start = 16.dp, top = 4.dp)
         )
         if (description.length >= 1000) {
