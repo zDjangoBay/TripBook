@@ -7,6 +7,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -66,14 +67,20 @@ fun PostDescriptionInput(
                 description.length >= 900 -> MaterialTheme.colorScheme.secondary
                 else -> MaterialTheme.colorScheme.onSurfaceVariant
             },
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 4.dp),
+            textAlign = TextAlign.End
         )
         if (description.length >= 1000) {
             Text(
                 text = "Maximum character limit reached",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 4.dp),
+                textAlign = TextAlign.End
             )
         }
     }
