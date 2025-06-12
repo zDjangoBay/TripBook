@@ -109,3 +109,100 @@ fun SafetyTipCard(tip: SafetyTip) {
         }
     }
 }
+package com.android.tripbook.companycatalog.ui.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+
+data class SafetyTip(
+    val title: String,
+    val description: String,
+    val category: String
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SafetyScreen() {
+    val safetyTips = listOf(
+        SafetyTip("Emergency Contacts", "Always keep emergency contact numbers saved in your phone", "Emergency"),
+        SafetyTip("Travel Insurance", "Purchase comprehensive travel insurance before your trip", "Insurance"),
+        SafetyTip("Document Copies", "Keep copies of important documents in separate locations", "Documents"),
+        SafetyTip("Local Laws", "Research local laws and customs of your destination", "Legal"),
+        SafetyTip("Money Safety", "Use hotel safes and avoid carrying large amounts of cash", "Financial"),
+        SafetyTip("Health Precautions", "Check vaccination requirements and pack a first aid kit", "Health")
+    )
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Safety Information") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                Text(
+                    text = "Stay safe during your travels",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+            
+            items(safetyTips) { tip ->
+                SafetyTipCard(tip = tip)
+            }
+        }
+    }
+}
+
+@Composable
+fun SafetyTipCard(tip: SafetyTip) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = tip.title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = tip.category,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = tip.description,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}
