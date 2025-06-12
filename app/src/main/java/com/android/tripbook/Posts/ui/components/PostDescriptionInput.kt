@@ -14,6 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable for entering a post description with character limit and error handling.
+ * @param description The current description text.
+ * @param onDescriptionChange Callback invoked when the description changes.
+ * @param error Error message to display, if any.
+ * @param enabled Whether the text field is enabled.
+ * @param focusRequester Optional focus requester for programmatic focus.
+ * @param modifier Modifier for the composable.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostDescriptionInput(
