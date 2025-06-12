@@ -38,7 +38,7 @@ data class Traveler(
 @Composable
 fun TravelerNetworkScreen() {
     var searchQuery by remember { mutableStateOf("") }
-
+    
     val travelers = remember {
         listOf(
             Traveler(
@@ -101,7 +101,7 @@ fun TravelerNetworkScreen() {
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1B5E20)
         )
-
+        
         Text(
             text = "Connect with fellow adventurers",
             style = MaterialTheme.typography.bodyMedium,
@@ -184,7 +184,7 @@ fun TravelerCard(traveler: Traveler) {
                                 fontSize = 16.sp
                             )
                         }
-
+                        
                         // Online indicator
                         if (traveler.isOnline) {
                             Box(
@@ -196,9 +196,9 @@ fun TravelerCard(traveler: Traveler) {
                             )
                         }
                     }
-
+                    
                     Spacer(modifier = Modifier.width(12.dp))
-
+                    
                     Column {
                         Text(
                             text = traveler.name,
@@ -217,7 +217,7 @@ fun TravelerCard(traveler: Traveler) {
                         )
                     }
                 }
-
+                
                 // Connection status
                 if (traveler.mutualConnections > 0) {
                     Card(
@@ -290,7 +290,7 @@ fun TravelerCard(traveler: Traveler) {
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("Connect")
                 }
-
+                
                 Button(
                     onClick = { /* Message */ },
                     modifier = Modifier.weight(1f),

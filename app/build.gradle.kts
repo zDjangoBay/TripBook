@@ -93,3 +93,4 @@ dependencies {
     
     // Foundation for LazyRow
     implementation("androidx.compose.foundation:foundation:1.5.4")
+}

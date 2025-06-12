@@ -11,6 +11,11 @@ import androidx.compose.ui.Alignment
 
 @Composable
 fun SettingsScreen() {
+    var isDarkMode by remember { mutableStateOf(false) }
+    var notificationsEnabled by remember { mutableStateOf(true) }
+    var selectedLanguage by remember { mutableStateOf("English") }
+    val languages = listOf("English", "French", "Spanish", "German")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -18,52 +23,120 @@ fun SettingsScreen() {
     ) {
         Text(
             text = "Settings",
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 24.dp)
         )
+
+        // Dark Mode toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                "Dark Mode",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = isDarkMode,
+                onCheckedChange = { isDarkMode = it }
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
+        // Notifications toggle
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+            Text(
+                "Enable Notifications",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Switch(
+                checked = notificationsEnabled,
+                onCheckedChange = { notificationsEnabled = it }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Language selection dropdown
+        Text(
+            "Language",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        var expanded by remember { mutableStateOf(false) }
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            TextField(
+                value = selectedLanguage,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Select Language") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
             ) {
-                Text(
-                    text = "App Preferences",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                var darkMode by remember { mutableStateOf(false) }
-                var notifications by remember { mutableStateOf(true) }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Dark Mode")
-                    Switch(
-                        checked = darkMode,
-                        onCheckedChange = { darkMode = it }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Notifications")
-                    Switch(
-                        checked = notifications,
-                        onCheckedChange = { notifications = it }
+                languages.forEach { language ->
+                    DropdownMenuItem(
+                        text = { Text(language) },
+                        onClick = {
+                            selectedLanguage = language
+                            expanded = false
+                        }
                     )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Account section (just example text)
+        Text(
+            text = "Account",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text(
+            "Username: johndoe123",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Clear Cache button
+        Button(
+            onClick = { /* TODO: clear cache action */ },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Clear Cache")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Privacy Policy (text button)
+        TextButton(onClick = { /* TODO: open privacy policy */ }) {
+            Text("Privacy Policy")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // App Version info (non-clickable)
+        Text(
+            "App Version 1.0.0",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
