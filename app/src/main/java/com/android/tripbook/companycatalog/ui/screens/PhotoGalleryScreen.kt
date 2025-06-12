@@ -7,178 +7,126 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-data class PhotoItem(
-    val id: Int,
-    val title: String,
-    val location: String
-)
-
-@Composable
-fun PhotoGalleryScreen() {
-    val photos = listOf(
-        PhotoItem(1, "Mountain View", "Swiss Alps"),
-        PhotoItem(2, "Beach Sunset", "Maldives"),
-        PhotoItem(3, "City Lights", "Tokyo"),
-        PhotoItem(4, "Wildlife", "Kenya Safari"),
-        PhotoItem(5, "Forest Trail", "Amazon"),
-        PhotoItem(6, "Desert Dunes", "Sahara")
-    )
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(photos) { photo ->
-            PhotoCard(photo = photo)
-        }
-    }
-}
-
-@Composable
-fun PhotoCard(photo: PhotoItem) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = photo.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = photo.location,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
-}
-package com.android.tripbook.companycatalog.ui.screens
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-
-data class PhotoItem(
+data class Photo(
     val id: String,
     val title: String,
     val location: String,
-    val photographer: String
+    val photographer: String,
+    val likes: Int
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoGalleryScreen() {
     val photos = listOf(
-        PhotoItem("1", "Sunset at Limbe Beach", "Limbe, Cameroon", "Travel Explorer"),
-        PhotoItem("2", "Mount Cameroon Trek", "Buea, Cameroon", "Adventure Seeker"),
-        PhotoItem("3", "Douala City Lights", "Douala, Cameroon", "City Photographer"),
-        PhotoItem("4", "Waza National Park", "Far North, Cameroon", "Wildlife Expert"),
-        PhotoItem("5", "Kribi Beaches", "Kribi, Cameroon", "Beach Lover"),
-        PhotoItem("6", "Yaoundé Cathedral", "Yaoundé, Cameroon", "Architecture Fan")
+        Photo("1", "Sunset at Victoria Falls", "Zambia/Zimbabwe", "Alex Turner", 145),
+        Photo("2", "Maasai Village", "Kenya", "Sarah Johnson", 89),
+        Photo("3", "Cape Town Skyline", "South Africa", "Mike Chen", 234),
+        Photo("4", "Sahara Desert Dunes", "Morocco", "Emma Davis", 178),
+        Photo("5", "Ethiopian Highlands", "Ethiopia", "David Williams", 92),
+        Photo("6", "Nile River at Dawn", "Uganda", "Amara Okafor", 156),
+        Photo("7", "Zanzibar Beach", "Tanzania", "Lisa Brown", 267),
+        Photo("8", "Lagos Street Art", "Nigeria", "John Doe", 123)
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Photo Gallery") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Photo Gallery",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Discover beautiful places through photos",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(photos) { photo ->
-                    PhotoCard(photo = photo)
-                }
+            items(photos) { photo ->
+                PhotoCard(photo = photo)
             }
         }
     }
 }
 
 @Composable
-fun PhotoCard(photo: PhotoItem) {
+fun PhotoCard(photo: Photo) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text = "📸",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = photo.title,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = photo.location,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = "by ${photo.photographer}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // Placeholder for image - in real app would use AsyncImage
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(1.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "📸",
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+                        Text(
+                            text = photo.title,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+
+            // Overlay with photo info
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                color = Color.Black.copy(alpha = 0.7f)
+            ) {
+                Column(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = photo.location,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = "by ${photo.photographer}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
+                    Text(
+                        text = "❤️ ${photo.likes}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.8f)
+                    )
+                }
+            }
         }
     }
 }

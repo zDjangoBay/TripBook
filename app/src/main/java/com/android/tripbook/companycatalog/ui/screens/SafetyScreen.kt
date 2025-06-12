@@ -7,8 +7,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -25,146 +27,58 @@ data class SafetyTip(
 fun SafetyScreen() {
     val safetyTips = listOf(
         SafetyTip(
-            title = "Check Weather Conditions",
-            description = "Always check the weather forecast before starting your trip.",
-            icon = Icons.Default.Warning,
-            priority = "High"
+            "Emergency Contacts",
+            "Always share your travel itinerary with someone back home",
+            Icons.Default.Warning,
+            "High"
         ),
         SafetyTip(
-            title = "Keep Emergency Contacts",
-            description = "Maintain a list of emergency contacts and share your itinerary.",
-            icon = Icons.Default.Warning,
-            priority = "High"
+            "Local Laws",
+            "Research local customs and laws before traveling",
+            Icons.Default.Warning,
+            "Medium"
         ),
         SafetyTip(
-            title = "Pack First Aid Kit",
-            description = "Always carry a basic first aid kit for minor injuries.",
-            icon = Icons.Default.Warning,
-            priority = "Medium"
+            "Health Precautions",
+            "Get necessary vaccinations and carry basic medications",
+            Icons.Default.Warning,
+            "High"
         ),
         SafetyTip(
-            title = "Stay Hydrated",
-            description = "Carry enough water and stay hydrated throughout your journey.",
-            icon = Icons.Default.Warning,
-            priority = "High"
+            "Money Safety",
+            "Use multiple payment methods and avoid carrying large cash amounts",
+            Icons.Default.Warning,
+            "Medium"
         ),
         SafetyTip(
-            title = "Inform Someone",
-            description = "Let someone know your travel plans and expected return time.",
-            icon = Icons.Default.Warning,
-            priority = "High"
+            "Communication",
+            "Keep your phone charged and have offline maps downloaded",
+            Icons.Default.Warning,
+            "High"
         ),
         SafetyTip(
-            title = "Carry Identification",
-            description = "Always carry proper identification and important documents.",
-            icon = Icons.Default.Warning,
-            priority = "Medium"
+            "Transportation",
+            "Use reputable transportation services and avoid traveling alone at night",
+            Icons.Default.Warning,
+            "Medium"
         )
     )
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        items(safetyTips) { tip ->
-            SafetyTipCard(tip = tip)
-        }
-    }
-}
+        Text(
+            text = "Safety Tips",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-@Composable
-fun SafetyTipCard(tip: SafetyTip) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Row {
-                Icon(
-                    imageVector = tip.icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = tip.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = tip.description,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Priority: ${tip.priority}",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-package com.android.tripbook.companycatalog.ui.screens
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-
-data class SafetyTip(
-    val title: String,
-    val description: String,
-    val category: String
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SafetyScreen() {
-    val safetyTips = listOf(
-        SafetyTip("Emergency Contacts", "Always keep emergency contact numbers saved in your phone", "Emergency"),
-        SafetyTip("Travel Insurance", "Purchase comprehensive travel insurance before your trip", "Insurance"),
-        SafetyTip("Document Copies", "Keep copies of important documents in separate locations", "Documents"),
-        SafetyTip("Local Laws", "Research local laws and customs of your destination", "Legal"),
-        SafetyTip("Money Safety", "Use hotel safes and avoid carrying large amounts of cash", "Financial"),
-        SafetyTip("Health Precautions", "Check vaccination requirements and pack a first aid kit", "Health")
-    )
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Safety Information") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { padding ->
         LazyColumn(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
-                Text(
-                    text = "Stay safe during your travels",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-            
             items(safetyTips) { tip ->
                 SafetyTipCard(tip = tip)
             }
@@ -175,34 +89,55 @@ fun SafetyScreen() {
 @Composable
 fun SafetyTipCard(tip: SafetyTip) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            Icon(
+                imageVector = tip.icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = when (tip.priority) {
+                    "High" -> MaterialTheme.colorScheme.error
+                    "Medium" -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.onSurface
+                }
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = tip.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Medium
                 )
                 Text(
-                    text = tip.category,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    text = tip.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = tip.description,
-                style = MaterialTheme.typography.bodyMedium
-            )
+
+            Badge(
+                containerColor = when (tip.priority) {
+                    "High" -> MaterialTheme.colorScheme.error
+                    "Medium" -> MaterialTheme.colorScheme.primary
+                    else -> MaterialTheme.colorScheme.outline
+                }
+            ) {
+                Text(
+                    text = tip.priority,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
         }
     }
 }
