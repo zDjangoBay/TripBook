@@ -1,0 +1,86 @@
+failed
+Download info
+:app:compileDebugKotlin
+TipsScreen.kt
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+Expecting a top level declaration
+imports are only allowed in the beginning of file
+Expecting a top level declaration
+Conflicting import, imported name 'RoundedCornerShape' is ambiguous
+Conflicting import, imported name 'Icons' is ambiguous
+Conflicting import, imported name 'Alignment' is ambiguous
+Conflicting import, imported name 'Modifier' is ambiguous
+Conflicting import, imported name 'Color' is ambiguous
+Conflicting import, imported name 'FontWeight' is ambiguous
+Redeclaration: TravelTip
+Conflicting overloads: public fun TipsScreen(): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt, public fun TipsScreen(): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Unresolved reference: LazyRow
+Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+public inline fun <T> LazyListScope.items(items: Array<TypeVariable(T)>, noinline key: ((item: TypeVariable(T)) -> Any)? = ..., noinline contentType: (item: TypeVariable(T)) -> Any? = ..., crossinline itemContent: LazyItemScope.(item: TypeVariable(T)) -> Unit): Unit defined in androidx.compose.foundation.lazy
+public inline fun <T> LazyListScope.items(items: List<TypeVariable(T)>, noinline key: ((item: TypeVariable(T)) -> Any)? = ..., noinline contentType: (item: TypeVariable(T)) -> Any? = ..., crossinline itemContent: LazyItemScope.(item: TypeVariable(T)) -> Unit): Unit defined in androidx.compose.foundation.lazy
+Cannot infer a type for this parameter. Please specify it explicitly.
+@Composable invocations can only happen from the context of a @Composable function
+This material API is experimental and is likely to change or to be removed in the future.
+Overload resolution ambiguity:
+public fun Text(text: AnnotatedString, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow = ..., softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., inlineContent: Map<String, InlineTextContent> = ..., onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): Unit defined in androidx.compose.material3
+public fun Text(text: String, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow = ..., softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): Unit defined in androidx.compose.material3
+This material API is experimental and is likely to change or to be removed in the future.
+@Composable invocations can only happen from the context of a @Composable function
+This material API is experimental and is likely to change or to be removed in the future.
+Overload resolution ambiguity:
+private fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+public fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Conflicting overloads: public fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt, private fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Conflicting import, imported name 'RoundedCornerShape' is ambiguous
+Conflicting import, imported name 'Icons' is ambiguous
+Conflicting import, imported name 'Alignment' is ambiguous
+Conflicting import, imported name 'Modifier' is ambiguous
+Conflicting import, imported name 'Color' is ambiguous
+Conflicting import, imported name 'FontWeight' is ambiguous
+Redeclaration: TravelTip
+Cannot find a parameter with this name: rating
+Cannot find a parameter with this name: likes
+Cannot find a parameter with this name: isVerified
+No value passed for parameter 'upvotes'
+Cannot find a parameter with this name: rating
+Cannot find a parameter with this name: likes
+Cannot find a parameter with this name: isVerified
+No value passed for parameter 'upvotes'
+Cannot find a parameter with this name: rating
+Cannot find a parameter with this name: likes
+Cannot find a parameter with this name: isVerified
+No value passed for parameter 'upvotes'
+Cannot find a parameter with this name: rating
+Cannot find a parameter with this name: likes
+Cannot find a parameter with this name: isVerified
+No value passed for parameter 'upvotes'
+Conflicting overloads: public fun TipsScreen(): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt, public fun TipsScreen(): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Unresolved reference: LazyRow
+Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
+public inline fun <T> LazyListScope.items(items: Array<TypeVariable(T)>, noinline key: ((item: TypeVariable(T)) -> Any)? = ..., noinline contentType: (item: TypeVariable(T)) -> Any? = ..., crossinline itemContent: LazyItemScope.(item: TypeVariable(T)) -> Unit): Unit defined in androidx.compose.foundation.lazy
+public inline fun <T> LazyListScope.items(items: List<TypeVariable(T)>, noinline key: ((item: TypeVariable(T)) -> Any)? = ..., noinline contentType: (item: TypeVariable(T)) -> Any? = ..., crossinline itemContent: LazyItemScope.(item: TypeVariable(T)) -> Unit): Unit defined in androidx.compose.foundation.lazy
+Cannot infer a type for this parameter. Please specify it explicitly.
+@Composable invocations can only happen from the context of a @Composable function
+This material API is experimental and is likely to change or to be removed in the future.
+Overload resolution ambiguity:
+public fun Text(text: AnnotatedString, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow = ..., softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., inlineContent: Map<String, InlineTextContent> = ..., onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): Unit defined in androidx.compose.material3
+public fun Text(text: String, modifier: Modifier = ..., color: Color = ..., fontSize: TextUnit = ..., fontStyle: FontStyle? = ..., fontWeight: FontWeight? = ..., fontFamily: FontFamily? = ..., letterSpacing: TextUnit = ..., textDecoration: TextDecoration? = ..., textAlign: TextAlign? = ..., lineHeight: TextUnit = ..., overflow: TextOverflow = ..., softWrap: Boolean = ..., maxLines: Int = ..., minLines: Int = ..., onTextLayout: (TextLayoutResult) -> Unit = ..., style: TextStyle = ...): Unit defined in androidx.compose.material3
+Overload resolution ambiguity:
+private fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+public fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Conflicting overloads: public fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt, private fun TipCard(tip: TravelTip): Unit defined in com.android.tripbook.companycatalog.ui.screens in file TipsScreen.kt
+Unresolved reference: isVerified
+Unresolved reference: rating
+Unresolved reference: likes
+[Incubating] Problems report is available at: file:///C:/Users/USER/Documents/GitHub/TripBook/build/reports/problems/problems-report.html
+Compilation error
