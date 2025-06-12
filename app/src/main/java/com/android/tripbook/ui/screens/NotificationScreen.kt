@@ -23,6 +23,7 @@ fun NotificationScreen(notificationDispatcher: NotificationDispatcher) {
     val notifications = notificationDispatcher.notifications.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
     var selectedType by remember { mutableStateOf<NotificationType?>(null) }
+    var detailedNotification by remember { mutableStateOf<Notification?>(null) }
 
     Scaffold(
         topBar = {
@@ -63,12 +64,22 @@ fun NotificationScreen(notificationDispatcher: NotificationDispatcher) {
 
                     items(filteredNotifications.size) { index ->
                         val notification = filteredNotifications[index]
-                        NotificationItem(notification) {
-                            coroutineScope.launch {
-                                notificationDispatcher.markAsRead(notification.id)
+                        NotificationItem(
+                            notification,
+                            onMarkAsRead = {
+                                coroutineScope.launch {
+                                    notificationDispatcher.markAsRead(notification.id)
+                                }
+                            },
+                            onViewDetails = {
+                                detailedNotification = notification
                             }
-                        }
+                        )
                     }
+                }
+
+                detailedNotification?.let {
+                    DetailedNotificationView(notification = it, onDismiss = { detailedNotification = null })
                 }
             }
         }
@@ -76,7 +87,7 @@ fun NotificationScreen(notificationDispatcher: NotificationDispatcher) {
 }
 
 @Composable
-fun NotificationItem(notification: Notification, onMarkAsRead: () -> Unit) {
+fun NotificationItem(notification: Notification, onMarkAsRead: () -> Unit, onViewDetails: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,11 +117,37 @@ fun NotificationItem(notification: Notification, onMarkAsRead: () -> Unit) {
                 Text(text = "Type: ${notification.type}", style = MaterialTheme.typography.bodySmall)
             }
 
-            if (!notification.isRead) {
+            Row {
                 Button(onClick = onMarkAsRead) {
                     Text("Mark as Read")
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = onViewDetails) {
+                    Text("View Details")
                 }
             }
         }
     }
+}
+
+@Composable
+fun DetailedNotificationView(notification: Notification, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Notification Details")
+        },
+        text = {
+            Column {
+                Text(text = "Message: ${notification.message}", style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Type: ${notification.type}", style = MaterialTheme.typography.bodySmall)
+                Text(text = "Timestamp: ${notification.timestamp}", style = MaterialTheme.typography.bodySmall)
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
 }
