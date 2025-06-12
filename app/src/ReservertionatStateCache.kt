@@ -1,24 +1,27 @@
 import java.io.File
-data class Reservation(val name: String, val amount: Double, val statut: String = "in_progress")
+data class Reservation(val Name: String, val amount: Double, val status: String = "in_progress")
 object ReservationManager {
     private val reservations = mutableListOf<Reservation>()
-    private val file = File("reservations.txt")
-    fun addReservation(name: String, amount: Double) {
-        val reservation = Reservation(nom, montant)
-        reservations.add(ongoing reservation)
-        save()}
-         fun save() {
-        file.writeText("") /
-        for (res in reservation) {
-            file.appendText("{res.name};${res.amount};${res.statut}\n")
-        }}
-        fun afficherReservations() {
-        println("Réservations saving:")
-        reservations.forEach {
-            println("{it.name}{it.amount}$ [{it.statut}]")
-        } }}
-        fun main() {
-            ReservationManager.addReservation("Ali", 120.0)
-            ReservationManager.addReservation("Leila", 90.5)
-             ReservationManager.display Reservations()
+    private val storageFile = File("reservations.txt")
+    fun addReservation(Name: String, amount: Double) {
+        val newReservation = Reservation(Name, amount)
+        reservations.add(newReservation)
+        saveReservations() }
+        private fun saveReservations() {
+        storageFile.writeText("") // Clear the file before writing
+        reservations.forEach { reservation ->
+            storageFile.appendText("${reservation.guestName};${reservation.amount};${reservation.status}\n") }}
+        fun showReservations() {
+        if (reservations.isEmpty()) {
+            println("No reservations found.")} 
+            else {
+            println("Current reservations:")
+            reservations.forEach { res ->
+                println("${res.guestName} - ${res.amount}F [${res.status}]")
+            }}}}
+           fun main() {
+    ReservationManager.addReservation("loli", 12000)
+    ReservationManager.addReservation("kamta", 6000)
+    ReservationManager.showReservations()
 }
+            
