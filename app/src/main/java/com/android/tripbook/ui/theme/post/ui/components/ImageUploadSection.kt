@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.tripbook.posts.model.ImageModel
 
+private val IMAGE_SIZE = 100.dp
+
 /**
  * Displays a section for uploading and managing images in a post.
  *
@@ -53,7 +55,7 @@ fun ImageUploadSection(
             item {
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(IMAGE_SIZE)
                         .clip(RoundedCornerShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .border(
@@ -77,7 +79,7 @@ fun ImageUploadSection(
             items(images) { image ->
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(IMAGE_SIZE)
                         .clip(RoundedCornerShape(12.dp))
                 ) {
                     AsyncImage(
