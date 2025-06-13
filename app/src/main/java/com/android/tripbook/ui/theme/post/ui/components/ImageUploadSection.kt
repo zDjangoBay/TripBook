@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import com.android.tripbook.posts.model.ImageModel
 
 private val IMAGE_SIZE = 100.dp
+private val IMAGE_CORNER_RADIUS = 12.dp
 
 /**
  * Displays a section for uploading and managing images in a post.
@@ -56,13 +57,13 @@ fun ImageUploadSection(
                 Box(
                     modifier = Modifier
                         .size(IMAGE_SIZE)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(IMAGE_CORNER_RADIUS))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .border(
                             width = 2.dp,
                             color = if (error != null) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.outline,
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(IMAGE_CORNER_RADIUS)
                         )
                         .clickable { onImageAdd() },
                     contentAlignment = Alignment.Center
@@ -80,7 +81,7 @@ fun ImageUploadSection(
                 Box(
                     modifier = Modifier
                         .size(IMAGE_SIZE)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(IMAGE_CORNER_RADIUS))
                 ) {
                     AsyncImage(
                         model = image.uri,
@@ -96,7 +97,7 @@ fun ImageUploadSection(
                             .size(24.dp)
                             .background(
                                 Color.Black.copy(alpha = 0.6f),
-                                RoundedCornerShape(12.dp)
+                                RoundedCornerShape(IMAGE_CORNER_RADIUS)
                             )
                     ) {
                         Icon(
