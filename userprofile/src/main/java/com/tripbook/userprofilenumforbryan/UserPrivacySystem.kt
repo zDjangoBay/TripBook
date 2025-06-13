@@ -82,6 +82,8 @@ fun PrivacySettingsScreen(
             .padding(24.dp)
     ) {
         Text("Privacy Settings", style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text("Choose who can view your content", style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         options.forEach { option ->
