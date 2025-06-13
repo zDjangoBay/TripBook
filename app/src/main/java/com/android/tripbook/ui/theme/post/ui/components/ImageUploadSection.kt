@@ -30,7 +30,7 @@ private val CLOSE_ICON_SIZE = 16.dp
  * Displays a section for uploading and managing images in a post.
  *
  * @param images List of images to display
- * @param onImageAdd Callback when the add image button is clicked
+ * @param onImageAdd Callback for when the add image button is clicked
  * @param onImageRemove Callback when an image is removed
  * @param error Optional error message to display
  * @param modifier Modifier for styling
