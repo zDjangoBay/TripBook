@@ -65,7 +65,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.foundation.layout.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +76,14 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.maps.compose) // Or latest
     implementation(libs.play.services.maps)
+
+
+
+    //---------------------------------------------------------
+    //      You can add your own dependencies down here
+    //---------------------------------------------------------
+
+    implementation(libs.foundation.layout.android)
 
     // Google Maps Compose
     implementation(libs.maps.compose.v430)
@@ -92,7 +99,4 @@ dependencies {
 
 
 
-    //---------------------------------------------------------
-    //      You can add your own dependencies down here
-    //---------------------------------------------------------
 }
