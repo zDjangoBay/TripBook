@@ -1,5 +1,5 @@
+// Full NearbyUsersScreen.kt with inline chat functionality
 package com.android.tripbook.ui.uis
-
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -8,11 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -23,12 +19,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.tripbook.viewmodel.ChatViewModel
 import com.android.tripbook.viewmodel.UserViewModel
 import java.time.LocalDate
+import androidx.compose.animation.AnimatedVisibility
 
 data class User(
     val id: Int,
@@ -49,16 +46,21 @@ fun NearbyUsersScreen(
     onBackClick: () -> Unit,
     onPreferencesClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    userViewModel: UserViewModel = viewModel()
+    userViewModel: UserViewModel = viewModel(),
 ) {
     val users by userViewModel.users.collectAsState()
     val isLoading by userViewModel.isLoading.collectAsState()
     val error by userViewModel.error.collectAsState()
     var searchText by remember { mutableStateOf("") }
     var isEditEnabled by remember { mutableStateOf(false) }
+    var showChat by remember { mutableStateOf(false) }
+    val dummyMessages = remember { mutableStateListOf("Hey there!", "Excited to travel?") }
+    val chatViewModel: ChatViewModel = viewModel()
+    val messages by chatViewModel.messages.collectAsState()
+    var chatInput by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        userViewModel.fetchUsers()
+        chatViewModel.loadMessages()
     }
 
     Box(
@@ -78,7 +80,6 @@ fun NearbyUsersScreen(
                 .fillMaxSize()
                 .padding(20.dp)
         ) {
-            // Header with Back Button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -117,16 +118,18 @@ fun NearbyUsersScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // Enable Edit Button
+            // Buttons row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(
-                    onClick = { isEditEnabled = !isEditEnabled },
-                    modifier = Modifier.padding(8.dp)
-                ) {
+                Button(onClick = { isEditEnabled = !isEditEnabled }) {
                     Text(if (isEditEnabled) "Disable Edit" else "Enable Edit")
+                }
+                Button(onClick = { showChat = !showChat }) {
+                    Icon(Icons.Default.Chat, contentDescription = "Chat")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Chat")
                 }
             }
 
@@ -152,28 +155,17 @@ fun NearbyUsersScreen(
                     BasicTextField(
                         value = searchText,
                         onValueChange = { searchText = it },
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            color = Color.Black
-                        ),
+                        modifier = Modifier.weight(1f),
+                        textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
                         decorationBox = { innerTextField ->
-                            Box(
-                                contentAlignment = Alignment.CenterStart,
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                if (searchText.isEmpty()) {
-                                    Text(
-                                        text = "Search users...",
-                                        color = Color(0xFF9CA3AF),
-                                        fontSize = 16.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                                innerTextField()
+                            if (searchText.isEmpty()) {
+                                Text(
+                                    text = "Search users...",
+                                    color = Color(0xFF9CA3AF),
+                                    fontSize = 16.sp
+                                )
                             }
+                            innerTextField()
                         }
                     )
                 }
@@ -181,81 +173,14 @@ fun NearbyUsersScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Error State with Retry Button
             if (!error.isNullOrEmpty()) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.9f))
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CloudOff,
-                            contentDescription = "Connection Error",
-                            tint = Color(0xFFDC2626),
-                            modifier = Modifier.size(32.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Connection Lost",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1F2937),
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = error!!,
-                            fontSize = 14.sp,
-                            color = Color(0xFF6B7280),
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = { userViewModel.fetchUsers() },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF667EEA)
-                            ),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(16.dp),
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Retrying...",
-                                    color = Color.White,
-                                    fontSize = 14.sp
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Retry",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Retry",
-                                    color = Color.White,
-                                    fontSize = 14.sp
-                                )
-                            }
-                        }
-                    }
-                }
+                // TODO: Display error message and retry option
+                Text("Error loading users: $error", color = Color.Red, modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else if (isLoading) {
+                // TODO: Display loading indicator
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+
             } else {
-                // User List
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -265,136 +190,148 @@ fun NearbyUsersScreen(
                             if (searchText.isEmpty()) true
                             else user.name.contains(searchText, ignoreCase = true) ||
                                     user.destination.contains(searchText, ignoreCase = true)
-                        }.takeIf { searchText.isEmpty() }?.take(4) ?: users.filter { user ->
-                            user.name.contains(searchText, ignoreCase = true) ||
-                                    user.destination.contains(searchText, ignoreCase = true)
                         }
                     ) { user ->
                         UserCard(
                             user = user,
                             isEditEnabled = isEditEnabled,
-                            onEditName = { newName -> userViewModel.updateUserName(user.id, newName) },
-                            onEditDestination = { newDestination -> userViewModel.updateUserDestination(user.id, newDestination) },
+                            onEditName = { newName ->
+                                userViewModel.updateUserName(
+                                    user.id,
+                                    newName
+                                )
+                            },
+                            onEditDestination = { newDestination ->
+                                userViewModel.updateUserDestination(
+                                    user.id,
+                                    newDestination
+                                )
+                            },
                             onPreferencesClick = { onPreferencesClick(user.id) }
                         )
                     }
                 }
             }
+
+            // Chat overlay
+            Box(
+                modifier =  Modifier.fillMaxSize()
+            )
+            {   androidx.compose.animation.AnimatedVisibility(
+                visible = showChat,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.97f))
+                    .padding(16.dp)
+                    .align(Alignment.BottomCenter)
+             ) {
+                Column {
+                    Text("Nearby Chat", style = MaterialTheme.typography.titleLarge)
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(messages) {
+                            Text("${it.senderId.take(4)}: ${it.message}")
+                        }
+                    }
+                    Row {
+                        OutlinedTextField(
+                            value = chatInput,
+                            onValueChange = { chatInput = it },
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(onClick = {
+                            chatViewModel.sendMessage("Akwi", chatInput)
+                            chatInput = ""
+                        }) {
+                            Text("Send")
+                        }
+                    }
+                }
+           } }
         }
     }
 }
 
 @Composable
 fun UserCard(
-    user: User,
-    isEditEnabled: Boolean,
-    onEditName: (String) -> Unit,
-    onEditDestination: (String) -> Unit,
-    onPreferencesClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = Color.Black.copy(alpha = 0.1f)
-            ),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp)
-        ) {
-            var name by remember { mutableStateOf(user.name) }
-            var destination by remember { mutableStateOf(user.destination) }
+                user: User,
+                isEditEnabled: Boolean,
+                onEditName: (String) -> Unit,
+                onEditDestination: (String) -> Unit,
+                onPreferencesClick: () -> Unit
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .shadow(elevation = 4.dp, shape = RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        var name by remember { mutableStateOf(user.name) }
+                        var destination by remember { mutableStateOf(user.destination) }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (isEditEnabled) {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = {
-                            name = it
-                            onEditName(it)
-                        },
-                        label = { Text("Name") },
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Text(
-                        text = user.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1A202C)
-                    )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (isEditEnabled) {
+                                OutlinedTextField(
+                                    value = name,
+                                    onValueChange = {
+                                        name = it
+                                        onEditName(it)
+                                    },
+                                    label = { Text("Name") },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                Text(
+                                    text = user.name,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1A202C)
+                                )
+                            }
+                            IconButton(onClick = onPreferencesClick) {
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = "Edit Preferences",
+                                    tint = Color(0xFF667EEA)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("📍", fontSize = 14.sp, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            if (isEditEnabled) {
+                                OutlinedTextField(
+                                    value = destination,
+                                    onValueChange = {
+                                        destination = it
+                                        onEditDestination(it)
+                                    },
+                                    label = { Text("Destination") },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            } else {
+                                Text(destination, fontSize = 14.sp, color = Color(0xFF64748B))
+                            }
+                        }
+                        user.travelStyle?.let {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Style: $it", fontSize = 14.sp, color = Color(0xFF64748B))
+                        }
+                        user.budget?.let {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Budget: $$it", fontSize = 14.sp, color = Color(0xFF64748B))
+                        }
+                        user.activities?.let {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Activities: $it", fontSize = 14.sp, color = Color(0xFF64748B))
+                        }
+                    }
                 }
-                IconButton(onClick = onPreferencesClick) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Preferences",
-                        tint = Color(0xFF667EEA)
-                    )
-                }
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "📍",
-                    fontSize = 14.sp,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                if (isEditEnabled) {
-                    OutlinedTextField(
-                        value = destination,
-                        onValueChange = {
-                            destination = it
-                            onEditDestination(it)
-                        },
-                        label = { Text("Destination") },
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Text(
-                        text = user.destination,
-                        fontSize = 14.sp,
-                        color = Color(0xFF64748B)
-                    )
-                }
-            }
-            user.travelStyle?.let {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Style: $it",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-            user.budget?.let {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Budget: $$it",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-            user.activities?.let {
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "Activities: $it",
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-        }
-    }
-}
 
