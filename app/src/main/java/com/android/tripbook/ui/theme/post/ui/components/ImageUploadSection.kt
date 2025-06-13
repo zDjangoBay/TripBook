@@ -32,7 +32,7 @@ private val CLOSE_ICON_SIZE = 16.dp
  * @param images List of images to display
  * @param onImageAdd Callback for when the add image button is clicked
  * @param onImageRemove Callback when an image is removed
- * @param error Optional error message to display
+ * @param error Optional error message to display below the image section
  * @param modifier Modifier for styling
  */
 @Composable
