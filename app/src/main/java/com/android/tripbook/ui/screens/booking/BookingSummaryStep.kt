@@ -110,7 +110,44 @@ fun BookingSummaryStep(
                     }
                 }
             }
-            
+
+            // Selected Agency
+            if (selectedAgency != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Travel Agency",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "Name:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.width(120.dp)
+                            )
+                            Text(
+                                text = selectedAgency.name,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+
+
+                    }
+                }
+            }
+
+
             // Contact information
             Card(
                 modifier = Modifier
