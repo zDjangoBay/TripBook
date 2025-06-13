@@ -22,8 +22,13 @@ import coil.compose.AsyncImage
 import com.android.tripbook.posts.model.ImageModel
 
 /**
- * Composable UI component for uploading and displaying images in the post creation screen.
- * Handles image addition, removal, and error display for image selection.
+ * Displays a section for uploading and managing images in a post.
+ *
+ * @param images List of images to display
+ * @param onImageAdd Callback when the add image button is clicked
+ * @param onImageRemove Callback when an image is removed
+ * @param error Optional error message to display
+ * @param modifier Modifier for styling
  */
 @Composable
 fun ImageUploadSection(
