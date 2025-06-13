@@ -44,6 +44,7 @@ fun ImageUploadSection(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
+        // Section title
         Text(
             text = "Photos",
             style = MaterialTheme.typography.titleMedium,
