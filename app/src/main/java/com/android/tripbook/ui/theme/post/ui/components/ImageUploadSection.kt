@@ -113,6 +113,7 @@ fun ImageUploadSection(
             }
         }
 
+        // Show error message if present
         if (error != null) {
             Text(
                 text = error,
