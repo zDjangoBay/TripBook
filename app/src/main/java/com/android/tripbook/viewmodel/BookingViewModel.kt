@@ -41,7 +41,7 @@ class BookingViewModel : ViewModel() {
     private val _departureTime = MutableStateFlow<String>("")
     val departureTime: StateFlow<String> = _departureTime.asStateFlow()
 
-    // Update booking model to include agency and departure time
+    // Update booking model to include agency and departure time during the booking process
     fun updateDepartureTime(time: String) {
         _departureTime.value = time
         _booking.update { current ->
