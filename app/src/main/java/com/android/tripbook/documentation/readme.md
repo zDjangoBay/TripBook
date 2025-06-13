@@ -1,76 +1,45 @@
 # Trip Catalog Module - TripBook Travel App
 
 ## 📘 Introduction
+The **Trip Catalog Module** is a key component of the TripBook Travel mobile app.  It offers visitors a visually appealing and educational experience in which they may explore travel destinations, read authentic user experiences, and share their own trip stories and photos.
 
-The **Trip Catalog Module** is a core feature of the TripBook Travel mobile application. It provides users with a visually engaging and informative experience where they can explore travel destinations, read authentic user experiences, and contribute their own trip stories and media.
+This module is intended to be intuitive and socially interactive.  It works flawlessly with the TripBook app architecture, acting as both a discovery tool for new travel destinations and a forum for community involvement.
 
-This module is designed to be intuitive and socially interactive. It integrates seamlessly with the overall TripBook app architecture, serving as both a discovery platform for new travel destinations and a space for community engagement.
 
-It will connects with other modules such as:
-- The **Trip Scheduling Module** (for converting interest into action)
-- The **User Profile Module** (to display and manage user-submitted content)
+It integrates with other modules, including the **Trip Scheduling Module**, which converts interest into action.
+- The **User Profile Module** (displays and manages user-submitted content).
 
 ---
 
 ## 🔧 Functionalities Planned
 
-Below is a breakdown of the key features and screens planned for the Trip Catalog module:
+Below is a breakdown of the key features and screens planned for the Trip Catalog module and my section on which i specifically worked:
 
 ### ✅ Core Functionalities
-- **Trip Catalog Screen**
-    - Displays a list/grid of possible trip destinations.
-    - Each item shows a destination name and a representative image along with a short caption
-    - Clicking an item navigates to the detailed view
 
-- **Trip Detail Screen**
-    - Swipable image carousel at the top
-    - Displays trip name and description
-    - Shows a preview of 1–5 user reviews (with option to "See All Reviews")
-    - Allows users to submit their own reviews directly from this screen
+- **Booking Process**
+    - Display of the booking process with date, Agency, and time for the booking to take place 
 
-- **Review Section**
-    - Each review includes the username(taken from the user information), comment, and optional images
-    - Reviews are displayed horizontally (carousel-like)
-    - Shows a ``see all`` button to allow for view of more review related to a given trip destination
-
-- **All Reviews Screen**
-    - Displays all user-submitted reviews for a selected trip destination
-    - Reviews shown vertically with full text and images
-    - Long reviews are initially truncated with a “Read More” button to expand
-
-- **Add Review Section**
-    - Accessible from the Trip Detail screen
-    - Allows users to:
-        - Enter a comment
-        - Upload images
-        - Submit their review tied to the selected trip
 
 ---
 
 ## ✅ Functionalities Implemented So Far
 
-### 1. **Trip Catalog Screen**
-- Fully implemented with sample data
-- Each trip card is clickable, routing to its detail screen using navigation with trip ID
 
-### 2. **Trip Detail Screen**
-- Fetches full trip data by ID from a sample source
-- Displays image carousel and description
-- Shows a horizontal list of review cards (username, comment, image)
-- Includes a "See All Reviews" button that navigates to the full review screen
+### 1. **All Agency Screen**
+- Fetches and displays all agencies for the trip
+- Built using dynamic layout that scales
 
-### 3. **All Reviews Screen**
-- Fetches and displays all reviews for the trip
-- Long reviews are collapsed with a “Read More” option
-- Built using dynamic layout that scales to review length and image count
-
-### 4. **Navigation Integration**
+### 2. **Navigation Integration**
 - All screens are fully integrated into the app’s navigation using the Jetpack Compose NavHost pattern
-- Trip ID is passed through the navigation route for fetching dynamic data
+- Agency ID is passed through the navigation route for fetching dynamic data
 
-### 5. **UI Components**
-- Modular UI using reusable Composables (ReviewCard, TripCard, etc.)
+### 3. **UI Components**
+- Modular UI using reusable Composables (AgencyCard, etc.)
 - Design consistent with app-wide theming and UX patterns
+
+### 4. **Rating of Agencies and sorting**
+
 
 ---
 
@@ -80,34 +49,22 @@ Below is a breakdown of the key features and screens planned for the Trip Catalo
   <tr>
     <td align="center">
       <strong>Trip Catalog Screen</strong><br>
-      <img src="images/trip-catalog.png" width="300px">
+      <img src="images/AgencyBook.png" width="300px">
     </td>
-    <td align="center">
-      <strong>Trip Detail Screen</strong><br>
-      <img src="images/trip-details.png" width="300px">
-    </td>
-  </tr>
   <tr>
     <td align="center">
-      <strong>Horizontal Review Section</strong><br>
-      <img src="images/trip-review.png" width="300px">
+      <strong>Trip Catalog Screen</strong><br>
+      <img src="images/TravellerBook.png" width="300px">
     </td>
+  <tr>
     <td align="center">
-      <strong>All Reviews Screen</strong><br>
-      <img src="images/trip-all-review.png" width="300px">
+      <strong>Trip Catalog Screen</strong><br>
+      <img src="images/TravellerInfos.png" width="300px">
     </td>
-  </tr>
 </table>
 
 
----
-
-## 🔄 Planned Enhancements
-- Advanced filtering/sorting in the catalog screen
-- Reaction system (like, comment, flag) for reviews
-
-
-Perfect. Let's proceed with **Part 2: Code Architecture & Data Flow**, which outlines how the Trip Catalog module is structured and how data flows between components. This will be especially useful for developers maintaining or extending the module.
+Perfect. Let's proceed with **Part 2: Code Architecture & Data Flow**, which outlines how the Trip Catalog module is structured and how data flows between components during the booking process. This will be especially useful for developers maintaining or extending the module.
 
 ---
 
@@ -120,29 +77,24 @@ The Trip Catalog module follows a clean separation of concerns, leveraging the M
 ```plaintext
 tripcatalog/
 ├── data/
-│   ├── SampleTrips.kt            # Static mock data for trips
-│   ├── SampleReviews.kt          # Static mock data for trip reviews
+│   ├── SampleAgency.kt            # Static mock data for agencies
+│   
 ├── model/
-│   ├── Trip.kt                   # Data class representing a trip (id, title, description, images, etc.)
-│   ├── Review.kt                 # Data class representing a user review (username, content, images, etc.)
+│   ├── Agency.kt                   # Data class representing an agency (id, name, description, images, etc.)
+│
 ├── ui/
 │   ├── screens/
-│   │   ├── TripCatalogScreen.kt      # Displays a list of trips in a scrollable view
-│   │   ├── TripDetailScreen.kt       # Shows detailed info and reviews for a selected trip
-│   │   ├── AllReviewsScreen.kt       # Displays all reviews for a trip in a vertical list
+│   │   ├── booking/     
+│   │        ├── AgencySelectionStep.kt       # Displays a list of agencies in a scrollable view
+│   │        ├── BookingScreen.kt             # Provides a step by step navigation of the booking process
+             ├── DateSelectionStep.kt         # Displays information about the date for the selection process
 │   ├── components/
-│   │   ├── BaseScaffold.kt           # Common layout wrapper for screens with consistent structure
-│   │   ├── BottomNavBar.kt           # Bottom navigation bar for switching between app sections
-│   │   ├── TopBar.kt                 # Top bar component with title and back navigation
-│   │   ├── TripCard.kt               # Card UI component showing trip summary (image, title, etc.)
-│   │   ├── ReviewCard.kt             # Card UI for displaying an individual user review
-│   │   └── ReviewCarousel.kt         # Horizontally scrollable row of review cards
-│   ├── navigation/
-│   │   ├── MainNavGraph.kt           # Defines navigation graph and composable destinations
-│   │   ├── NavigationUtils.kt        # Helper functions for building and handling navigation routes
+│   │   ├── AgencyCard.kt               # Agency UI component showing agency summary (image, name, etc.)
+│   ├── theme/
+│   │   ├── Extensions.kt               #  A layout composable with content
 ├── viewmodel/
-│   ├── MockTripViewModel.kt          # ViewModel providing trip data from SampleTrips
-│   ├── MockReviewViewModel.kt        # ViewModel providing reviews from SampleReviews based on trip ID
+│   ├── BookingViewModel.kt          # ViewModel providing agency data from SampleAgency
+│ 
 ````
 
 ---
@@ -151,46 +103,28 @@ tripcatalog/
 
 ### 📥 Trip Selection Flow
 
-1. **TripCatalogScreen**
+1. **DateSelectionStep**
 
-    * Displays trips from `SampleTrips`
-    * On click, passes the trip ID via navigation route to `TripDetailScreen`
+    * Displays dates 
+    * On click, passes the trip ID via navigation route to `AgencySelectionStep`
 
-2. **TripDetailScreen**
+2. **AgencySelectionStep**
 
-    * Fetches the corresponding trip data from `SampleTrips` using `tripId`
-    * Loads reviews dynamically using `tripId` from `SampleReviews`
+    * Fetches the corresponding agencies data from `SampleAgency` using `AgencyId`
+    * Loads agencies dynamically using `AgencyId` from `SampleAgency`
 
-3. **AllReviewsScreen**
+3. **TravelerInfoStep**
 
-    * Navigated from TripDetailScreen
-    * Loads all reviews for the trip
-    * Supports expandable/collapsible long reviews
+    * Navigated from AgencySelectionStep
+    * Takes down all information for the trip
 
-### 📤 Add Review Flow
-
-1. **User enters review**
-
-    * Comment text and image(s) captured in `AddReviewSection`
-
-2. **Review Submission**
-
-    * Currently updates in-memory list in ViewModel
-    * Will be extended to call an API endpoint in the future
-
-3. **Review Update**
-
-    * The new review appears immediately in the carousel and review list
-
----
 
 ## 🧩 Reusable Components
 
-| Component       | Description                                                     |
-|-----------------|-----------------------------------------------------------------|
-| `TripCard`      | Compact card showing trip image and title                       |
-| `ReviewCard`    | Shows reviewer, comment, images (with expandable logic)         |
-| `ImageCarousel` | Shows images in a carousel form that you can swipe to view more |
+| Component      | Description                                                     |
+|----------------|-----------------------------------------------------------------|
+| `AgencyCard`   | Compact card showing agency image and name                      |
+
 
 
 ---

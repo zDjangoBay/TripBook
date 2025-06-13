@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.model.Agency
 import com.android.tripbook.model.Booking
 import com.android.tripbook.model.Trip
 import java.time.format.DateTimeFormatter
@@ -17,6 +18,7 @@ import java.time.format.DateTimeFormatter
 fun BookingSummaryStep(
     trip: Trip?,
     booking: Booking?,
+    selectedAgency: Agency?,
     totalPrice: Double,
     termsAgreed: Boolean,
     onTermsAgreedChange: (Boolean) -> Unit,
@@ -108,7 +110,43 @@ fun BookingSummaryStep(
                     }
                 }
             }
-            
+
+            // Selected Agency
+            if (selectedAgency != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Travel Agency",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "Name:",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.width(120.dp)
+                            )
+                            Text(
+                                text = selectedAgency.name,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+
+                    }
+                }
+            }
+
+
             // Contact information
             Card(
                 modifier = Modifier

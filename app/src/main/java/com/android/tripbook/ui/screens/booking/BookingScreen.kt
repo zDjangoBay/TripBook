@@ -25,14 +25,16 @@ fun BookingScreen(
     LaunchedEffect(tripId) {
         viewModel.initBooking(tripId)
     }
-    
+
     val currentStep by viewModel.currentStep.collectAsState()
     val booking by viewModel.booking.collectAsState()
     val trip by viewModel.trip.collectAsState()
     val options by viewModel.availableOptions.collectAsState()
-    
+    val agencies by viewModel.availableAgencies.collectAsState()
+    val selectedAgency by viewModel.selectedAgency.collectAsState()
+
     var bookingComplete by remember { mutableStateOf(false) }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,21 +55,22 @@ fun BookingScreen(
             // Progress indicator
             LinearProgressIndicator(
                 progress = when (currentStep) {
-                    BookingStep.DATE_SELECTION -> 0.25f
-                    BookingStep.TRAVELER_INFO -> 0.5f
-                    BookingStep.ADDITIONAL_OPTIONS -> 0.75f
+                    BookingStep.DATE_SELECTION -> 0.2f
+                    BookingStep.AGENCY_SELECTION -> 0.4f
+                    BookingStep.TRAVELER_INFO -> 0.6f
+                    BookingStep.ADDITIONAL_OPTIONS -> 0.8f
                     BookingStep.SUMMARY -> 1f
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            
+
             // Step indicator
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                    .padding(horizontal = 16.dp, vertical = 5.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 StepIndicator(
@@ -75,27 +78,33 @@ fun BookingScreen(
                     isActive = currentStep == BookingStep.DATE_SELECTION,
                     isCompleted = currentStep.ordinal > BookingStep.DATE_SELECTION.ordinal
                 )
-                
+
+                StepIndicator(
+                    title = "Agency",
+                    isActive = currentStep == BookingStep.AGENCY_SELECTION,
+                    isCompleted = currentStep.ordinal > BookingStep.AGENCY_SELECTION.ordinal
+                )
+
                 StepIndicator(
                     title = "Travelers",
                     isActive = currentStep == BookingStep.TRAVELER_INFO,
                     isCompleted = currentStep.ordinal > BookingStep.TRAVELER_INFO.ordinal
                 )
-                
+
                 StepIndicator(
                     title = "Options",
                     isActive = currentStep == BookingStep.ADDITIONAL_OPTIONS,
                     isCompleted = currentStep.ordinal > BookingStep.ADDITIONAL_OPTIONS.ordinal
                 )
-                
+
                 StepIndicator(
                     title = "Summary",
                     isActive = currentStep == BookingStep.SUMMARY,
                     isCompleted = false
                 )
             }
-            
-            // Current step content
+
+            // Current step content for the booking process
             when (currentStep) {
                 BookingStep.DATE_SELECTION -> {
                     DateSelectionStep(
@@ -109,6 +118,17 @@ fun BookingScreen(
                     )
                 }
                 
+                BookingStep.AGENCY_SELECTION -> {
+                    AgencySelectionStep(
+                        viewModel = viewModel,
+                        onBack = { viewModel.previousStep() },
+                        onContinue = { viewModel.nextStep() },
+                        modifier = Modifier.fillMaxSize(),
+                        selectedAgency = selectedAgency?.id,
+                        agencies = agencies,
+                    )
+                }
+
                 BookingStep.TRAVELER_INFO -> {
                     TravelerInfoStep(
                         adultCount = booking?.adultCount ?: 1,
@@ -126,7 +146,7 @@ fun BookingScreen(
                         onPreviousStep = { viewModel.previousStep() }
                     )
                 }
-                
+
                 BookingStep.ADDITIONAL_OPTIONS -> {
                     AdditionalOptionsStep(
                         options = options,
@@ -135,7 +155,7 @@ fun BookingScreen(
                         onPreviousStep = { viewModel.previousStep() }
                     )
                 }
-                
+
                 BookingStep.SUMMARY -> {
                     if (bookingComplete) {
                         BookingConfirmationScreen(
@@ -153,10 +173,12 @@ fun BookingScreen(
                                 if (viewModel.submitBooking()) {
                                     bookingComplete = true
                                 }
-                            }
+                            },
+                            selectedAgency = selectedAgency
                         )
                     }
                 }
+
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.android.tripbook.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.android.tripbook.data.SampleAgency
 import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.model.Agency
 import com.android.tripbook.model.Booking
 import com.android.tripbook.model.BookingStep
 import com.android.tripbook.model.Trip
@@ -27,11 +29,46 @@ class BookingViewModel : ViewModel() {
     // Sample trip options - in a real app, these would come from an API
     private val _availableOptions = MutableStateFlow<List<TripOption>>(emptyList())
     val availableOptions: StateFlow<List<TripOption>> = _availableOptions.asStateFlow()
-    
+
+    // Added trip option for the agency availabilities as it's from the mock data
+    private val _availableAgencies = MutableStateFlow<List<Agency>>(emptyList())
+    val availableAgencies: StateFlow<List<Agency>> = _availableAgencies.asStateFlow()
+
+    // Added trip option for the agency selection
+    private val _selectedAgency = MutableStateFlow<Agency?>(null)
+    val selectedAgency: StateFlow<Agency?> = _selectedAgency.asStateFlow()
+
+    private val _departureTime = MutableStateFlow<String>("")
+    val departureTime: StateFlow<String> = _departureTime.asStateFlow()
+
+    // Update booking model to include agency and departure time during the booking process
+    fun updateDepartureTime(time: String) {
+        _departureTime.value = time
+        _booking.update { current ->
+            current?.copy(departureTime = time)
+        }
+    }
+
+
+    // agency selection function for the booking process
+    fun selectAgency(agency: Agency) {
+        _selectedAgency.value = agency
+        _booking.update { current ->
+            current?.copy(agencyId = agency.id)
+        }
+    }
+
     fun initBooking(tripId: Int) {
         val selectedTrip = SampleTrips.get().find { it.id == tripId }
+
+        // Load agencies for this trip
+        _availableAgencies.value = SampleAgency.getForTrip(tripId)
+        // ... rest of existing init
+
         _trip.value = selectedTrip
-        _booking.value = Booking(tripId = tripId)
+
+        val time = ""
+        _booking.value = Booking(tripId = tripId, departureTime = time)
         
         // Initialize with sample options
         _availableOptions.value = listOf(
@@ -101,7 +138,12 @@ class BookingViewModel : ViewModel() {
     fun nextStep() {
         _currentStep.update { currentStep ->
             when (currentStep) {
-                BookingStep.DATE_SELECTION -> BookingStep.TRAVELER_INFO
+                BookingStep.DATE_SELECTION -> BookingStep.AGENCY_SELECTION
+                BookingStep.AGENCY_SELECTION -> {
+                    require(selectedAgency.value != null) { "Agency must be selected" }  //The user must select an agency for the booking process to be completed
+                    require(departureTime.value.isNotEmpty()) { "Departure time must be selected" }
+                    BookingStep.TRAVELER_INFO // Takes the booking process to the traveler-infos
+                }
                 BookingStep.TRAVELER_INFO -> BookingStep.ADDITIONAL_OPTIONS
                 BookingStep.ADDITIONAL_OPTIONS -> BookingStep.SUMMARY
                 BookingStep.SUMMARY -> BookingStep.SUMMARY // Stay on summary
@@ -112,8 +154,9 @@ class BookingViewModel : ViewModel() {
     fun previousStep() {
         _currentStep.update { currentStep ->
             when (currentStep) {
-                BookingStep.DATE_SELECTION -> BookingStep.DATE_SELECTION // Stay on first step
-                BookingStep.TRAVELER_INFO -> BookingStep.DATE_SELECTION
+                BookingStep.DATE_SELECTION -> BookingStep.DATE_SELECTION
+                BookingStep.AGENCY_SELECTION -> BookingStep.DATE_SELECTION  // Addition of the agency step in the process
+                BookingStep.TRAVELER_INFO -> BookingStep.AGENCY_SELECTION
                 BookingStep.ADDITIONAL_OPTIONS -> BookingStep.TRAVELER_INFO
                 BookingStep.SUMMARY -> BookingStep.ADDITIONAL_OPTIONS
             }
@@ -146,3 +189,5 @@ class BookingViewModel : ViewModel() {
         return true
     }
 }
+
+//private fun MutableStateFlow.update(function: (BookingStep) -> Unit) {}

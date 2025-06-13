@@ -6,7 +6,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Delete
+//import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -78,7 +79,7 @@ fun TravelerInfoStep(
                             onClick = { if (adults > 1) adults-- },
                             enabled = adults > 1
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "Decrease adults")
+                            Icon(Icons.Default.Delete, contentDescription = "Decrease adults")
                         }
                         Text(adults.toString(), style = MaterialTheme.typography.bodyLarge)
                         IconButton(onClick = { adults++ }) {
@@ -105,7 +106,7 @@ fun TravelerInfoStep(
                             onClick = { if (children > 0) children-- },
                             enabled = children > 0
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "Decrease children")
+                            Icon(Icons.Default.Delete, contentDescription = "Decrease children")
                         }
                         Text(children.toString(), style = MaterialTheme.typography.bodyLarge)
                         IconButton(onClick = { children++ }) {
@@ -192,7 +193,7 @@ fun TravelerInfoStep(
             }
         }
 
-        // Navigation Buttons
+        // Navigation Buttons for the booking process
         Row(
             modifier = Modifier
                 .fillMaxWidth()

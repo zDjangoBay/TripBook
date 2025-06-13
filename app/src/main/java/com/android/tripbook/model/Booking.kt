@@ -13,7 +13,9 @@ data class Booking(
     val contactPhone: String = "",
     val specialRequirements: String = "",
     val selectedOptions: List<TripOption> = emptyList(),
-    val agreedToTerms: Boolean = false
+    val agreedToTerms: Boolean = false,
+    val agencyId: Int? = null,
+    val departureTime: String = "" //no specification yet since each agency has its own time
 )
 
 data class TripOption(
@@ -26,6 +28,7 @@ data class TripOption(
 
 enum class BookingStep {
     DATE_SELECTION,
+    AGENCY_SELECTION,
     TRAVELER_INFO,
     ADDITIONAL_OPTIONS,
     SUMMARY
