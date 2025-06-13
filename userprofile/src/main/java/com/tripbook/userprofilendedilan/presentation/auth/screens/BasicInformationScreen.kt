@@ -47,7 +47,8 @@ fun BasicInfoPage(
     onFieldTouched: (field: String) -> Unit,
     onFieldBlur: (field: String) -> Unit,
     onSignUp: () -> Unit,
-    isSignUpEnabled: Boolean
+    isSignUpEnabled: Boolean,
+    onForgotPassword: () -> Unit = {} // Add parameter for forgot password callback
 ) {
     var nameState by remember { mutableStateOf(name) }
     var emailState by remember { mutableStateOf(email) }
@@ -74,7 +75,6 @@ fun BasicInfoPage(
                 .fillMaxSize()
 
             ){
-
         Column(
             modifier = Modifier
                 .fillMaxSize() // Fill the Box
@@ -115,11 +115,11 @@ fun BasicInfoPage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 2.dp)
-                    .onFocusChanged { 
-                    if (!it.isFocused && isNameTouched) {
-                        onFieldBlur("name")
-                    }
-                },
+                    .onFocusChanged {
+                        if (!it.isFocused && isNameTouched) {
+                            onFieldBlur("name")
+                        }
+                    },
                 shape = RoundedCornerShape(24.dp),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
       
@@ -128,7 +128,7 @@ fun BasicInfoPage(
             // Email
             OutlinedTextField(
                 value = emailState,
-                onValueChange = { 
+                onValueChange = {
                 emailState = it
                 onInfoUpdated(nameState, it, phoneState, passwordState, confirmPasswordState)
                 if (!isEmailTouched) onFieldTouched("email")
@@ -136,7 +136,7 @@ fun BasicInfoPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .onFocusChanged { 
+                .onFocusChanged {
                     if (!it.isFocused && isEmailTouched) {
                         onFieldBlur("email")
                     }
@@ -150,7 +150,7 @@ fun BasicInfoPage(
                     Text(emailValidation.errorMessage, color = MaterialTheme.colorScheme.error)
                 }
             },
-            shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(24.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
@@ -160,7 +160,7 @@ fun BasicInfoPage(
             // Phone
             OutlinedTextField(
                 value = phoneState,
-               onValueChange = { 
+                onValueChange = {
                 phoneState = it
                 onInfoUpdated(nameState, emailState, it, passwordState, confirmPasswordState)
                 if (!isPhoneTouched) onFieldTouched("phone")
@@ -168,7 +168,7 @@ fun BasicInfoPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .onFocusChanged { 
+                .onFocusChanged {
                     if (!it.isFocused && isPhoneTouched) {
                         onFieldBlur("phone")
                     }
@@ -182,7 +182,7 @@ fun BasicInfoPage(
                     Text(phoneValidation.errorMessage, color = MaterialTheme.colorScheme.error)
                 }
             },
-            shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(24.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
@@ -192,7 +192,7 @@ fun BasicInfoPage(
             // Password
             OutlinedTextField(
                 value = passwordState,
-                onValueChange = { 
+                onValueChange = {
                 passwordState = it
                 onInfoUpdated(nameState, emailState, phoneState, it, confirmPasswordState)
                 if (!isPasswordTouched) onFieldTouched("password")
@@ -200,7 +200,7 @@ fun BasicInfoPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .onFocusChanged { 
+                .onFocusChanged {
                     if (!it.isFocused && isPasswordTouched) {
                         onFieldBlur("password")
                     }
@@ -223,7 +223,7 @@ fun BasicInfoPage(
                     Text("Use at least 8 characters with letters and numbers")
                 }
             },
-            shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(24.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
@@ -233,7 +233,7 @@ fun BasicInfoPage(
             // Confirm Password
             OutlinedTextField(
                 value = confirmPasswordState,
-                onValueChange = { 
+                onValueChange = {
                 confirmPasswordState = it
                 onInfoUpdated(nameState, emailState, phoneState, passwordState, it)
                 if (!isConfirmPasswordTouched) onFieldTouched("confirmPassword")
@@ -241,7 +241,7 @@ fun BasicInfoPage(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
-                .onFocusChanged { 
+                .onFocusChanged {
                     if (!it.isFocused && isConfirmPasswordTouched) {
                         onFieldBlur("confirmPassword")
                     }
@@ -249,9 +249,10 @@ fun BasicInfoPage(
             leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
             label = { Text("Confirm Password") },
             singleLine = true,
-            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val icon = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                val icon =
+                    if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
                 IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                     Icon(icon, contentDescription = null)
                 }
@@ -262,7 +263,7 @@ fun BasicInfoPage(
                     Text(confirmPasswordValidation.errorMessage, color = MaterialTheme.colorScheme.error)
                 }
             },
-            shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(24.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
@@ -270,6 +271,22 @@ fun BasicInfoPage(
             )
 
             Spacer(modifier = Modifier.height(18.dp))
+
+            // Forgot Password button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(
+                    onClick = onForgotPassword
+                ) {
+                    Text(
+                        text = "Forgot Password?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
 
             // Or sign up with
             Text(
@@ -295,7 +312,7 @@ fun BasicInfoPage(
                 }
 
                 Text(
-                    text = "Google Authentication",
+                    text = "Google",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

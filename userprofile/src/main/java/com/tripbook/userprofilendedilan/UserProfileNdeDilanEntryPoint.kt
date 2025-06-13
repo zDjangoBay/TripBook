@@ -18,6 +18,7 @@ import com.tripbook.userprofilendedilan.presentation.navigation.Screen
 import com.tripbook.userprofilendedilan.presentation.splash.SplashScreen
 import com.tripbook.userprofilendedilan.presentation.theme.TripBookTheme
 import com.tripbook.userprofilendedilan.presentation.onboarding.OnboardingScreen
+import com.tripbook.userprofilendedilan.presentation.auth.screens.PasswordResetScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,9 @@ fun UserProfileNdeDilanEntryPoint(modifier: Modifier = Modifier) {
         }
         composable(Screen.Register.route) {
             RegisterScreen(navController)
+        }
+        composable(Screen.PasswordReset.route) {
+            PasswordResetScreen(navController)
         }
         composable(Screen.Home.route) {
             // HomeScreen()

@@ -1,21 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.android.tripbook"
+    namespace = "com.tripbook.userprofilendedilan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.android.tripbook"
+
         minSdk = 28
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -31,12 +29,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
@@ -51,20 +50,14 @@ android {
             excludes += "/META-INF/LICENSE.txt"
             excludes += "/META-INF/NOTICE"
             excludes += "/META-INF/NOTICE.txt"
-            excludes += "/META-INF/NOTICE.md"
-            excludes += "/META-INF/LICENSE.md"
-            excludes += "/META-INF/ASL2.0"
-            excludes += "/META-INF/LGPL2.1"
-            pickFirsts += "META-INF/NOTICE.md"
-            pickFirsts += "META-INF/LICENSE.md"
-            pickFirsts += "META-INF/NOTICE.md"
         }
     }
 }
 
 dependencies {
+
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -91,6 +84,10 @@ dependencies {
     //---------------------------------------------------------
 
 
+    // JavaMail API for sending emails
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+
     // Compose
     implementation(libs.ui)
     implementation(libs.ui.graphics)
@@ -113,14 +110,9 @@ dependencies {
     implementation(libs.androidx.compose.material3.material3)
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation(project(":userprofile"))
-    implementation(project(":passwordrecovery"))
 
-    // Firebase
+    // Firebase Authentication and Kotlin coroutines
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
-
-
-    implementation("com.sun.mail:android-mail:1.6.7")
-    implementation("com.sun.mail:android-activation:1.6.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
