@@ -123,6 +123,7 @@ fun ImageUploadSection(
             )
         }
 
+        // Show image count
         Text(
             text = "${images.size}/10 images",
             style = MaterialTheme.typography.bodySmall,
