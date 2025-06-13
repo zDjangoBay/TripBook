@@ -142,7 +142,6 @@ fun BookingSummaryStep(
                             )
                         }
 
-
                     }
                 }
             }
