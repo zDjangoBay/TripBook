@@ -43,6 +43,7 @@ fun ImageUploadSection(
     error: String? = null,
     modifier: Modifier = Modifier
 ) {
+    // Main container for the image upload section
     Column(modifier = modifier) {
         // Section title
         Text(
