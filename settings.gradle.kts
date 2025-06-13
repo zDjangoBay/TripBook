@@ -14,6 +14,11 @@ pluginManagement {
         id("com.google.gms.google-services") version "4.4.1"
     }
 }
+
+rootProject.name = "TripBook"
+include(":app")
+include(":userprofile")
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -21,7 +26,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
-rootProject.name = "TripBook"
-include(":app")
-include(":userprofile")
