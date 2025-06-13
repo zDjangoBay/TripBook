@@ -1,4 +1,4 @@
-package com.tripbook.userprofilendedilan.presentation.auth.viewmodels
+package com.tripbook.userprofileMbahDavid.presentation.auth.viewmodels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -325,41 +325,22 @@ class RegistrationViewModel : ViewModel() {
 class LoginViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
-
-    var loginError by mutableStateOf<String?>(null)
+    
+    var errorMessage by mutableStateOf<String?>(null)
         private set
-
-    private var savedCredentials by mutableStateOf<Pair<String, String>?>(null)
 
     fun login(email: String, password: String, rememberMe: Boolean) {
         viewModelScope.launch {
             try {
                 isLoading = true
-                loginError = null
-                
-                //  Implement actual login logic
-                if (rememberMe) {
-                    savedCredentials = email to password
-                }
-                
-                // Simulate network delay
-                kotlinx.coroutines.delay(1000)
-                
-                //  Handle successful login
-                
+                errorMessage = null
+                // TODO: Implement actual login logic
+                kotlinx.coroutines.delay(1000) // Simulate network call
             } catch (e: Exception) {
-                loginError = e.message
+                errorMessage = e.message
             } finally {
                 isLoading = false
             }
         }
-    }
-
-    fun getSavedCredentials(): Pair<String, String>? {
-        return savedCredentials
-    }
-
-    fun clearSavedCredentials() {
-        savedCredentials = null
     }
 }
