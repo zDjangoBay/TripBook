@@ -50,6 +50,7 @@ fun ImageUploadSection(
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
+        // Horizontal list for add button and selected images
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth()
