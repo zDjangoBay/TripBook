@@ -87,7 +87,7 @@ fun ImageUploadSection(
                         .clip(RoundedCornerShape(IMAGE_CORNER_RADIUS))
                 ) {
                     AsyncImage(
-                        model = image.uri,
+                        model = image.uri ?: "",
                         contentDescription = "Selected Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
