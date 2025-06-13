@@ -21,6 +21,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.tripbook.posts.model.ImageModel
 
+/**
+ * Composable UI component for uploading and displaying images in the post creation screen.
+ * Handles image addition, removal, and error display for image selection.
+ */
 @Composable
 fun ImageUploadSection(
     images: List<ImageModel>,
