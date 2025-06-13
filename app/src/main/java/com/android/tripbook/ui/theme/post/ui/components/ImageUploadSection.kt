@@ -130,3 +130,5 @@ fun ImageUploadSection(
         )
     }
 }
+
+// TODO: Support drag-and-drop reordering of images in the future
