@@ -13,15 +13,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color // Import Color
 import androidx.compose.ui.unit.dp
+import com.android.tripbook.posts.ViewModel.PostEvent
+import com.android.tripbook.posts.ViewModel.PostUIState
+import com.android.tripbook.posts.ViewModel.PostViewModel
 import com.android.tripbook.posts.model.Location
-import com.android.tripbook.posts.viewmodel.PostEvent
-import com.android.tripbook.posts.viewmodel.PostUIState
-import com.android.tripbook.posts.viewmodel.PostViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.material3.CardDefaults
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
