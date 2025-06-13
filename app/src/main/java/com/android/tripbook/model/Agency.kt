@@ -6,6 +6,8 @@ data class Agency(
     val name: String,
     val price: String,
     val rating: Float,
+    val email: String,
+    val phone: String,
     val reviewCount: Int,
     val perks: List<String>,  // e.g., ["Free cancellation", "24/7 support"]
     val imageUrl: String,     //for the imageview
