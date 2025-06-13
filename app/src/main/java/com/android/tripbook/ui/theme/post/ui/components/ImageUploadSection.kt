@@ -117,7 +117,7 @@ fun ImageUploadSection(
         // Show error message if present
         if (error != null) {
             Text(
-                text = error,
+                text = error ?: "Please select at least one image to continue.",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 4.dp)
