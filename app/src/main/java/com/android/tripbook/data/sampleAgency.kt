@@ -14,8 +14,7 @@ object SampleAgency {
             perks = listOf("Free cancellation", "English guides"),
             imageUrl = "https://example.com/agency1.jpg",
             description = "Reliable agency with 10+ years experience in mountain trips over the country",
-            email = TODO(),
-            phone = TODO()
+
         ),
         Agency(
             id = 2,
@@ -26,8 +25,6 @@ object SampleAgency {
             perks = listOf("Private transfers", "Flexible schedules"),
             imageUrl = "https://example.com/agency2.jpg",
             description = "Premium service with luxury vehicles",
-            email = TODO(),
-            phone = TODO()
         ),
         Agency(
             id = 3,
@@ -41,8 +38,7 @@ object SampleAgency {
             ),
             imageUrl = "https://example.com/agency2.jpg",
             description = "Premium service with luxury vehicles",
-            email = TODO(),
-            phone = TODO()
+
         )
     )
 }
