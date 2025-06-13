@@ -50,7 +50,7 @@ class BookingViewModel : ViewModel() {
     }
 
 
-    // agency selection function
+    // agency selection function for the booking process
     fun selectAgency(agency: Agency) {
         _selectedAgency.value = agency
         _booking.update { current ->
