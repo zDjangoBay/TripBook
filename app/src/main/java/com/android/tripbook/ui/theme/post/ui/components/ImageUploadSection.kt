@@ -137,3 +137,10 @@ fun ImageUploadSection(
 }
 
 // TODO: Support drag-and-drop reordering of images in the future
+
+// Sample usage:
+// ImageUploadSection(
+//     images = listOf(),
+//     onImageAdd = { /* TODO */ },
+//     onImageRemove = { /* TODO */ }
+// )
