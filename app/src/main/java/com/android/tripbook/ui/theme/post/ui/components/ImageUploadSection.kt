@@ -23,6 +23,8 @@ import com.android.tripbook.posts.model.ImageModel
 
 private val IMAGE_SIZE = 100.dp
 private val IMAGE_CORNER_RADIUS = 12.dp
+private val CLOSE_BUTTON_SIZE = 24.dp
+private val CLOSE_ICON_SIZE = 16.dp
 
 /**
  * Displays a section for uploading and managing images in a post.
@@ -94,7 +96,7 @@ fun ImageUploadSection(
                         onClick = { onImageRemove(image.id) },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .size(24.dp)
+                            .size(CLOSE_BUTTON_SIZE)
                             .background(
                                 Color.Black.copy(alpha = 0.6f),
                                 RoundedCornerShape(IMAGE_CORNER_RADIUS)
@@ -104,7 +106,7 @@ fun ImageUploadSection(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Remove Image",
                             tint = Color.White,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(CLOSE_ICON_SIZE)
                         )
                     }
                 }
