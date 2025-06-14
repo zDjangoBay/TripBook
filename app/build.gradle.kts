@@ -28,7 +28,12 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            // Enable debuggable mode for debug builds
+            isDebuggable = true
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -51,7 +56,7 @@ android {
 
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -76,4 +81,27 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    
+    // Retrofit for networking
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson) // For JSON parsing
+
+    // Room for local data storage
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler) // For annotation processing
+
+    // Coroutines for asynchronous programming
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Dependency Injection with Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+    // SMS Retriever API for secure OTP retrieval
+    implementation(libs.play.services.sms)
+
+    // Testing with MockK
+    testImplementation(libs.mockk) // For mocking in unit tests
+    androidTestImplementation(libs.hilt.testing) // For Hilt testing
 }
