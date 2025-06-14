@@ -11,12 +11,22 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+<<<<<<< HEAD
         android:theme="@style/Theme.TripBook">
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.TripBook">
+=======
+        android:theme="@style/Theme.TripBookTest"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.TripBookTest">
+>>>>>>> 51a58f2 (My integration testing implementation)
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

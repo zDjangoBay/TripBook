@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.TripBook" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -13,4 +14,10 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.TripBookTest" parent="android:Theme.Material.Light.NoActionBar" />
+>>>>>>> 51a58f2 (My integration testing implementation)
 </resources>
