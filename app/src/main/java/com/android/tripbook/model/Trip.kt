@@ -17,7 +17,7 @@ data class Trip(
     val city: String,
     val country: String,
     val latitude: Double,
-    val longitude: Double,
+    val longitude: Double,//vdrvrdrvdvdrvrdvr
     val imageUrl: List<String>,
 
     val caption: String = "",

@@ -11,5 +11,5 @@ data class Trip(
     val duration: Int, // in days
     val type: String, // e.g., "Adventure", "Leisure", "Business"
     val description: String? = null,
-    val agency: String? = null//yghghgh
+    val agency: String? = null//yghghghnnn
 )
