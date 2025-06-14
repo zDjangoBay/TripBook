@@ -22,6 +22,10 @@ class UserViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    init {
+
+        fetchUsers()
+    }
     fun fetchUsers() {
         viewModelScope.launch {
             _isLoading.value = true

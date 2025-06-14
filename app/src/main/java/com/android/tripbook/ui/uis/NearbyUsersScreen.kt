@@ -61,6 +61,7 @@ fun NearbyUsersScreen(
 
     LaunchedEffect(Unit) {
         chatViewModel.loadMessages()
+        userViewModel.fetchUsers()
     }
 
     Box(

@@ -29,6 +29,7 @@ firebaseCrashlytics = "19.4.4"
 googleGmsGoogleServices = "4.4.2"
 googleFirebaseCrashlytics = "3.0.4"
 firebaseFirestoreKtx = "25.1.4"
+media3CommonKtx = "1.6.1"
 
 
 [libraries]
@@ -66,6 +67,7 @@ androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", vers
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
