@@ -103,7 +103,11 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(project(":userprofile"))
 
-    // Firebase
+    // Firebase - Added back to support FirebaseApp
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-common")
+
+    // Firebase - Removed temporarily to fix build issues
+    // implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    // implementation("com.google.firebase:firebase-auth-ktx")
 }

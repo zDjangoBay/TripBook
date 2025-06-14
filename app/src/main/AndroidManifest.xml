@@ -23,6 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Bradley's Post Management Activity -->
+        <activity
+            android:name=".userprofilebradley.PostActivity"
+            android:exported="false"
+            android:label="Bradley's Posts"
+            android:theme="@style/Theme.TripBook" />
     </application>
 
 </manifest>

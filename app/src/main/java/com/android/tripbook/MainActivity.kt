@@ -12,14 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
-import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
+import com.android.tripbook.userprofilebradley.UserProfileBradleyApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            UserProfileNdeDilanEntryPoint( )
+            UserProfileBradleyApp( )
         }
     }
 }
