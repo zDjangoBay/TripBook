@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    // id("com.google.gms.google-services") // Remove this line
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -140,11 +140,12 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     implementation(libs.androidx.compose.foundation)
 
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation ("androidx.compose.material3:material3:1.1.2")
+    implementation ("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Material Date Picker
     implementation("com.google.android.material:material:1.11.0")

@@ -32,6 +32,7 @@ lifecycleRuntimeCompose = "2.6.2"
 playServicesLocation = "21.3.0"
 
 
+
 [libraries]
 #noinspection SimilarGradleDependency
 compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }

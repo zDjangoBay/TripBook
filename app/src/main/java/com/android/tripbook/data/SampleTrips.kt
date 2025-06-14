@@ -1,4 +1,3 @@
-
 package com.android.tripbook.data
 
 import com.android.tripbook.model.Trip

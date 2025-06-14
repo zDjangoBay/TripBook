@@ -1,11 +1,12 @@
-package com.android.tripbook.viewmodel // Or your actual package
 
+package com.android.tripbook.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope // Ensure this import is present
-import com.android.tripbook.data.SampleTrips // Assuming this is still used for initial data
-import com.android.tripbook.model.Review // Assuming you have this model
+import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.model.Review
 import com.android.tripbook.model.Trip
+
+import androidx.lifecycle.viewModelScope // Ensure this import is present
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
