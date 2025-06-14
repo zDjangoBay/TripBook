@@ -1,7 +1,7 @@
 TripBook
 
 TripBook: A mobile social network for travelers exploring Africa and beyond. This platform allows users to share stories, photos, and tips, rate travel agencies, and connect with fellow adventurers.
-Key Features:
+Key Features
 
     User Profiles: Create personalized profiles to showcase travel experiences and connect with like-minded individuals.
     Story Sharing: Post and share travel stories, complete with photos, to inspire others and document your adventures.
@@ -11,16 +11,54 @@ Key Features:
     Itinerary Planning: Collaborate with friends to plan trips and itineraries, making travel planning a social experience.
     Safety Features: Access safety tips and resources to ensure safer journeys while traveling in unfamiliar areas.
 
-Technology Stack:
+Technology Stack
 
     Frontend: Built with React Native for a smooth and responsive mobile experience across both iOS and Android platforms.
     Backend: Powered by Node.js for efficient server-side operations and real-time data handling.
     Database: Utilizes a NoSQL database (e.g., MongoDB) to store user data, travel stories, and ratings.
     APIs: Integrates various APIs, including geolocation services, to enhance user experience and provide relevant travel information.
 
-Community Contributions:
+Community Contributions
 
 We welcome contributions from developers, designers, and travel enthusiasts! Whether you want to improve the user interface, add new features, or help with documentation, your input is valuable. Join our community to share your ideas and collaborate on making TripBook the ultimate travel companion.
-Join Us:
+Join Us
 
 Embark on a journey with TripBook and become part of a vibrant community dedicated to exploring the beauty of Africa and beyond. Share your adventures, connect with fellow travelers, and help promote tourism in hidden gems. 🌍✨
+📱 Screenshots
+Home	Discover	Profile
+Home	Discover	Profile
+Your Account	Your Style	Upload Picture
+Account	Style	Picture
+🛠️ Technology Stack
+
+    Android: Kotlin, Jetpack Compose
+    Navigation: Navigation Compose
+    Data Storage: DataStore Preferences
+    UI Framework: Material 3
+    Backend: Node.js (REST API)
+    Geolocation: Various location APIs
+
+📦 Installation
+
+    Clone the repository:
+    bash
+
+    git clone https://github.com/sas-bergson/TripBook.git
+
+    Open in Android Studio:
+        Launch the application on an emulator or a physical device.
+
+🤝 Contribution
+
+Contributions are welcome! Please open an issue or pull request for any suggestions or improvements.
+👨‍💻 Author
+
+Eng. Daniel Moune (alias sas-bergson)
+Lecturer, Android Mobile App
+ICT University, Spring 2025
+GitHub Profile
+🌍 License
+
+This project is licensed under the MIT License.
+
+This revised document provides a structured and cohesive overview of your TripBook project, resolving conflicts and enhancing the presentation for better readability and understanding.
