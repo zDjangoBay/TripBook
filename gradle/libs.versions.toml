@@ -25,6 +25,11 @@ retrofit = "2.9.0"
 okhttp = "4.12.0"
 coil = "2.4.0"
 supabase = "2.5.0"
+firebaseCrashlytics = "19.4.4"
+googleGmsGoogleServices = "4.4.2"
+googleFirebaseCrashlytics = "3.0.4"
+firebaseFirestoreKtx = "25.1.4"
+media3CommonKtx = "1.6.1"
 
 
 [libraries]
@@ -60,8 +65,13 @@ androidx-foundation-layout-android = { group = "androidx.compose.foundation", na
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 

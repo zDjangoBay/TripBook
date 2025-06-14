@@ -1,5 +1,7 @@
 package com.android.tripbook
 
+
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +25,7 @@ import com.android.tripbook.ui.uis.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.viewmodel.TripViewModel
 import com.android.tripbook.viewmodel.AgencyViewModel
+import com.android.tripbook.viewmodel.UserViewModel
 import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
@@ -66,9 +69,11 @@ class MainActivity : ComponentActivity() {
         var selectedTrip by remember { mutableStateOf<Trip?>(null) }
         var selectedDestination by remember { mutableStateOf<String?>(null) }
         var selectedAgency by remember { mutableStateOf<Agency?>(null) }
+        var selectedUserId by remember { mutableStateOf<Int?>(null) }
 
         val tripViewModel: TripViewModel = viewModel()
         val agencyViewModel = remember { AgencyViewModel(agencyRepository) }
+        val userViewModel: UserViewModel = viewModel()
 
         LaunchedEffect(Unit) {
             agencyRepository.loadAgencies()
@@ -131,7 +136,8 @@ class MainActivity : ComponentActivity() {
                             selectedTrip = trip
                             currentScreen = "TripDetails"
                         },
-                        onAgenciesClick = { currentScreen = "AllAgencies" }
+                        onAgenciesClick = { currentScreen = "AllAgencies" },
+                        onNearbyUsersClick = { currentScreen = "NearbyUsers" }
                     )
 
                     "MyTrips" -> MyTripsScreen(
@@ -144,7 +150,8 @@ class MainActivity : ComponentActivity() {
                             selectedTrip = trip
                             currentScreen = "TripDetails"
                         },
-                        onAgenciesClick = { currentScreen = "AllAgencies" }
+                        onAgenciesClick = { currentScreen = "AllAgencies" },
+                        onNearbyUsersClick = { currentScreen = "NearbyUsers" }
                     )
 
                     "CreateTrip" -> TripCreationFlowScreen(
@@ -164,7 +171,6 @@ class MainActivity : ComponentActivity() {
 
                     "Settings" -> SettingsScreen()
 
-                    // Detailed navigation screens (without bottom bar)
                     "PlanNewTrip" -> PlanNewTripScreen(
                         onBackClick = {
                             selectedTab = 1
@@ -243,7 +249,6 @@ class MainActivity : ComponentActivity() {
                                     type = type,
                                     agencyService = service
                                 )
-
                                 selectedTrip = trip.copy(
                                     itinerary = trip.itinerary + newItem
                                 )
@@ -269,6 +274,15 @@ class MainActivity : ComponentActivity() {
                         agencyViewModel = agencyViewModel,
                         onBackClick = { currentScreen = "AllAgencies" }
                     )
+
+                    "NearbyUsers" -> NearbyUsersScreen(
+                        onBackClick = {
+                            selectedTab = 1
+                            currentScreen = "MyTrips"
+                        },
+                        onPreferencesClick = { /* TODO: Implement or remove if not needed */ },
+                        userViewModel = userViewModel
+                    )
                 }
             }
         }
@@ -281,4 +295,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-//conatains all the classes of the project
+

@@ -1,5 +1,6 @@
 package com.android.tripbook.ui.uis
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,7 +21,7 @@ fun MainContainerScreen(
     googleMapsService: GoogleMapsService,
     agencyRepository: SupabaseAgencyRepository
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) } // Start with Home (index 0)//
+    var selectedTab by remember { mutableIntStateOf(0) } // Start with Home (index 0)
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember { mutableStateOf<Trip?>(null) }
     var selectedDestination by remember { mutableStateOf<String?>(null) }
@@ -28,6 +29,7 @@ fun MainContainerScreen(
 
     val tripViewModel: TripViewModel = viewModel()
     val agencyViewModel = remember { AgencyViewModel(agencyRepository) }
+    val userViewModel: UserViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         agencyRepository.loadAgencies()
@@ -90,7 +92,8 @@ fun MainContainerScreen(
                         selectedTrip = trip
                         currentScreen = "TripDetails"
                     },
-                    onAgenciesClick = { currentScreen = "AllAgencies" }
+                    onAgenciesClick = { currentScreen = "AllAgencies" },
+                    onNearbyUsersClick = { currentScreen = "NearbyUsers" }
                 )
 
                 "MyTrips" -> MyTripsScreen(
@@ -103,7 +106,8 @@ fun MainContainerScreen(
                         selectedTrip = trip
                         currentScreen = "TripDetails"
                     },
-                    onAgenciesClick = { currentScreen = "AllAgencies" }
+                    onAgenciesClick = { currentScreen = "AllAgencies" },
+                    onNearbyUsersClick = { currentScreen = "NearbyUsers" }
                 )
 
                 "CreateTrip" -> TripCreationFlowScreen(
@@ -123,10 +127,15 @@ fun MainContainerScreen(
 
                 "Settings" -> SettingsScreen()
 
-                // Keep existing screens for detailed navigation
                 "PlanNewTrip" -> PlanNewTripScreen(
-                    onBackClick = { currentScreen = "Home" },
-                    onTripCreated = { newTrip -> currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 0
+                        currentScreen = "Home"
+                    },
+                    onTripCreated = { newTrip ->
+                        selectedTab = 0
+                        currentScreen = "Home"
+                    },
                     nominatimService = nominatimService,
                     travelAgencyService = travelAgencyService,
                     googleMapsService = googleMapsService,
@@ -147,7 +156,10 @@ fun MainContainerScreen(
                         budget = 0,
                         status = TripStatus.PLANNED
                     ),
-                    onBackClick = { currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 0
+                        currentScreen = "Home"
+                    },
                     onEditItineraryClick = { currentScreen = "ItineraryBuilder" }
                 )
 
@@ -193,7 +205,6 @@ fun MainContainerScreen(
                                 type = type,
                                 agencyService = service
                             )
-
                             selectedTrip = trip.copy(
                                 itinerary = trip.itinerary + newItem
                             )
@@ -203,7 +214,10 @@ fun MainContainerScreen(
                 )
 
                 "AllAgencies" -> AllAgenciesScreen(
-                    onBackClick = { currentScreen = "Home" },
+                    onBackClick = {
+                        selectedTab = 0
+                        currentScreen = "Home"
+                    },
                     agencyViewModel = agencyViewModel,
                     onAgencyClick = { agency ->
                         selectedAgency = agency
@@ -216,6 +230,15 @@ fun MainContainerScreen(
                     agencyViewModel = agencyViewModel,
                     onBackClick = { currentScreen = "AllAgencies" }
                 )
+
+                "NearbyUsers" -> NearbyUsersScreen(
+                    onBackClick = {
+                        selectedTab = 1
+                        currentScreen = "MyTrips"
+                    },
+                    onPreferencesClick = { /* TODO: Implement or remove if not needed */ },
+                    userViewModel = userViewModel
+                )
             }
         }
     }
@@ -227,3 +250,4 @@ private fun shouldShowBottomBar(currentScreen: String): Boolean {
         else -> false
     }
 }
+
