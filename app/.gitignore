@@ -1,1 +1,61 @@
-/build
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (local.properties)
+local.properties
+
+# Android Studio specific files
+.idea/
+*.iml
+
+# User-specific configurations
+*.hprof
+*.log
+
+# Android specific files
+*.apk
+*.ap_
+*.dex
+*.class
+*.jar
+*.war
+*.so
+*.o
+*.a
+*.d
+
+# Generated files
+*/build/
+*/outputs/
+*/intermediates/
+
+# Java class files
+*.class
+
+# ProGuard files
+proguard/
+proguard-rules.pro
+
+# Keystore files (for signing APKs)
+*.jks
+*.keystore
+
+# Miscellaneous files
+.DS_Store
+*.swp
+*.swo
+
+# Ignore Android NDK files
+obj/
+*.so
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore the Android Studio cache
+*.hprof
+
+# Ignore Android Studio's lint report
+lint-results*.xml /build
