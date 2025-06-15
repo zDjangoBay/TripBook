@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name">TripBook</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="brandName">TRIP BOOK</string>
 </resources>

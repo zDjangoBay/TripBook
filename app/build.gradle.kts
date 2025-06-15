@@ -1,24 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.android.tripbook"
+    namespace = "com.example.tripbook"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.android.tripbook"
-        minSdk = 28
-        targetSdk = 34
+        applicationId = "com.example.tripbook"
+        minSdk = 24
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -31,34 +28,20 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-    //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
-    //-----------------------------------------------------
+
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.ui.tooling.preview.android)
-    implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -73,37 +56,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    //---------------------------------------------------------
-    //      You can add your own dependencies down here
-    //---------------------------------------------------------
-
-
-    // Compose
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
-
-    // Navigation Compose
-    implementation(libs.androidx.navigation.compose)
-
-    // SavedState -
-    implementation(libs.androidx.savedstate)
-    implementation(libs.androidx.savedstate.ktx)
-
-    implementation(libs.androidx.datastore.preferences)
-
-    // Coil for image loading
-    implementation(libs.coil.compose)
-
-    // Date picker
-    implementation(libs.androidx.compose.material3.material3)
-
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
-    implementation(project(":userprofile"))
-
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
-    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.24")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("com.github.yalantis:ucrop:2.2.8")
+    implementation("androidx.core:core-ktx:1.12.0")
 }
