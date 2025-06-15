@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Gradle files
 .gradle/
 build/
@@ -34,3 +35,23 @@ google-services.json
 
 # macOS-specific files (if applicable)
 .DS_Store
+<<<<<<< HEAD
+=======
+=======
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+>>>>>>> 51a58f2 (My integration testing implementation)
+>>>>>>> 0857550e (My integration testing implementation)
