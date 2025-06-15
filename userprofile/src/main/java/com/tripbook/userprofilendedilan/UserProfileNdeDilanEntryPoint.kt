@@ -13,6 +13,7 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.tripbook.userprofileKollekang.ui.MainScreenView
 import com.tripbook.userprofilendedilan.presentation.auth.screens.RegisterScreen
 import com.tripbook.userprofilendedilan.presentation.navigation.Screen
 import com.tripbook.userprofilendedilan.presentation.splash.SplashScreen
@@ -63,7 +64,7 @@ fun UserProfileNdeDilanEntryPoint(modifier: Modifier = Modifier) {
             RegisterScreen(navController)
         }
         composable(Screen.Home.route) {
-            // HomeScreen()
+            MainScreenView()
         }
     }
 }
