@@ -19,7 +19,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaItem
 import com.tripbook.userprofileManfoDjuiko.data.model.MediaType
-import okhttp3.internal.concurrent.formatDuration
+import com.tripbook.userprofileManfoDjuiko.utils.formatDuration
 import java.text.SimpleDateFormat
 import java.util.*
 
