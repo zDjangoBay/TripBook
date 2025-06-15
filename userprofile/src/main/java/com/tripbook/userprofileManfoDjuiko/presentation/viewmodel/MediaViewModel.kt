@@ -116,8 +116,8 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         return cr.getType(uri)
     }
 
-    fun updateItemName(){
-       // TDOD
+    fun updateItemName(itemId: String, itemName: String){
+       // TDDO - implement
     }
 
     fun deleteSelectedItems() {
