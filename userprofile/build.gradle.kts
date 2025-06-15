@@ -45,6 +45,13 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/LICENSE.txt"
+            excludes += "/META-INF/NOTICE"
+            excludes += "/META-INF/NOTICE.txt"
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/NOTICE.md"
         }
     }
 }
@@ -79,6 +86,10 @@ dependencies {
     //---------------------------------------------------------
 
 
+    // JavaMail API for sending emails
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+
     // Compose
     implementation(libs.ui)
     implementation(libs.ui.graphics)
@@ -107,4 +118,3 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 }
-
