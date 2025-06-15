@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.tripbook.ui.theme.TripBookTheme
-import com.tripbook.userprofileManfoDjuiko.MediaManagementModule
 import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +19,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MediaManagementModule( )
+            UserProfileNdeDilanEntryPoint( )
         }
     }
 }
