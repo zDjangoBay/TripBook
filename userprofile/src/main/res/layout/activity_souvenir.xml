@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- App Title -->
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:textSize="28sp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:textAlignment="center"
+            android:paddingBottom="16dp" />
+
+        <!-- Souvenir Subheading -->
+        <TextView
+            android:id="@+id/souvenirHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/souvenir_heading"
+            android:textSize="20sp"
+            android:textColor="@color/primary"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif"
+            android:textAlignment="center"
+            android:paddingBottom="8dp" />
+
+        <!-- Instruction -->
+        <TextView
+            android:id="@+id/souvenirInstruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/souvenir_instruction"
+            android:textSize="14sp"
+            android:textColor="@color/secondary_text"
+            android:fontFamily="sans-serif"
+            android:textAlignment="center"
+            android:paddingBottom="16dp" />
+
+        <!-- Image View -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="16dp"
+            android:scaleType="centerCrop"
+            android:background="@color/image_placeholder"
+            android:contentDescription="@string/image_preview" />
+
+        <!-- Choose Image Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/chooseImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_image"
+            android:layout_gravity="center_horizontal"
+            app:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="8dp" />
+
+        <!-- Description Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/primary"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description_hint"
+                android:inputType="textMultiLine"
+                android:minHeight="100dp"
+                android:padding="12dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/hint_text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save_souvenir"
+            app:backgroundTint="@color/primary"
+            android:textColor="@color/white"
+            app:cornerRadius="8dp" />
+
+        <!-- Empty State Layout -->
+        <LinearLayout
+            android:id="@+id/emptyStateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_empty_state"
+                android:contentDescription="@string/empty_state_image" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/empty_state_message"
+                android:textSize="16sp"
+                android:textColor="@color/secondary_text"
+                android:fontFamily="sans-serif"
+                android:textAlignment="center"
+                android:paddingTop="8dp" />
+        </LinearLayout>
+
+        <!-- RecyclerView for Saved Souvenirs -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/savedSouvenirsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </LinearLayout>
+</ScrollView>

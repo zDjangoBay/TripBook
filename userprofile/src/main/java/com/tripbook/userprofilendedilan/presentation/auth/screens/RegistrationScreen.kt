@@ -1,5 +1,7 @@
 package com.tripbook.userprofilendedilan.presentation.auth.screens
 
+//Take a photo
+
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -11,10 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding // Import for keyboard padding
-import androidx.compose.foundation.layout.navigationBars // For specific navigation bar insets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars // For specific status bar insets
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -29,15 +31,12 @@ import androidx.navigation.NavController
 import com.tripbook.userprofilendedilan.presentation.auth.components.RegistrationFooter
 import com.tripbook.userprofilendedilan.presentation.auth.viewmodels.RegistrationViewModel
 import com.tripbook.userprofilendedilan.presentation.navigation.Screen
-
-//Take a photo
 import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-
 import com.tripbook.userprofile.fonchrisbright.RegistrationViewModel as FonchrisbrightRegistrationViewModel
 import com.tripbook.userprofile.fonchrisbright.RegistrationRepository
 import com.tripbook.userprofile.fonchrisbright.RegistrationApi
@@ -47,6 +46,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
+import android.widget.Toast
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -80,9 +80,9 @@ fun RegisterScreen(navController: NavController) {
     ) { isGranted: Boolean ->
         if (isGranted) {
             // Permission is granted, launch camera
-            cameraLauncher.launch(viewModel.createImageUri(context))
+            cameraLauncher.launch(viewModel.createImageUri(context)!!)
         } else {
-            // Permission denied 
+            // Permission denied
             //TODO
         }
     }
