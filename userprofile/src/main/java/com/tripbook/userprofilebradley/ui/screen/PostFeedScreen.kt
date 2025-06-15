@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.ui.screen
+package com.tripbook.userprofilebradley.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -9,9 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.tripbook.userprofilebradley.data.PostData
-import com.android.tripbook.userprofilebradley.ui.compose.PostList
-import com.android.tripbook.userprofilebradley.viewmodel.PostListViewModel
+import com.tripbook.userprofilebradley.data.PostData
+import com.tripbook.userprofilebradley.ui.compose.PostList
+import com.tripbook.userprofilebradley.viewmodel.PostListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

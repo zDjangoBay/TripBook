@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley
+package com.tripbook.userprofilebradley
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -6,9 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.android.tripbook.userprofilebradley.ui.screen.PostCreationScreen
-import com.android.tripbook.userprofilebradley.ui.screen.PostFeedScreen
-import com.android.tripbook.userprofilebradley.viewmodel.PostListViewModel
+import com.tripbook.userprofilebradley.ui.screen.PostCreationScreen
+import com.tripbook.userprofilebradley.ui.screen.PostFeedScreen
+import com.tripbook.userprofilebradley.viewmodel.PostListViewModel
 
 @Composable
 fun UserProfileBradleyApp(

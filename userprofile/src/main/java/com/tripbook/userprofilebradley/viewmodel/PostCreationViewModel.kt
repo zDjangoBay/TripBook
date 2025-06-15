@@ -1,12 +1,12 @@
-package com.android.tripbook.userprofilebradley.viewmodel
+package com.tripbook.userprofilebradley.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.android.tripbook.userprofilebradley.data.LocationData
-import com.android.tripbook.userprofilebradley.data.PostData
-import com.android.tripbook.userprofilebradley.data.PostType
+import com.tripbook.userprofilebradley.data.LocationData
+import com.tripbook.userprofilebradley.data.PostData
+import com.tripbook.userprofilebradley.data.PostType
 
 class PostCreationViewModel : ViewModel() {
 

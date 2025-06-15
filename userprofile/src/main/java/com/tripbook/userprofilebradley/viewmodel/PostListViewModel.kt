@@ -1,8 +1,8 @@
-package com.android.tripbook.userprofilebradley.viewmodel
+package com.tripbook.userprofilebradley.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.android.tripbook.userprofilebradley.data.PostData
+import com.tripbook.userprofilebradley.data.PostData
 
 class PostListViewModel : ViewModel() {
 

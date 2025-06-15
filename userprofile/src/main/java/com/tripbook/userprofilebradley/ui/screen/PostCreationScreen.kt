@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.ui.screen
+package com.tripbook.userprofilebradley.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,11 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.tripbook.userprofilebradley.data.LocationData
-import com.android.tripbook.userprofilebradley.ui.compose.PostContentEditor
-import com.android.tripbook.userprofilebradley.ui.compose.PostTypeSelector
-import com.android.tripbook.userprofilebradley.viewmodel.PostCreationViewModel
-import com.android.tripbook.userprofilebradley.viewmodel.PostListViewModel
+import com.tripbook.userprofilebradley.data.LocationData
+import com.tripbook.userprofilebradley.data.PostData
+import com.tripbook.userprofilebradley.ui.compose.PostContentEditor
+import com.tripbook.userprofilebradley.ui.compose.PostTypeSelector
+import com.tripbook.userprofilebradley.viewmodel.PostCreationViewModel
+import com.tripbook.userprofilebradley.viewmodel.PostListViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,11 +55,11 @@ fun PostCreationScreen(
                     TextButton(
                         onClick = {
                             viewModel.publishPost(
-                                onSuccess = { postData ->
+                                onSuccess = { postData: PostData ->
                                     postListViewModel?.addPost(postData)
                                     onPostPublished()
                                 },
-                                onError = { error ->
+                                onError = { error: String ->
                                     snackbarMessage = error
                                     showSnackbar = true
                                 }

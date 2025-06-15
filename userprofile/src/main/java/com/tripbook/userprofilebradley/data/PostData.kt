@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.data
+package com.tripbook.userprofilebradley.data
 
 data class PostData(
     val id: String = "",

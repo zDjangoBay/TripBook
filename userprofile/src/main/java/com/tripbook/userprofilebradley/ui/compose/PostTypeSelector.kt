@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.ui.compose
+package com.tripbook.userprofilebradley.ui.compose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.userprofilebradley.data.PostType
+import com.tripbook.userprofilebradley.data.PostType
 
 @Composable
 fun PostTypeSelector(

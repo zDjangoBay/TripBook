@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.data
+package com.tripbook.userprofilebradley.data
 
 enum class PostType {
     TEXT,

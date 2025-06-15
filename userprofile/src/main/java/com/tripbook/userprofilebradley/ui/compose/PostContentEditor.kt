@@ -1,4 +1,4 @@
-package com.android.tripbook.userprofilebradley.ui.compose
+package com.tripbook.userprofilebradley.ui.compose
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import com.android.tripbook.userprofilebradley.data.LocationData
-import com.android.tripbook.userprofilebradley.data.PostType
+import com.tripbook.userprofilebradley.data.LocationData
+import com.tripbook.userprofilebradley.data.PostType
 
 @Composable
 fun PostContentEditor(

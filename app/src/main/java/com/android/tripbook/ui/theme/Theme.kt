@@ -51,7 +51,7 @@ fun TripBookTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = com.android.tripbook.ui.theme.Typography,
         content = content
     )
 }
