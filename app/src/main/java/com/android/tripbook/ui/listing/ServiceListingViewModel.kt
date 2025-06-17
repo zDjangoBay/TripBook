@@ -5,85 +5,74 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.data.models.TravelService
-import com.android.tripbook.data.repositories.MockServiceRepository
+import com.android.tripbook.data.models.Service
+import com.android.tripbook.data.repositories.ServiceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import com.android.tripbook.ui.listing.SortOrder
 
-class ServiceListingViewModel(
-    private val savedStateHandle: SavedStateHandle // Used to get navigation arguments
+
+
+@HiltViewModel
+class ServiceListingViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val serviceRepository: ServiceRepository
 ) : ViewModel() {
 
-    private val serviceRepository = MockServiceRepository() 
+    private val _services = MutableLiveData<List<Service>>()
+    val services: LiveData<List<Service>> = _services
 
-    private val _services = MutableLiveData<List<TravelService>>()
-    val services: LiveData<List<TravelService>> = _services
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _currentSearchQuery = MutableLiveData<String?>()
-    val currentSearchQuery: LiveData<String?> = _currentSearchQuery
+    private var currentSearchQuery: String? = null
+    private var currentSortOrder: SortOrder = SortOrder.NONE
 
     init {
-        val searchQuery: String? = savedStateHandle["searchQuery"] 
-        _currentSearchQuery.value = searchQuery
-
-        loadServices(searchQuery)
+        // Retrieve the search query passed from the HomeFragment
+        val queryFromArgs: String? = savedStateHandle["query"]
+        currentSearchQuery = queryFromArgs
+        loadServices(currentSearchQuery, currentSortOrder)
     }
 
-    private fun loadServices(query: String? = null) {
+
+    fun loadServices(query: String?, sortOrder: SortOrder = SortOrder.NONE) {
+        currentSearchQuery = query // Update stored query
+        currentSortOrder = sortOrder // Update stored sort order
+
         viewModelScope.launch {
-            val allServices = serviceRepository.getMockServices()
-            if (query.isNullOrBlank()) {
-                _services.value = allServices
-            } else {
-                val filtered = allServices.filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                    it.agency.name.contains(query, ignoreCase = true)
+            try {
+                // The repository handles the filtering by query
+                var fetchedServices = serviceRepository.searchServices(query)
+
+                // Apply sorting in the ViewModel
+                fetchedServices = when (sortOrder) {
+                    SortOrder.PRICE_ASC -> fetchedServices.sortedBy { parsePriceToDouble(it.price) }
+                    SortOrder.PRICE_DESC -> fetchedServices.sortedByDescending { parsePriceToDouble(it.price) }
+                    SortOrder.RATING_DESC -> fetchedServices.sortedByDescending { it.rating }
+                    SortOrder.NONE -> fetchedServices
                 }
-                _services.value = filtered
+
+                _services.value = fetchedServices
+                _errorMessage.value = null
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to load services: ${e.message}"
+                _services.value = emptyList()
             }
         }
     }
 
-    /**
-     * Applies filters to the service list.
-     * @param minPrice Minimum price for filtering.
-     * @param maxPrice Maximum price for filtering.
-     * @param minRating Minimum rating for filtering.
-     */
-    fun applyFilters(minPrice: Double?, maxPrice: Double?, minRating: Double?) {
-        viewModelScope.launch {
-            // Get the current list (could be filtered by search already)
-            val currentList = _services.value ?: emptyList()
-            var filteredList = currentList
 
-            minPrice?.let { price ->
-                filteredList = filteredList.filter { it.price >= price }
-            }
-            maxPrice?.let { price ->
-                filteredList = filteredList.filter { it.price <= price }
-            }
-            minRating?.let { rating ->
-                filteredList = filteredList.filter { it.rating >= rating }
-            }
-
-            _services.value = filteredList
-        }
+    private fun parsePriceToDouble(priceString: String): Double {
+        return priceString.replace("[^\\d.]".toRegex(), "").toDoubleOrNull() ?: 0.0
     }
 
-   
-    fun sortServices(sortBy: String) {
-        viewModelScope.launch {
-            val currentList = _services.value ?: emptyList()
-            val sortedList = when (sortBy) {
-                "price_asc" -> currentList.sortedBy { it.price }
-                "price_desc" -> currentList.sortedByDescending { it.price }
-                "rating_desc" -> currentList.sortedByDescending { it.rating }
-                else -> currentList 
-            }
-            _services.value = sortedList
-        }
+
+    fun sortServices(sortOrder: SortOrder) {
+        loadServices(currentSearchQuery, sortOrder)
     }
 
-    fun refreshServices() {
-        loadServices(_currentSearchQuery.value) 
-    }
+    // for user interactions specific to the listing screen,
+    // e.g., "applyFilters()", "refreshList()", etc.
 }

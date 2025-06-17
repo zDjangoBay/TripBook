@@ -1,4 +1,3 @@
-// ui/detail/ServiceDetailFragment.kt
 package com.android.tripbook.ui.detail
 
 import android.os.Bundle
@@ -9,15 +8,18 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.load
 import com.android.tripbook.R
-import com.android.tripbook.data.repositories.MockServiceRepository
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ServiceDetailFragment : Fragment() {
 
     private val args: ServiceDetailFragmentArgs by navArgs()
-    private val mockServiceRepository = MockServiceRepository()
+    private val viewModel: ServiceDetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,25 +31,41 @@ class ServiceDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val serviceId = args.serviceId
-        val service = mockServiceRepository.getServiceById(serviceId)
+        val serviceId = args.serviceId // Get the serviceId from arguments
 
-        service?.let {
-            view.findViewById<TextView>(R.id.detail_service_name_text_view).text = it.name
-            view.findViewById<TextView>(R.id.detail_agency_name_text_view).text = "Agency: ${it.agency.name}"
-            view.findViewById<TextView>(R.id.detail_price_text_view).text = "Price: $${it.price}"
-            view.findViewById<TextView>(R.id.detail_rating_text_view).text = "Rating: ${it.rating} ★"
-            view.findViewById<TextView>(R.id.detail_description_text_view).text = it.description
-            // Set image: In a real app, use a library like Glide to load from URL
-            view.findViewById<ImageView>(R.id.detail_service_image_view).setImageResource(R.drawable.ic_placeholder_image)
+        val serviceNameTextView: TextView = view.findViewById(R.id.service_detail_name)
+        val serviceTypeTextView: TextView = view.findViewById(R.id.service_detail_type)
+        val serviceDescriptionTextView: TextView = view.findViewById(R.id.service_detail_description)
+        val servicePriceTextView: TextView = view.findViewById(R.id.service_detail_price)
+        val serviceImageView: ImageView = view.findViewById(R.id.service_detail_image)
+        val serviceRatingTextView: TextView = view.findViewById(R.id.service_detail_rating)
+        val serviceAgencyTextView: TextView = view.findViewById(R.id.service_detail_agency)
+        val bookNowButton: Button = view.findViewById(R.id.book_now_button)
 
-            view.findViewById<Button>(R.id.book_now_button).setOnClickListener {
-                val action = ServiceDetailFragmentDirections.actionServiceDetailFragmentToBookingConfirmationFragment()
-                findNavController().navigate(action)
+        viewModel.service.observe(viewLifecycleOwner) { service ->
+            service?.let {
+                serviceNameTextView.text = it.name
+                serviceTypeTextView.text = getString(R.string.service_type_label, it.type)
+                serviceDescriptionTextView.text = it.description
+                servicePriceTextView.text = it.price
+                serviceImageView.load(it.imageUrl) {
+                    placeholder(R.drawable.service_placeholder)
+                    error(R.drawable.ic_error_image)
+                    crossfade(true)
+                }
+                serviceRatingTextView.text = getString(R.string.service_rating_label, it.rating)
+                serviceAgencyTextView.text = getString(R.string.service_agency_label, it.agency)
+
+                bookNowButton.setOnClickListener {
+                    val action = ServiceDetailFragmentDirections.actionServiceDetailFragmentToBookingConfirmationFragment(serviceId = it.id.toString())
+                    findNavController().navigate(action)
+                }
+            } ?: run {
+                serviceNameTextView.text = getString(R.string.service_not_found)
             }
-        } ?: run {
-            // Handle case where service is not found (e.g., show error message)
-            findNavController().popBackStack() // Go back if service not found
         }
+
+        // Trigger loading service details
+        viewModel.loadServiceDetails(serviceId)
     }
 }

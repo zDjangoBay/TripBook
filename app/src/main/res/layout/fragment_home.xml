@@ -1,92 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".ui.home.HomeFragment">
 
+    <!-- Top Header ConstraintLayout with Background and Content -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        android:background="@drawable/home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif"
+            android:text="Find Your"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Next Destination"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/profile" />
+        <!-- android:contentDescription="@string/profile_image_description" Added contentDescription -->
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/search_bg"
+            android:drawableStart="@drawable/ic_search_black_24dp"
+            android:drawablePadding="16dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Search for flights, hotels, tours... "
+            android:textColor="#62878F"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <TextView
-        android:id="@+id/welcome_text"
+        android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Discover Your Next Adventure!"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-black"
+        android:text="Catergories"
+        android:textColor="@android:color/background_dark"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"/>
-
-    <EditText
-        android:id="@+id/search_edit_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Search for flights, hotels, tours..."
-        android:padding="12dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_text"
-        android:layout_marginTop="32dp"/>
-
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_edit_text"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <TextView
-        android:id="@+id/popular_text"
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Popular Categories"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_button"
-        android:layout_marginTop="48dp"/>
+        android:layout_marginEnd="16dp"
+        android:fontFamily="sans-serif"
+        android:text="See All"
+        android:textColor="@android:color/background_dark"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView3" />
 
     <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popular_text"
-        android:layout_marginTop="16dp">
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:text="Flights"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                app:cornerRadius="24dp"
+                android:backgroundTint="@color/purple_500"
                 android:layout_marginEnd="8dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:text="Hotels"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                app:cornerRadius="24dp"
+                android:backgroundTint="@color/purple_500"
                 android:layout_marginEnd="8dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:text="Tours"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                app:cornerRadius="24dp"
+                android:backgroundTint="@color/purple_500"
                 android:layout_marginEnd="8dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="120dp"
+                android:layout_height="50dp"
                 android:text="Car Rentals"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                app:cornerRadius="24dp"
+                android:backgroundTint="@color/purple_500"
                 android:layout_marginEnd="8dp"/>
-            </LinearLayout>
+        </LinearLayout>
     </HorizontalScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/hotels_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Top Hotels"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/hotels_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hotels_title"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_hotel"
+            android:nestedScrollingEnabled="false" /> <TextView
+            android:id="@+id/tours_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Popular Tours"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hotels_recycler_view" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tours_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tours_title"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_tour"
+            android:nestedScrollingEnabled="false" />
+
+        <TextView
+            android:id="@+id/car_rentals_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Car Rental Deals"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tours_recycler_view" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/car_rentals_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/car_rentals_title"
+            app:layout_constraintBottom_toBottomOf="parent" tools:itemCount="3"
+            tools:listitem="@layout/item_car_rental"
+            android:nestedScrollingEnabled="false" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

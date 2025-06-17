@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App Name -->
     <string name="app_name">TripBook</string>
+    <string name="title_activity_main">Main Activity Title</string>
 
+    <!-- General UI Strings -->
+    <string name="discover_your_next_adventure">Discover Your Next Adventure!</string>
+    <string name="search_for_flights_hotels_tours">Search for flights, hotels, tours...</string>
     <string name="action_settings">Settings</string>
     <string name="search_hint">Search for destinations, services…</string>
     <string name="price_label">Price:</string>
@@ -11,45 +16,49 @@
     <string name="go_to_home_button">Go to Home</string>
     <string name="loading_message">Loading…</string>
     <string name="error_message">An error occurred: %s</string>
-    <string name="service_image_description">Image of the service</string>
-    <string name="back_button_description">Back button</string>
 
+
+<!--    <string name="back_button_description">Back button</back_button_description>-->
+
+
+    <!-- Fragment Labels (as used in nav_graph.xml) -->
     <string name="fragment_home_label">Home</string>
     <string name="fragment_service_listing_label">Service Listing</string>
     <string name="fragment_service_detail_label">Service Detail</string>
     <string name="fragment_booking_confirmation_label">Booking Confirmation</string>
     <string name="fragment_profile_label">Profile</string>
 
+    <!-- Home Fragment Specific Strings -->
     <string name="popular_categories_title">Popular Categories</string>
     <string name="featured_services_title">Featured Services</string>
     <string name="see_all_button">See All</string>
 
+    <!-- Service Listing Fragment Specific Strings -->
     <string name="filter_button">Filter</string>
     <string name="sort_button">Sort</string>
-    <string name="no_services_found">No services found for your criteria.</string>
+<!--    <string name="no_services_found">No services found for your criteria.</no_services_found>-->
     <string name="search_results_for">Search Results for \"%s\"</string>
 
+    <!-- Service Detail Fragment Specific Strings -->
     <string name="service_name">Service Name</string>
     <string name="agency_name">Travel Agency</string>
     <string name="service_description">Service Description</string>
     <string name="dummy_description">Experience the ultimate adventure with our carefully curated travel packages. From serene beach getaways to thrilling mountain expeditions, we offer unparalleled experiences designed to create lasting memories. Our expert guides and meticulously planned itineraries ensure every detail is covered for a seamless journey.</string>
 
+    <!-- Booking Confirmation Fragment Specific Strings -->
     <string name="booking_success_title">Booking Confirmed!</string>
     <string name="booking_id_label">Booking ID:</string>
     <string name="thank_you_message">Thank you for your booking! We look forward to seeing you.</string>
     <string name="booking_details_title">Booking Details</string>
 
+    <!-- Profile Fragment Specific Strings -->
     <string name="profile_title">My Profile</string>
     <string name="edit_profile_button">Edit Profile</string>
     <string name="logout_button">Log Out</string>
-    <string name="placeholder_username">Justify Mercy</string>
-    <string name="placeholder_email">justifymercy@gmail.com</string>
+    <string name="placeholder_username">John Doe</string>
+    <string name="placeholder_email">john.doe@example.com</string>
 
-    <string name="placeholder_service_name">Luxurious Beach Resort Stay</string>
-    <string name="placeholder_agency_name">Oceanic Travel Agency</string>
-    <string name="placeholder_price">$1200</string>
-    <string name="placeholder_rating">4.5 ★</string>
-
+    <!-- Navigation Drawer & Bottom Navigation Menu Items -->
     <string name="menu_home">Home</string>
     <string name="menu_my_bookings">My Bookings</string>
     <string name="menu_favorites">Favorites</string>
@@ -58,9 +67,53 @@
     <string name="menu_about_us">About Us</string>
     <string name="menu_contact_us">Contact Us</string>
 
-    <string name="nav_header_title">TripBook Explorer</string>
-    <string name="nav_header_subtitle">explore@tripbook.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="title_activity_main">Main Activity</string>
+    <string name="profiles">Profiles</string> <!-- For activity_main_drawer.xml -->
+    <string name="home">Home</string>         <!-- For bottom_nav_menu.xml -->
+    <string name="services">Services</string> <!-- For bottom_nav_menu.xml -->
+    <string name="profile">Profile</string>
 
+
+    <!-- Strings for Hotel Detail Fragment -->
+    <string name="fragment_hotel_detail_label">Hotel Details</string>
+    <string name="detail_main_image_description">Main image of the destination</string>
+    <string name="back_button_description">Back button</string>
+    <string name="star_icon_description">Rating star icon</string>
+    <string name="detail_available_date_label">Available date:</string>
+    <string name="detail_price_range_label">Price range:</string>
+    <string name="detail_photo_gallery_title">Photogallery</string>
+    <string name="gallery_image_description">Gallery image</string>
+    <string name="detail_about_title">About</string>
+    <string name="like_button_description">Like button</string>
+    <string name="detail_book_now_button_text">Start Booking Your Trip</string>
+
+
+    <!-- Placeholder for hotel image in list (if not already defined) -->
+    <string name="hotel_image_description">Hotel image</string>
+
+    <string name="search_results_for_query">Search Results for: "%s"</string>
+    <string name="no_services_found">No services found for your query.</string>
+    <string name="all_services_title">All Available Services</string>
+
+    <string name="service_image_description">Image of %s</string>
+    <string name="service_type_label">Type: %s</string>
+    <string name="service_rating_label">Rating: %.1f/5</string>
+    <string name="service_agency_label">Agency: %s</string>
+    <string name="service_not_found">Service details not found.</string>
+
+    <string name="detail_agency_label">Agency: %s</string>
+    <string name="detail_price_label">Price: %s</string>
+    <string name="detail_rating_label">Rating: %.1f / 5</string>
+    <string name="service_details_label">Service Details</string>
+    <string name="book_now">Book Now</string>
+    <string name="placeholder_image_description">Placeholder image</string>
+    <string name="error_image_description">Error loading image</string>
+    <string name="service_detail_label">Service Details</string>
+    <string name="booking_confirmation_label">Booking Confirmation</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
+    <string name="filter_status_none">No filters/sorting applied</string>
+    <string name="sort_by_price_asc">Price (Low to High)</string>
+    <string name="sort_by_price_desc">Price (High to Low)</string>
+    <string name="sort_by_rating_desc">Rating (High to Low)</string>
 </resources>
+

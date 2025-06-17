@@ -1,27 +1,78 @@
 [versions]
-agp = "8.10.1"
-kotlin = "1.9.0"
+androidGradlePlugin = "8.10.1"
+androidxJunit = "1.2.1"
+coilCompose = "2.5.0"
+espressoCoreVersion = "3.6.1"
+gson = "2.10.1"
+hiltAndroid = "2.50"
+hiltAndroidCompiler = "2.50"
+hiltNavigationCompose = "1.2.0"
+hiltNavigationComposeVersion = "1.1.0"
+kotlin = "1.9.23"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.7.0"
+lifecycleViewmodelCompose = "2.9.1"
 material = "1.10.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.8.0"
-composeBom = "2023.08.00"
+composeBom = "2023.10.01"
 coreSplashscreen = "1.2.0-alpha02"
 coreSplashscreenVersion = "1.0.1"
 activity = "1.10.1"
 constraintlayout = "2.1.4"
+materialIconsExtended = "1.7.8"
+navigationCompose = "2.9.0"
 uiToolingPreviewAndroid = "1.7.8"
 foundationLayoutAndroid = "1.7.8"
 runtimeAndroid = "1.7.8"
 uiAndroid = "1.7.8"
 material3Android = "1.3.2"
+roomCompilerProcessingTesting = "2.7.1"
+hilt = "2.51.1"
+coil = "2.6.0"
+#kotlinCompilerExtensionVersion = "1.5.8"
+composeCompiler = "1.5.11"
+androidxHiltNavigationFragment = "1.2.0"
+navigation = "2.7.7"
+recyclerViewVersion = "1.4.0" # Or your desired version
+lifecycle = "2.7.0"
+cardview = "1.0.0"
+#agpVersion = "8.3.0"
+androidxNavigation = "2.7.7"
+
+
+
+
+
 
 [libraries]
+
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" } # This is the one you need
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerViewVersion" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+androidx-hilt-navigation-fragment = { group = "androidx.hilt", name = "hilt-navigation-fragment", version.ref = "androidxHiltNavigationFragment" }
+coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
+androidx-navigation-safeargs-gradle-plugin = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "androidxNavigation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-espresso-core-v361 = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-hilt-navigation-compose-v110 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
+androidx-junit-v121 = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-x023-x0-x0 = { module = "androidx.compose.compose-bom:2023.10.00" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+#hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -46,8 +97,17 @@ androidx-foundation-layout-android = { group = "androidx.compose.foundation", na
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-android = { group = "androidx.compose.ui", name = "ui-android", version.ref = "uiAndroid" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-room-compiler-processing-testing = { group = "androidx.room", name = "room-compiler-processing-testing", version.ref = "roomCompilerProcessingTesting" }
+androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+
+
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+# android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+androidx-navigation-safeargs-kotlin = { id = "androidx.navigation.safeargs.kotlin", version.ref = "androidxNavigation" }

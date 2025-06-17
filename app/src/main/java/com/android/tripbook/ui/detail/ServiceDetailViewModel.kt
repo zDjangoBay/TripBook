@@ -5,30 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.data.models.TravelService
-import com.android.tripbook.data.repositories.MockServiceRepository
+import com.android.tripbook.data.models.Service
+import com.android.tripbook.data.repositories.ServiceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-// ViewModel for the ServiceDetailFragment
-class ServiceDetailViewModel(
-    private val savedStateHandle: SavedStateHandle // Used to get navigation arguments
+@HiltViewModel
+class ServiceDetailViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val serviceRepository: ServiceRepository
 ) : ViewModel() {
 
-    private val serviceRepository = MockServiceRepository() // In a real app, inject this
+    private val _service = MutableLiveData<Service?>()
+    val service: LiveData<Service?> = _service
 
-    // LiveData to hold the details of the selected service
-    private val _service = MutableLiveData<TravelService>()
-    val service: LiveData<TravelService> = _service
-
-    // LiveData for error messages (e.g., service not found)
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
 
     init {
-        // Retrieve the service ID from navigation arguments
-        // The key "serviceId" must match the argument name in your nav_graph.xml
         val serviceId: String? = savedStateHandle["serviceId"]
-
         if (serviceId != null) {
             loadServiceDetails(serviceId)
         } else {
@@ -36,18 +32,20 @@ class ServiceDetailViewModel(
         }
     }
 
-    private fun loadServiceDetails(id: String) {
+    fun loadServiceDetails(id: String) {
         viewModelScope.launch {
-            // In a real app, this would be an asynchronous call to the repository
-            val foundService = serviceRepository.getServiceById(id)
-            if (foundService != null) {
+            try {
+                val foundService = serviceRepository.getServiceById(id)
                 _service.value = foundService
-            } else {
-                _errorMessage.value = "Service with ID $id not found."
+                if (foundService == null) {
+                    _errorMessage.value = "Service with ID $id not found."
+                } else {
+                    _errorMessage.value = null
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Error loading service: ${e.message}"
+                _service.value = null
             }
         }
     }
-
-    // You might add functions here for user interactions specific to the detail screen,
-    // e.g., "addToFavorites()", "checkAvailability()", etc.
-}   
+}

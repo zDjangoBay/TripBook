@@ -1,6 +1,6 @@
-// ui/booking/BookingConfirmationFragment.kt
 package com.android.tripbook.ui.booking
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +20,7 @@ class BookingConfirmationFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_booking_confirmation, container, false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,7 +28,7 @@ class BookingConfirmationFragment : Fragment() {
         view.findViewById<TextView>(R.id.booking_id_text_view).text = "Booking ID: ABC-12345" // Mock ID
 
         view.findViewById<Button>(R.id.go_to_home_button).setOnClickListener {
-            findNavController().popBackStack(R.id.homeFragment, false) // Go back to home fragment
+            findNavController().popBackStack(R.id.homeFragment, false)
         }
     }
 }

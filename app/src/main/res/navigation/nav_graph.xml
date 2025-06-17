@@ -8,17 +8,24 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.android.tripbook.ui.home.HomeFragment"
-        android:label="@string/fragment_home_label"
+        android:label="@string/discover_your_next_adventure"
         tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_hotelDetailFragment"
+            app:destination="@id/hotelDetailFragment">
+            <argument
+                android:name="hotelId"
+                app:argType="string" />
+
+        </action>
 
         <action
             android:id="@+id/action_homeFragment_to_serviceListingFragment"
             app:destination="@id/serviceListingFragment">
             <argument
                 android:name="searchQuery"
-                android:defaultValue="@null"
-                app:argType="string"
-                app:nullable="true" />
+                app:argType="string"/>
         </action>
     </fragment>
 
@@ -37,6 +44,7 @@
         <action
             android:id="@+id/action_serviceListingFragment_to_serviceDetailFragment"
             app:destination="@id/serviceDetailFragment" />
+
     </fragment>
 
     <fragment
@@ -76,5 +84,8 @@
         android:name="com.android.tripbook.ui.profile.ProfileFragment"
         android:label="@string/fragment_profile_label"
         tools:layout="@layout/fragment_profile" />
+
+
+
 
 </navigation>

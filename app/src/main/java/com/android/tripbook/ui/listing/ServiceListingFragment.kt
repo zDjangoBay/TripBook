@@ -1,4 +1,3 @@
-// ui/listing/ServiceListingFragment.kt
 package com.android.tripbook.ui.listing
 
 import android.os.Bundle
@@ -6,21 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.tripbook.R
-import com.android.tripbook.data.models.TravelService
-import com.android.tripbook.data.repositories.MockServiceRepository
+import com.android.tripbook.adapters.ServiceAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import com.android.tripbook.ui.listing.SortOrder
 
+@AndroidEntryPoint
 class ServiceListingFragment : Fragment() {
 
     private val args: ServiceListingFragmentArgs by navArgs()
-    private lateinit var serviceAdapter: ServiceAdapter
-    private val mockServiceRepository = MockServiceRepository()
+    private val viewModel: ServiceListingViewModel by viewModels()
+
+    private lateinit var servicesRecyclerView: RecyclerView
+    private lateinit var noResultsTextView: TextView
+    private lateinit var searchQueryTextView: TextView
+    private lateinit var filterButton: Button
+    private lateinit var sortButton: Button
+    private lateinit var filterStatusTextView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,33 +41,95 @@ class ServiceListingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.service_recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        // Initialize view references
+        servicesRecyclerView = view.findViewById(R.id.service_list_recycler_view)
+        noResultsTextView = view.findViewById(R.id.no_results_text_view)
+        searchQueryTextView = view.findViewById(R.id.search_query_text_view)
+        filterButton = view.findViewById(R.id.filter_button)
+        sortButton = view.findViewById(R.id.sort_button)
+        filterStatusTextView = view.findViewById(R.id.filter_status_text_view)
+        // Set up RecyclerView
+        servicesRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        serviceAdapter = ServiceAdapter { service ->
-            // Handle service item click
-            val action = ServiceListingFragmentDirections.actionServiceListingFragmentToServiceDetailFragment(service.id)
-            findNavController().navigate(action)
-        }
-        recyclerView.adapter = serviceAdapter
+        // Get the search query from arguments
+        val query = args.searchQuery
 
-        val initialQuery = args.searchQuery
-        val services = mockServiceRepository.getMockServices()
-        serviceAdapter.submitList(services) // Display all mock services initially
-
-        // Set up filter/sort buttons (their actual logic would be more complex)
-        val filterButton = view.findViewById<Button>(R.id.filter_button)
-        val sortButton = view.findViewById<Button>(R.id.sort_button)
-        val filterStatusTextView = view.findViewById<TextView>(R.id.filter_status_text_view)
-
-        filterButton.setOnClickListener {
-            // Implement a dialog or another fragment for filter options
-            filterStatusTextView.text = "Filters applied: Price Range, 4+ Stars"
+        searchQueryTextView.text = if (!query.isNullOrBlank()) {
+            getString(R.string.search_results_for_query, query)
+        } else {
+            getString(R.string.all_services_title)
         }
 
+        // Observe services from the ViewModel
+        viewModel.services.observe(viewLifecycleOwner) { services ->
+            if (services.isNullOrEmpty()) {
+                noResultsTextView.visibility = View.VISIBLE
+                servicesRecyclerView.visibility = View.GONE
+            } else {
+                noResultsTextView.visibility = View.GONE
+                servicesRecyclerView.visibility = View.VISIBLE
+                // ServiceAdapter and its lambda should now resolve with the import
+                val adapter = ServiceAdapter(services) { service ->
+                    // Handle service item click: Navigate to ServiceDetailFragment
+                    val action = ServiceListingFragmentDirections.actionServiceListingFragmentToServiceDetailFragment(serviceId = service.id)
+                    findNavController().navigate(action)
+                }
+                servicesRecyclerView.adapter = adapter
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            if (!errorMessage.isNullOrEmpty()) {
+
+                println("ServiceListingFragment ERROR: $errorMessage") // For debugging
+            }
+        }
+
+        // Setup Sort Button
         sortButton.setOnClickListener {
-            // Implement a dialog for sort options
-            filterStatusTextView.text = "Sorted by: Price (Low to High)"
+            showSortMenu(it)
         }
+
+        // Setup Filter Button
+        filterButton.setOnClickListener {
+
+            println("Filter button clicked!")
+        }
+
+        filterStatusTextView.text = getString(R.string.filter_status_none)
+        filterStatusTextView.visibility = View.VISIBLE
+
+    }
+
+    private fun showSortMenu(view: View) {
+        val popupMenu = PopupMenu(requireContext(), view)
+        popupMenu.menuInflater.inflate(R.menu.menu_sort_options, popupMenu.menu) // Create this menu_sort_options.xml
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.sort_price_asc -> {
+                    viewModel.sortServices(SortOrder.PRICE_ASC)
+                    filterStatusTextView.text = getString(R.string.sort_by_price_asc)
+                    true
+                }
+                R.id.sort_price_desc -> {
+                    viewModel.sortServices(SortOrder.PRICE_DESC)
+                    filterStatusTextView.text = getString(R.string.sort_by_price_desc)
+                    true
+                }
+                R.id.sort_rating_desc -> {
+                    viewModel.sortServices(SortOrder.RATING_DESC)
+                    filterStatusTextView.text = getString(R.string.sort_by_rating_desc)
+                    true
+                }
+                R.id.sort_none -> {
+                    viewModel.sortServices(SortOrder.NONE)
+                    filterStatusTextView.text = getString(R.string.filter_status_none)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 }

@@ -5,64 +5,55 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.tripbook.data.models.TravelService 
-import com.android.tripbook.data.repositories.MockServiceRepository 
-import kotlinx.coroutines.delay 
+import com.android.tripbook.data.models.Service
+import com.android.tripbook.data.repositories.ServiceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.UUID
+import javax.inject.Inject
 
-class BookingConfirmationViewModel(
-    private val savedStateHandle: SavedStateHandle // Used to get navigation arguments
+@HiltViewModel
+class BookingConfirmationViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val serviceRepository: ServiceRepository
 ) : ViewModel() {
 
-    private val serviceRepository = MockServiceRepository() 
+    private val _service = MutableLiveData<Service?>()
+    val service: LiveData<Service?> = _service
 
-    private val _bookingId = MutableLiveData<String>()
-    val bookingId: LiveData<String> = _bookingId
-
-    private val _bookedService = MutableLiveData<TravelService>()
-    val bookedService: LiveData<TravelService> = _bookedService
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _bookingConfirmed = MutableLiveData<Boolean>()
+    val bookingConfirmed: LiveData<Boolean> = _bookingConfirmed
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
     init {
-        // Retrieve the service ID from navigation arguments
-        // The key "serviceId" must match the argument name in your nav_graph.xml
         val serviceId: String? = savedStateHandle["serviceId"]
 
         if (serviceId != null) {
-            _isLoading.value = true
-            viewModelScope.launch {
-                try {
-                    // Simulate booking process (e.g., API call)
-                    delay(1000) // Simulate network delay
-
-                    // Generate a unique booking ID (in a real app, this comes from backend)
-                    val generatedId = "TBK-${UUID.randomUUID().toString().substring(0, 8).uppercase()}"
-                    _bookingId.value = generatedId
-
-                    // Fetch the details of the booked service for display
-                    val service = serviceRepository.getServiceById(serviceId)
-                    if (service != null) {
-                        _bookedService.value = service
-                    } else {
-                        _errorMessage.value = "Booked service details not found."
-                    }
-                } catch (e: Exception) {
-                    _errorMessage.value = "Failed to confirm booking: ${e.message}"
-                } finally {
-                    _isLoading.value = false
-                }
-            }
+            loadServiceDetails(serviceId)
         } else {
-            _errorMessage.value = "No service ID provided for booking confirmation."
-            _isLoading.value = false
+            _errorMessage.value = "Service ID for booking is missing."
         }
     }
 
-    // You might add functions here like "viewBookingDetails()" for more complex flows
+    private fun loadServiceDetails(id: String) {
+        viewModelScope.launch {
+            try {
+                val foundService = serviceRepository.getServiceById(id)
+                _service.value = foundService
+                if (foundService == null) {
+                    _errorMessage.value = "Service with ID $id not found for booking."
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Error loading service details for booking: ${e.message}"
+                _service.value = null
+            }
+        }
+    }
+
+    fun confirmBooking() {
+        viewModelScope.launch {
+            _bookingConfirmed.value = true
+        }
+    }
 }
