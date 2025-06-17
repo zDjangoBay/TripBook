@@ -108,8 +108,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.4")
 
     // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.database)
+    // implementation(platform(libs.firebase.bom)) // Remove these Firebase dependencies
+    // implementation(libs.firebase.database)
 
     implementation(libs.compose.material3)
 
@@ -146,4 +146,27 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation ("androidx.compose.material3:material3:1.1.2")
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
+
+    // Material Date Picker
+    implementation("com.google.android.material:material:1.11.0")
+
+    // RecyclerView for trip list
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // CardView for trip items
+    implementation("androidx.cardview:cardview:1.0.0")
+
+    // ViewModel and LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended")
+
 }

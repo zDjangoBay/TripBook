@@ -28,6 +28,18 @@
             android:exported="false" />
 
         <activity
+            android:name=".TripCalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TripCatalogActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BookingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddTripActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/title_activity_main" android:theme="@style/Theme.TripBook" >

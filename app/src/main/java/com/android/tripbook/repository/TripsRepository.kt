@@ -1,47 +1,40 @@
 package com.android.tripbook.repository
 
 import com.android.tripbook.model.Place
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import android.util.Log
 import com.android.tripbook.model.Triphome
 
 class TripsRepository {
-    private val database by lazy {
-        try {
-            FirebaseDatabase.getInstance().reference
-        } catch (e: IllegalStateException) {
-            throw IllegalStateException("Firebase is not initialized. Ensure FirebaseApp.initializeApp(context) is called in Application class.", e)
-        }
-    }
-
-    // Generic fetch function
-    private suspend inline fun <reified T> fetchItemsFromFirebase(path: String): List<T> =
-        suspendCancellableCoroutine { continuation ->
-            database.child(path)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val list = snapshot.children.mapNotNull { it.getValue(T::class.java) }
-                        Log.d("TripsRepository", "Fetched ${list.size} items from $path")
-                        continuation.resume(list)
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.e("TripsRepository", "Failed to fetch from $path", error.toException())
-                        continuation.resumeWithException(error.toException())
-                    }
-                })
-        }
-
-    // Updated functions using generic fetch
+    // Mock data implementation since Firebase is removed
     suspend fun getUpcomingTrips(): List<Triphome> {
         return try {
-            fetchItemsFromFirebase<Triphome>("Trips")
+            // Return mock data instead of Firebase data
+            listOf(
+                Triphome(
+                    companyName = "Paris Airways",
+                    from = "New York",
+                    fromshort = "NYC",
+                    to = "Paris",
+                    toshort = "PAR",
+                    date = "2024-06-01",
+                    time = "14:30",
+                    arriveTime = "08:45",
+                    price = 899.99,
+                    score = 4.5
+                ),
+                Triphome(
+                    companyName = "Tokyo Express",
+                    from = "Los Angeles",
+                    fromshort = "LAX",
+                    to = "Tokyo",
+                    toshort = "NRT",
+                    date = "2024-07-15",
+                    time = "11:20",
+                    arriveTime = "16:30",
+                    price = 1299.99,
+                    score = 4.8
+                )
+            )
         } catch (e: Exception) {
             Log.e("TripsRepository", "Error loading trips: ${e.message}")
             emptyList()
@@ -50,7 +43,17 @@ class TripsRepository {
 
     suspend fun getRecommendedTrips(): List<Place> {
         return try {
-            fetchItemsFromFirebase<Place>("RecommendedPlace")
+            // Return mock data instead of Firebase data
+            listOf(
+                Place(
+                    title = "Eiffel Tower",
+                    picUrl = ""
+                ),
+                Place(
+                    title = "Tokyo Tower",
+                    picUrl = ""
+                )
+            )
         } catch (e: Exception) {
             Log.e("TripsRepository", "Error loading recommended places: ${e.message}")
             emptyList()

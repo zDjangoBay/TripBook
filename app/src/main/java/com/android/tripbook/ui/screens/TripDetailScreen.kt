@@ -1,15 +1,9 @@
 // ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import android.content.Intent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -30,8 +24,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.android.tripbook.TripCalendarActivity
 import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
 import com.android.tripbook.ui.components.ImageGallery
@@ -63,9 +59,11 @@ fun TripDetailScreen(
 ) {
 
     val trip = remember { SampleTrips.get().find { it.id == tripId } }
+
     val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
     val reviewsForTrip = allReviews.filter { it.tripId == tripId }
+    val context = LocalContext.current
 
     // Rating states
     var showRatingDialog by remember { mutableStateOf(false) }
@@ -189,6 +187,26 @@ fun TripDetailScreen(
                     ratingSummary = ratingSummary,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            val intent = Intent(context, TripCalendarActivity::class.java)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text("View Calendar")
+                    }
+                }
 
                 Text(
                     text = trip.description,

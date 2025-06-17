@@ -1,4 +1,3 @@
-
 package com.android.tripbook.utils
 
 import android.annotation.SuppressLint
@@ -6,7 +5,8 @@ import android.content.Context
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class LocationUtils(context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -15,7 +15,11 @@ class LocationUtils(context: Context) {
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(): Location? {
         return try {
-            fusedLocationClient.lastLocation.await()
+            suspendCoroutine { continuation ->
+                fusedLocationClient.lastLocation.addOnCompleteListener { task ->
+                    continuation.resume(task.result)
+                }
+            }
         } catch (e: Exception) {
             null
         }
