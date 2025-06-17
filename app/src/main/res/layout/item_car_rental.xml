@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/car_image"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/car_placeholder" />
+    <TextView
+    android:id="@+id/car_model"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:text="Toyota Camry"
+    android:textStyle="bold"
+    android:textSize="16sp"
+    android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/car_price_per_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$45/day"
+        android:textStyle="bold"
+        android:textColor="@color/purple_500" />
+</LinearLayout>

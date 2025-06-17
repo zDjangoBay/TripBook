@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.detail.HotelDetailFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Main Image (Top Banner) -->
+        <ImageView
+            android:id="@+id/detail_main_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/hotel_placeholder"
+            android:contentDescription="@string/detail_main_image_description" />
+
+        <!-- Back Button Icon -->
+        <ImageView
+            android:id="@+id/detail_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+            android:contentDescription="@string/back_button_description" />
+
+        <!-- Location Name -->
+        <TextView
+            android:id="@+id/detail_location_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="Mughal Gardens, Srinagar"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_main_image" />
+
+        <!-- Star Icon -->
+        <ImageView
+            android:id="@+id/detail_star_icon"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_location_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/detail_location_name"
+            app:srcCompat="@drawable/star"
+            android:contentDescription="@string/star_icon_description" />
+
+        <!-- Rating Text -->
+        <TextView
+            android:id="@+id/detail_rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:fontFamily="sans-serif"
+            android:text="4.5"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_star_icon"
+            app:layout_constraintEnd_toStartOf="@+id/detail_star_icon"
+            app:layout_constraintTop_toTopOf="@+id/detail_star_icon" />
+
+        <!-- Available Flight Label -->
+        <TextView
+            android:id="@+id/detail_available_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/detail_available_date_label"
+            android:textColor="#044363"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/detail_location_name"
+            app:layout_constraintTop_toBottomOf="@+id/detail_location_name" />
+
+        <!-- Price Range Label -->
+        <TextView
+            android:id="@+id/detail_price_range_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/detail_price_range_label"
+            android:textColor="#044363"
+            app:layout_constraintStart_toStartOf="@+id/detail_available_label"
+            app:layout_constraintTop_toBottomOf="@+id/detail_available_label" />
+
+        <!-- Available Date Text -->
+        <TextView
+            android:id="@+id/detail_available_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="18 April, 2020"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_available_label"
+            app:layout_constraintStart_toEndOf="@+id/detail_available_label"
+            app:layout_constraintTop_toTopOf="@+id/detail_available_label" />
+
+        <!-- Price Range Text -->
+        <TextView
+            android:id="@+id/detail_price_range_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="sans-serif"
+            android:text="$3,00 - $8,00"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_price_range_label"
+            app:layout_constraintStart_toEndOf="@+id/detail_price_range_label"
+            app:layout_constraintTop_toTopOf="@+id/detail_price_range_label" />
+
+        <!-- Photo Gallery Title -->
+        <TextView
+            android:id="@+id/detail_photo_gallery_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/detail_photo_gallery_title"
+            android:textColor="@android:color/background_dark"
+            app:layout_constraintStart_toStartOf="@+id/detail_price_range_label"
+            app:layout_constraintTop_toBottomOf="@+id/detail_price_range_label" />
+
+        <!-- Gallery Images  -->
+        <ImageView
+            android:id="@+id/detail_gallery_image_1"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_photo_gallery_title"
+            app:srcCompat="@drawable/img1"
+            android:contentDescription="@string/gallery_image_description" />
+
+        <ImageView
+            android:id="@+id/detail_gallery_image_2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_gallery_image_1"
+            app:layout_constraintStart_toEndOf="@+id/detail_gallery_image_1"
+            app:layout_constraintTop_toTopOf="@+id/detail_gallery_image_1"
+            app:srcCompat="@drawable/img2"
+            android:contentDescription="@string/gallery_image_description" />
+
+        <ImageView
+            android:id="@+id/detail_gallery_image_3"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_gallery_image_2"
+            app:layout_constraintStart_toEndOf="@+id/detail_gallery_image_2"
+            app:layout_constraintTop_toTopOf="@+id/detail_gallery_image_2"
+            app:srcCompat="@drawable/img3"
+            android:contentDescription="@string/gallery_image_description" />
+
+        <!-- About Section Title -->
+        <TextView
+            android:id="@+id/detail_about_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/detail_about_title"
+            android:textColor="@android:color/background_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/detail_gallery_image_1" />
+
+        <!-- About Description Text -->
+        <TextView
+            android:id="@+id/detail_about_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Mughal Gardens which have truly changed the face of the Mughal Empire is one of the most popular and the most visited tourist attractions of Srinagar."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/detail_about_title"
+            app:layout_constraintTop_toBottomOf="@+id/detail_about_title" />
+
+        <!-- Like Button (ImageView) -->
+        <ImageView
+            android:id="@+id/detail_like_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/like"
+            android:contentDescription="@string/like_button_description"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- Book Now Button -->
+        <Button
+            android:id="@+id/detail_book_now_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/book_button_bg"
+            android:fontFamily="sans-serif"
+            android:text="@string/detail_book_now_button_text"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/detail_like_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/detail_like_button"
+            app:layout_constraintTop_toTopOf="@+id/detail_like_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
