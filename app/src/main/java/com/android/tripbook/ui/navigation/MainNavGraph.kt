@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.ui.screens.*
 import com.android.tripbook.ui.screens.booking.BookingScreen
 
@@ -57,7 +59,8 @@ fun MainNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onTripClick = { tripId ->
                     navController.navigate("detail/$tripId")
-                }
+                },
+                navController = navController
             )
         }
         composable("profile") {
@@ -129,6 +132,19 @@ fun MainNavGraph(
                             inclusive = true
                         }
                     }
+                }
+            )
+        }
+        composable("location/{locationName}") { backStackEntry ->
+            val locationName = backStackEntry.arguments?.getString("locationName") ?: ""
+            val tripsForLocation = remember { SampleTrips.get().filter { it.title == locationName } }
+
+            LocationTripsScreen(
+                location = locationName,
+                trips = tripsForLocation,
+                onBack = { navController.popBackStack() },
+                onTripClick = { tripId ->
+                    navController.navigate("detail/$tripId")
                 }
             )
         }

@@ -8,11 +8,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.android.tripbook.ui.theme.Purple40
+import com.android.tripbook.model.Trip
 
 @Composable
 fun BaseScaffold(
     navController: NavController,
+    trips: List<Trip> = emptyList(),
     isLoading: Boolean = false,
+    onTripSelected: (Trip) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -29,7 +32,14 @@ fun BaseScaffold(
     }
 
     Scaffold(
-        topBar = { TopBar(title = title) },
+        topBar = { 
+            TopBar(
+                title = title,
+                currentRoute = currentRoute,
+                trips = trips,
+                onTripSelected = onTripSelected
+            ) 
+        },
         bottomBar = {
             BottomNavigationBar(
                 current = currentRoute,
