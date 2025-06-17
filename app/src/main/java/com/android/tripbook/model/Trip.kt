@@ -16,7 +16,10 @@ data class Trip(
     val title: String,
     val caption: String,
     val description: String,
-    val imageUrl: List<String>
+    val city: String,
+    val country: String,
+    val latitude: Double,
+    val longitude: Double,
+    val imageUrl: List<String>,
+    val region: String? = null
 ) : Serializable
-
-
