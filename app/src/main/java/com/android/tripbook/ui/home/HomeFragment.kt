@@ -103,10 +103,10 @@ class HomeFragment : Fragment() {
         )
 
         val hotelsAdapter = HotelsAdapter(dummyHotels) { hotel ->
-            Log.d(tag, "HomeFragment received click for hotel: ${hotel.name} (ID: ${hotel.id})") // Using 'tag'
+            Log.d(tag, "HomeFragment received click for hotel: ${hotel.name} (ID: ${hotel.id})") 
 
             val action = HomeFragmentDirections.actionHomeFragmentToHotelDetailFragment(hotel.id)
-            findNavController().navigate(action) // Navigating with the generated action
+            findNavController().navigate(action) 
         }
         hotelsRecyclerView.adapter = hotelsAdapter
 

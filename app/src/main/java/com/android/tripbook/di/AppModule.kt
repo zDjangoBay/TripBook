@@ -9,13 +9,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Module // Marks this class as a Dagger Hilt module
-@InstallIn(SingletonComponent::class) // Specifies the scope (Singleton means it lives as long as the app)
-abstract class AppModule { // Abstract class for @Binds methods
+@Module 
+@InstallIn(SingletonComponent::class) 
+abstract class AppModule { 
 
-    @Singleton // Ensures only one instance of ServiceRepository exists
-    @Binds // Tells Hilt that when ServiceRepository is requested, provide MockServiceRepository
+    @Singleton 
+    @Binds 
     abstract fun bindServiceRepository(
-        mockServiceRepository: MockServiceRepository // Hilt will figure out how to create MockServiceRepository
+        mockServiceRepository: MockServiceRepository 
     ): ServiceRepository
 }

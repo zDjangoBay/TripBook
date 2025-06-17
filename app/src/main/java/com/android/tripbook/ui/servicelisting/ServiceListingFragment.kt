@@ -81,7 +81,6 @@ class ServiceListingFragment : Fragment() {
             }
         }
 
-        // The ViewModel's init block already loads services based on args.query
-        // If you need to re-fetch based on a different query, call viewModel.loadServices(newQuery)
+        
     }
 }

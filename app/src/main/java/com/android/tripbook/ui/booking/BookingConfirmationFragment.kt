@@ -25,7 +25,7 @@ class BookingConfirmationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<TextView>(R.id.confirmation_message_text_view).text = "Your booking is confirmed!"
-        view.findViewById<TextView>(R.id.booking_id_text_view).text = "Booking ID: ABC-12345" // Mock ID
+        view.findViewById<TextView>(R.id.booking_id_text_view).text = "Booking ID: ABC-12345" 
 
         view.findViewById<Button>(R.id.go_to_home_button).setOnClickListener {
             findNavController().popBackStack(R.id.homeFragment, false)

@@ -9,5 +9,4 @@ data class Hotel(
     val rating: Double,
     val availableDate: String,
     val description: String,
-    // val galleryImages: List<Int> = emptyList()
 )

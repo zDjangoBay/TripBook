@@ -31,7 +31,7 @@ class ServiceDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val serviceId = args.serviceId // Get the serviceId from arguments
+        val serviceId = args.serviceId 
 
         val serviceNameTextView: TextView = view.findViewById(R.id.service_detail_name)
         val serviceTypeTextView: TextView = view.findViewById(R.id.service_detail_type)

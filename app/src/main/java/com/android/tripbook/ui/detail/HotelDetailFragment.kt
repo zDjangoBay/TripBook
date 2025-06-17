@@ -20,7 +20,6 @@ import com.android.tripbook.data.models.Hotel
 class HotelDetailFragment : Fragment() {
 
     private val args: HotelDetailFragmentArgs by navArgs()
-    // Injecting the ViewModel
     private val viewModel: HotelDetailViewModel by viewModels()
 
     override fun onCreateView(
@@ -33,10 +32,8 @@ class HotelDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // The hotelId is accessed from args here
         val hotelId = args.hotelId
 
-        // Initialize your views here (using the IDs from fragment_hotel_detail.xml)
         val locationNameTextView: TextView = view.findViewById(R.id.detail_location_name)
         val ratingTextView: TextView = view.findViewById(R.id.detail_rating_text)
         val availableDateTextView: TextView = view.findViewById(R.id.detail_available_date_text)
@@ -45,12 +42,10 @@ class HotelDetailFragment : Fragment() {
         val mainImageView: ImageView = view.findViewById(R.id.detail_main_image)
         val bookNowButton: Button = view.findViewById(R.id.detail_book_now_button)
 
-        // Set up back button click listener
         view.findViewById<ImageView>(R.id.detail_back_button).setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // Observe the hotel LiveData from the ViewModel
         viewModel.hotel.observe(viewLifecycleOwner) { hotelData ->
             hotelData?.let { hotel ->
                 locationNameTextView.text = hotel.location
@@ -66,11 +61,9 @@ class HotelDetailFragment : Fragment() {
                 }
                 mainImageView.contentDescription = getString(R.string.detail_main_image_description)
 
-                // Load gallery images (static for now, but ideally from hotel.galleryImages)
                 view.findViewById<ImageView>(R.id.detail_gallery_image_1).load(R.drawable.img1)
                 view.findViewById<ImageView>(R.id.detail_gallery_image_2).load(R.drawable.img2)
                 view.findViewById<ImageView>(R.id.detail_gallery_image_3).load(R.drawable.img3)
-                // Set content descriptions for gallery images
                 view.findViewById<ImageView>(R.id.detail_gallery_image_1).contentDescription = getString(R.string.gallery_image_description)
                 view.findViewById<ImageView>(R.id.detail_gallery_image_2).contentDescription = getString(R.string.gallery_image_description)
                 view.findViewById<ImageView>(R.id.detail_gallery_image_3).contentDescription = getString(R.string.gallery_image_description)
@@ -80,12 +73,10 @@ class HotelDetailFragment : Fragment() {
                     findNavController().navigate(action)
                 }
             } ?: run {
-                // Toast.makeText(context, "Hotel details not found!", Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
         }
 
-        // Observe error messages from ViewModel
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             if (!errorMessage.isNullOrEmpty()) {
                 println("HotelDetailFragment ERROR: $errorMessage")

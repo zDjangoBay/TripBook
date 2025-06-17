@@ -68,9 +68,7 @@ class ServiceListingFragment : Fragment() {
             } else {
                 noResultsTextView.visibility = View.GONE
                 servicesRecyclerView.visibility = View.VISIBLE
-                // ServiceAdapter and its lambda should now resolve with the import
                 val adapter = ServiceAdapter(services) { service ->
-                    // Handle service item click: Navigate to ServiceDetailFragment
                     val action = ServiceListingFragmentDirections.actionServiceListingFragmentToServiceDetailFragment(serviceId = service.id)
                     findNavController().navigate(action)
                 }
@@ -81,7 +79,7 @@ class ServiceListingFragment : Fragment() {
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             if (!errorMessage.isNullOrEmpty()) {
 
-                println("ServiceListingFragment ERROR: $errorMessage") // For debugging
+                println("ServiceListingFragment ERROR: $errorMessage") 
             }
         }
 
@@ -103,7 +101,7 @@ class ServiceListingFragment : Fragment() {
 
     private fun showSortMenu(view: View) {
         val popupMenu = PopupMenu(requireContext(), view)
-        popupMenu.menuInflater.inflate(R.menu.menu_sort_options, popupMenu.menu) // Create this menu_sort_options.xml
+        popupMenu.menuInflater.inflate(R.menu.menu_sort_options, popupMenu.menu) 
 
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {

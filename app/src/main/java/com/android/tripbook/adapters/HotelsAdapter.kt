@@ -17,7 +17,6 @@ class HotelsAdapter(
 ) : RecyclerView.Adapter<HotelsAdapter.HotelViewHolder>() {
 
     class HotelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Ensure these IDs match your item_hotel.xml layout
         val hotelImage: ImageView = itemView.findViewById(R.id.hotel_image)
         val hotelName: TextView = itemView.findViewById(R.id.hotel_name)
         val hotelLocation: TextView = itemView.findViewById(R.id.hotel_location)

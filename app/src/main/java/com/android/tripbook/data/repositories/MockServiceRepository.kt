@@ -10,7 +10,6 @@ import java.util.Locale
 class MockServiceRepository @Inject constructor() : ServiceRepository {
 
     private val allServices = listOf(
-        // Ensure rating is a Double (e.g., 4.7, 4.9, not just 4 or 5)
         Service("s1", "Flight to Paris", "Flight", "Experience the romantic city of Paris.", "$550", R.drawable.flight_placeholder, 4.7, "Airways Pro"),
         Service("s2", "Eiffel Tower Tour", "Tour", "Guided tour of the iconic Eiffel Tower.", "$50", R.drawable.tour_placeholder, 4.9, "City Tours"),
         Service("s3", "Car Rental: Economy", "Car Rental", "Affordable car rental for city exploration.", "$40/day", R.drawable.car_placeholder, 4.2, "Rent-A-Ride"),

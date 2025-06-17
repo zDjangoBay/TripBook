@@ -34,7 +34,7 @@ class ServiceListingViewModel @Inject constructor(
             try {
                 val results = serviceRepository.searchServices(query)
                 _services.value = results
-                _errorMessage.value = null // Clear any previous errors
+                _errorMessage.value = null 
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load services: ${e.message}"
                 _services.value = emptyList()

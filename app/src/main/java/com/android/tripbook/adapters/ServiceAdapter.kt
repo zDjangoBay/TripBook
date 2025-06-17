@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.android.tripbook.R
-import com.android.tripbook.data.models.Service // Make sure this import is correct
+import com.android.tripbook.data.models.Service 
 
 class ServiceAdapter(
     private val services: List<Service>,
@@ -34,8 +34,8 @@ class ServiceAdapter(
         holder.serviceType.text = holder.itemView.context.getString(R.string.service_type_label, service.type)
         holder.servicePrice.text = service.price
         holder.serviceImage.load(service.imageUrl) {
-            placeholder(R.drawable.service_placeholder) // Ensure you have this drawable
-            error(R.drawable.ic_error_image) // Ensure you have this drawable
+            placeholder(R.drawable.service_placeholder)
+            error(R.drawable.ic_error_image)
             crossfade(true)
         }
 
