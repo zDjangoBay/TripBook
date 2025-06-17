@@ -2,6 +2,8 @@ package com.android.tripbook.companycatalog.ui.screens
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -23,6 +25,7 @@ import com.android.tripbook.companycatalog.MainAppScreen
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
@@ -47,6 +50,7 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DynamicGreetingSection() {
     val greeting = when (LocalTime.now().hour) {
@@ -226,6 +230,7 @@ fun TrendingTagsSection() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun QuoteOfTheDaySection() {
     val quotes = listOf(

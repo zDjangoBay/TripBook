@@ -1,13 +1,16 @@
 package com.android.tripbook.companycatalog
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CompassCalibration
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Store
@@ -32,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.tripbook.companycatalog.ui.screens.CatalogScreen
 import com.android.tripbook.companycatalog.ui.screens.ExploreScreen
 import com.android.tripbook.companycatalog.ui.screens.HomeScreen
+import com.android.tripbook.companycatalog.ui.screens.NotificationScreen
 import com.android.tripbook.companycatalog.ui.screens.ProfileScreen
 import com.android.tripbook.companycatalog.ui.screens.SettingsScreen
 import com.android.tripbook.ui.theme.TripBookTheme
@@ -43,9 +47,11 @@ sealed class MainAppScreen(val route: String, val label: String, val icon: Image
     data object Catalog : MainAppScreen("catalog", "Catalog", Icons.Default.Store)
     data object Profile : MainAppScreen("profile", "Profile", Icons.Default.Person)
     data object Settings : MainAppScreen("settings", "Settings", Icons.Default.Settings)
+    data object Notifications : MainAppScreen("notifications","Notifications", Icons.Default.Notifications)
 }
 
 class CompanyCatalogActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -61,6 +67,7 @@ class CompanyCatalogActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppRootNavHost() {
     val navController = rememberNavController()
@@ -68,7 +75,8 @@ fun AppRootNavHost() {
         MainAppScreen.Home,
         MainAppScreen.Explore,
         MainAppScreen.Catalog,
-        MainAppScreen.Profile
+        MainAppScreen.Profile,
+        MainAppScreen.Notifications
         // If you want Settings in bottom nav, add here: MainAppScreen.Settings
     )
 
@@ -119,10 +127,16 @@ fun AppRootNavHost() {
             composable(MainAppScreen.Settings.route) {
                 SettingsScreen()
             }
+            composable(MainAppScreen.Notifications.route) {
+                NotificationScreen()
+            }
         }
     }
 }
 
+
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun AppRootNavHostPreview() {
