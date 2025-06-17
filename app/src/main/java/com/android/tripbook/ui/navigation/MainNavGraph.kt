@@ -63,6 +63,10 @@ fun MainNavGraph(
         composable("profile") {
             ProfileScreen(navController = navController)
         }
+        composable("notification") {
+            NotificationScreen()
+        }
+
 
         composable("detail/{tripId}") { backStackEntry ->
             val tripId = backStackEntry.arguments?.getString("tripId")?.toIntOrNull() ?: 0

@@ -15,6 +15,7 @@ enum class BottomNavItem(
     Profile("profile", R.drawable.bottom_btn4, R.string.Profile),
     Notification("notification", R.drawable.ic_notification, R.string.Notification);
 
+
     companion object {
         fun fromRoute(route: String?): BottomNavItem? {
             return values().find { it.route == route }
