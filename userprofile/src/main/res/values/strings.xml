@@ -2,4 +2,21 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+    
+    <!-- Onboarding Screen -->
+    <string name="onboarding_title_1">Welcome to TripBook</string>
+    <string name="onboarding_description_1">Plan your perfect journey with ease</string>
+    <string name="onboarding_title_2">Discover Amazing Places</string>
+    <string name="onboarding_description_2">Find the best destinations and create unforgettable memories</string>
+    <string name="onboarding_title_3">Share Your Adventures</string>
+    <string name="onboarding_description_3">Connect with fellow travelers and share your experiences</string>
+    
+    <!-- Splash Screen -->
+    <string name="splash_welcome">Welcome to TripBook</string>
+    <string name="splash_tagline">Your journey begins here</string>
+    
+    <!-- Common -->
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="get_started">Get Started</string>
 </resources>

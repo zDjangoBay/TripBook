@@ -24,7 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.tripbook.userprofilendedilan.R
+import androidx.compose.ui.res.stringResource
+import com.android.tripbook.userprofile.R
 import androidx.navigation.NavController
 import com.tripbook.userprofilendedilan.presentation.navigation.Screen
 import com.tripbook.userprofilendedilan.presentation.onboarding.components.OnboardingPage
@@ -52,18 +53,18 @@ fun OnboardingScreen(navController: NavController) {
 
     val pages = listOf(
         OnboardingPageData(
-            title = "Share Your Journeys",
-            description = "Document and share your travel experiences with friends and fellow travelers.",
-            onboardingImage= R.drawable.share_journey
+            title = stringResource(R.string.onboarding_title_1),
+            description = stringResource(R.string.onboarding_description_1),
+            onboardingImage = R.drawable.share_journey
         ),
         OnboardingPageData(
-            title = "Discover New Places",
-            description = "Explore destinations through the experiences of other travelers.",
+            title = stringResource(R.string.onboarding_title_2),
+            description = stringResource(R.string.onboarding_description_2),
             onboardingImage = R.drawable.new_places
         ),
         OnboardingPageData(
-            title = "Connect & Plan Together",
-            description = "Connect with like-minded travelers and plan your next adventure.",
+            title = stringResource(R.string.onboarding_title_3),
+            description = stringResource(R.string.onboarding_description_3),
             onboardingImage = R.drawable.connect_plan
         )
     )
@@ -129,7 +130,7 @@ fun OnboardingScreen(navController: NavController) {
                         }
                     }
                 ) {
-                    Text("Skip")
+                    Text(stringResource(R.string.skip))
                 }
 
                 Button(
@@ -150,8 +151,8 @@ fun OnboardingScreen(navController: NavController) {
                     }
                 ) {
                     Text(
-                        if (pagerState.currentPage < pages.size - 1) "Next"
-                        else "Get Started"
+                        if (pagerState.currentPage < pages.size - 1) stringResource(R.string.next)
+                        else stringResource(R.string.get_started)
                     )
                 }
             }

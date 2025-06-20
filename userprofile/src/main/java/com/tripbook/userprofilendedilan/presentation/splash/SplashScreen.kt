@@ -10,9 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.tripbook.userprofilendedilan.R
+import com.android.tripbook.userprofile.R
 import com.tripbook.userprofilendedilan.data.repository.UserPreferencesRepository
 import com.tripbook.userprofilendedilan.data.repository.dataStore
 import com.tripbook.userprofilendedilan.presentation.navigation.Screen
@@ -37,8 +38,8 @@ fun SplashScreen(navController: NavController) {
     // Display logo
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Image(
-            painter = painterResource(id = R.drawable.app_logo), // Add your logo to resources
-            contentDescription = "TripBook Logo"
+            painter = painterResource(id = R.drawable.app_logo),
+            contentDescription = stringResource(R.string.app_name)
         )
     }
 
