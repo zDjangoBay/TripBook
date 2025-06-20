@@ -16,6 +16,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.tripbook.ui.theme.TripBookTheme
+Nangu
 import com.google.gson.Gson
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -30,17 +31,24 @@ import com.android.tripbook.restapi.ApiClient
 import com.android.tripbook.restapi.ApiService
 import com.android.tripbook.restapi.TokenResponse
 
+import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
+ userprofile
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
+ Nangu
             TripBookTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(Modifier.padding(innerPadding))
                 }
             }
+
+            UserProfileNdeDilanEntryPoint( )
+ userprofile
         }
     }
 }
@@ -142,4 +150,8 @@ fun LoginScreenPreview() {
     TripBookTheme {
         LoginScreen()
     }
+ Nangu
 }*/
+
+}
+userprofile
