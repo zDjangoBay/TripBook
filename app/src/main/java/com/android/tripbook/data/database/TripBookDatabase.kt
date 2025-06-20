@@ -23,6 +23,7 @@ abstract class TripBookDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: TripBookDatabase? = null
         
+
         fun getDatabase(context: Context): TripBookDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -32,9 +33,11 @@ abstract class TripBookDatabase : RoomDatabase() {
                 )
                 .fallbackToDestructiveMigration()
                 .build()
+
                 INSTANCE = instance
                 instance
             }
         }
     }
 }
+
