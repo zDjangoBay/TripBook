@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import com.android.tripbook.reservation.notifications.bridge.NotificationBridge
 import com.android.tripbook.reservation.notifications.models.*
 import com.android.tripbook.reservation.notifications.utils.NotificationFormatter
+import com.tripbook.reservation.notifications.models.InAppNotification
 
 class NotificationManager private constructor(private val context: Context) {
 
@@ -170,7 +171,7 @@ class NotificationManager private constructor(private val context: Context) {
             markAsRead(notificationId)
         }, 5000)
     }
-e fun scheduleFlightReminders(notification: InAppNotification) {
+ fun scheduleFlightReminders(notification: InAppNotification) {
         val flightTime = notification.data?.get("departureTime") as? Long
         if (flightTime != null) {
             val currentTime = System.currentTimeMillis()
