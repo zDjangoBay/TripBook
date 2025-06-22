@@ -73,7 +73,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation ("androidx.room:room-runtime:2.7.2")
+    implementation   ("androidx.room:room-compiler:2.5.2")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation ("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
 }
+
+
+
+
