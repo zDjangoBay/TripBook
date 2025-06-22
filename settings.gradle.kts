@@ -22,6 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TripBook"
+rootProject.name = "ProfilEditUI"
 include(":app")
-include(":userprofile")

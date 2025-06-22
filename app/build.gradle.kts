@@ -1,25 +1,38 @@
 plugins {
     alias(libs.plugins.android.application)
+<<<<<<< HEAD
+    alias(libs.plugins.kotlin.android)
+=======
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
 }
 
 android {
-    namespace = "com.android.tripbook"
+    namespace = "com.example.profileditui"
     compileSdk = 35
 
     defaultConfig {
+<<<<<<< HEAD
+        applicationId = "com.example.profileditui"
+        minSdk = 24
+        targetSdk = 35
+=======
         applicationId = "com.android.tripbook"
         minSdk = 28
         targetSdk = 34
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
+
+    // --- CHANGE THIS BLOCK ---
+    buildFeatures {
+        viewBinding = true // <--- CHANGE THIS LINE: Use '=' for assignment in Kotlin DSL
+    }
+    // --- END CHANGE ---
 
     buildTypes {
         release {
@@ -29,46 +42,33 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+        }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        jvmTarget = "11"
     }
 }
 
 dependencies {
-    //------------------------------------------------------
-   //           default dependencies on the project
-    //                       do not touch them !!!!!!
-    //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.material)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+
+    implementation(libs.kotlinx.coroutines.core.v173)
+    implementation(libs.kotlinx.coroutines.android.v173)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+<<<<<<< HEAD
+}
+=======
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
@@ -107,3 +107,4 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
 }
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
