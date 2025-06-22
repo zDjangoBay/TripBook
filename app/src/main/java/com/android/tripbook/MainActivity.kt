@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 // Importations nécessaires
  import android.os.Bundle 
  import android.view.LayoutInflater 
@@ -13,6 +14,21 @@
  import androidx.recyclerview.widget.RecyclerView 
  import java.text.SimpleDateFormat
  import java.util.* 
+=======
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.android.tripbook.ui.theme.TripBookTheme
+import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
 
  data class Comment(
     val id: String, 
@@ -36,6 +52,7 @@
 
    
     override fun onCreate(savedInstanceState: Bundle?) {
+<<<<<<< HEAD
         super.onCreate(savedInstanceState) 
         setContentView(R.layout.activity_main)
 
@@ -60,6 +77,12 @@ val commentText = commentEditText.text.toString()
                 commentEditText.text.clear() 
                 ratingBar.rating = 0f
             }
+=======
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            UserProfileNdeDilanEntryPoint( )
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
         }
     }
 
@@ -82,6 +105,7 @@ val commentText = commentEditText.text.toString()
         // Faire défiler vers le bas pour afficher le nouveau commentaire
         commentsRecyclerView.scrollToPosition(commentsList.size - 1) // Faire défiler la RecyclerView jusqu'au dernier élément
     }
+<<<<<<< HEAD
  }
 
 
@@ -118,3 +142,6 @@ val comment = comments[position]
 
     override fun getItemCount() = comments.size 
  }
+=======
+}
+>>>>>>> 4712c46cf27c3ef86b98da24e08e999274614675
