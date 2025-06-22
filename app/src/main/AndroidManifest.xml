@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripBook">
         <activity
+            android:name=".Userprofile"
+            android:exported="false"
+            android:label="@string/title_activity_userprofile"
+            android:theme="@style/Theme.TripBook" />
+        <activity
             android:name=".Signupscreen"
             android:exported="false"
             android:label="@string/title_activity_signupscreen"

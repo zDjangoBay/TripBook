@@ -50,6 +50,10 @@ interface SignupUserDao {
 
     @Query("SELECT * FROM signup_users WHERE email = :email")
     suspend fun getUserByEmail(email: String): SignupUser?
+
+    @Update
+    suspend fun updateUser(user: SignupUser)
+
 }
 
 @Database(entities = [SignupUser::class], version = 1)
