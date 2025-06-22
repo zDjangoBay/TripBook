@@ -54,7 +54,9 @@ package com.android.tripbook
 
 import android.Manifest
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -64,9 +66,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -76,8 +80,30 @@ import com.android.tripbook.posts.utils.PostValidator
 import com.android.tripbook.posts.viewmodel.PostViewModel
 import com.android.tripbook.posts.viewmodel.PostViewModelFactory
 import com.android.tripbook.ui.theme.TripBookTheme
+import java.util.*
 
 class MainActivity : ComponentActivity() {
+    
+    // Theme and Configuration Management
+    private lateinit var sharedPreferences: SharedPreferences
+    private var isDarkTheme by mutableStateOf(false)
+    private var selectedLanguage by mutableStateOf("en")
+    private var fontSize by mutableStateOf("medium")
+    
+    companion object {
+        private const val PREFS_NAME = "TripBookPrefs"
+        private const val PREF_THEME = "theme_mode"
+        private const val PREF_LANGUAGE = "selected_language"
+        private const val PREF_FONT_SIZE = "font_size"
+        private const val PREF_AUTO_SYNC = "auto_sync"
+        private const val PREF_LOCATION_ENABLED = "location_enabled"
+        private const val PREF_NOTIFICATION_ENABLED = "notifications_enabled"
+        
+        // Theme modes
+        const val THEME_LIGHT = "light"
+        const val THEME_DARK = "dark"
+        const val THEME_SYSTEM = "system"
+    }
     
     // Network Connectivity Management
     private lateinit var connectivityManager: ConnectivityManager
@@ -125,11 +151,11 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.READ_MEDIA_IMAGES -> handleMediaPermission(permission.value)
                 Manifest.permission.READ_MEDIA_VIDEO -> handleMediaPermission(permission.value)
                 Manifest.permission.ACCESS_NETWORK_STATE -> handleNetworkPermission(permission.value)
+                Manifest.permission.POST_NOTIFICATIONS -> handleNotificationPermission(permission.value)
             }
         }
     }
 
-    // Single permission launcher (keeping for backward compatibility)
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -143,6 +169,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // Initialize app configuration
+        setupAppConfiguration()
+        
         // Initialize connectivity manager
         initializeNetworkMonitoring()
         
@@ -150,7 +179,14 @@ class MainActivity : ComponentActivity() {
         checkAndRequestPermissions()
         
         setContent {
-            TripBookTheme {
+            TripBookTheme(
+                darkTheme = when (getThemeMode()) {
+                    THEME_LIGHT -> false
+                    THEME_DARK -> true
+                    THEME_SYSTEM -> isSystemInDarkTheme()
+                    else -> isSystemInDarkTheme()
+                }
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -164,6 +200,195 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Theme and Configuration Methods
+    private fun setupAppConfiguration() {
+        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        
+        // Load saved preferences
+        loadUserPreferences()
+        
+        // Apply theme
+        applyTheme()
+        
+        // Apply language
+        applyLanguage()
+        
+        // Initialize app settings
+        initializeAppSettings()
+    }
+
+    private fun loadUserPreferences() {
+        isDarkTheme = when (sharedPreferences.getString(PREF_THEME, THEME_SYSTEM)) {
+            THEME_DARK -> true
+            THEME_LIGHT -> false
+            else -> isSystemInDarkTheme()
+        }
+        
+        selectedLanguage = sharedPreferences.getString(PREF_LANGUAGE, "en") ?: "en"
+        fontSize = sharedPreferences.getString(PREF_FONT_SIZE, "medium") ?: "medium"
+    }
+
+    private fun applyTheme() {
+        val themeMode = getThemeMode()
+        when (themeMode) {
+            THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            THEME_SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
+    private fun applyLanguage() {
+        val locale = Locale(selectedLanguage)
+        Locale.setDefault(locale)
+        
+        val config = Configuration()
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    private fun initializeAppSettings() {
+        // Initialize default settings if first time launch
+        if (isFirstTimeLaunch()) {
+            setDefaultSettings()
+        }
+        
+        // Apply user settings
+        applyUserSettings()
+    }
+
+    private fun isFirstTimeLaunch(): Boolean {
+        return sharedPreferences.getBoolean("first_launch", true)
+    }
+
+    private fun setDefaultSettings() {
+        sharedPreferences.edit().apply {
+            putString(PREF_THEME, THEME_SYSTEM)
+            putString(PREF_LANGUAGE, Locale.getDefault().language)
+            putString(PREF_FONT_SIZE, "medium")
+            putBoolean(PREF_AUTO_SYNC, true)
+            putBoolean(PREF_LOCATION_ENABLED, true)
+            putBoolean(PREF_NOTIFICATION_ENABLED, true)
+            putBoolean("first_launch", false)
+            apply()
+        }
+    }
+
+    private fun applyUserSettings() {
+        // Apply auto-sync setting
+        val autoSync = sharedPreferences.getBoolean(PREF_AUTO_SYNC, true)
+        configureAutoSync(autoSync)
+        
+        // Apply location settings
+        val locationEnabled = sharedPreferences.getBoolean(PREF_LOCATION_ENABLED, true)
+        configureLocationServices(locationEnabled)
+        
+        // Apply notification settings
+        val notificationsEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_ENABLED, true)
+        configureNotifications(notificationsEnabled)
+    }
+
+    // Theme management methods
+    fun setThemeMode(themeMode: String) {
+        sharedPreferences.edit().putString(PREF_THEME, themeMode).apply()
+        applyTheme()
+        recreate() // Recreate activity to apply theme
+    }
+
+    fun getThemeMode(): String {
+        return sharedPreferences.getString(PREF_THEME, THEME_SYSTEM) ?: THEME_SYSTEM
+    }
+
+    fun setLanguage(languageCode: String) {
+        sharedPreferences.edit().putString(PREF_LANGUAGE, languageCode).apply()
+        selectedLanguage = languageCode
+        applyLanguage()
+        recreate() // Recreate activity to apply language
+    }
+
+    fun getLanguage(): String {
+        return sharedPreferences.getString(PREF_LANGUAGE, "en") ?: "en"
+    }
+
+    fun setFontSize(size: String) {
+        sharedPreferences.edit().putString(PREF_FONT_SIZE, size).apply()
+        fontSize = size
+        // Apply font size changes
+        applyFontSize(size)
+    }
+
+    fun getFontSize(): String {
+        return sharedPreferences.getString(PREF_FONT_SIZE, "medium") ?: "medium"
+    }
+
+    private fun applyFontSize(size: String) {
+        // Apply font size to UI components
+        // This can be handled in the theme or passed to components
+    }
+
+    private fun configureAutoSync(enabled: Boolean) {
+        // Configure automatic data synchronization
+        if (enabled) {
+            // Enable background sync
+            enableAutoSync()
+        } else {
+            // Disable background sync
+            disableAutoSync()
+        }
+    }
+
+    private fun configureLocationServices(enabled: Boolean) {
+        // Configure location-based services
+        if (enabled) {
+            enableLocationServices()
+        } else {
+            disableLocationServices()
+        }
+    }
+
+    private fun configureNotifications(enabled: Boolean) {
+        // Configure push notifications
+        if (enabled) {
+            enableNotifications()
+        } else {
+            disableNotifications()
+        }
+    }
+
+    private fun enableAutoSync() {
+        // Start background sync service
+        // Schedule periodic sync
+    }
+
+    private fun disableAutoSync() {
+        // Stop background sync service
+        // Cancel scheduled sync
+    }
+
+    private fun enableLocationServices() {
+        // Start location tracking
+        // Enable location-based features
+    }
+
+    private fun disableLocationServices() {
+        // Stop location tracking
+        // Disable location-based features
+    }
+
+    private fun enableNotifications() {
+        // Register for push notifications
+        // Enable notification channels
+    }
+
+    private fun disableNotifications() {
+        // Unregister from push notifications
+        // Disable notification channels
+    }
+
+    @Composable
+    private fun isSystemInDarkTheme(): Boolean {
+        return androidx.compose.foundation.isSystemInDarkTheme()
     }
 
     // Network Connectivity Methods
@@ -279,7 +504,8 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_MEDIA_IMAGES,
             Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.ACCESS_NETWORK_STATE
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.POST_NOTIFICATIONS
         )
         
         permissions.forEach { permission ->
@@ -341,6 +567,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun handleNotificationPermission(isGranted: Boolean) {
+        if (isGranted) {
+            showToast("Notification permission granted - You'll receive updates!")
+            enableNotificationFeatures()
+        } else {
+            showToast("Notification permission denied - Limited notifications")
+            disableNotificationFeatures()
+        }
+    }
+
     // Feature control methods
     private fun enableCameraFeatures() {
         // Enable camera-related UI components
@@ -376,7 +612,17 @@ class MainActivity : ComponentActivity() {
         // Limit media access
     }
 
-    // Utility methods
+    private fun enableNotificationFeatures() {
+        // Enable push notifications
+        // Enable notification scheduling
+    }
+
+    private fun disableNotificationFeatures() {
+        // Disable push notifications
+        // Show alternative update methods
+    }
+
+    // Public utility methods for other components
     fun hasPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
     }
@@ -403,6 +649,22 @@ class MainActivity : ComponentActivity() {
 
     fun isNetworkConnected(): Boolean {
         return isNetworkAvailable
+    }
+
+    fun getUserPreference(key: String, defaultValue: Boolean = false): Boolean {
+        return sharedPreferences.getBoolean(key, defaultValue)
+    }
+
+    fun getUserPreference(key: String, defaultValue: String = ""): String {
+        return sharedPreferences.getString(key, defaultValue) ?: defaultValue
+    }
+
+    fun setUserPreference(key: String, value: Boolean) {
+        sharedPreferences.edit().putBoolean(key, value).apply()
+    }
+
+    fun setUserPreference(key: String, value: String) {
+        sharedPreferences.edit().putString(key, value).apply()
     }
 
     private fun showToast(message: String) {
