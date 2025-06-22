@@ -1,0 +1,64 @@
+# TripBook Notification Service
+
+Service Android pour l'envoi d'alertes push/email déclenchées par le backend.
+
+## Fonctionnalités
+
+- **Notifications push** : Confirmation réservation, paiement, rappels voyage
+- **Templates email** : HTML personnalisés par type de notification
+- **Rappels automatiques** : 24h avant le voyage
+- **Logs complets** : Suivi des envois et erreurs
+
+## Structure
+
+```
+notifications/
+├── models/     # NotificationRequest, NotificationType, UserProfile
+├── services/   # NotificationService, PushNotificationService
+├── managers/   # NotificationTemplateManager
+├── config/     # EmailConfig
+└── utils/      # NotificationUtils
+
+```
+
+## Installation
+
+1. Copiez le dossier `notifications/` dans votre projet
+2. Ajoutez les dépendances :
+```gradle
+implementation 'androidx.core:core-ktx:1.12.0'
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+```
+
+
+
+### Types de notifications
+- `BOOKING_CONFIRMED` - Réservation confirmée
+- `PAYMENT_SUCCESS` - Paiement réussi
+- `TRIP_REMINDER` - Rappel de voyage
+- `BOOKING_MODIFIED` - Réservation modifiée
+- `BOOKING_CANCELLED` - Réservation annulée
+- `REFUND_PROCESSED` - Remboursement traité
+
+## API Backend
+
+Format JSON attendu :
+```json
+{
+  "userId": "123",
+  "type": "BOOKING_CONFIRMED",
+  "data": {
+    "destination": "Paris",
+    "date": "2024-07-15"
+  }
+}
+```
+
+## Logs
+
+```kotlin
+// Récupérer les logs d'un utilisateur
+val logs = notificationService.getLogsForUser("123")
+```
+
+Status disponibles : `PENDING`, `SENT`, `FAILED`, `DELIVERED`
