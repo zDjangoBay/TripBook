@@ -4,4 +4,5 @@
     <string name="brandName">TRIP BOOK</string>
     <string name="title_activity_register_screen">RegisterScreen</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="title_activity_signupscreen">Signupscreen</string>
 </resources>
