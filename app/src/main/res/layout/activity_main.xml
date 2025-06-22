@@ -7,7 +7,7 @@
     android:background="@color/background_light"
     tools:context=".MainActivity">
 
-    <!-- Header avec titre -->
+    <!-- Header with title -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/headerCard"
         android:layout_width="0dp"
@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mon Profil"
+                android:text="My Profile"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gérez vos informations personnelles"
+                android:text="Manage your personal information"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:alpha="0.8"
@@ -55,7 +55,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Formulaire dans une card -->
+    <!-- Form in a card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/formCard"
         android:layout_width="0dp"
@@ -74,12 +74,12 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Champ nom d'utilisateur avec icône -->
+            <!-- Username field with icon -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nom d'utilisateur"
+                android:hint="Username"
                 app:errorEnabled="true"
                 app:startIconDrawable="@drawable/ic_person_outline"
                 app:startIconTint="@color/primary"
@@ -98,12 +98,12 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Champ email avec icône -->
+            <!-- Email field with icon -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Adresse E-mail"
+                android:hint="Email Address"
                 android:layout_marginTop="20dp"
                 app:errorEnabled="true"
                 app:startIconDrawable="@drawable/ic_email_outline"
@@ -123,13 +123,13 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Bouton stylisé -->
+            <!-- Styled button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveProfile"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
-                android:text="Enregistrer le profil"
+                android:text="Save Profile"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="28dp"
@@ -140,13 +140,13 @@
                 app:elevation="4dp"
                 style="@style/Widget.MaterialComponents.Button" />
 
-            <!-- Bouton secondaire pour annuler -->
+            <!-- Secondary cancel button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCancel"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="12dp"
-                android:text="Annuler"
+                android:text="Cancel"
                 android:textSize="14sp"
                 app:cornerRadius="24dp"
                 app:backgroundTint="@color/surface"
@@ -159,7 +159,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Indicateur de chargement amélioré -->
+    <!-- Enhanced loading indicator -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/loadingCard"
         android:layout_width="wrap_content"
@@ -190,7 +190,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enregistrement..."
+                android:text="Saving..."
                 android:textSize="16sp"
                 android:textColor="@color/on_surface"
                 android:layout_marginTop="16dp" />
@@ -199,7 +199,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Message de succès (optionnel) -->
+    <!-- Success message (optional) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/successCard"
         android:layout_width="0dp"
@@ -231,7 +231,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Profil enregistré avec succès !"
+                android:text="Profile saved successfully!"
                 android:textColor="@color/success"
                 android:textSize="14sp"
                 android:textStyle="bold" />
