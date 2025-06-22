@@ -53,7 +53,12 @@
 package com.android.tripbook
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -74,6 +79,38 @@ import com.android.tripbook.ui.theme.TripBookTheme
 
 class MainActivity : ComponentActivity() {
     
+    // Network Connectivity Management
+    private lateinit var connectivityManager: ConnectivityManager
+    private var isNetworkAvailable = false
+    
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            isNetworkAvailable = true
+            runOnUiThread {
+                handleNetworkAvailable()
+            }
+        }
+
+        override fun onLost(network: Network) {
+            super.onLost(network)
+            isNetworkAvailable = false
+            runOnUiThread {
+                handleNetworkLost()
+            }
+        }
+
+        override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+            super.onCapabilitiesChanged(network, networkCapabilities)
+            val hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            val hasValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            
+            runOnUiThread {
+                handleNetworkCapabilityChange(hasInternet && hasValidated)
+            }
+        }
+    }
+    
     // Enhanced Permission Management
     private val requestMultiplePermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -87,6 +124,7 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE -> handleStoragePermission(permission.value)
                 Manifest.permission.READ_MEDIA_IMAGES -> handleMediaPermission(permission.value)
                 Manifest.permission.READ_MEDIA_VIDEO -> handleMediaPermission(permission.value)
+                Manifest.permission.ACCESS_NETWORK_STATE -> handleNetworkPermission(permission.value)
             }
         }
     }
@@ -96,16 +134,17 @@ class MainActivity : ComponentActivity() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // Permission granted - handle camera/storage access
             showToast("Permission granted!")
         } else {
-            // Permission denied - show explanation
             showToast("Permission denied. Some features may not work properly.")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize connectivity manager
+        initializeNetworkMonitoring()
         
         // Check and request permissions on app start
         checkAndRequestPermissions()
@@ -127,6 +166,108 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Network Connectivity Methods
+    private fun initializeNetworkMonitoring() {
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .build()
+        
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        
+        // Check initial network state
+        checkInitialNetworkState()
+    }
+
+    private fun checkInitialNetworkState() {
+        val activeNetwork = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+        
+        isNetworkAvailable = networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
+                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        
+        if (isNetworkAvailable) {
+            handleNetworkAvailable()
+        } else {
+            handleNetworkLost()
+        }
+    }
+
+    private fun handleNetworkAvailable() {
+        showToast("Network connected - Syncing data...")
+        // Enable online features
+        enableOnlineFeatures()
+        // Sync offline posts
+        syncOfflinePosts()
+        // Enable real-time features
+        enableRealTimeFeatures()
+    }
+
+    private fun handleNetworkLost() {
+        showToast("Network disconnected - Offline mode enabled")
+        // Enable offline mode
+        enableOfflineMode()
+        // Disable real-time features
+        disableRealTimeFeatures()
+        // Cache important data
+        cacheEssentialData()
+    }
+
+    private fun handleNetworkCapabilityChange(hasValidInternet: Boolean) {
+        if (hasValidInternet != isNetworkAvailable) {
+            isNetworkAvailable = hasValidInternet
+            if (hasValidInternet) {
+                handleNetworkAvailable()
+            } else {
+                handleNetworkLost()
+            }
+        }
+    }
+
+    // Network-related feature methods
+    private fun enableOnlineFeatures() {
+        // Enable cloud sync
+        // Enable social features
+        // Enable real-time location sharing
+        // Enable online backup
+    }
+
+    private fun enableOfflineMode() {
+        // Enable local storage
+        // Show offline indicators
+        // Queue actions for later sync
+        // Enable offline post creation
+    }
+
+    private fun syncOfflinePosts() {
+        // Upload pending posts
+        // Sync user data
+        // Update cached content
+        // Resolve conflicts
+    }
+
+    private fun enableRealTimeFeatures() {
+        // Enable live updates
+        // Enable push notifications
+        // Enable real-time chat
+    }
+
+    private fun disableRealTimeFeatures() {
+        // Disable live updates
+        // Show cached data
+        // Queue real-time actions
+    }
+
+    private fun cacheEssentialData() {
+        // Cache user profile
+        // Cache recent posts
+        // Cache essential app data
+    }
+
+    // Permission Methods
     private fun checkAndRequestPermissions() {
         val permissionsToRequest = mutableListOf<String>()
         
@@ -137,7 +278,8 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.ACCESS_NETWORK_STATE
         )
         
         permissions.forEach { permission ->
@@ -154,11 +296,9 @@ class MainActivity : ComponentActivity() {
     private fun handleCameraPermission(isGranted: Boolean) {
         if (isGranted) {
             showToast("Camera permission granted - You can now capture photos!")
-            // Enable camera features
             enableCameraFeatures()
         } else {
             showToast("Camera permission denied - Photo capture disabled")
-            // Disable camera features or show alternative
             disableCameraFeatures()
         }
     }
@@ -166,11 +306,9 @@ class MainActivity : ComponentActivity() {
     private fun handleLocationPermission(isGranted: Boolean) {
         if (isGranted) {
             showToast("Location permission granted - Auto-tagging enabled!")
-            // Enable location-based features
             enableLocationFeatures()
         } else {
             showToast("Location permission denied - Manual location entry required")
-            // Disable location features or show manual input
             disableLocationFeatures()
         }
     }
@@ -178,11 +316,9 @@ class MainActivity : ComponentActivity() {
     private fun handleStoragePermission(isGranted: Boolean) {
         if (isGranted) {
             showToast("Storage permission granted - Gallery access enabled!")
-            // Enable gallery and file access
             enableStorageFeatures()
         } else {
             showToast("Storage permission denied - Gallery access limited")
-            // Disable storage features
             disableStorageFeatures()
         }
     }
@@ -190,64 +326,61 @@ class MainActivity : ComponentActivity() {
     private fun handleMediaPermission(isGranted: Boolean) {
         if (isGranted) {
             showToast("Media permission granted - Full media access enabled!")
-            // Enable full media access
             enableMediaFeatures()
         } else {
             showToast("Media permission denied - Limited media access")
-            // Disable media features
             disableMediaFeatures()
+        }
+    }
+
+    private fun handleNetworkPermission(isGranted: Boolean) {
+        if (isGranted) {
+            showToast("Network permission granted - Connection monitoring enabled!")
+        } else {
+            showToast("Network permission denied - Limited connectivity features")
         }
     }
 
     // Feature control methods
     private fun enableCameraFeatures() {
         // Enable camera-related UI components
-        // Set camera availability flag
     }
 
     private fun disableCameraFeatures() {
         // Disable camera-related UI components
-        // Show alternative options
     }
 
     private fun enableLocationFeatures() {
         // Enable GPS tracking
         // Enable auto-location tagging
-        // Enable nearby places suggestions
     }
 
     private fun disableLocationFeatures() {
         // Disable automatic location services
-        // Show manual location input
     }
 
     private fun enableStorageFeatures() {
         // Enable gallery access
         // Enable file import/export
-        // Enable photo/video selection
     }
 
     private fun disableStorageFeatures() {
         // Disable gallery features
-        // Show camera-only options
     }
 
     private fun enableMediaFeatures() {
         // Enable full media library access
-        // Enable media management features
     }
 
     private fun disableMediaFeatures() {
         // Limit media access
-        // Show reduced functionality warning
     }
 
-    // Utility method to check if specific permission is granted
+    // Utility methods
     fun hasPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    // Utility method to check if all required permissions are granted
     fun hasAllRequiredPermissions(): Boolean {
         val requiredPermissions = arrayOf(
             Manifest.permission.CAMERA,
@@ -260,17 +393,29 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Method to request specific permission
     fun requestSpecificPermission(permission: String) {
         requestPermissionLauncher.launch(permission)
     }
 
-    // Method to request all permissions again
     fun requestAllPermissions() {
         checkAndRequestPermissions()
     }
 
+    fun isNetworkConnected(): Boolean {
+        return isNetworkAvailable
+    }
+
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Unregister network callback to avoid memory leaks
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback)
+        } catch (e: Exception) {
+            // Handle exception if callback was not registered
+        }
     }
 }
