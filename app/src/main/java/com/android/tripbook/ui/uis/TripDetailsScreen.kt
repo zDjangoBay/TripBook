@@ -47,9 +47,7 @@ fun TripDetailsScreen(
 
     // Initialize with the provided trip
     LaunchedEffect(trip.id) {
-        if (trip.id.isNotEmpty()) {
-            viewModel.loadTripDetails(trip.id)
-        }
+        viewModel.loadTripDetails(trip.id)
     }
 
     // Use the trip from viewModel if available, otherwise use the provided trip

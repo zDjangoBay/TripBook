@@ -22,10 +22,13 @@ import com.android.tripbook.ui.theme.TripBookTheme
 import com.android.tripbook.viewmodel.TripViewModel
 import com.android.tripbook.viewmodel.AgencyViewModel
 import java.time.LocalDate
+import android.util.Log
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        Log.d("MainActivity", "onCreate started")
 
         val nominatimService = NominatimService()
         val travelAgencyService = TravelAgencyService()
@@ -34,20 +37,28 @@ class MainActivity : ComponentActivity() {
         val apiKey = applicationContext.packageManager
             .getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
             .metaData.getString("com.google.android.geo.API_KEY") ?: ""
+        
+        Log.d("MainActivity", "Google Maps API Key: ${if (apiKey.isNotEmpty()) "Found" else "Not found"}")
 
         val googleMapsService = GoogleMapsService(applicationContext, apiKey)
 
         enableEdgeToEdge()
 
-        setContent {
-            TripBookTheme {
-                TripBookApp(
-                    nominatimService = nominatimService,
-                    travelAgencyService = travelAgencyService,
-                    googleMapsService = googleMapsService,
-                    agencyRepository = agencyRepository
-                )
+        try {
+            setContent {
+                Log.d("MainActivity", "Setting content")
+                TripBookTheme {
+                    TripBookApp(
+                        nominatimService = nominatimService,
+                        travelAgencyService = travelAgencyService,
+                        googleMapsService = googleMapsService,
+                        agencyRepository = agencyRepository
+                    )
+                }
             }
+            Log.d("MainActivity", "Content set successfully")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error setting content: ${e.message}", e)
         }
     }
 

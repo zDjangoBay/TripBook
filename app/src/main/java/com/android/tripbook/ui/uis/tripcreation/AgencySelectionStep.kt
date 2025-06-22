@@ -341,7 +341,7 @@ fun AgencyWithBusesCard(
             // Buses List (when expanded)
             if (isExpanded && buses.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider(color = Color(0xFFE2E8F0))
+                HorizontalDivider(color = Color(0xFFE2E8F0))
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(

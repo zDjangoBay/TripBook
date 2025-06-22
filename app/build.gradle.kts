@@ -31,6 +31,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -109,19 +110,12 @@ dependencies {
     //---------------------------------------------------------
     //      Supabase Backend Integration
     //---------------------------------------------------------
-    implementation("io.github.jan-tennert.supabase:supabase-kt:2.6.0")
-    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.6.0")
-    implementation("io.github.jan-tennert.supabase:storage-kt:2.6.0")
-    implementation("io.github.jan-tennert.supabase:realtime-kt:2.6.0")
-    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.6.0")
-
-    // Ktor for networking (required by Supabase)
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.7")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:1.4.7")
+    implementation("io.github.jan-tennert.supabase:storage-kt:1.4.7")
+    implementation("io.github.jan-tennert.supabase:supabase-kt:1.4.7")
     implementation("io.ktor:ktor-client-android:2.3.7")
-    implementation("io.ktor:ktor-client-core:2.3.7")
-    implementation("io.ktor:ktor-utils:2.3.7")
-
-    // JSON serialization (using latest version for compatibility)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.7")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

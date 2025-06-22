@@ -40,6 +40,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -1088,7 +1089,7 @@ private fun EnhancedSuggestionItem(suggestion: PlaceResult, onClick: () -> Unit)
                     ) {
                         Text(
                             text = type.replace("_", " ").lowercase().split(" ")
-                                .joinToString(" ") { it.capitalize() },
+                                .joinToString(" ") { it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } },
                             fontSize = 10.sp,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                         )

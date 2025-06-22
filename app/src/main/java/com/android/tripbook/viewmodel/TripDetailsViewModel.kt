@@ -27,23 +27,39 @@ enum class MapViewMode {
 }
 
 class TripDetailsViewModel(
-    private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance()
+    private val repository: SupabaseTripRepository = SupabaseTripRepository.getInstance(),
+    tripId: String? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TripDetailsUiState())
     val uiState: StateFlow<TripDetailsUiState> = _uiState.asStateFlow()
 
+    init {
+        if (tripId != null) {
+            loadTripDetails(tripId)
+        }
+    }
+
     fun loadTripDetails(tripId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
             try {
+                _uiState.value = _uiState.value.copy(isLoading = true)
                 // Load trip with full details including itinerary
-                val trip = repository.getTripWithDetails(tripId)
-                _uiState.value = _uiState.value.copy(
-                    trip = trip,
-                    isLoading = false,
-                    selectedDate = trip?.startDate
+                val tripResult = repository.getTripWithDetails(tripId)
+                tripResult.fold(
+                    onSuccess = { trip ->
+                        _uiState.value = _uiState.value.copy(
+                            trip = trip,
+                            isLoading = false,
+                            selectedDate = trip.startDate
+                        )
+                    },
+                    onFailure = { e ->
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = "Failed to load trip details: ${e.message}"
+                        )
+                    }
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(

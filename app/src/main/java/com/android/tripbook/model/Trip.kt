@@ -70,9 +70,47 @@ data class Trip(
     val journalEntries: List<JournalEntry> = emptyList(),
     val destinationCoordinates: Location? = null,
     val notes: String = "",
-    val createdAt: LocalDate = LocalDate.now(),
-    val updatedAt: LocalDate = LocalDate.now()
-)
+    // Using constructor parameter to capture actual creation time
+    val createdAt: LocalDate,
+    // Using constructor parameter to capture actual update time
+    val updatedAt: LocalDate
+) {
+    constructor(
+        id: String = "",
+        name: String,
+        destination: String,
+        startDate: LocalDate,
+        endDate: LocalDate,
+        category: TripCategory,
+        status: TripStatus = TripStatus.PLANNED,
+        description: String = "",
+        budget: Double = 0.0,
+        travelers: Int = 1,
+        companions: List<TravelCompanion> = emptyList(),
+        itinerary: List<ItineraryItem> = emptyList(),
+        journalEntries: List<JournalEntry> = emptyList(),
+        destinationCoordinates: Location? = null,
+        notes: String = ""
+    ) : this(
+        id = id,
+        name = name,
+        destination = destination,
+        startDate = startDate,
+        endDate = endDate,
+        category = category,
+        status = status,
+        description = description,
+        budget = budget,
+        travelers = travelers,
+        companions = companions,
+        itinerary = itinerary,
+        journalEntries = journalEntries,
+        destinationCoordinates = destinationCoordinates,
+        notes = notes,
+        createdAt = LocalDate.now(),
+        updatedAt = LocalDate.now()
+    )
+}
 
 // Data class for managing trip creation state across multiple steps
 data class TripCreationState(
@@ -93,7 +131,7 @@ data class TripCreationState(
         return when (currentStep) {
             1 -> destination.isNotBlank()
             2 -> true // Agency selection is optional
-            3 -> startDate != null && endDate != null && startDate.isBefore(endDate)
+            3 -> startDate != null && endDate != null && !startDate.isAfter(endDate) // Allow same-day trips
             4 -> true // Companions step is optional
             5 -> tripName.isNotBlank()
             6 -> true // Review step

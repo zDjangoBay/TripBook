@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -240,7 +241,7 @@ fun DayTimelineView(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.Default.EventNote,
+                        imageVector = Icons.AutoMirrored.Filled.EventNote,
                         contentDescription = "No activities",
                         tint = TripBookColors.TextSecondary,
                         modifier = Modifier.size(48.dp)

@@ -6,13 +6,22 @@ import com.android.tripbook.model.Agency
 import com.android.tripbook.model.Bus
 import com.android.tripbook.model.Destination
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.PostgrestRequestBuilder
+import io.github.jan.supabase.postgrest.query.Order
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+
+enum class FilterOperator {
+    EQ,    // equals
+    IN,    // in array
+    LIKE,  // case-sensitive pattern matching
+    ILIKE  // case-insensitive pattern matching
+}
 
 @Serializable
 data class SupabaseAgency(
@@ -69,12 +78,27 @@ data class SupabaseBus(
         return Bus(
             busId = bus_id,
             busName = bus_name,
-            timeOfDeparture = LocalDateTime.parse(time_of_departure.replace(" ", "T")),
+            timeOfDeparture = parseDateTime(time_of_departure),
             agencyId = agency_id,
             destinationId = destination_id,
             destinationName = destinationName,
             agencyName = agencyName
         )
+    }
+
+    private fun parseDateTime(dateTimeStr: String): LocalDateTime {
+        return try {
+            // Try parsing as ISO format first
+            if (dateTimeStr.contains('T')) {
+                LocalDateTime.parse(dateTimeStr)
+            } else {
+                // Handle non-ISO format (e.g., "2024-06-10 09:00:00")
+                LocalDateTime.parse(dateTimeStr.replace(" ", "T"))
+            }
+        } catch (e: Exception) {
+            // Fallback to custom pattern if both attempts fail
+            LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        }
     }
 }
 
@@ -95,23 +119,18 @@ class SupabaseAgencyRepository {
         return try {
             _isLoading.value = true
             _error.value = null
-
-            Log.d(TAG, "Loading agencies from Supabase...")
-
-            val agenciesResponse = supabase.from(AGENCIES_TABLE)
+            
+            Log.d(TAG, "Loading agencies from Supabase")
+            
+            val response = supabase.from(AGENCIES_TABLE)
                 .select()
-                .decodeList<SupabaseAgency>()
+                .decodeAs<List<SupabaseAgency>>()
 
-            Log.d(TAG, "Loaded ${agenciesResponse.size} agencies from database")
+            Log.d(TAG, "Successfully loaded ${response.size} agencies")
 
-            val agencies = agenciesResponse.map { it.toAgency() }
-                .sortedBy { it.agencyName }
-
-            _agencies.value = agencies
-
-            Log.d(TAG, "Successfully loaded and processed ${agenciesResponse.size} agencies")
-
-            agencies
+            response.map { it.toAgency() }.also { agencies ->
+                _agencies.value = agencies
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading agencies: ${e.message}", e)
             _error.value = "Failed to load agencies: ${e.message}"
@@ -128,26 +147,21 @@ class SupabaseAgencyRepository {
 
             Log.d(TAG, "Loading destinations for agency $agencyId...")
 
-            // Load all destinations first, then filter in-memory
-            val allSupabaseDestinations = supabase.from(DESTINATIONS_TABLE)
-                .select()
+            val destinations = supabase.from(DESTINATIONS_TABLE)
+                .select() {
+                    filter {
+                        eq("agencyid", agencyId)
+                    }
+                }
                 .decodeList<SupabaseDestination>()
+                .map { destination -> destination.toDestination() }
+                .sortedBy { destination -> destination.destinationName }
 
-            Log.d(TAG, "Loaded ${allSupabaseDestinations.size} destinations from database")
-            Log.d(TAG, "Raw Supabase destinations: $allSupabaseDestinations")
+            Log.d(TAG, "Loaded ${destinations.size} destinations for agency $agencyId")
 
-            val filteredDestinations = allSupabaseDestinations
-                .map { it.toDestination() }
-                .filter { it.agencyId == agencyId }
-                .sortedBy { it.destinationName }
-
-            Log.d(TAG, "Filtered ${filteredDestinations.size} destinations for agency $agencyId: $filteredDestinations")
-
-            filteredDestinations
+            destinations
         } catch (e: Exception) {
             Log.e(TAG, "Error loading destinations: ${e.message}", e)
-            Log.e(TAG, "Exception type: ${e.javaClass.simpleName}")
-            e.printStackTrace()
             _error.value = "Failed to load destinations: ${e.message}"
             emptyList()
         } finally {
@@ -162,33 +176,35 @@ class SupabaseAgencyRepository {
 
             Log.d(TAG, "Loading agencies for destination: $destinationQuery")
 
-            // Load all destinations first
-            val allSupabaseDestinations = supabase.from(DESTINATIONS_TABLE)
-                .select()
-                .decodeList<SupabaseDestination>()
-
-            Log.d(TAG, "Loaded ${allSupabaseDestinations.size} destinations from database")
-
-            // Filter destinations that match the query (case-insensitive partial match)
-            val matchingDestinations = allSupabaseDestinations
-                .map { it.toDestination() }
-                .filter { destination ->
-                    destination.destinationName.contains(destinationQuery, ignoreCase = true) ||
-                    destinationQuery.contains(destination.destinationName, ignoreCase = true)
+            // First, load all destinations that match the query
+            val matchingDestinations = supabase.from(DESTINATIONS_TABLE)
+                .select() {
+                    filter {
+                        ilike("destination_name", "%$destinationQuery%")
+                    }
                 }
+                .decodeList<SupabaseDestination>()
+                .map { it.toDestination() }
 
             Log.d(TAG, "Found ${matchingDestinations.size} matching destinations for query: $destinationQuery")
+
+            if (matchingDestinations.isEmpty()) {
+                return emptyList()
+            }
 
             // Get unique agency IDs from matching destinations
             val agencyIds = matchingDestinations.map { it.agencyId }.distinct()
 
-            Log.d(TAG, "Found agency IDs: $agencyIds")
+            // Load all agencies and filter in memory
+            // This is a fallback approach when direct filtering doesn't work
+            val allAgencies = supabase.from(AGENCIES_TABLE)
+                .select()
+                .decodeList<SupabaseAgency>()
+                .map { it.toAgency() }
 
-            // Load all agencies and filter by the matching agency IDs
-            val allAgencies = loadAgencies()
-            val filteredAgencies = allAgencies.filter { agency ->
-                agencyIds.contains(agency.agencyId)
-            }.sortedBy { it.agencyName }
+            val filteredAgencies = allAgencies
+                .filter { agency -> agencyIds.contains(agency.agencyId) }
+                .sortedBy { it.agencyName }
 
             Log.d(TAG, "Filtered ${filteredAgencies.size} agencies for destination: $destinationQuery")
 
@@ -207,42 +223,55 @@ class SupabaseAgencyRepository {
             _isLoading.value = true
             _error.value = null
 
-            Log.d(TAG, "Loading buses for agency $agencyId...")
-
-            // Load buses for the specific agency
-            val allSupabaseBuses = supabase.from(BUS_TABLE)
-                .select()
+            // Filter buses at database level
+            val buses = supabase.from(BUS_TABLE)
+                .select() {
+                    filter {
+                        eq("agency_id", agencyId)
+                    }
+                }
                 .decodeList<SupabaseBus>()
 
-            Log.d(TAG, "Loaded ${allSupabaseBuses.size} buses from database")
+            if (buses.isEmpty()) {
+                return emptyList()
+            }
 
-            // Filter buses for the specific agency
-            val agencyBuses = allSupabaseBuses.filter { it.agency_id == agencyId }
+            // Get destination IDs from buses
+            val destinationIds = buses.map { bus -> bus.destination_id }.distinct()
 
-            Log.d(TAG, "Found ${agencyBuses.size} buses for agency $agencyId")
-
-            // Load destinations and agencies to get names for display
+            // Load all destinations and filter in memory
             val allDestinations = supabase.from(DESTINATIONS_TABLE)
                 .select()
                 .decodeList<SupabaseDestination>()
-                .map { it.toDestination() }
+                .map { destination -> destination.toDestination() }
 
-            val allAgencies = loadAgencies()
+            val filteredDestinations = allDestinations
+                .filter { destination -> destinationIds.contains(destination.id) }
 
-            // Convert to Bus objects with destination and agency names
-            val buses = agencyBuses.map { supabaseBus ->
-                val destination = allDestinations.find { it.id == supabaseBus.destination_id }
-                val agency = allAgencies.find { it.agencyId == supabaseBus.agency_id }
+            // Load only the required agency - THIS IS WHERE THE ERROR MIGHT BE
+            // Instead of using find, let's load the specific agency directly
+            val agencyResponse = supabase.from(AGENCIES_TABLE)
+                .select() {
+                    filter {
+                        eq("agency_id", agencyId)
+                    }
+                }
+                .decodeList<SupabaseAgency>()
+            
+            val agencyName = if (agencyResponse.isNotEmpty()) {
+                agencyResponse.first().agency_name
+            } else {
+                "Unknown Agency"
+            }
 
-                supabaseBus.toBus(
+            // Map the results
+            buses.map { bus ->
+                val destination = filteredDestinations.find { dest -> dest.id == bus.destination_id }
+                bus.toBus(
                     destinationName = destination?.destinationName ?: "Unknown Destination",
-                    agencyName = agency?.agencyName ?: "Unknown Agency"
+                    agencyName = agencyName
                 )
-            }.sortedBy { it.timeOfDeparture }
-
-            Log.d(TAG, "Processed ${buses.size} buses for agency $agencyId")
-
-            buses
+            }.sortedBy { bus -> bus.timeOfDeparture }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading buses for agency: ${e.message}", e)
             _error.value = "Failed to load buses: ${e.message}"
@@ -257,49 +286,54 @@ class SupabaseAgencyRepository {
             _isLoading.value = true
             _error.value = null
 
-            Log.d(TAG, "Loading buses for destination: $destinationQuery")
+            // First find matching destinations using ilike for case-insensitive search
+            val matchingDestinations = supabase.from(DESTINATIONS_TABLE)
+                .select() {
+                    filter {
+                        ilike("destination_name", "%$destinationQuery%")
+                    }
+                }
+                .decodeList<SupabaseDestination>()
 
-            // Load all buses
-            val allSupabaseBuses = supabase.from(BUS_TABLE)
+            if (matchingDestinations.isEmpty()) {
+                return emptyList()
+            }
+
+            val destinationIds = matchingDestinations.map { dest -> dest.id }
+
+            // Load all buses and filter in memory
+            val allBuses = supabase.from(BUS_TABLE)
                 .select()
                 .decodeList<SupabaseBus>()
 
-            // Load destinations to filter by destination name
-            val allDestinations = supabase.from(DESTINATIONS_TABLE)
+            val filteredBuses = allBuses
+                .filter { bus -> destinationIds.contains(bus.destination_id) }
+
+            if (filteredBuses.isEmpty()) {
+                return emptyList()
+            }
+
+            // Get agency IDs from filtered buses
+            val agencyIds = filteredBuses.map { bus -> bus.agency_id }.distinct()
+
+            // Load all agencies and filter in memory
+            val allAgencies = supabase.from(AGENCIES_TABLE)
                 .select()
-                .decodeList<SupabaseDestination>()
-                .map { it.toDestination() }
+                .decodeList<SupabaseAgency>()
+                .map { agency -> agency.toAgency() }
 
-            // Find destinations that match the query
-            val matchingDestinations = allDestinations.filter { destination ->
-                destination.destinationName.contains(destinationQuery, ignoreCase = true) ||
-                destinationQuery.contains(destination.destinationName, ignoreCase = true)
-            }
+            val filteredAgencies = allAgencies
+                .filter { agency -> agencyIds.contains(agency.agencyId) }
 
-            val matchingDestinationIds = matchingDestinations.map { it.id }
-
-            // Filter buses for matching destinations
-            val matchingBuses = allSupabaseBuses.filter { bus ->
-                matchingDestinationIds.contains(bus.destination_id)
-            }
-
-            // Load agencies for display names
-            val allAgencies = loadAgencies()
-
-            // Convert to Bus objects with names
-            val buses = matchingBuses.map { supabaseBus ->
-                val destination = allDestinations.find { it.id == supabaseBus.destination_id }
-                val agency = allAgencies.find { it.agencyId == supabaseBus.agency_id }
-
-                supabaseBus.toBus(
-                    destinationName = destination?.destinationName ?: "Unknown Destination",
+            // Map the results
+            filteredBuses.map { bus ->
+                val destination = matchingDestinations.find { dest -> dest.id == bus.destination_id }
+                val agency = filteredAgencies.find { ag -> ag.agencyId == bus.agency_id }
+                bus.toBus(
+                    destinationName = destination?.destination_name ?: "Unknown Destination",
                     agencyName = agency?.agencyName ?: "Unknown Agency"
                 )
-            }.sortedBy { it.timeOfDeparture }
-
-            Log.d(TAG, "Found ${buses.size} buses for destination: $destinationQuery")
-
-            buses
+            }.sortedBy { bus -> bus.timeOfDeparture }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading buses for destination: ${e.message}", e)
             _error.value = "Failed to load buses: ${e.message}"

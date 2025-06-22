@@ -178,16 +178,9 @@ private data class OpeningHoursApi(
     val weekday_text: List<String> = emptyList()
 )
 
-class GoogleMapsService(
-    private val context: Context,
-    private val apiKey: String
-) {
-    private val placesClient: PlacesClient
-    private val httpClient = OkHttpClient()
-    private val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
+class GoogleMapsService(private val context: Context, private val apiKey: String) {
+    private val client = OkHttpClient()
+    private var placesClient: PlacesClient? = null
 
     init {
         if (!Places.isInitialized()) {
@@ -196,348 +189,174 @@ class GoogleMapsService(
         placesClient = Places.createClient(context)
     }
 
-    // Places API - Get autocomplete suggestions
-    suspend fun getPlaceSuggestions(query: String): List<AutocompletePrediction> {
-        return withContext(Dispatchers.IO) {
-            val token = AutocompleteSessionToken.newInstance()
-            val request = FindAutocompletePredictionsRequest.builder()
-                .setQuery(query)
-                .setSessionToken(token)
-                .build()
-
-            try {
-                val response = placesClient.findAutocompletePredictions(request).await()
-                response.autocompletePredictions
-            } catch (e: Exception) {
-                emptyList()
-            }
-        }
-    }
-
-    // Places API - Get place details from place ID
-    suspend fun getPlaceDetails(placeId: String): Location? {
-        return withContext(Dispatchers.IO) {
-            val placeFields = listOf(
-                Place.Field.ID,
-                Place.Field.NAME,
-                Place.Field.LAT_LNG,
-                Place.Field.ADDRESS
-            )
-
-            val request = FetchPlaceRequest.newInstance(placeId, placeFields)
-
-            try {
-                val response = placesClient.fetchPlace(request).await()
-                val place = response.place
-                val latLng = place.latLng
-                if (latLng != null) {
-                    Location(
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude,
-                        address = place.address ?: "",
-                        placeId = place.id ?: ""
-                    )
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    // Directions API - Get route between two points
-    suspend fun getDirections(origin: LatLng, destination: LatLng): RouteInfo? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val originStr = "${origin.latitude},${origin.longitude}"
-                val destinationStr = "${destination.latitude},${destination.longitude}"
-
-                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=$originStr" +
-                        "&destination=$destinationStr" +
-                        "&key=$apiKey"
-
-                val request = Request.Builder().url(url).build()
-                val response = httpClient.newCall(request).execute()
-                val jsonResponse = response.body?.string()
-
-                if (jsonResponse != null) {
-                    parseDirectionsResponse(jsonResponse)
-                } else null
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    private fun parseDirectionsResponse(jsonResponse: String): RouteInfo? {
-        return try {
-            val json = JSONObject(jsonResponse)
-            val routes = json.getJSONArray("routes")
-
-            if (routes.length() > 0) {
-                val route = routes.getJSONObject(0)
-                val legs = route.getJSONArray("legs")
-                val leg = legs.getJSONObject(0)
-
-                val distance = leg.getJSONObject("distance").getString("text")
-                val duration = leg.getJSONObject("duration").getString("text")
-                val polyline = route.getJSONObject("overview_polyline").getString("points")
-
-                RouteInfo(
-                    distance = distance,
-                    duration = duration,
-                    polyline = polyline
-                )
-            } else null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // Utility function to decode polyline for map display
-    fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = mutableListOf<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lat += dlat
-
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or (b and 0x1f shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-            lng += dlng
-
-            val p = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(p)
-        }
-
-        return poly
-    }
-
-    /**
-     * Search for places using text query
-     */
-    suspend fun searchPlaces(
-        query: String,
-        type: String? = null,
-        location: String? = null,
-        radius: Int = 50000
-    ): List<PlaceResult> = withContext(Dispatchers.IO) {
+    suspend fun searchPlaces(query: String): List<PlaceResult> = withContext(Dispatchers.IO) {
         try {
             val encodedQuery = URLEncoder.encode(query, "UTF-8")
-            var urlString = "$PLACES_SEARCH_URL?query=$encodedQuery&key=$apiKey"
+            val url = "$PLACES_SEARCH_URL?query=$encodedQuery&key=$apiKey"
 
-            // Add optional parameters
-            type?.let { urlString += "&type=${URLEncoder.encode(it, "UTF-8")}" }
-            location?.let { urlString += "&location=${URLEncoder.encode(it, "UTF-8")}&radius=$radius" }
+            val request = Request.Builder()
+                .url(url)
+                .build()
 
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw Exception("Search request failed")
 
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
+                val jsonResponse = response.body?.string() ?: throw Exception("Empty response")
+                val searchResponse = Json.decodeFromString<PlacesSearchResponse>(jsonResponse)
 
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val placesResponse = json.decodeFromString<PlacesSearchResponse>(response)
-
-                if (placesResponse.status == "OK") {
-                    return@withContext placesResponse.results.map { it.toPlaceResult() }
-                } else {
-                    throw Exception("Places API error: ${placesResponse.status} - ${placesResponse.errorMessage}")
+                if (searchResponse.status != "OK") {
+                    throw Exception(searchResponse.errorMessage ?: "Search failed")
                 }
-            } else {
-                throw Exception("HTTP error: $responseCode")
+
+                searchResponse.results.map { it.toPlaceResult() }
             }
         } catch (e: Exception) {
-            throw Exception("Failed to search places: ${e.message}", e)
+            throw Exception("Failed to search places: ${e.message}")
         }
     }
 
-    /**
-     * Get detailed information about a specific place using Web API
-     */
-    suspend fun getPlaceDetailsWeb(placeId: String): PlaceDetails? = withContext(Dispatchers.IO) {
+    suspend fun getPlaceDetails(placeId: String): PlaceDetails = withContext(Dispatchers.IO) {
         try {
-            val fields = "place_id,name,formatted_address,formatted_phone_number,website," +
-                    "rating,price_level,reviews,photos,opening_hours,geometry,types"
-            val urlString = "$PLACE_DETAILS_URL?place_id=$placeId&fields=$fields&key=$apiKey"
+            val url = "$PLACE_DETAILS_URL?place_id=$placeId&key=$apiKey"
 
-            val url = URL(urlString)
-            val connection = url.openConnection() as HttpURLConnection
+            val request = Request.Builder()
+                .url(url)
+                .build()
 
-            connection.apply {
-                requestMethod = "GET"
-                connectTimeout = 10000
-                readTimeout = 10000
-            }
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) throw Exception("Details request failed")
 
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val detailsResponse = json.decodeFromString<PlaceDetailsResponse>(response)
+                val jsonResponse = response.body?.string() ?: throw Exception("Empty response")
+                val detailsResponse = Json.decodeFromString<PlaceDetailsResponse>(jsonResponse)
 
-                if (detailsResponse.status == "OK" && detailsResponse.result != null) {
-                    return@withContext detailsResponse.result.toPlaceDetails()
-                } else {
-                    throw Exception("Place Details API error: ${detailsResponse.status}")
+                if (detailsResponse.status != "OK") {
+                    throw Exception(detailsResponse.errorMessage ?: "Failed to get place details")
                 }
-            } else {
-                throw Exception("HTTP error: $responseCode")
+
+                detailsResponse.result?.toPlaceDetails()
+                    ?: throw Exception("No details found for place")
             }
         } catch (e: Exception) {
-            println("Failed to get place details: ${e.message}")
-            return@withContext null
+            throw Exception("Failed to get place details: ${e.message}")
         }
     }
 
-    /**
-     * Get photo URL for a place photo reference
-     */
-    fun getPhotoUrl(photoReference: String, maxWidth: Int = 400): String {
-        return "$PLACE_PHOTO_URL?photoreference=$photoReference&maxwidth=$maxWidth&key=$apiKey"
-    }
+    suspend fun getRouteInfo(origin: Location, destination: Location): RouteInfo {
+        return withContext(Dispatchers.IO) {
+            try {
+                val url = buildDirectionsUrl(origin, destination)
+                val request = Request.Builder().url(url).build()
 
-    /**
-     * Search for nearby attractions around a location
-     */
-    suspend fun searchNearbyAttractions(
-        latitude: Double,
-        longitude: Double,
-        radius: Int = 5000,
-        type: String = "tourist_attraction"
-    ): List<PlaceResult> {
-        val location = "$latitude,$longitude"
-        return searchPlaces(
-            query = type,
-            location = location,
-            radius = radius,
-            type = type
-        )
-    }
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) throw Exception("Route request failed")
 
-    /**
-     * Search for restaurants near a location
-     */
-    suspend fun searchNearbyRestaurants(
-        latitude: Double,
-        longitude: Double,
-        radius: Int = 2000
-    ): List<PlaceResult> {
-        val location = "$latitude,$longitude"
-        return searchPlaces(
-            query = "restaurant",
-            location = location,
-            radius = radius,
-            type = "restaurant"
-        )
-    }
+                    val jsonResponse = JSONObject(response.body?.string() ?: throw Exception("Empty response"))
+                    if (jsonResponse.getString("status") != "OK") {
+                        throw Exception("Failed to get route")
+                    }
 
-    /**
-     * Search for hotels near a location
-     */
-    suspend fun searchNearbyHotels(
-        latitude: Double,
-        longitude: Double,
-        radius: Int = 10000
-    ): List<PlaceResult> {
-        val location = "$latitude,$longitude"
-        return searchPlaces(
-            query = "hotel",
-            location = location,
-            radius = radius,
-            type = "lodging"
-        )
-    }
+                    val routes = jsonResponse.getJSONArray("routes")
+                    if (routes.length() == 0) throw Exception("No routes found")
 
-    // Extension functions to convert API models to public models
-    private fun PlaceResultApi.toPlaceResult(): PlaceResult {
-        return PlaceResult(
-            placeId = place_id,
-            name = name,
-            address = formatted_address,
-            types = types,
-            rating = rating,
-            priceLevel = price_level,
-            photoReference = photos.firstOrNull()?.photo_reference,
-            geometry = geometry?.toGeometry()
-        )
-    }
+                    val route = routes.getJSONObject(0)
+                    val leg = route.getJSONArray("legs").getJSONObject(0)
 
-    private fun PlaceDetailsApi.toPlaceDetails(): PlaceDetails {
-        return PlaceDetails(
-            placeId = place_id,
-            name = name,
-            address = formatted_address,
-            formattedPhoneNumber = formatted_phone_number,
-            website = website,
-            rating = rating,
-            priceLevel = price_level,
-            reviews = reviews.map { it.toReview() },
-            photos = photos.map { it.toPhoto() },
-            openingHours = opening_hours?.toOpeningHours(),
-            geometry = geometry?.toGeometry(),
-            types = types
-        )
-    }
-
-    private fun GeometryApi.toGeometry(): Geometry {
-        return Geometry(
-            location = GeoLocation(location.lat, location.lng),
-            viewport = viewport?.let {
-                Viewport(
-                    northeast = GeoLocation(it.northeast.lat, it.northeast.lng),
-                    southwest = GeoLocation(it.southwest.lat, it.southwest.lng)
-                )
+                    RouteInfo(
+                        distance = leg.getJSONObject("distance").getString("text"),
+                        duration = leg.getJSONObject("duration").getString("text"),
+                        polyline = route.getJSONObject("overview_polyline").getString("points")
+                    )
+                }
+            } catch (e: Exception) {
+                throw Exception("Failed to get route info: ${e.message}")
             }
-        )
+        }
     }
 
-    private fun ReviewApi.toReview(): Review {
-        return Review(
-            authorName = author_name,
-            rating = rating,
-            text = text,
-            time = time
-        )
+    suspend fun getPlaceAutocomplete(query: String): List<AutocompletePrediction> {
+        return suspendCoroutine { continuation ->
+            val token = AutocompleteSessionToken.newInstance()
+            val request = FindAutocompletePredictionsRequest.builder()
+                .setSessionToken(token)
+                .setQuery(query)
+                .build()
+
+            placesClient?.findAutocompletePredictions(request)
+                ?.addOnSuccessListener { response ->
+                    continuation.resume(response.autocompletePredictions)
+                }
+                ?.addOnFailureListener { exception ->
+                    continuation.resumeWithException(exception)
+                }
+                ?: continuation.resumeWithException(Exception("PlacesClient not initialized"))
+        }
     }
 
-    private fun PhotoApi.toPhoto(): Photo {
-        return Photo(
-            photoReference = photo_reference,
-            height = height,
-            width = width
-        )
+    private fun buildDirectionsUrl(origin: Location, destination: Location): String {
+        return "https://maps.googleapis.com/maps/api/directions/json?" +
+                "origin=${origin.latitude},${origin.longitude}&" +
+                "destination=${destination.latitude},${destination.longitude}&" +
+                "key=$apiKey"
     }
 
-    private fun OpeningHoursApi.toOpeningHours(): OpeningHours {
-        return OpeningHours(
-            openNow = open_now,
-            weekdayText = weekday_text
-        )
+    private fun PlaceResultApi.toPlaceResult() = PlaceResult(
+        placeId = place_id,
+        name = name,
+        address = formatted_address,
+        types = types,
+        rating = rating,
+        priceLevel = price_level,
+        photoReference = photos.firstOrNull()?.photo_reference,
+        geometry = geometry?.toGeometry()
+    )
+
+    private fun PlaceDetailsApi.toPlaceDetails() = PlaceDetails(
+        placeId = place_id,
+        name = name,
+        address = formatted_address,
+        formattedPhoneNumber = formatted_phone_number,
+        website = website,
+        rating = rating,
+        priceLevel = price_level,
+        reviews = reviews.map { it.toReview() },
+        photos = photos.map { it.toPhoto() },
+        openingHours = opening_hours?.toOpeningHours(),
+        geometry = geometry?.toGeometry(),
+        types = types
+    )
+
+    private fun GeometryApi.toGeometry() = Geometry(
+        location = location.toGeoLocation(),
+        viewport = viewport?.toViewport()
+    )
+
+    private fun GeoLocationApi.toGeoLocation() = GeoLocation(lat, lng)
+
+    private fun ViewportApi.toViewport() = Viewport(
+        northeast = northeast.toGeoLocation(),
+        southwest = southwest.toGeoLocation()
+    )
+
+    private fun ReviewApi.toReview() = Review(
+        authorName = author_name,
+        rating = rating,
+        text = text,
+        time = time
+    )
+
+    private fun PhotoApi.toPhoto() = Photo(
+        photoReference = photo_reference,
+        height = height,
+        width = width
+    )
+
+    private fun OpeningHoursApi.toOpeningHours() = OpeningHours(
+        openNow = open_now,
+        weekdayText = weekday_text
+    )
+
+    companion object {
+        private const val TAG = "GoogleMapsService"
     }
 }
 

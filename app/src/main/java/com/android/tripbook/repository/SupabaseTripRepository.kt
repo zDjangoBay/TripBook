@@ -8,6 +8,7 @@ import com.android.tripbook.data.models.SupabaseItineraryItem
 import com.android.tripbook.data.models.TripWithDetails
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.ItineraryItem
+import com.android.tripbook.model.TravelCompanion
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -235,25 +236,92 @@ class SupabaseTripRepository {
         _error.value = null
     }
 
-    suspend fun getTripWithDetails(tripId: String): Trip? {
+    @Suppress("unused")
+    suspend fun updateTripCompanions(tripId: String, companions: List<TravelCompanion>): Result<List<TravelCompanion>> {
         return try {
-            Log.d(TAG, "Loading trip with details: $tripId")
+            _isLoading.value = true
+            _error.value = null
 
-            // Fetch trip
-            val tripResponse = supabase.from(TRIPS_TABLE)
-                .select(){
+            Log.d(TAG, "Updating companions for trip: $tripId")
+
+            // Delete all existing companions for this trip
+            supabase.from(COMPANIONS_TABLE)
+                .delete {
                     filter {
-                        eq("id", tripId)
+                        eq("trip_id", tripId)
                     }
                 }
 
-                .decodeSingle<SupabaseTrip>()
+            // Insert new companions if any
+            if (companions.isNotEmpty()) {
+                val supabaseCompanions = companions.map { companion ->
+                    SupabaseTravelCompanion.fromTravelCompanion(companion, tripId)
+                }
+                
+                val insertedCompanions = supabase.from(COMPANIONS_TABLE)
+                    .insert(supabaseCompanions) {
+                        select()
+                    }
+                    .decodeList<SupabaseTravelCompanion>()
+                    .map { companion -> companion.toTravelCompanion() }
+                
+                // Update local state
+                val currentTrips = _trips.value.toMutableList()
+                val tripIndex = currentTrips.indexOfFirst { trip -> trip.id == tripId }
+                if (tripIndex != -1) {
+                    currentTrips[tripIndex] = currentTrips[tripIndex].copy(companions = insertedCompanions)
+                    _trips.value = currentTrips
+                }
+                
+                Result.success(insertedCompanions)
+            } else {
+                // If no companions, just return empty list
+                val currentTrips = _trips.value.toMutableList()
+                val tripIndex = currentTrips.indexOfFirst { trip -> trip.id == tripId }
+                if (tripIndex != -1) {
+                    currentTrips[tripIndex] = currentTrips[tripIndex].copy(companions = emptyList())
+                    _trips.value = currentTrips
+                }
+                
+                Result.success(emptyList())
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating trip companions: ${e.message}", e)
+            _error.value = "Failed to update companions: ${e.message}"
+            Result.failure(e)
+        } finally {
+            _isLoading.value = false
+        }
+    }
 
-            // Fetch companions
-            val companions = try {
-                supabase.from(COMPANIONS_TABLE)
-                    .select()
-                    {
+    suspend fun getTripWithDetails(tripId: String): Result<Trip> {
+        return try {
+            Log.d(TAG, "Loading trip with details: $tripId")
+
+            var trip: Trip? = null
+            var companions: List<TravelCompanion> = emptyList()
+            var itineraryItems: List<ItineraryItem> = emptyList()
+            var hasErrors = false
+
+            // Fetch trip (required)
+            try {
+                val tripResponse = supabase.from(TRIPS_TABLE)
+                    .select {
+                        filter {
+                            eq("id", tripId)
+                        }
+                    }
+                    .decodeSingle<SupabaseTrip>()
+                trip = tripResponse.toTrip(emptyList())
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load trip $tripId: ${e.message}")
+                return Result.failure(e)
+            }
+
+            // Fetch companions (optional)
+            try {
+                companions = supabase.from(COMPANIONS_TABLE)
+                    .select {
                         filter {
                             eq("trip_id", tripId)
                         }
@@ -262,14 +330,13 @@ class SupabaseTripRepository {
                     .map { it.toTravelCompanion() }
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to load companions for trip $tripId: ${e.message}")
-                emptyList()
+                hasErrors = true
             }
 
-            // Fetch itinerary items
-            val itineraryItems = try {
-                supabase.from(ITINERARY_TABLE)
-                    .select()
-                    {
+            // Fetch itinerary items (optional)
+            try {
+                itineraryItems = supabase.from(ITINERARY_TABLE)
+                    .select {
                         filter {
                             eq("trip_id", tripId)
                         }
@@ -278,14 +345,22 @@ class SupabaseTripRepository {
                     .map { it.toItineraryItem() }
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to load itinerary for trip $tripId: ${e.message}")
-                emptyList()
+                hasErrors = true
             }
 
-            tripResponse.toTrip(companions).copy(itinerary = itineraryItems)
+            val finalTrip = trip.copy(
+                companions = companions,
+                itinerary = itineraryItems
+            )
 
+            if (hasErrors) {
+                _error.value = "Some trip details could not be loaded"
+            }
+
+            Result.success(finalTrip)
         } catch (e: Exception) {
             Log.e(TAG, "Error loading trip with details: ${e.message}", e)
-            null
+            Result.failure(e)
         }
     }
 
@@ -350,6 +425,14 @@ class SupabaseTripRepository {
             Log.e(TAG, "Error deleting itinerary item: ${e.message}", e)
             Result.failure(e)
         }
+    }
+
+    @Suppress("unused")
+    fun cleanup() {
+        _trips.value = emptyList()
+        _error.value = null
+        _isLoading.value = false
+        // Clear any other state as needed
     }
 
     companion object {
