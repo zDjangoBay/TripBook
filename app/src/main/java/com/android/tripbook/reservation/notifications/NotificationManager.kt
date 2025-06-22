@@ -37,7 +37,6 @@ class NotificationManager private constructor(private val context: Context) {
             processIncomingNotification(serviceNotification)
         }
     }
-
     private fun processIncomingNotification(serviceNotification: ServiceNotification) {
         val inAppNotification = NotificationFormatter.formatNotification(serviceNotification)
 
