@@ -2,4 +2,12 @@
     <string name="app_name">TripBook</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="brandName">TRIP BOOK</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">EMAIL</string>
+    <string name="password">PASSWORD</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="register">REGISTER</string>
+    <string name="Login">LOGIN</string>
+    <string name="loginWithGoogle">LOGIN WITH GOOGLE</string>
+    <string name="NewUserInfo">IF YOU ARE A NEW USER CLICK</string>
 </resources>

@@ -1,12 +1,22 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+ Nangu
+
+
+}
+
+android {
+    namespace = "com.example.tripbook"
+    compileSdk = 34
+
     id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.android.tripbook"
     compileSdk = 35
+ userprofile
 
     defaultConfig {
         applicationId = "com.android.tripbook"
@@ -22,7 +32,12 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("debug") {
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
+            isDebuggable = true
+        }
+        getByName("release") {
+            buildConfigField("String", "BASE_URL", "\"https://your-production-api.com/\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -39,6 +54,8 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -50,9 +67,12 @@ android {
     }
 }
 
+
+
+
 dependencies {
     //------------------------------------------------------
-   //           default dependencies on the project
+    //           default dependencies on the project
     //                       do not touch them !!!!!!
     //-----------------------------------------------------
     implementation(libs.androidx.core.ktx)
@@ -66,6 +86,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -77,6 +98,23 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+ Nangu
+    // Retrofit
+    implementation(libs.retrofit)
+
+    // Gson converter
+    implementation(libs.converter.gson)
+
+
+    // Optional: OkHttp logging interceptor
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
+
+}
+
 
 
     // Compose
@@ -107,3 +145,4 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
 }
+ userprofile
