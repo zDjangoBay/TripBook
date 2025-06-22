@@ -12,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.android.tripbook.ui.screens.booking.BookingScreen
+// import com.android.tripbook.ui.screens.booking.BookingScreen // Temporarily commented out
 import com.android.tripbook.ui.theme.TripBookTheme
 
 class BookingActivity : ComponentActivity() {
@@ -28,12 +28,13 @@ class BookingActivity : ComponentActivity() {
                 var isLoading by remember { mutableStateOf(false) }
 
                 Scaffold { padding ->
-                    BookingScreen(
-                        modifier = Modifier.padding(padding),  // Pass padding here
-                        tripId = tripId,
-                        onBack = { finish() },
-                        onBookingComplete = { finish() }
-                    )
+                    // BookingScreen temporarily commented out for team compatibility
+                    // BookingScreen(
+                    //     modifier = Modifier.padding(padding),
+                    //     tripId = tripId,
+                    //     onBack = { finish() },
+                    //     onBookingComplete = { finish() }
+                    // )
                 }
             }
         }

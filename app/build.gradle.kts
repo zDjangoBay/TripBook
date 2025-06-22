@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -10,7 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 28
+
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -87,7 +89,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.runtime.android)
+    // Removed problematic navigation-runtime-android
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -122,10 +124,7 @@ dependencies {
 
     // Navigation - SDK 34 compatible version
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.navigation.runtime.android)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.navigation.runtime.android)    // Navigation - SDK 34 compatible version
+    // Removed problematic navigation-runtime-android dependencies
     implementation("androidx.navigation:navigation-compose:2.8.4")
 
     // Firebase

@@ -1,4 +1,4 @@
-package com.android.tripbook.ui.components
+package com.android.tripbook.ui.navigation
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
