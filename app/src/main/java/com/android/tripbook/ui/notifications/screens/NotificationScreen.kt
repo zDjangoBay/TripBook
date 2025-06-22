@@ -156,7 +156,7 @@ fun EmptyNotificationsView(
         )
 
         Text(
-            text = "Vous êtes à jour ! 🎉",
+            text = "Vous êtes à jour ! ",
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         )

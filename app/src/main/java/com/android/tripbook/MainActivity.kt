@@ -18,6 +18,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.android.tripbook.notifications.managers.NotificationTemplateManager
+import com.android.tripbook.notifications.models.NotificationType
 import com.android.tripbook.notifications.services.NotificationService
 import com.android.tripbook.notifications.utils.NotificationUtils
 import com.android.tripbook.ui.notifications.screens.NotificationScreen
@@ -29,12 +31,14 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     private lateinit var notificationService: NotificationService
+    private lateinit var templateManager: NotificationTemplateManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize notification service
-        notificationService = NotificationService(this)
+        // Initialize notification components
+        templateManager = NotificationTemplateManager(this)
+        notificationService = NotificationService(this, templateManager)
 
         // Test notifications on app start
         testNotifications()
@@ -42,41 +46,105 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TripBookTheme {
-                TripBookApp(notificationService = notificationService)
+                TripBookApp(
+                    notificationService = notificationService,
+                    templateManager = templateManager
+                )
             }
         }
     }
 
     private fun testNotifications() {
-        // Test booking confirmation
         lifecycleScope.launch {
+            // Test booking confirmation
+            val bookingData = mapOf(
+                "destination" to "Douala",
+                "date" to "25 Juin 2025",
+                "transport" to "Bus",
+                "departure_time" to "08:00",
+                "seat_number" to "A12"
+            )
+
             val bookingNotification = NotificationUtils.createBookingConfirmation(
-                userId = "test123",
-                destination = "Douala",
-                date = "Demain",
-                transport = "Bus"
+                userId = "user_123",
+                destination = bookingData["destination"] as String,
+                date = bookingData["date"] as String,
+                transport = bookingData["transport"] as String
             )
-            notificationService.processNotification(bookingNotification)
+
+            notificationService.processNotification(bookingNotification, bookingData)
         }
 
-        // Test payment success
         lifecycleScope.launch {
+            // Test payment success
+            val paymentData = mapOf(
+                "amount" to "25,000 FCFA",
+                "payment_method" to "Mobile Money",
+                "transaction_id" to "TXN123456789",
+                "date" to "23 Juin 2025"
+            )
+
             val paymentNotification = NotificationUtils.createPaymentSuccess(
-                userId = "test123",
-                amount = "25,000 FCFA",
-                paymentMethod = "Mobile Money"
+                userId = "user_123",
+                amount = paymentData["amount"] as String,
+                paymentMethod = paymentData["payment_method"] as String
             )
-            notificationService.processNotification(paymentNotification)
+
+            notificationService.processNotification(paymentNotification, paymentData)
         }
 
-        // Test trip reminder
         lifecycleScope.launch {
-            val reminderNotification = NotificationUtils.createTripReminder(
-                userId = "test123",
-                destination = "Yaoundé",
-                departureTime = "08:00"
+            // Test trip reminder
+            val reminderData = mapOf(
+                "destination" to "Yaoundé",
+                "departure_time" to "08:00",
+                "departure_location" to "Gare Routière Mvan",
+                "seat_number" to "B05"
             )
-            notificationService.processNotification(reminderNotification)
+
+            val reminderNotification = NotificationUtils.createTripReminder(
+                userId = "user_123",
+                destination = reminderData["destination"] as String,
+                departureTime = reminderData["departure_time"] as String
+            )
+
+            notificationService.processNotification(reminderNotification, reminderData)
+        }
+
+        lifecycleScope.launch {
+            // Test booking modification
+            val modificationData = mapOf(
+                "destination" to "Bamenda",
+                "old_date" to "24 Juin 2025",
+                "new_date" to "26 Juin 2025",
+                "reason" to "Changement d'horaire demandé"
+            )
+
+            val modificationNotification = NotificationUtils.createBookingModification(
+                userId = "user_123",
+                bookingId = "BK789456",
+                changes = "Date modifiée"
+            )
+
+            notificationService.processNotification(modificationNotification, modificationData)
+        }
+
+        lifecycleScope.launch {
+            // Test refund processed
+            val refundData = mapOf(
+                "amount" to "15,000 FCFA",
+                "original_amount" to "25,000 FCFA",
+                "refund_reason" to "Annulation voyage",
+                "processing_time" to "3-5 jours ouvrables"
+            )
+
+            val refundNotification = NotificationUtils.createRefundProcessed(
+                userId = "user_123",
+                amount = refundData["amount"] as String,
+                transactionId = "REF123456"
+            )
+
+            notificationService.processNotification(refundNotification, refundData)
         }
     }
 
@@ -90,11 +158,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TripBookApp(
     notificationService: NotificationService,
+    templateManager: NotificationTemplateManager,
     navController: NavHostController = rememberNavController()
 ) {
-    // Créer le ViewModel avec le service de notification
+
     val notificationViewModel: NotificationViewModel = viewModel {
-        NotificationViewModel(notificationService)
+        NotificationViewModel(notificationService, templateManager)
     }
 
     Scaffold(
@@ -105,13 +174,14 @@ fun TripBookApp(
             startDestination = "home",
             modifier = Modifier.padding(innerPadding)
         ) {
-            // Écran d'accueil
+
             composable("home") {
                 HomeScreen(
                     onNotificationClick = {
                         navController.navigate("notifications")
                     },
-                    notificationViewModel = notificationViewModel
+                    notificationViewModel = notificationViewModel,
+                    templateManager = templateManager
                 )
             }
 
@@ -121,13 +191,27 @@ fun TripBookApp(
                     viewModel = notificationViewModel,
                     onSettingsClick = {
                         navController.navigate("notification_settings")
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
                     }
                 )
             }
 
-            // Écran des paramètres de notification
+            // Écran des paramètres de notifications
             composable("notification_settings") {
                 NotificationSettingsScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            // Écran de test des notifications
+            composable("test_notifications") {
+                TestNotificationScreen(
+                    templateManager = templateManager,
+                    notificationService = notificationService,
                     onBackClick = {
                         navController.popBackStack()
                     }
@@ -141,7 +225,8 @@ fun TripBookApp(
 @Composable
 fun HomeScreen(
     onNotificationClick: () -> Unit,
-    notificationViewModel: NotificationViewModel
+    notificationViewModel: NotificationViewModel,
+    templateManager: NotificationTemplateManager
 ) {
     val uiState by notificationViewModel.uiState.collectAsState()
 
@@ -150,7 +235,6 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("TripBook") },
                 actions = {
-                    // Badge de notification avec compteur
                     BadgedBox(
                         badge = {
                             if (uiState.unreadCount > 0) {
@@ -178,7 +262,8 @@ fun HomeScreen(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Message de bienvenue
+
+            // Carte de bienvenue
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -202,7 +287,7 @@ fun HomeScreen(
                 }
             }
 
-            // Bouton pour tester les notifications
+            // Bouton notifications
             Button(
                 onClick = onNotificationClick,
                 modifier = Modifier.fillMaxWidth()
@@ -251,6 +336,44 @@ fun HomeScreen(
                 }
             }
 
+            // Répartition par type de notification
+            if (uiState.notifications.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Types de notifications",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        val notificationCounts = uiState.notifications.groupBy { it.type }.mapValues { it.value.size }
+
+                        notificationCounts.forEach { (type, count) ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = getNotificationTypeLabel(type),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = count.toString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             // Message d'information
             Card(
                 modifier = Modifier.fillMaxWidth()
@@ -277,6 +400,73 @@ fun HomeScreen(
 }
 
 @Composable
+fun TestNotificationScreen(
+    templateManager: NotificationTemplateManager,
+    notificationService: NotificationService,
+    onBackClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Test des Notifications",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Button(
+            onClick = {
+                // Test notification booking
+                val template = templateManager.getTemplate(
+                    NotificationType.BOOKING_CONFIRMED,
+                    mapOf("destination" to "Douala", "date" to "Demain")
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Tester Réservation Confirmée")
+        }
+
+        Button(
+            onClick = {
+                // Test notification payment
+                val template = templateManager.getTemplate(
+                    NotificationType.PAYMENT_SUCCESS,
+                    mapOf("amount" to "15,000 FCFA")
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Tester Paiement Réussi")
+        }
+
+        Button(
+            onClick = {
+                // Test notification reminder
+                val template = templateManager.getTemplate(
+                    NotificationType.TRIP_REMINDER,
+                    mapOf("destination" to "Yaoundé")
+                )
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Tester Rappel de Voyage")
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = onBackClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Retour")
+        }
+    }
+}
+
+@Composable
 fun NotificationStat(
     label: String,
     count: Int
@@ -294,6 +484,17 @@ fun NotificationStat(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
+    }
+}
+
+fun getNotificationTypeLabel(type: NotificationType): String {
+    return when (type) {
+        NotificationType.BOOKING_CONFIRMED -> "Réservation confirmée"
+        NotificationType.PAYMENT_SUCCESS -> "Paiement réussi"
+        NotificationType.TRIP_REMINDER -> "Rappel de voyage"
+        NotificationType.BOOKING_MODIFIED -> "Réservation modifiée"
+        NotificationType.BOOKING_CANCELLED -> "Réservation annulée"
+        NotificationType.REFUND_PROCESSED -> "Remboursement traité"
     }
 }
 

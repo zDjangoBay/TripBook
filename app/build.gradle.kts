@@ -77,12 +77,7 @@ dependencies {
     //
 //
         // Notifications
-    implementation 'androidx.core:core-ktx:1.12.0'
 
-        // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-
-        // Tes autres dépendances existantes...
 
 
     //---------------------------------------------------------

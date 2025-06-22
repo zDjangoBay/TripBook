@@ -19,7 +19,7 @@ class NotificationService(private val context: Context) {
     private val notificationLogs = mutableListOf<NotificationLog>()
 
     /**
-     * 🎯 FONCTION PRINCIPALE - Point d'entrée pour toutes les notifications
+     *  FONCTION PRINCIPALE - Point d'entrée pour toutes les notifications
      */
     suspend fun processNotification(request: NotificationRequest) {
         try {
@@ -28,7 +28,7 @@ class NotificationService(private val context: Context) {
             // 1. Récupérer le profil utilisateur
             val userProfile = getUserProfile(request.userId)
             if (userProfile == null) {
-                Log.e(TAG, "❌ User profile not found for userId: ${request.userId}")
+                Log.e(TAG, " User profile not found for userId: ${request.userId}")
                 return
             }
 

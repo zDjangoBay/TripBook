@@ -5,9 +5,7 @@ import com.android.tripbook.notifications.models.NotificationType
 
 object NotificationUtils {
 
-    /**
-     * 🎫 Crée une notification de confirmation de réservation
-     */
+
     fun createBookingConfirmation(
         userId: String,
         destination: String,
@@ -25,9 +23,7 @@ object NotificationUtils {
         )
     }
 
-    /**
-     * 💳 Crée une notification de succès de paiement
-     */
+
     fun createPaymentSuccess(
         userId: String,
         amount: String,
@@ -43,9 +39,6 @@ object NotificationUtils {
         )
     }
 
-    /**
-     * ⏰ Crée une notification de rappel de voyage
-     */
     fun createTripReminder(
         userId: String,
         destination: String,
@@ -61,9 +54,7 @@ object NotificationUtils {
         )
     }
 
-    /**
-     * ✏️ Crée une notification de modification
-     */
+
     fun createBookingModification(
         userId: String,
         changes: String
@@ -77,9 +68,7 @@ object NotificationUtils {
         )
     }
 
-    /**
-     * ❌ Crée une notification d'annulation
-     */
+
     fun createBookingCancellation(
         userId: String,
         reason: String = "Demande utilisateur"
@@ -93,9 +82,7 @@ object NotificationUtils {
         )
     }
 
-    /**
-     * 💰 Crée une notification de remboursement
-     */
+
     fun createRefundNotification(
         userId: String,
         amount: String

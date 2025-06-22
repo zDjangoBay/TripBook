@@ -2,154 +2,163 @@ package com.android.tripbook.notifications.managers
 
 import com.android.tripbook.notifications.models.NotificationTemplate
 import com.android.tripbook.notifications.models.NotificationType
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
+import com.android.tripbook.R
 
-class NotificationTemplateManager {
+
+class NotificationTemplateManager(private val context: Context) {
 
     fun getTemplate(type: NotificationType, data: Map<String, Any>): NotificationTemplate {
         return when (type) {
             NotificationType.BOOKING_CONFIRMED -> {
-                val destination = data["destination"] as? String ?: "votre destination"
-                val date = data["date"] as? String ?: "bientôt"
-
                 NotificationTemplate(
                     title = "Réservation confirmée !",
-                    body = "Votre voyage vers $destination est confirmé pour le $date",
-                    emailSubject = "Confirmation de votre réservation TripBook",
-                    emailBody = createBookingEmail(destination, date, data)
+                    body = "Votre voyage est confirmé",
+                    layoutResource = R.layout.notification_booking_confirmed,
+                    expandedLayoutResource = R.layout.notification_booking_expanded,
+                    data = data
                 )
             }
 
             NotificationType.PAYMENT_SUCCESS -> {
-                val amount = data["amount"] as? String ?: "0€"
-
                 NotificationTemplate(
                     title = "Paiement réussi",
-                    body = "Votre paiement de $amount a été traité avec succès",
-                    emailSubject = "Confirmation de paiement - TripBook",
-                    emailBody = createPaymentEmail(amount)
+                    body = "Paiement traité avec succès",
+                    layoutResource = R.layout.notification_payment_success,
+                    expandedLayoutResource = R.layout.notification_payment_expanded,
+                    data = data
                 )
             }
 
             NotificationType.TRIP_REMINDER -> {
-                val destination = data["destination"] as? String ?: "votre destination"
-
                 NotificationTemplate(
                     title = "Rappel de voyage",
-                    body = "N'oubliez pas votre voyage vers $destination demain !",
-                    emailSubject = "Rappel : Votre voyage approche",
-                    emailBody = createReminderEmail(destination)
+                    body = "Votre voyage est demain !",
+                    layoutResource = R.layout.notification_trip_reminder,
+                    expandedLayoutResource = null, // Pas de version étendue pour ce type
+                    data = data
                 )
             }
 
             NotificationType.BOOKING_MODIFIED -> {
                 NotificationTemplate(
                     title = "Réservation modifiée",
-                    body = "Votre réservation a été mise à jour avec succès",
-                    emailSubject = "Modification de votre réservation",
-                    emailBody = createModificationEmail()
+                    body = "Votre réservation a été mise à jour",
+                    layoutResource = R.layout.notification_booking_modified,
+                    expandedLayoutResource = R.layout.notification_booking_modified_expanded,
+                    data = data
                 )
             }
 
             NotificationType.BOOKING_CANCELLED -> {
                 NotificationTemplate(
                     title = "Réservation annulée",
-                    body = "Votre réservation a été annulée. Remboursement en cours.",
-                    emailSubject = "Annulation de votre réservation",
-                    emailBody = createCancellationEmail()
+                    body = "Votre réservation a été annulée",
+                    layoutResource = R.layout.notification_booking_cancelled,
+                    expandedLayoutResource = R.layout.notification_booking_cancelled_expanded,
+                    data = data
                 )
             }
 
             NotificationType.REFUND_PROCESSED -> {
-                val amount = data["amount"] as? String ?: "0€"
-
                 NotificationTemplate(
                     title = "Remboursement traité",
-                    body = "Votre remboursement de $amount a été traité",
-                    emailSubject = "Remboursement effectué - TripBook",
-                    emailBody = createRefundEmail(amount)
+                    body = "Votre remboursement a été effectué",
+                    layoutResource = R.layout.notification_refund_processed,
+                    expandedLayoutResource = R.layout.notification_refund_expanded,
+                    data = data
                 )
             }
         }
     }
 
-    private fun createBookingEmail(destination: String, date: String, data: Map<String, Any>): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #2E86AB;">✅ Réservation confirmée</h2>
-                <p>Bonjour,</p>
-                <p>Votre réservation TripBook a été confirmée avec succès !</p>
-                
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                    <h3>📍 Détails du voyage</h3>
-                    <p><strong>Destination :</strong> $destination</p>
-                    <p><strong>Date :</strong> $date</p>
-                </div>
-                
-                <p>Bon voyage avec TripBook ! 🌍</p>
-            </body>
-            </html>
-        """.trimIndent()
+    /**
+     * Crée une vue personnalisée à partir du template et remplit les données
+     */
+    fun createCustomView(template: NotificationTemplate, isExpanded: Boolean = false): View {
+        val layoutId = if (isExpanded && template.expandedLayoutResource != null) {
+            template.expandedLayoutResource
+        } else {
+            template.layoutResource
+        }
+
+        val view = LayoutInflater.from(context).inflate(layoutId, null)
+        populateView(view, template)
+        return view
     }
 
-    private fun createPaymentEmail(amount: String): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #28a745;">💳 Paiement confirmé</h2>
-                <p>Votre paiement de <strong>$amount</strong> a été traité avec succès.</p>
-                <p>Merci pour votre confiance ! 🙏</p>
-            </body>
-            </html>
-        """.trimIndent()
+    /**
+     * Remplit la vue avec les données du template
+     */
+    private fun populateView(view: View, template: NotificationTemplate) {
+        val data = template.data
+
+        // Remplir les champs communs
+        view.findViewById<TextView>(R.id.title_booking)?.text = template.title
+        view.findViewById<TextView>(R.id.title_payment)?.text = template.title
+        view.findViewById<TextView>(R.id.title_reminder)?.text = template.title
+        view.findViewById<TextView>(R.id.title_booking_expanded)?.text = template.title
+        view.findViewById<TextView>(R.id.title_payment_expanded)?.text = template.title
+
+        // Remplir les données spécifiques selon le type
+        when {
+            // Réservation confirmée
+            data.containsKey("destination") && data.containsKey("date") -> {
+                val destination = data["destination"] as? String ?: "votre destination"
+                val date = data["date"] as? String ?: "bientôt"
+
+                view.findViewById<TextView>(R.id.message_booking)?.text =
+                    "Votre voyage est confirmé"
+                view.findViewById<TextView>(R.id.message_booking_expanded)?.text =
+                    "Votre voyage vers $destination est confirmé pour le $date"
+                view.findViewById<TextView>(R.id.destination_detail)?.text =
+                    "Destination : $destination"
+                view.findViewById<TextView>(R.id.date_detail)?.text =
+                    "Date : $date"
+            }
+
+            // Paiement
+            data.containsKey("amount") -> {
+                val amount = data["amount"] as? String ?: "0€"
+
+                view.findViewById<TextView>(R.id.message_payment)?.text =
+                    "Paiement traité avec succès"
+                view.findViewById<TextView>(R.id.message_payment_expanded)?.text =
+                    "Votre paiement a été traité avec succès"
+                view.findViewById<TextView>(R.id.amount_payment)?.text =
+                    "Montant : $amount"
+            }
+
+            // Rappel de voyage
+            data.containsKey("destination") -> {
+                val destination = data["destination"] as? String ?: "votre destination"
+
+                view.findViewById<TextView>(R.id.message_reminder)?.text =
+                    "Votre voyage est demain !"
+            }
+        }
     }
 
-    private fun createReminderEmail(destination: String): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #ffc107;">⏰ Rappel de voyage</h2>
-                <p>Votre voyage vers <strong>$destination</strong> est prévu pour demain !</p>
-                <p>N'oubliez pas vos documents de voyage ! 📄</p>
-                <p>Bon voyage ! ✈️</p>
-            </body>
-            </html>
-        """.trimIndent()
+    /**
+     * Retourne la vue pour une notification simple (non étendue)
+     */
+    fun getCompactView(type: NotificationType, data: Map<String, Any>): View {
+        val template = getTemplate(type, data)
+        return createCustomView(template, false)
     }
 
-    private fun createModificationEmail(): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #17a2b8;">✏️ Réservation modifiée</h2>
-                <p>Votre réservation a été mise à jour avec succès.</p>
-                <p>Consultez l'application pour voir les détails.</p>
-            </body>
-            </html>
-        """.trimIndent()
-    }
-
-    private fun createCancellationEmail(): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #dc3545;">❌ Réservation annulée</h2>
-                <p>Votre réservation a été annulée comme demandé.</p>
-                <p>Le remboursement sera traité dans les prochains jours.</p>
-            </body>
-            </html>
-        """.trimIndent()
-    }
-
-    private fun createRefundEmail(amount: String): String {
-        return """
-            <html>
-            <body style="font-family: Arial, sans-serif; padding: 20px;">
-                <h2 style="color: #28a745;">💰 Remboursement effectué</h2>
-                <p>Votre remboursement de <strong>$amount</strong> a été traité.</p>
-                <p>Les fonds apparaîtront sur votre compte dans 3-5 jours ouvrables.</p>
-            </body>
-            </html>
-        """.trimIndent()
+    /**
+     * Retourne la vue pour une notification étendue
+     */
+    fun getExpandedView(type: NotificationType, data: Map<String, Any>): View? {
+        val template = getTemplate(type, data)
+        return if (template.expandedLayoutResource != null) {
+            createCustomView(template, true)
+        } else {
+            null
+        }
     }
 }

@@ -29,7 +29,7 @@ class PushNotificationService(private val context: Context) {
         request: NotificationRequest
     ): Boolean {
         return try {
-            // Intent pour ouvrir l'app quand on clique sur la notification
+             //ouvrir l'app quand on clique sur la notification
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 putExtra("notification_type", request.type.name)
@@ -45,7 +45,7 @@ class PushNotificationService(private val context: Context) {
 
             // Construire la notification
             val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification) // Tu devras créer cette icône
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(template.title)
                 .setContentText(template.body)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -53,7 +53,7 @@ class PushNotificationService(private val context: Context) {
                 .setAutoCancel(true)
                 .build()
 
-            // Afficher la notification
+
             notificationManager.notify(request.hashCode(), notification)
 
             Log.d(TAG, "Local notification sent to user: ${userProfile.userId}")

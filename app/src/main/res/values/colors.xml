@@ -7,4 +7,43 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+        <!-- Couleurs principales -->
+        <color name="primary_blue">#2E86AB</color>
+        <color name="primary_dark">#1A5F7A</color>
+        <color name="accent_color">#F24236</color>
+
+        <!-- Couleurs de statut -->
+        <color name="success_green">#28A745</color>
+        <color name="warning_orange">#FFC107</color>
+        <color name="error_red">#DC3545</color>
+        <color name="info_blue">#17A2B8</color>
+
+        <!-- Couleurs de texte -->
+        <color name="text_primary">#212529</color>
+        <color name="text_secondary">#6C757D</color>
+        <color name="text_hint">#ADB5BD</color>
+        <color name="text_white">#FFFFFF</color>
+
+        <!-- Couleurs de fond -->
+        <color name="background_primary">#FFFFFF</color>
+        <color name="background_secondary">#F8F9FA</color>
+        <color name="background_tertiary">#E9ECEF</color>
+
+        <!-- Couleurs de notification -->
+        <color name="notification_bg_booking">#E8F5E8</color>
+        <color name="notification_bg_payment">#E8F5E8</color>
+        <color name="notification_bg_reminder">#FFF3CD</color>
+        <color name="notification_bg_modification">#D1ECF1</color>
+        <color name="notification_bg_cancellation">#F8D7DA</color>
+        <color name="notification_bg_refund">#E8F5E8</color>
+
+        <!-- Couleurs utilitaires -->
+        <color name="divider">#DEE2E6</color>
+        <color name="shadow">#80000000</color>
+        <color name="transparent">#00000000</color>
+
+        <!-- Couleurs gradient -->
+        <color name="gradient_start">#2E86AB</color>
+
 </resources>
