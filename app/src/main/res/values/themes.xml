@@ -5,53 +5,13 @@
         <!-- Couleurs primaires -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/on_primary</item>
-        <item name="colorPrimaryContainer">@color/primary_container</item>
-        <item name="colorOnPrimaryContainer">@color/on_primary_container</item>
-
-        <!-- Couleurs secondaires -->
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
-        <item name="colorSecondaryContainer">@color/secondary_container</item>
-        <item name="colorOnSecondaryContainer">@color/on_secondary_container</item>
-
-        <!-- Couleurs tertiaires -->
-        <item name="colorTertiary">@color/tertiary</item>
-        <item name="colorOnTertiary">@color/on_tertiary</item>
-        <item name="colorTertiaryContainer">@color/tertiary_container</item>
-        <item name="colorOnTertiaryContainer">@color/on_tertiary_container</item>
-
-        <!-- Couleurs d'erreur -->
-        <item name="colorError">@color/error</item>
-        <item name="colorOnError">@color/on_error</item>
-        <item name="colorErrorContainer">@color/error_container</item>
-        <item name="colorOnErrorContainer">@color/on_error_container</item>
-
-        <!-- Couleurs de surface -->
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/on_surface</item>
-        <item name="colorSurfaceVariant">@color/surface_variant</item>
-        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
-
-        <!-- Couleurs d'arrière-plan -->
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorOnBackground">@color/on_background</item>
-
-        <!-- StatusBar et NavigationBar -->
-        <item name="android:statusBarColor">@color/primary</item>
-        <item name="android:navigationBarColor">@color/surface</item>
-        <item name="android:windowLightStatusBar">false</item>
-
-        <!-- Autres propriétés -->
-        <item name="colorOutline">@color/outline</item>
-        <item name="colorOutlineVariant">@color/outline_variant</item>
+        <!-- ... reste de votre thème complet -->
     </style>
-
     <!-- Thème pour les activités sans ActionBar -->
     <style name="Theme.TripBookReservation.NoActionBar" parent="Theme.TripBookReservation">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
     <!-- Thème pour les activités de notification -->
     <style name="Theme.TripBookReservation.Notification" parent="Theme.TripBookReservation">
         <item name="android:windowBackground">@color/surface</item>
