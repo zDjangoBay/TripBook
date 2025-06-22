@@ -2,6 +2,7 @@
 package com.tripbook.reservation.notifications.models
 import com.android.tripbook.reservation.notifications.models.NotificationType
 import com.android.tripbook.reservation.notifications.models.NotificationAction
+import com.android.tripbook.reservation.notifications.models.NotificationPriority
 
 /**
  * Modèle de données pour les notifications de vols
