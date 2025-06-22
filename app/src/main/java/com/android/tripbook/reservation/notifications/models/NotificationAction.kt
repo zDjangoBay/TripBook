@@ -3,7 +3,10 @@ package com.android.tripbook.reservation.notifications.models
 enum class NotificationAction(
     val displayName: String,
     val buttonText: String,
-    val requiresConfirmation: Boolean = false
+    val requiresConfirmation: Boolean = false,
+    val viewAction: NotificationAction = NotificationAction.VIEW_DETAILS,
+    val bookingAction: NotificationAction = NotificationAction.VIEW_BOOKING,
+    val cancelAction: NotificationAction = NotificationAction.CANCEL_BOOKING,
 ) {
 
     VIEW_DETAILS("Voir les détails", "Voir détails"),
