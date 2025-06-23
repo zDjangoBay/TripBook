@@ -149,6 +149,7 @@ This project includes a **Flutter-like development environment** with:
 - User authentication
 - Data persistence with Room database
 - Push notifications
+- History and User preferences
 
 ## 🛠️ Technology Stack
 
