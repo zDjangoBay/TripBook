@@ -1,0 +1,16 @@
+
+//Apparence d'une réservation unique dans la liste
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView android:id="@+id/txtDestination" ... />
+    <TextView android:id="@+id/txtDates" ... />
+    <TextView android:id="@+id/txtTransport" ... />
+    <TextView android:id="@+id/txtPersonnes" ... />
+    <TextView android:id="@+id/txtPrix" ... />
+    <TextView android:id="@+id/txtStatut" ... />
+</LinearLayout>

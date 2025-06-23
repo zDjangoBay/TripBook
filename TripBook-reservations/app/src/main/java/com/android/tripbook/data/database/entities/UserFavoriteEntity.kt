@@ -117,6 +117,7 @@ enum class FavoriteType {
     ACTIVITY
 }
 
+//
 class ParametresActivity : AppCompatActivity() {
 
     private lateinit var prefHelper: PreferenceHelper

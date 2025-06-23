@@ -249,3 +249,24 @@ class PreferenceHelper(context: Context) {
 
     fun isNotificationsActives(): Boolean = prefs.getBoolean("notifications", true)
 }
+
+//The user can set up favorite places and see their preferences
+class PreferencesActivity : AppCompatActivity() {
+    private lateinit var prefHelper: DestinationPrefHelper
+    private val userId = "user_123"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_preferences)
+
+        prefHelper = DestinationPrefHelper(this)
+
+        // Exemple : enregistrer des destinations préférées
+        val lieuxChoisis = listOf("Tokyo", "Nairobi", "Rio")
+        prefHelper.saveDestinationsPref(userId, lieuxChoisis)
+
+        // Récupérer et afficher
+        val prefs = prefHelper.getDestinationsPref(userId)
+        findViewById<TextView>(R.id.txtPrefs).text = "Destinations préférées : ${prefs.joinToString()}"
+    }
+}
