@@ -21,7 +21,7 @@ import com.google.gson.reflect.TypeToken
 )
 @TypeConverters(TripEntity.Converters::class)
 data class TripEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: String,
     val caption: String,

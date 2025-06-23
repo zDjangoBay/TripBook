@@ -26,7 +26,7 @@ import com.google.gson.reflect.TypeToken
         )
     ],
     indices = [
-        Index(value = ["reviewId"])  // ✅ Index on foreign key for optimal performance
+        Index(value = ["reviewId"])  //  Index on foreign key for optimal performance
     ]
 )
 @TypeConverters(CommentEntity.Converters::class)

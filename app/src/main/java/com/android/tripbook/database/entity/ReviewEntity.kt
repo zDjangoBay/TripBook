@@ -25,7 +25,7 @@ import com.google.gson.reflect.TypeToken
         )
     ],
     indices = [
-        Index(value = ["tripId"])  // ✅ Index on foreign key for optimal performance
+        Index(value = ["tripId"])  //  Index on foreign key for optimal performance
     ]
 )
 @TypeConverters(ReviewEntity.Converters::class)

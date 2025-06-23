@@ -6,7 +6,7 @@ This guide explains the **OPTIONAL** Room database implementation that provides 
 
 ## 🔄 What Changed
 
-### ✅ **What Stays EXACTLY the Same**
+### **What Stays EXACTLY the Same**
 
 - All existing UI screens work unchanged
 - All existing ViewModels (`MockTripViewModel`, `MockReviewViewModel`) work unchanged

@@ -8,7 +8,7 @@ import com.android.tripbook.Model.Place
 import com.android.tripbook.Model.Triphome
 import com.android.tripbook.Repository.TripsRepository
 import kotlinx.coroutines.launch
-import com.android.tripbook.Model.Trip
+// import com.android.tripbook.Model.Trip // Commented out - not needed
 
 class MainViewModel(
     private val repository: TripsRepository = TripsRepository()

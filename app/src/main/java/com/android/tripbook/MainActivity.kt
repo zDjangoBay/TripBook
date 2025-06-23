@@ -3,21 +3,13 @@ package com.android.tripbook
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
-import com.android.tripbook.ui.components.BaseScaffold
-import com.android.tripbook.ui.navigation.MainNavGraph
-import com.android.tripbook.ui.theme.TripBookTheme
-import com.android.tripbook.test.SimpleDatabaseTest
-import com.android.tripbook.database.TripBookDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+// Database imports commented out for team collaboration
+// import com.android.tripbook.test.SimpleDatabaseTest
+// import com.android.tripbook.database.TripBookDatabase
+// import kotlinx.coroutines.CoroutineScope
+// import kotlinx.coroutines.Dispatchers
+// import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,11 +45,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         */
-        setContent {
-            TripBookTheme {
-                val navController = rememberNavController()
-                var isLoading by remember { mutableStateOf(false) }
-
         // Immediately launch HomeActivity
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)

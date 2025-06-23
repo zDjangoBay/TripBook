@@ -1,9 +1,6 @@
 package com.android.tripbook.Repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.android.tripbook.Model.Place
-import com.android.tripbook.model.Trip
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase

@@ -1,4 +1,4 @@
-package com.android.tripbook.ViewModel
+package com.android.tripbook.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.android.tripbook.data.SampleTrips

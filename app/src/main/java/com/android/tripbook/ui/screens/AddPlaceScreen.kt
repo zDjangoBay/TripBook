@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.android.tripbook.R
 import com.android.tripbook.viewmodel.MockTripViewModel
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,6 +31,16 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.platform.LocalContext
 import com.android.tripbook.model.Trip
 import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.data.EnhancedSampleTrips
+import com.android.tripbook.database.TripBookDatabase
+import com.android.tripbook.database.entity.TripEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
+import android.content.Context
 
 
 
@@ -45,6 +55,7 @@ fun AddPlaceScreen(
     var description by remember { mutableStateOf("") }
     var selectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
@@ -69,7 +80,7 @@ fun AddPlaceScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -165,16 +176,29 @@ fun AddPlaceScreen(
 
                 Button(
                     onClick = {
-                        SampleTrips.addTrip(
-                            Trip(
-                                id = SampleTrips.generateId(),
-                                title = title,
-                                caption = caption,
-                                description = description,
-                                imageUrl = selectedImages.map { it.toString() }
-                            )
-                        )
-                        onBack()
+                        coroutineScope.launch(Dispatchers.IO) {
+                            // Copy images to internal storage and get their new paths
+                            val permanentImagePaths = selectedImages.map { uri ->
+                                saveImageToInternalStorage(context, uri)
+                            }.filterNotNull()
+
+                            if (permanentImagePaths.isNotEmpty()) {
+                                val newTripEntity = TripEntity(
+                                    id = 0, // Use 0 to let Room auto-generate the ID
+                                    title = title,
+                                    caption = caption,
+                                    description = description,
+                                    imageUrl = permanentImagePaths
+                                )
+                                val database = TripBookDatabase.getDatabase(context.applicationContext)
+                                database.tripDao().insertTrip(newTripEntity)
+
+                                // Navigate back on the main thread after the insert is complete
+                                withContext(Dispatchers.Main) {
+                                    onBack()
+                                }
+                            }
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -186,4 +210,19 @@ fun AddPlaceScreen(
             }
         }
     )
+}
+
+private fun saveImageToInternalStorage(context: Context, uri: Uri): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File(context.filesDir, "${UUID.randomUUID()}.jpg")
+        val outputStream = FileOutputStream(file)
+        inputStream?.copyTo(outputStream)
+        inputStream?.close()
+        outputStream.close()
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
