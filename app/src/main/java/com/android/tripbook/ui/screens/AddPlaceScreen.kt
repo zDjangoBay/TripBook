@@ -48,7 +48,7 @@ fun AddPlaceScreen(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(),
         onResult = { uris ->
-            selectedImages = uris.take(2)
+            selectedImages = uris.take(3)
         }
     )
 
