@@ -6,7 +6,6 @@ enum class NotificationAction(
     val requiresConfirmation: Boolean = false,
     val viewAction: NotificationAction = NotificationAction.VIEW_DETAILS,
     val bookingAction: NotificationAction = NotificationAction.VIEW_BOOKING,
-    val cancelAction: NotificationAction = NotificationAction.CANCEL_BOOKING,
 ) {
 
     VIEW_DETAILS("Voir les détails", "Voir détails"),

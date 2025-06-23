@@ -61,18 +61,18 @@ enum class NotificationPriority {
 /**
  * Actions possibles depuis les notifications
  */
-enum class NotificationAction {
-    VIEW_BOOKING,        // Voir la réservation
-    VIEW_BOARDING_PASS,  // Voir carte d'embarquement
-    CHECK_IN_NOW,        // S'enregistrer maintenant
-    SELECT_SEAT,         // Choisir un siège
-    VIEW_FLIGHT_STATUS,  // Voir statut du vol
-    CONTACT_SUPPORT,     // Contacter le support
-    RETRY_PAYMENT,       // Réessayer le paiement
-    VIEW_REFUND,         // Voir le remboursement
-    UPDATE_DOCUMENTS,    // Mettre à jour documents
-    BOOK_MEAL,          // Réserver un repas
-    UPGRADE_SEAT,       // Surclasser le siège
-    VIEW_WEATHER,       // Voir météo destination
-    NONE                // Pas d'action
+enum class NotificationAction(string: String, string1: String) {
+    VIEW_BOOKING("Voir les détails", "Voir détails"),        // Voir la réservation
+    VIEW_BOARDING_PASS("Voir les détails", "Voir détails"),  // Voir carte d'embarquement
+    CHECK_IN_NOW("Voir les détails", "Voir détails"),        // S'enregistrer maintenant
+    SELECT_SEAT("Voir les détails", "Voir détails"),         // Choisir un siège
+    VIEW_FLIGHT_STATUS("Voir les détails", "Voir détails"),  // Voir statut du vol
+    CONTACT_SUPPORT("Voir les détails", "Voir détails"),     // Contacter le support
+    RETRY_PAYMENT("Voir les détails", "Voir détails"),       // Réessayer le paiement
+    VIEW_REFUND("Voir les détails", "Voir détails"),         // Voir le remboursement
+    UPDATE_DOCUMENTS("Voir les détails", "Voir détails"),    // Mettre à jour documents
+    BOOK_MEAL("Voir les détails", "Voir détails"),          // Réserver un repas
+    UPGRADE_SEAT("Voir les détails", "Voir détails"),       // Surclasser le siège
+    VIEW_WEATHER("Voir les détails", "Voir détails"),       // Voir météo destination
+    NONE("Voir les détails", "Voir détails")                // Pas d'action
 }
