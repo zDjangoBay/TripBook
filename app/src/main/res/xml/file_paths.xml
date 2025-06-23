@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dossier pour les fichiers temporaires -->
+    <cache-path name="cache" path="." />
+
+    <!-- Dossier pour les fichiers de l'application -->
+    <files-path name="files" path="." />
+
+    <!-- Dossier pour les fichiers externes -->
+    <external-files-path name="external_files" path="." />
+
+    <!-- Dossier pour les boarding passes et documents -->
+    <external-files-path name="documents" path="Documents/" />
+
+    <!-- Dossier pour les images et médias -->
+    <external-files-path name="images" path="Pictures/" />
+</paths>
