@@ -1,10 +1,10 @@
-# 🗄️ Room Database Implementation Guide - TripBook
+# 🗄 Room Database Implementation Guide - TripBook
 
-## 📋 Overview
+##  Overview
 
 This guide explains the **OPTIONAL** Room database implementation that provides persistent local storage. The implementation is **COMPLETELY NON-INTRUSIVE** - all existing code continues to work unchanged.
 
-## 🔄 What Changed
+##  What Changed
 
 ### **What Stays EXACTLY the Same**
 
@@ -15,7 +15,7 @@ This guide explains the **OPTIONAL** Room database implementation that provides 
 - Navigation and UI components require no changes
 - **NO BREAKING CHANGES WHATSOEVER**
 
-### 🆕 **What's Available (Optional)**
+###  **What's Available (Optional)**
 
 - **NEW** Room-based ViewModels (`RoomTripViewModel`, `RoomReviewViewModel`)
 - Data can be stored in local SQLite database via Room
@@ -23,7 +23,7 @@ This guide explains the **OPTIONAL** Room database implementation that provides 
 - Automatic data seeding on first launch
 - Better performance with reactive data updates
 
-## 🏗️ **New Architecture**
+## 🏗 **New Architecture**
 
 ```
 UI Layer (Unchanged)
@@ -37,7 +37,7 @@ Room Database (New)
 SQLite Database
 ```
 
-## 📁 **New Files Added**
+##  **New Files Added**
 
 ### Database Entities
 
@@ -106,7 +106,7 @@ viewModel.updateTrip(trip)        // Updates in database
 reviewViewModel.addReview(review) // Persists to database
 ```
 
-## 🚀 **Migration Steps for Team Members**
+##  **Migration Steps for Team Members**
 
 ### **Step 1: Update Your ViewModels (If Creating Manually)**
 
@@ -143,7 +143,7 @@ fun MyScreen() {
 - Model classes
 - Existing data display logic
 
-## 📊 **Data Seeding**
+##  **Data Seeding**
 
 The database automatically seeds with sample data on first launch:
 
@@ -151,7 +151,7 @@ The database automatically seeds with sample data on first launch:
 - 6 sample reviews
 - Data persists between app sessions
 
-## 🔍 **Troubleshooting**
+##  **Troubleshooting**
 
 ### **Issue: ViewModel creation fails**
 
@@ -165,7 +165,7 @@ The database automatically seeds with sample data on first launch:
 
 **Solution:** Ensure you've synced Gradle after Room dependencies were added
 
-## 🎯 **Benefits for Team**
+##  **Benefits for Team**
 
 1. **Offline Support** - App works without internet
 2. **Data Persistence** - User data survives app restarts
@@ -173,7 +173,7 @@ The database automatically seeds with sample data on first launch:
 4. **Scalability** - Easy to add new data types and operations
 5. **Testing** - Consistent data state for testing
 
-## 🔄 **Backward Compatibility**
+##  **Backward Compatibility**
 
 - All existing code continues to work
 - Static sample data classes remain for reference
@@ -195,7 +195,7 @@ Your existing code should work immediately with persistent data storage. New fea
 
 ---
 
-## ⚠️ **Important: Understanding Compose Dependency Issues**
+##  **Important: Understanding Compose Dependency Issues**
 
 ### **Hey Team! Important Info About Database Integration**
 
@@ -226,7 +226,7 @@ implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel integrat
 implementation(libs.androidx.lifecycle.runtime.compose)    // Lifecycle integration
 ```
 
-### **🚫 Why They Block Our Database**
+### **Why They Block Our Database**
 
 The issue is **VERSION CONFLICTS**:
 
@@ -247,7 +247,7 @@ val tripViewModel: RoomTripViewModel = viewModel(factory = TripBookViewModelFact
 //                                     This function needs compatible versions!
 ```
 
-### **🔧 How Components Are Used**
+### **How Components Are Used**
 
 #### **In Our Screens:**
 
@@ -270,7 +270,7 @@ fun TripDetailScreen() {
 }
 ```
 
-### **🚀 Solutions If You Encounter Database Issues**
+### **Solutions If You Encounter Database Issues**
 
 #### **Option 1: Update Compose BOM**
 
@@ -296,20 +296,20 @@ lifecycleRuntimeCompose = "2.6.2"      # Match original BOM
 val tripViewModel = remember { MockTripViewModel() }  // Works without version conflicts
 ```
 
-### **🎯 Key Takeaway**
+### **Key Takeaway**
 
 **"Dependency Components"** = **Jetpack Compose libraries** that provide:
 
-- ✅ **UI building blocks** (Text, Button, Column)
-- ✅ **ViewModel integration** (`viewModel()` function)
-- ✅ **State management** (`collectAsState()`)
-- ❌ **Potential version conflicts** that can prevent Room database usage
+- **UI building blocks** (Text, Button, Column)
+- **ViewModel integration** (`viewModel()` function)
+- **State management** (`collectAsState()`)
+- (No)**Potential version conflicts** that can prevent Room database usage
 
 **If anyone encounters database integration issues, check these dependency versions first!**
 
 ---
 
-## 🚀 **Database Performance for Team**
+##  **Database Performance for Team**
 
 ### **⚡ Performance Benchmarks**
 
@@ -322,13 +322,13 @@ Your Room database is **highly optimized** for fast team collaboration:
 - **Insert New Trip**: 5-15ms ⚡
 
 #### **Performance Optimizations:**
-✅ **Indexed Foreign Keys** - Lightning fast joins
-✅ **Search Indices** - Fast title/caption searches
-✅ **Batch Operations** - Efficient bulk inserts
-✅ **Flow Queries** - Reactive UI updates
-✅ **Performance Monitoring** - Track slow operations
+ **Indexed Foreign Keys** - Lightning fast joins
+ **Search Indices** - Fast title/caption searches
+ **Batch Operations** - Efficient bulk inserts
+ **Flow Queries** - Reactive UI updates
+ **Performance Monitoring** - Track slow operations
 
-### **📊 Performance Monitoring**
+### **Performance Monitoring**
 
 Use `PerformanceMonitor` to track database speed:
 
@@ -344,7 +344,7 @@ val results = PerformanceMonitor.monitorSearchOperation("beach") {
 }
 ```
 
-### **🎯 Team Performance Guidelines**
+### **Team Performance Guidelines**
 
 #### **For Fast Loading:**
 1. **Use Flow queries** for reactive UI updates
@@ -353,28 +353,28 @@ val results = PerformanceMonitor.monitorSearchOperation("beach") {
 4. **Use OptimizedTripRepository** for best performance
 
 #### **Performance Levels:**
-- ⚡ **EXCELLENT**: < 10ms
-- ✅ **GOOD**: 10-50ms
-- ⚠️ **ACCEPTABLE**: 50-100ms
-- 🐌 **SLOW**: 100-500ms (investigate)
-- ❌ **VERY SLOW**: > 500ms (needs optimization)
+-  **EXCELLENT**: < 10ms
+-  **GOOD**: 10-50ms
+-  **ACCEPTABLE**: 50-100ms
+-  **SLOW**: 100-500ms (investigate)
+-  **VERY SLOW**: > 500ms (needs optimization)
 
 #### **Best Practices:**
 ```kotlin
-// ✅ FAST - Use Flow for reactive updates
+//  FAST - Use Flow for reactive updates
 val trips: Flow<List<Trip>> = repository.getAllTrips()
 
-// ✅ FAST - Batch operations
+//  FAST - Batch operations
 repository.insertTrips(listOf(trip1, trip2, trip3))
 
-// ✅ FAST - Indexed searches
+//  FAST - Indexed searches
 repository.searchTrips("beach")
 
-// ❌ AVOID - Blocking UI thread
+//  AVOID - Blocking UI thread
 // Don't call suspend functions on Main thread
 ```
 
-### **🔍 Troubleshooting Performance**
+### **Troubleshooting Performance**
 
 If database feels slow:
 

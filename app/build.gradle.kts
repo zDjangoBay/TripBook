@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 28
+        minSdk = 31
 
         targetSdk = 34
         versionCode = 1
