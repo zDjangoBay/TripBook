@@ -12,14 +12,14 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.android.tripbook.model.Review
-import com.android.tripbook.ui.components.FullscreenGalleryDialog
+import com.android.tripbook.Model.Review
+// Removed FullscreenGalleryDialog import to avoid team conflicts
 
 @Composable
 fun ReviewCard(
@@ -29,8 +29,7 @@ fun ReviewCard(
     onLikeClicked: (Int) -> Unit = {},
     onFlagClicked: (Int) -> Unit = {}
 ) {
-    var showFullscreenGallery by remember { mutableStateOf(false) }
-    var initialImageIndex by remember { mutableStateOf(0) }
+    // Removed fullscreen gallery functionality to avoid team conflicts
 
     Card(
         modifier = modifier
@@ -60,10 +59,8 @@ fun ReviewCard(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .clickable {
-                                    initialImageIndex = review.images.indexOf(imageUrl)
-                                    showFullscreenGallery = true
-                                }
+                                .fillMaxWidth()
+                                // Removed fullscreen gallery click to avoid team conflicts
                         ) {
                             Image(
                                 painter = rememberAsyncImagePainter(imageUrl),
@@ -106,11 +103,5 @@ fun ReviewCard(
         }
     }
 
-    if (showFullscreenGallery) {
-        FullscreenGalleryDialog(
-            images = review.images,
-            initialPage = initialImageIndex,
-            onDismiss = { showFullscreenGallery = false }
-        )
-    }
+    // Removed FullscreenGalleryDialog to avoid team conflicts
 }

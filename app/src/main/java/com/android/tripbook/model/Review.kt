@@ -1,4 +1,4 @@
-package com.android.tripbook.model
+package com.android.tripbook.Model
 
 data class Review(
     val id: Int,
@@ -9,6 +9,6 @@ data class Review(
     val images: List<String>,
     var isLiked: Boolean = false,
     var isFlagged: Boolean = false,
-    var likeCount: Int = 0
-
+    var likeCount: Int = 0,
+    val votes: Int = 0 // Add votes for upvote/downvote
 )

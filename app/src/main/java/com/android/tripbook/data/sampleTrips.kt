@@ -3,7 +3,14 @@ package com.android.tripbook.data
 import com.android.tripbook.model.Trip
 
 object SampleTrips {
-    fun get(): List<Trip> = listOf(
+    fun get(): List<Trip> = trips
+
+    fun addTrip(trip: Trip) {
+        trips.add(trip)
+    }
+
+    fun generateId(): Int = (trips.maxOfOrNull { it.id } ?: 0) + 1
+    private val trips = mutableListOf(
         Trip(
             id = 1,
             title = "Yaounde Capital",
@@ -11,7 +18,7 @@ object SampleTrips {
             description = """
                 Yaoundé, the political and administrative capital of Cameroon, is a city that gracefully blends modernity with tradition. Set across lush hills, it offers a panoramic view of urban sprawl peppered with colonial-era buildings, bustling markets, and tree-lined boulevards. As you walk through the city, the rhythm of local life pulsates through every corner — from roadside vendors selling grilled fish and plantains to students debating politics in open cafés.
 
-                The city also offers a rich cultural experience with attractions like the National Museum, the Reunification Monument, and the Mvog-Betsi Zoo. Whether you're exploring its historical sites, enjoying the diverse local cuisine, or simply soaking in the atmosphere, Yaoundé presents an authentic slice of Cameroon’s soul. It’s a dynamic entry point for any traveler wishing to dive deep into the country’s culture.
+                The city also offers a rich cultural experience with attractions like the National Museum, the Reunification Monument, and the Mvog-Betsi Zoo. Whether you're exploring its historical sites, enjoying the diverse local cuisine, or simply soaking in the atmosphere, Yaoundé presents an authentic slice of Cameroon's soul. It's a dynamic entry point for any traveler wishing to dive deep into the country's culture.
             """.trimIndent(),
             imageUrl = listOf(
                 "https://media.gettyimages.com/id/803446314/fr/photo/this-photo-taken-on-june-16-2017-shows-the-city-of-bamenda-the-anglophone-capital-of-northwest.jpg?s=1024x1024&w=gi&k=20&c=x_r8SMF62ult9Xps8g4t8HQJwr6eZvgJH3HOBi8rk48=",
@@ -38,7 +45,7 @@ object SampleTrips {
             title = "Kribi",
             caption = "Soak in paradise by the sea.",
             description = """
-                Kribi is Cameroon’s coastal gem, renowned for its golden beaches, crystal-clear waters, and laid-back charm. The town is a popular retreat for locals and tourists seeking sun, sea, and serenity. Among its highlights is the Lobe Waterfall — a rare natural wonder where the river plunges directly into the Atlantic Ocean, creating a surreal backdrop for boat rides and photo opportunities.
+                Kribi is Cameroon's coastal gem, renowned for its golden beaches, crystal-clear waters, and laid-back charm. The town is a popular retreat for locals and tourists seeking sun, sea, and serenity. Among its highlights is the Lobe Waterfall — a rare natural wonder where the river plunges directly into the Atlantic Ocean, creating a surreal backdrop for boat rides and photo opportunities.
 
                 Kribi is not just about scenic beauty; it's a place where culture and relaxation merge seamlessly. Fresh seafood is a local specialty, with grilled shrimp and fish served fresh by the beach. The friendly communities and tranquil atmosphere make it a perfect spot for romantic getaways, solo retreats, or family vacations. Kribi invites you to unplug and reconnect with nature in the most soothing way.
             """.trimIndent(),
@@ -63,4 +70,6 @@ object SampleTrips {
             )
         )
     )
+
+
 }
