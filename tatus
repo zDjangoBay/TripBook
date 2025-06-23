@@ -1,0 +1,75 @@
+[33maefca745[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mposts-DzudieSimoGraceEmmanuelle-ICTU20222980-PostViewModel[m[33m, [m[1;31morigin/posts-DzudieSimoGraceEmmanuelle-ICTU20222980-PostViewModel[m[33m, [m[1;31morigin/posts[m[33m)[m Revert "Merge pull request #161 from zDjangoBay/post-Feukounmarel-ICTU20223436-PostEvent"
+[33macb121b2[m Merge pull request #161 from zDjangoBay/post-Feukounmarel-ICTU20223436-PostEvent
+[33maa93a37f[m Merge pull request #142 from zDjangoBay/posts-BIGOUAWE_EFFOUDOU_ICTU20223125
+[33mefd99bca[m Finalize PostEvent class organization and structure
+[33mba4d3a7d[m Add success feedback to PostEvent
+[33m956854be[m Add error handling to PostEvent
+[33m8f177c44[m Enhance form management in PostEvent
+[33m8f6a538f[m Add privacy controls to PostEvent
+[33m439a1036[m Implement tag management in PostEvent
+[33mee72e913[m Add travel category support to PostEvent
+[33md77658be[m Add location support to PostEvent
+[33m235d3c34[m Enhance image management in PostEvent
+[33md3d3d973[m Add basic PostEvent sealed class with core events
+[33m9641e47c[m feat(post): implement PostEvent sealed class for handling user interactions
+[33mb171aa3a[m[33m ([m[1;31morigin/posts-BIGOUAWE_EFFOUDOU_ICTU20223125[m[33m)[m Create initial LocationPicker Composable for location selection Implement LocationPicker dialog for search results display
+[33m43f7bf68[m Create initial HashTagInput Composable for hashtag entry  Enhance HashTagInput with real-time preview and basic styling
+[33mfa87750c[m Setup initial PostViewModel with PostUIState and coroutine scope
+[33m5efbe49b[m Introduce PostEvent sealed class for user and system events
+[33mf0e472fc[m Define PostUIState data class for comprehensive UI state
+[33m2bf3c5d9[m Create initial FakePostRepository for in-memory data simulation
+[33m18eae235[m Define PostRepository interface for data abstraction
+[33mc04fd7d9[m feat(model): Introduce TagModel for post categorization
+[33mbd332103[m feat(model): Define initial PostModel structure
+[33mccdaf2b3[m[33m ([m[1;31morigin/Posts-Penetouassom_Ictu20223128[m[33m)[m Merge pull request #134 from zDjangoBay/revert-121-posts-GuegouoMoghommahieGuiddel-ICTU20222932-postcard
+[33m2441c3db[m[33m ([m[1;31morigin/revert-121-posts-GuegouoMoghommahieGuiddel-ICTU20222932-postcard[m[33m)[m Revert "Posts guegouo moghommahie guiddel ictu20222932 postcard"
+[33mdf0c4215[m Merge pull request #121 from zDjangoBay/posts-GuegouoMoghommahieGuiddel-ICTU20222932-postcard
+[33m230604bd[m Merge branch 'posts' into posts-guegouoguiddel
+[33m967a1da1[m added files
+[33m4ccf4680[m added files
+[33m2b89d847[m postcard
+[33me19513b2[m updated files
+[33m28616e4e[m reclone the repo
+[33m3cbe4bc1[m files updated solve some issues
+[33m16442471[m remove some files
+[33m8b43312b[m updated postcard
+[33m88de8380[m updated files
+[33m58f52a79[m added mainactivity file and models for preview
+[33mad775dd7[m new postcard added
+[33mc3d8e1d6[m added new files to facitate merge
+[33ma6cf0150[m replace  files for testing
+[33ma002eb7e[m added interactionclass
+[33m221ef2cc[m added a feedscreenclass
+[33m89122a0a[m[33m ([m[1;31morigin/posts-da[m[33m)[m Merge pull request #90 from sas-bergson/revert-87-posts-guegouoguiddel
+[33m43a1a578[m[33m ([m[1;31morigin/revert-87-posts-guegouoguiddel[m[33m)[m Revert "Posts guegouoguiddel"
+[33m65b4393a[m Merge pull request #87
+[33mdf8e69b3[m testing
+[33m52b3830c[m resolving comflict
+[33m07946448[m remove files for testing
+[33m91c321ed[m updated some files
+[33m4f1905b0[m added feedscreen and feedInteraction
+[33m43382272[m added and updated files
+[33me5a2b495[m remove files
+[33m41d01d19[m Removed PostCard.kt
+[33m652578f9[m separated the postcard files
+[33m8303911b[m updated the postcard in the main activity
+[33mffe46db7[m added others classes
+[33m401d31bb[m joined post card with the main activity
+[33m2c6bd18c[m joined post card with the main activity
+[33m73dc08e5[m updated the main activity
+[33m70cea1d5[m added a model
+[33mf426bcc4[m added a card component
+[33ma3796af5[m create post
+[33m69333f46[m[33m ([m[1;31morigin/tripcatalog-DongmoDouanlaLoic-ICTU20223005-TripFilter[m[33m)[m Delete My Notes
+[33m84a4f5f3[m Delete app/src/main/java/com/android/tripbook/reservations directory
+[33m61efef25[m[33m ([m[1;31morigin/tripcatalog-tchuemenijorel[m[33m)[m Sample overview of the UI for reservations, please review
+[33m49ee5fb5[m Sample overview of the UI for reservations, please review
+[33mc4793857[m Sample overview of the UI for reservations, please review
+[33me7618e5c[m[33m ([m[1;31morigin/userprofile-BarthsonKimiaTabi-ICTU20223052-Media_Uploading_System[m[33m, [m[1;31morigin/tripsheduling[m[33m, [m[1;31morigin/trip-scheduling-mbwa-madian[m[33m, [m[1;31morigin/mvogochris[m[33m, [m[1;31morigin/TripCatalog_Nisso_ICTU20233590_LocationPicker[m[33m)[m Merge pull request #2 from sas-bergson/userprofile
+[33m8ccdd54c[m[33m ([m[1;31morigin/amougou[m[33m)[m Added my signature on the NOTES
+[33m50f66234[m Created NOTEs to explain android development with VSCODE
+[33mb616e51f[m[33m ([m[1;31morigin/userprofile-tiojiowilfried[m[33m)[m Merge pull request #1 from sas-bergson/main
+[33m0a3fca42[m[33m ([m[1;31morigin/readme[m[33m)[m simplified the preview of the Greetings
+[33mbdb6e4a7[m[33m ([m[1;31morigin/userprofile-Ndzengueantoinette-ictu20222988-activityfeedlogic[m[33m, [m[1;31morigin/comments-Kouamloic[m[33m)[m Initial commit: Creation of TripBook project skeleton
+[33m7b0b9657[m Initial commit: Creation of TripBook project skeleton
+[33m96095a62[m[33m ([m[1;31morigin/tripcatalog-lukong-jonathan[m[33m, [m[1;31morigin/tripcatalog-fokouafongou[m[33m, [m[1;31morigin/Hephzibah-tripscheduling[m[33m)[m Initial commit: Creation of TripBook project skeleton
