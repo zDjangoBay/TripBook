@@ -3,6 +3,8 @@ package com.android.tripbook.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,13 +20,14 @@ fun UserProfileDemoScreen(
     modifier: Modifier = Modifier,
     specificUser: com.android.tripbook.data.User? = null
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        if (specificUser != null) {
-            // Show specific user profile when clicked from travelers list
+    if (specificUser != null) {
+        // Show specific user profile when clicked from travelers list - with scrolling
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
             Text(
                 text = "Traveler Profile",
                 fontSize = 28.sp,
@@ -60,8 +63,14 @@ fun UserProfileDemoScreen(
                     UserProfileEmbedding(user = convertedUser)
                 }
             }
-        } else {
-            // Show all sample users (original demo behavior)
+        }
+    } else {
+        // Show all sample users (original demo behavior) - already scrollable with LazyColumn
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
             Text(
                 text = "User Profile Embedding",
                 fontSize = 28.sp,
