@@ -427,7 +427,7 @@ Kotlin is designed to be expressive, concise, and safe. Here’s a brief overvie
    - Use nullable types and safe calls to prevent null pointer exceptions.
    ```kotlin
    var email: String? = null
-   email?.let { println(it) }
+   email?.let { println(it) } 
    ```
 
 4. **Collections**:

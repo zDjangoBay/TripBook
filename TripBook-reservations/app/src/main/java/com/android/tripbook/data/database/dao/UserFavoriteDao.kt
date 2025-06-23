@@ -219,3 +219,33 @@ data class FavoriteStats(
     @ColumnInfo(name = "high_priority_favorites") val highPriorityFavorites: Int,
     @ColumnInfo(name = "favorites_with_notes") val favoritesWithNotes: Int
 )
+
+class PreferenceHelper(context: Context) {
+
+    private val prefs: SharedPreferences =
+            context.getSharedPreferences("tripbook_preferences", Context.MODE_PRIVATE)
+
+    fun setLangue(langue: String) {
+        prefs.edit().putString("langue", langue).apply()
+    }
+
+    fun getLangue(): String = prefs.getString("langue", "fr") ?: "fr"
+
+    fun setMoyenTransportPrefere(mode: String) {
+        prefs.edit().putString("transport", mode).apply()
+    }
+
+    fun getMoyenTransportPrefere(): String = prefs.getString("transport", "Avion") ?: "Avion"
+
+    fun setThemeSombre(active: Boolean) {
+        prefs.edit().putBoolean("theme_sombre", active).apply()
+    }
+
+    fun isThemeSombre(): Boolean = prefs.getBoolean("theme_sombre", false)
+
+    fun setNotificationsActives(active: Boolean) {
+        prefs.edit().putBoolean("notifications", active).apply()
+    }
+
+    fun isNotificationsActives(): Boolean = prefs.getBoolean("notifications", true)
+}

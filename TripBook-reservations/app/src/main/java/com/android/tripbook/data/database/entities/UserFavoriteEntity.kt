@@ -116,3 +116,24 @@ enum class FavoriteType {
     HOTEL,
     ACTIVITY
 }
+
+class ParametresActivity : AppCompatActivity() {
+
+    private lateinit var prefHelper: PreferenceHelper
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_parametres)
+
+        prefHelper = PreferenceHelper(this)
+
+        // Exemple : on récupère la langue actuelle et l'affiche
+        val langueActuelle = prefHelper.getLangue()
+        findViewById<TextView>(R.id.txtLangueActuelle).text = "Langue : $langueActuelle"
+
+        // On modifie une préférence (par exemple, passage en thème sombre)
+        findViewById<Switch>(R.id.switchTheme).setOnCheckedChangeListener { _, isChecked ->
+            prefHelper.setThemeSombre(isChecked)
+        }
+    }
+}
