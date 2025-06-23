@@ -89,6 +89,9 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.0")
     //---------------------------------------------------------
     //      You can add your own dependencies down here
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
     //---------------------------------------------------------
 
 

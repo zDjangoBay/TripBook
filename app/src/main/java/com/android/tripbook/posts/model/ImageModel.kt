@@ -1,4 +1,6 @@
 package com.android.tripbook.posts.model
 
-class ImageModel {
-}
+data class ImageModel(
+    val uri: String,
+    val path: String?
+)
