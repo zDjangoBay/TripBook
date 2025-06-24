@@ -104,6 +104,29 @@ fun TripDetailScreen(
                     }
                 }
 
+                // ⭐ Insert Star Rating Row here
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 4.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    repeat(trip.rating.coerceIn(0, 5)) {
+                        Text(
+                            text = "⭐",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    repeat(3 - trip.rating.coerceIn(0, 35)) {
+                        Text(
+                            text = "⭐",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        )
+                    }
+                }
+
                 Text(
                     text = trip.description,
                     style = MaterialTheme.typography.bodyMedium,
@@ -147,6 +170,70 @@ fun TripDetailScreen(
 
                     }
                 }
+
+                // 🔽 Review Input Section
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = "Add Your Review",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                var name by remember { mutableStateOf("") }
+                var comment by remember { mutableStateOf("") }
+                var userRating by remember { mutableStateOf(0) }
+
+// ⭐ Interactive Star Rating
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    repeat(5) { index ->
+                        Text(
+                            text = if (index < userRating) "⭐" else "☆",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = if (index < userRating) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                            modifier = Modifier
+                                .padding(horizontal = 2.dp)
+                                .clickable { userRating = index + 1 }
+                        )
+                    }
+                }
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Your Name") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                )
+
+                OutlinedTextField(
+                    value = comment,
+                    onValueChange = { comment = it },
+                    label = { Text("Your Comment") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    maxLines = 4,
+                    singleLine = false
+                )
+
+                Button(
+                    onClick = {
+                        // 🔽 Handle Review Submission Logic
+                        // e.g., call reviewViewModel.addReview(...)
+                    },
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .align(Alignment.End),
+                    enabled = name.isNotBlank() && comment.isNotBlank() && userRating > 0
+                ) {
+                    Text("Submit Review")
+                }
+
             }
         }
     }

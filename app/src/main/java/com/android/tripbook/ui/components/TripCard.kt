@@ -46,6 +46,24 @@ fun TripCard(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
             )
+
+            // ⭐ Star Rating Display (1 to 3)
+            Row(modifier = Modifier.padding(bottom = 0.dp, top = 7.dp)) {
+                repeat(trip.rating.coerceIn(0, 5)) {
+                    Text(
+                        text = "⭐",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                repeat(3 - trip.rating.coerceIn(0, 5)) {
+                    Text(
+                        text = "☆",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(12.dp))
             Text(text = trip.title, style = MaterialTheme.typography.titleMedium)
             Text(
