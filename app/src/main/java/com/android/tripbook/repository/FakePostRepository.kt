@@ -1,8 +1,10 @@
 import com.android.tripbook.posts.model.*
+import com.android.tripbook.posts.model.Location
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.delay
+import com.android.tripbook.repository.PostRepository
 import java.time.Instant
 
 class FakePostRepository : PostRepository {
@@ -86,25 +88,35 @@ class FakePostRepository : PostRepository {
         PostModel(
             id = "1",
             userId = "user1",
-            username = "Sarah Explorer",
-            title = "Sunset at Santorini",
-            description = "Witnessed the most breathtaking sunset from Oia village. The blue domes and white buildings create a perfect contrast against the golden sky. This magical moment reminded me why I fell in love with travel photography.",
+            username = "Joyce Explorer",
+            title = "Waza National park",
+            description = "Witnessed the most breathtaking display of nature at its finest. The view of the various wildlife species were amazing. This magical moment reminded me why I fell in love with travel photography and nature.",
+            content = "Full story about the national park experience.",
+            author = "Joyce Explorer",
             location = Location(
-                name = "Oia Village",
-                city = "Santorini",
-                country = "Greece",
-                coordinates = Coordinates(36.4618, 25.3753)
+                name = "Far north region",
+                city = "Towards Nigeria (Logone and Chari Division)",
+                country = "Cameroon",
+                coordinates = Coordinates(11.3611, 14.5850)
             ),
             images = listOf(
-                ImageModel(uri = "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff", isUploaded = true),
-                ImageModel(uri = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e", isUploaded = true)
+                ImageModel(
+                    id = "img1",
+                    uri = "https://unsplash.com/photos/a-dirt-path-with-trees-and-water-Xw1evZiDs6I",
+                    isUploaded = true
+                ),
+                ImageModel(
+                    id = "img2",
+                    uri = "https://unsplash.com/photos/brown-monkey-on-green-grass-during-daytime-hCfIiuXHmWg",
+                    isUploaded = true
+                )
             ),
             categories = listOf(Category.NATURE, Category.CULTURE),
             tags = listOf(
                 TagModel("tag1", "sunset", Category.NATURE, true),
                 TagModel("tag2", "architecture", Category.CULTURE, true)
             ),
-            hashtags = listOf("sunset", "greece", "architecture", "romantic"),
+            hashtags = listOf("wildlife", "cameroon", "nature", "amazing"),
             timestamp = Instant.now().minusSeconds(3600 * 2),
             isVerified = true,
             likes = setOf("user2", "user3", "user4"),
@@ -131,24 +143,34 @@ class FakePostRepository : PostRepository {
             id = "2",
             userId = "user2",
             username = "Mike Traveler",
-            title = "Street Food Adventure in Bangkok",
-            description = "Exploring the vibrant street food scene in Chatuchak Market. From pad thai to mango sticky rice, every bite was incredible! The local vendors were so friendly and passionate about their craft.",
+            title = "The street food of Yaoundé",
+            description = "Exploring the vibrant and the serene beauty of Yaoundé. From bustling markets to peaceful parks, the city has so much to offer. The street food scene is a must-try, with flavors that will tantalize your taste buds.",
+            content = "Full story about the Yaounde adventure.",
+            author = "Mike Traveler",
             location = Location(
-                name = "Chatuchak Weekend Market",
-                city = "Bangkok",
-                country = "Thailand"
+                name = "Messasi Market",
+                city = "Yaoundé",
+                country = "Cameroon",
+                coordinates = Coordinates(3.8895, 11.4856)
             ),
-            images = listOf(ImageModel(uri = "https://images.unsplash.com/photo-1578662996442-48f60103fc96", isUploaded = true)),
+            images = listOf(
+                ImageModel(
+                    id = "img3",
+                    uri = "https://unsplash.com/photos/grilled-meat-on-charcoal-grill-4jRyugKbQdw",
+                    isUploaded = true
+                )
+
+            ),
             categories = listOf(Category.FOOD, Category.CULTURE),
             tags = listOf(
                 TagModel("tag3", "streetfood", Category.FOOD, true),
                 TagModel("tag4", "local", Category.CULTURE, true)
             ),
-            hashtags = listOf("streetfood", "thailand", "market", "spicy"),
+            hashtags = listOf("streetfood", "cameroon", "market", "spicy"),
             timestamp = Instant.now().minusSeconds(3600 * 8),
+            isVerified = false,
             likes = setOf("user1", "user3"),
             comments = listOf()
         )
     )
 }
-

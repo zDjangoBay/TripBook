@@ -76,4 +76,8 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+    implementation (libs.accompanist.swiperefresh)
+    implementation (libs.material3) // Or latest version
+
+
 }
