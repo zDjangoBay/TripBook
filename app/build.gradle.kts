@@ -1,17 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+feature/user-profile-dependency-injection-Ezekielkalu
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+=======
+    id("com.google.gms.google-services")
+ userprofile
 }
 
 android {
     namespace = "com.android.tripbook"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.android.tripbook"
-        minSdk = 31
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -78,6 +82,39 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+feature/user-profile-dependency-injection-Ezekielkalu
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 }
+=======
+
+
+    // Compose
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.material3)
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
+
+    // SavedState -
+    implementation(libs.androidx.savedstate)
+    implementation(libs.androidx.savedstate.ktx)
+
+    implementation(libs.androidx.datastore.preferences)
+
+    // Coil for image loading
+    implementation(libs.coil.compose)
+
+    // Date picker
+    implementation(libs.androidx.compose.material3.material3)
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    implementation(project(":userprofile"))
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-auth-ktx")
+}
+userprofile

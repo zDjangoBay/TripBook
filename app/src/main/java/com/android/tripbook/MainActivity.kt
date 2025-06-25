@@ -1,3 +1,4 @@
+ feature/user-profile-dependency-injection-Ezekielkalu
 
 // Importations nécessaires
  import android.os.Bundle 
@@ -60,6 +61,30 @@ val commentText = commentEditText.text.toString()
                 commentEditText.text.clear() 
                 ratingBar.rating = 0f
             }
+=======
+package com.android.tripbook
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.android.tripbook.ui.theme.TripBookTheme
+import com.tripbook.userprofilendedilan.UserProfileNdeDilanEntryPoint
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            UserProfileNdeDilanEntryPoint( )
+          userprofile
         }
     }
 
@@ -95,7 +120,7 @@ val commentText = commentEditText.text.toString()
         val commentTextView: TextView = itemView.findViewById(R.id.commentTextView) 
         val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView) 
         val ratingTextView: TextView = itemView.findViewById(R.id.ratingTextView) 
-    }
+    } feature/user-profile-dependency-injection-Ezekielkalu
 
    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -118,3 +143,6 @@ val comment = comments[position]
 
     override fun getItemCount() = comments.size 
  }
+=======
+}
+ userprofile
