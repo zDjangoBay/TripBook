@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.tripbook.model.Trip
 import com.android.tripbook.model.JournalEntry
+import com.android.tripbook.model.TransportationBooking
+import com.android.tripbook.service.TransportationService
 import com.android.tripbook.ui.components.TripMapView
 import java.time.format.DateTimeFormatter
 
@@ -26,7 +28,9 @@ fun TripDetailsScreen(
     trip: Trip,
     onBackClick: () -> Unit,
     onEditItineraryClick: () -> Unit,
-    onJournalUpdated: (List<JournalEntry>) -> Unit = {}
+    onJournalUpdated: (List<JournalEntry>) -> Unit = {},
+    onTransportationUpdated: (List<TransportationBooking>) -> Unit = {},
+    transportationService: TransportationService = TransportationService()
 ) {
     var selectedTab by remember { mutableStateOf("Overview") }
 
@@ -90,7 +94,7 @@ fun TripDetailsScreen(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            listOf("Overview", "Itinerary", "Journal", "Map").forEach { tab ->
+            listOf("Overview", "Itinerary", "Transportation", "Journal", "Map").forEach { tab ->
                 Text(
                     text = tab,
                     modifier = Modifier
@@ -113,6 +117,7 @@ fun TripDetailsScreen(
             when (selectedTab) {
                 "Overview" -> OverviewTab(trip)
                 "Itinerary" -> ItineraryTab(trip, onEditItineraryClick)
+                "Transportation" -> TransportationTab(trip, onTransportationUpdated, transportationService)
                 "Journal" -> JournalTab(trip, onJournalUpdated)
                 "Map" -> MapTab(trip)
             }
@@ -286,5 +291,19 @@ private fun JournalTab(trip: Trip, onJournalUpdated: (List<JournalEntry>) -> Uni
         trip = trip,
         onBackClick = { /* No-op as we're in a tab */ },
         onJournalUpdated = onJournalUpdated
+    )
+}
+
+@Composable
+private fun TransportationTab(
+    trip: Trip,
+    onTransportationUpdated: (List<TransportationBooking>) -> Unit,
+    transportationService: TransportationService
+) {
+    TransportationScreen(
+        trip = trip,
+        onBackClick = { /* No-op as we're in a tab */ },
+        onTransportationUpdated = onTransportationUpdated,
+        transportationService = transportationService
     )
 }
