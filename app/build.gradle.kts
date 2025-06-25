@@ -1,7 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+feature/user-profile-dependency-injection-Ezekielkalu
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+=======
     id("com.google.gms.google-services")
+ userprofile
 }
 
 android {
@@ -77,6 +82,11 @@ dependencies {
     //---------------------------------------------------------
     //      You can add your own dependencies down here
     //---------------------------------------------------------
+feature/user-profile-dependency-injection-Ezekielkalu
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+}
+=======
 
 
     // Compose
@@ -107,3 +117,4 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-auth-ktx")
 }
+userprofile
