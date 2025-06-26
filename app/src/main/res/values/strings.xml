@@ -35,5 +35,6 @@
     <string name="zero">0</string>
     <string name="titile">titile</string>
     <string name="Bookmark">Bookmark\n</string>
-
+    <string name="share">Share</string>
+    <string name="share_trip_message">Check out this trip on TripBook!\n\nDestination: %1$s\nLocation: %2$s, %3$s\n\n%4$s\n\nView more in the TripBook app!\n[Trip Link Here]</string>
 </resources>
