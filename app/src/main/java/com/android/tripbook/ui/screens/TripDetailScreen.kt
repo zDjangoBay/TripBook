@@ -1,6 +1,7 @@
 // ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
@@ -86,8 +88,20 @@ fun TripDetailScreen(
                     )
 
                     // Share Button
+                    val context = LocalContext.current
                     Button(
-                        onClick = { /* TODO: Implement share logic */ },
+                        onClick = {
+                            trip?.let {
+                                val shareText = "Check out this trip: ${it.title}\n${it.description}"
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, shareText)
+                                    type = "text/plain"
+                                }
+                                val shareIntent = Intent.createChooser(sendIntent, null)
+                                context.startActivity(shareIntent)
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
                         ),
