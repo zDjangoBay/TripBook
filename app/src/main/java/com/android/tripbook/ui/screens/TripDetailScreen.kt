@@ -27,7 +27,6 @@ import com.android.tripbook.ui.screens.ShareUtils
 fun TripDetailScreen(
     tripId: Int,
     onBack: () -> Unit,
-    navController: NavHostController,
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
@@ -194,7 +193,7 @@ fun TripDetailScreen(
                             ReviewCard(
                                 review = review,
                                 onClick = {
-                                    navController.navigate("detailReview/${review.id}/$tripId")
+                                    // navController.navigate("detailReview/${review.id}/$tripId")
                                 }
                             )
                             Spacer(modifier = Modifier.height(8.dp))
