@@ -21,7 +21,7 @@ import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
 import com.android.tripbook.ui.components.MiniMap
 import com.android.tripbook.data.SampleTrips
-import com.android.tripbook.utils.ShareUtils
+import com.android.tripbook.ui.screens.ShareUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,9 +92,7 @@ fun TripDetailScreen(
                     val context = LocalContext.current
                     Button(
                         onClick = {
-                            trip?.let {
-                                ShareUtils.shareTrip(context, it)
-                            }
+                            ShareUtils.shareTrip(context, trip)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.secondary
