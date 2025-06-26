@@ -21,6 +21,7 @@ import com.android.tripbook.ui.components.ReviewCard
 import com.android.tripbook.ui.components.MiniMap
 import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.ui.screens.ShareUtils
+import androidx.navigation.NavHostController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
