@@ -22,6 +22,7 @@ import com.android.tripbook.ui.components.MiniMap
 import com.android.tripbook.data.SampleTrips
 import com.android.tripbook.ui.screens.ShareUtils
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripDetailScreen(
