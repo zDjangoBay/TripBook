@@ -6,11 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.android.tripbook.model.*
 import com.android.tripbook.service.AgencyService
 import com.android.tripbook.service.GoogleMapsService
 import com.android.tripbook.service.NominatimService
 import com.android.tripbook.service.TravelAgencyService
+import com.android.tripbook.service.TransportationService
 import com.android.tripbook.ui.uis.*
 import com.android.tripbook.ui.theme.TripBookTheme
 import java.time.LocalDate
@@ -22,11 +29,16 @@ class MainActivity : ComponentActivity() {
 
         val nominatimService = NominatimService()
         val travelAgencyService = TravelAgencyService()
+        val transportationService = TransportationService()
 
-        // Get API key from manifest
-        val apiKey = applicationContext.packageManager
-            .getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-            .metaData.getString("com.google.android.geo.API_KEY") ?: ""
+        // Get API key from manifest (with error handling)
+        val apiKey = try {
+            applicationContext.packageManager
+                .getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+                .metaData?.getString("com.google.android.geo.API_KEY") ?: ""
+        } catch (e: Exception) {
+            ""
+        }
 
         val googleMapsService = GoogleMapsService(applicationContext, apiKey)
 
@@ -37,7 +49,8 @@ class MainActivity : ComponentActivity() {
                 TripBookApp(
                     nominatimService = nominatimService,
                     travelAgencyService = travelAgencyService,
-                    googleMapsService = googleMapsService
+                    googleMapsService = googleMapsService,
+                    transportationService = transportationService
                 )
             }
         }
@@ -48,7 +61,8 @@ class MainActivity : ComponentActivity() {
 fun TripBookApp(
     nominatimService: NominatimService,
     travelAgencyService: TravelAgencyService,
-    googleMapsService: GoogleMapsService
+    googleMapsService: GoogleMapsService,
+    transportationService: TransportationService
 ) {
     var currentScreen by remember { mutableStateOf("MyTrips") }
     var selectedTrip by remember {
@@ -67,6 +81,8 @@ fun TripBookApp(
                     endDate = LocalDate.of(2024, 12, 22),
                     budget = 2400.0,
                     itinerary = listOf(),
+                    journalEntries = listOf(),
+                    transportationBookings = listOf(),
                     travelers = 4,
                     status = TripStatus.PLANNED,
                     type = "Safari",
@@ -80,6 +96,8 @@ fun TripBookApp(
                     endDate = LocalDate.of(2025, 1, 18),
                     budget = 1800.0,
                     itinerary = listOf(),
+                    journalEntries = listOf(),
+                    transportationBookings = listOf(),
                     travelers = 2,
                     destinationCoordinates = Coordinates(latitude = 31.6295, longitude = -7.9811), // Marrakech
                     status = TripStatus.PLANNED,
@@ -93,6 +111,8 @@ fun TripBookApp(
                     endDate = LocalDate.of(2024, 9, 12),
                     budget = 3200.0,
                     itinerary = listOf(),
+                    journalEntries = listOf(),
+                    transportationBookings = listOf(),
                     travelers = 6,
                     destinationCoordinates = Coordinates(latitude = -33.9249, longitude = 18.4241), // Cape Town
                     status = TripStatus.PLANNED,
@@ -139,7 +159,7 @@ fun TripBookApp(
             onEditItineraryClick = {
                 currentScreen = "ItineraryBuilder"
             },
-            onJournalUpdated = { updatedJournalEntries ->
+            onJournalUpdated = { updatedJournalEntries: List<JournalEntry> ->
                 selectedTrip?.let { trip ->
                     val updatedTrip = trip.copy(journalEntries = updatedJournalEntries)
                     selectedTrip = updatedTrip
@@ -147,7 +167,17 @@ fun TripBookApp(
                         if (it.id == trip.id) updatedTrip else it
                     }
                 }
-            }
+            },
+            onTransportationUpdated = { updatedTransportationBookings: List<TransportationBooking> ->
+                selectedTrip?.let { trip ->
+                    val updatedTrip = trip.copy(transportationBookings = updatedTransportationBookings)
+                    selectedTrip = updatedTrip
+                    trips = trips.map {
+                        if (it.id == trip.id) updatedTrip else it
+                    }
+                }
+            },
+            transportationService = transportationService
         )
 
         "ItineraryBuilder" -> ItineraryBuilderScreen(
