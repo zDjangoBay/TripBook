@@ -21,6 +21,7 @@ import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
 import com.android.tripbook.ui.components.MiniMap
 import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.utils.ShareUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,24 +93,7 @@ fun TripDetailScreen(
                     Button(
                         onClick = {
                             trip?.let {
-                                val shareText = """
-                                    Check out this trip on TripBook!
-                                    
-                                    Destination: ${it.title}
-                                    Location: ${it.city}, ${it.country}
-                                    
-                                    ${it.description}
-                                    
-                                    View more in the TripBook app!
-                                    [Trip Link Here]
-                                """.trimIndent()
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(Intent.EXTRA_TEXT, shareText)
-                                    type = "text/plain"
-                                }
-                                val shareIntent = Intent.createChooser(sendIntent, null)
-                                context.startActivity(shareIntent)
+                                ShareUtils.shareTrip(context, it)
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
