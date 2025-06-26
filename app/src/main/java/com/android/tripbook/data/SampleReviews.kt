@@ -1,4 +1,4 @@
-// model/SampleReviews.kt
+
 package com.android.tripbook.data
 
 import com.android.tripbook.model.Review

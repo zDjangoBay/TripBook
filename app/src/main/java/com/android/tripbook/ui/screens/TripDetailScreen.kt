@@ -1,25 +1,28 @@
+// ui/screens/TripDetailScreen.kt
 package com.android.tripbook.ui.screens
 
-import androidx.compose.foundation.clickable
+import android.content.Intent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.android.tripbook.viewmodel.MockReviewViewModel
-import com.android.tripbook.viewmodel.MockTripViewModel
 import com.android.tripbook.ui.components.ImageGallery
 import com.android.tripbook.ui.components.ReviewCard
+import com.android.tripbook.ui.components.MiniMap
+import com.android.tripbook.data.SampleTrips
+import com.android.tripbook.ui.screens.ShareUtils
+import androidx.navigation.NavHostController
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,11 +33,14 @@ fun TripDetailScreen(
     onSeeAllReviews: (Int) -> Unit,
     onBookTrip: (Int) -> Unit = {}
 ) {
-    val tripViewModel = remember { MockTripViewModel() }
-    val trip = remember { tripViewModel.getTripById(tripId) }
+
+    val trip = remember { SampleTrips.get().find { it.id == tripId } }
+
     val reviewViewModel = remember { MockReviewViewModel() }
     val allReviews by reviewViewModel.reviews.collectAsState()
     val reviewsForTrip = allReviews.filter { it.tripId == tripId }
+
+
 
     Scaffold(
         topBar = {
@@ -83,6 +89,26 @@ fun TripDetailScreen(
                         modifier = Modifier.weight(1f)
                     )
 
+                    // Share Button
+                    val context = LocalContext.current
+                    Button(
+                        onClick = {
+                            ShareUtils.shareTrip(context, trip)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share, // You may need to import or use a custom icon
+                            contentDescription = "Share",
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Share")
+                    }
+
                     Button(
                         onClick = { onBookTrip(tripId) },
                         colors = ButtonDefaults.buttonColors(
@@ -110,7 +136,39 @@ fun TripDetailScreen(
                     modifier = Modifier.padding(16.dp)
                 )
 
-                Column(modifier = Modifier.padding(16.dp)) {
+                Spacer(modifier = Modifier.height(8.dp))
+                if (trip.latitude != 0.0 && trip.longitude != 0.0) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Location on Map",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        MiniMap(
+                            trip = trip,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        )
+                    }
+                } else {
+                    Text(
+                        text = "Location map not available for this trip.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -138,7 +196,7 @@ fun TripDetailScreen(
                             ReviewCard(
                                 review = review,
                                 onClick = {
-                                    navController.navigate("detailReview/${review.id}/$tripId")
+                                     navController.navigate("detailReview/${review.id}/$tripId")
                                 }
                             )
                             Spacer(modifier = Modifier.height(8.dp))

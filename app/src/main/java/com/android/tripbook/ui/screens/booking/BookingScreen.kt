@@ -16,6 +16,7 @@ import com.android.tripbook.viewmodel.BookingViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingScreen(
+    modifier: Modifier = Modifier, // ✅ Modifier parameter
     tripId: Int,
     onBack: () -> Unit,
     onBookingComplete: () -> Unit,
@@ -25,14 +26,14 @@ fun BookingScreen(
     LaunchedEffect(tripId) {
         viewModel.initBooking(tripId)
     }
-    
+
     val currentStep by viewModel.currentStep.collectAsState()
     val booking by viewModel.booking.collectAsState()
     val trip by viewModel.trip.collectAsState()
     val options by viewModel.availableOptions.collectAsState()
-    
+
     var bookingComplete by remember { mutableStateOf(false) }
-    
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -46,9 +47,9 @@ fun BookingScreen(
         }
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(padding) // ✅ Use passed-in modifier with Scaffold padding
         ) {
             // Progress indicator
             LinearProgressIndicator(
@@ -62,53 +63,32 @@ fun BookingScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            
-            // Step indicator
+
+            // Step indicator row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                StepIndicator(
-                    title = "Dates",
-                    isActive = currentStep == BookingStep.DATE_SELECTION,
-                    isCompleted = currentStep.ordinal > BookingStep.DATE_SELECTION.ordinal
-                )
-                
-                StepIndicator(
-                    title = "Travelers",
-                    isActive = currentStep == BookingStep.TRAVELER_INFO,
-                    isCompleted = currentStep.ordinal > BookingStep.TRAVELER_INFO.ordinal
-                )
-                
-                StepIndicator(
-                    title = "Options",
-                    isActive = currentStep == BookingStep.ADDITIONAL_OPTIONS,
-                    isCompleted = currentStep.ordinal > BookingStep.ADDITIONAL_OPTIONS.ordinal
-                )
-                
-                StepIndicator(
-                    title = "Summary",
-                    isActive = currentStep == BookingStep.SUMMARY,
-                    isCompleted = false
-                )
+                StepIndicator("Dates", currentStep == BookingStep.DATE_SELECTION, currentStep.ordinal > BookingStep.DATE_SELECTION.ordinal)
+                StepIndicator("Travelers", currentStep == BookingStep.TRAVELER_INFO, currentStep.ordinal > BookingStep.TRAVELER_INFO.ordinal)
+                StepIndicator("Options", currentStep == BookingStep.ADDITIONAL_OPTIONS, currentStep.ordinal > BookingStep.ADDITIONAL_OPTIONS.ordinal)
+                StepIndicator("Summary", currentStep == BookingStep.SUMMARY, false)
             }
-            
-            // Current step content
+
+            // Step-specific content
             when (currentStep) {
                 BookingStep.DATE_SELECTION -> {
                     DateSelectionStep(
                         trip = trip,
                         selectedStartDate = booking?.startDate,
                         selectedEndDate = booking?.endDate,
-                        onDateRangeSelected = { start, end ->
-                            viewModel.updateDates(start, end)
-                        },
+                        onDateRangeSelected = { start, end -> viewModel.updateDates(start, end) },
                         onNextStep = { viewModel.nextStep() }
                     )
                 }
-                
+
                 BookingStep.TRAVELER_INFO -> {
                     TravelerInfoStep(
                         adultCount = booking?.adultCount ?: 1,
@@ -118,15 +98,13 @@ fun BookingScreen(
                         contactPhone = booking?.contactPhone ?: "",
                         specialRequirements = booking?.specialRequirements ?: "",
                         onInfoUpdated = { adults, children, name, email, phone, requirements ->
-                            viewModel.updateTravelerInfo(
-                                adults, children, name, email, phone, requirements
-                            )
+                            viewModel.updateTravelerInfo(adults, children, name, email, phone, requirements)
                         },
                         onNextStep = { viewModel.nextStep() },
                         onPreviousStep = { viewModel.previousStep() }
                     )
                 }
-                
+
                 BookingStep.ADDITIONAL_OPTIONS -> {
                     AdditionalOptionsStep(
                         options = options,
@@ -135,12 +113,10 @@ fun BookingScreen(
                         onPreviousStep = { viewModel.previousStep() }
                     )
                 }
-                
+
                 BookingStep.SUMMARY -> {
                     if (bookingComplete) {
-                        BookingConfirmationScreen(
-                            onDone = onBookingComplete
-                        )
+                        BookingConfirmationScreen(onDone = onBookingComplete)
                     } else {
                         BookingSummaryStep(
                             trip = trip,
