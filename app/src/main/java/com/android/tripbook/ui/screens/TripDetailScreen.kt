@@ -92,7 +92,17 @@ fun TripDetailScreen(
                     Button(
                         onClick = {
                             trip?.let {
-                                val shareText = "Check out this trip: ${it.title}\n${it.description}"
+                                val shareText = """
+                                    Check out this trip on TripBook!
+                                    
+                                    Destination: ${it.title}
+                                    Location: ${it.city}, ${it.country}
+                                    
+                                    ${it.description}
+                                    
+                                    View more in the TripBook app!
+                                    [Trip Link Here]
+                                """.trimIndent()
                                 val sendIntent = Intent().apply {
                                     action = Intent.ACTION_SEND
                                     putExtra(Intent.EXTRA_TEXT, shareText)
