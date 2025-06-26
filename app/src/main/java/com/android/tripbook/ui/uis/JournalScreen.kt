@@ -49,7 +49,7 @@ fun JournalScreen(
     onBackClick: () -> Unit,
     onJournalUpdated: (List<JournalEntry>) -> Unit
 ) {
-    var journalEntries by remember { mutableStateOf(trip.journalEntries ?: emptyList()) }
+    var journalEntries by remember { mutableStateOf(trip.journalEntries) }
     var showAddEntryDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     val context = LocalContext.current
